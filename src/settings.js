@@ -1,5 +1,5 @@
 module.exports = {
-  title: '若依管理系统',
+  title: '南斗星高考外语教务平台',
 
   /**
    * 侧边栏主题 深色主题theme-dark，浅色主题theme-light
