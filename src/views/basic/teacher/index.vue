@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="校区名称" prop="xqmc">
         <el-input
           v-model="queryParams.xqmc"
@@ -38,7 +44,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="是否有教师资格证" prop="sfyjszgz">
+      <el-form-item label-width="150px" label="是否有教师资格证" prop="sfyjszgz">
         <el-select v-model="queryParams.sfyjszgz" placeholder="请选择是否有教师资格证" clearable size="small">
           <el-option
             v-for="dict in sfyjszgzOptions"
@@ -107,6 +113,9 @@
           v-hasPermi="['basic:teacher:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -161,7 +170,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -169,126 +178,51 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改老师信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="老师头像" prop="lstx">
-          <el-input v-model="form.lstx" placeholder="请输入老师头像" />
-        </el-form-item>
-        <el-form-item label="校区名称" prop="xqmc">
-          <el-input v-model="form.xqmc" placeholder="请输入校区名称" />
-        </el-form-item>
-        <el-form-item label="日语班级" prop="rybj">
-          <el-input v-model="form.rybj" placeholder="请输入日语班级" />
-        </el-form-item>
-        <el-form-item label="老师姓名" prop="lsxm">
-          <el-input v-model="form.lsxm" placeholder="请输入老师姓名" />
-        </el-form-item>
-        <el-form-item label="性别" prop="xb">
-          <el-select v-model="form.xb" placeholder="请选择性别">
-            <el-option
-              v-for="dict in xbOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="入职时间" prop="rzsj">
-          <el-date-picker clearable size="small"
-            v-model="form.rzsj"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择入职时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="入职工龄" prop="rzgl">
-          <el-input v-model="form.rzgl" placeholder="请输入入职工龄" />
-        </el-form-item>
-        <el-form-item label="身份证号" prop="sfzh">
-          <el-input v-model="form.sfzh" placeholder="请输入身份证号" />
-        </el-form-item>
-        <el-form-item label="电话号码" prop="dhhm">
-          <el-input v-model="form.dhhm" placeholder="请输入电话号码" />
-        </el-form-item>
-        <el-form-item label="家庭地址" prop="jtzz">
-          <el-input v-model="form.jtzz" placeholder="请输入家庭地址" />
-        </el-form-item>
-        <el-form-item label="现住址" prop="xzz">
-          <el-input v-model="form.xzz" placeholder="请输入现住址" />
-        </el-form-item>
-        <el-form-item label="紧急联系人" prop="jjlxr">
-          <el-input v-model="form.jjlxr" placeholder="请输入紧急联系人" />
-        </el-form-item>
-        <el-form-item label="紧急联系人电话" prop="jjlxrdh">
-          <el-input v-model="form.jjlxrdh" placeholder="请输入紧急联系人电话" />
-        </el-form-item>
-        <el-form-item label="毕业学校" prop="byxx">
-          <el-input v-model="form.byxx" placeholder="请输入毕业学校" />
-        </el-form-item>
-        <el-form-item label="毕业专业" prop="byzy">
-          <el-input v-model="form.byzy" placeholder="请输入毕业专业" />
-        </el-form-item>
-        <el-form-item label="个人身份证正反扫描照" prop="grsfzsmz">
-          <el-input v-model="form.grsfzsmz" placeholder="请输入个人身份证正反扫描照" />
-        </el-form-item>
-        <el-form-item label="毕业证扫描件" prop="byzsmj">
-          <el-input v-model="form.byzsmj" placeholder="请输入毕业证扫描件" />
-        </el-form-item>
-        <el-form-item label="学位证扫描件" prop="xwzsmj">
-          <el-input v-model="form.xwzsmj" placeholder="请输入学位证扫描件" />
-        </el-form-item>
-        <el-form-item label="个人证件照白底蓝底" prop="grzjzbdld">
-          <el-input v-model="form.grzjzbdld" placeholder="请输入个人证件照白底蓝底" />
-        </el-form-item>
-        <el-form-item label="日语登记证书" prop="rydjzs">
-          <el-input v-model="form.rydjzs" placeholder="请输入日语登记证书" />
-        </el-form-item>
-        <el-form-item label="是否有教师资格证" prop="sfyjszgz">
-          <el-select v-model="form.sfyjszgz" placeholder="请选择是否有教师资格证">
-            <el-option
-              v-for="dict in sfyjszgzOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="教师资格证" prop="jszgz">
-          <el-input v-model="form.jszgz" placeholder="请输入教师资格证" />
-        </el-form-item>
-        <el-form-item label="其他证书" prop="qtzs">
-          <el-input v-model="form.qtzs" placeholder="请输入其他证书" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
+    <!-- 用户导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+      <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+      </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listTeacher, getTeacher, delTeacher, addTeacher, updateTeacher } from "@/api/basic/teacher";
-
+import {
+  listTeacher,
+  getTeacher,
+  delTeacher,
+  addTeacher,
+  updateTeacher
+} from "@/api/basic/teacher";
+import { getToken } from "@/utils/auth";
 export default {
   name: "Teacher",
-  components: {
-  },
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -324,12 +258,33 @@ export default {
         lsxm: null,
         xb: null,
         sfyjszgz: null,
-        status: null,
+        status: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
+      rules: {},
+      // 头像
+      imageUrl: "",
+      //证件照
+      dialogImageUrl: "",
+      dialogVisible: false,
+      disabled: false,
+      //是否有教师资格证
+      isCertificais: false,
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
       }
     };
   },
@@ -427,20 +382,23 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
       this.open = true;
       this.title = "添加老师信息";
+      this.$router.push({
+        path: "/teacherForm"
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getTeacher(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -470,23 +428,137 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除老师信息编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除老师信息编号为"' + ids + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delTeacher(ids);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/teacher/export', {
-        ...this.queryParams
-      }, `basic_teacher.xlsx`)
+      this.download(
+        "basic/teacher/export",
+        {
+          ...this.queryParams
+        },
+        `basic_teacher.xlsx`
+      );
+    },
+    // 头像处理
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    //证件照处理
+    handleRemove(file) {
+      console.log(file);
+    },
+    // 预览图片
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    //是否有教师资格证
+    selectChange(value) {
+      if (value == "Y") {
+        this.isCertificais = true;
+      } else {
+        this.isCertificais = false;
+      }
+    },
+       /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "用户导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      this.download(
+        "basic/bjclass/importTemplate",
+        {
+          ...this.queryParams
+        },
+        `导入模板_${new Date().getTime()}.xlsx`
+      );
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$notify({
+        title: "成功",
+        message: response.msg,
+        type: "success"
+      });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.el-col {
+  float: none;
+  display: inline-block;
+}
+.wrap-el-dialog {
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+// .hide .el-upload--picture-card {
+//   display: none;
+// }
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>

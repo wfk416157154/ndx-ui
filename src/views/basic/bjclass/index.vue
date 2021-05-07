@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="校区名称" prop="xqmc">
         <el-input
           v-model="queryParams.xqmc"
@@ -19,7 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="日语班级名称" prop="rybjmc">
+      <el-form-item label-width="120px" label="日语班级名称" prop="rybjmc">
         <el-input
           v-model="queryParams.rybjmc"
           placeholder="请输入日语班级名称"
@@ -87,12 +93,7 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="info"
-          icon="el-icon-upload2"
-          size="mini"
-          @click="handleImport"
-        >导入</el-button>
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -149,55 +150,6 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改班级基础信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="开班照" prop="kbz">
-          <el-input v-model="form.kbz" placeholder="请输入开班照" />
-        </el-form-item>
-        <el-form-item label="集体照" prop="jtz">
-          <el-input v-model="form.jtz" placeholder="请输入集体照" />
-        </el-form-item>
-        <el-form-item label="校区名称" prop="xqmc">
-          <el-input v-model="form.xqmc" placeholder="请输入校区名称" />
-        </el-form-item>
-        <el-form-item label="年级" prop="nj">
-          <el-input v-model="form.nj" placeholder="请输入年级" />
-        </el-form-item>
-        <el-form-item label="日语班级名称" prop="rybjmc">
-          <el-input v-model="form.rybjmc" placeholder="请输入日语班级名称" />
-        </el-form-item>
-        <el-form-item label="班级人数" prop="bjrs">
-          <el-input v-model="form.bjrs" placeholder="请输入班级人数" />
-        </el-form-item>
-        <el-form-item label="老师姓名" prop="lsxm">
-          <el-input v-model="form.lsxm" placeholder="请输入老师姓名" />
-        </el-form-item>
-        <el-form-item label="开班时间" prop="kbsj">
-          <el-input v-model="form.kbsj" placeholder="请输入开班时间" />
-        </el-form-item>
-        <el-form-item label="老师电话" prop="lsdh">
-          <el-input v-model="form.lsdh" placeholder="请输入老师电话" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
@@ -228,18 +180,23 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { listBjclass, getBjclass, delBjclass, addBjclass, updateBjclass,importTemplate } from "@/api/basic/bjclass";
+import {
+  listBjclass,
+  getBjclass,
+  delBjclass,
+  addBjclass,
+  updateBjclass,
+  importTemplate
+} from "@/api/basic/bjclass";
 import { getToken } from "@/utils/auth";
 
 export default {
   name: "Bjclass",
-  components: {
-  },
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -270,13 +227,12 @@ export default {
         nj: null,
         rybjmc: null,
         lsxm: null,
-        status: null,
+        status: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       // 用户导入参数
       upload: {
         // 是否显示弹出层（用户导入）
@@ -292,6 +248,10 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
       },
+      // 图片地址
+      dialogImageUrl: "",
+      dialogVisible: false,
+      disabled: false
     };
   },
   created() {
@@ -360,20 +320,20 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加班级基础信息";
+      this.$router.push({
+        path : "/bjclassForm"
+      })
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getBjclass(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -403,54 +363,89 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除班级基础信息编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除班级基础信息编号为"' + ids + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delBjclass(ids);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/bjclass/export', {
-        ...this.queryParams
-      }, `basic_bjclass.xlsx`)
+      this.download(
+        "basic/bjclass/export",
+        {
+          ...this.queryParams
+        },
+        `basic_bjclass.xlsx`
+      );
     },
 
-      /** 导入按钮操作 */
-      handleImport() {
-        this.upload.title = "用户导入";
-        this.upload.open = true;
-      },
-      /** 下载模板操作 */
-      importTemplate() {
-        this.download('basic/bjclass/importTemplate', {
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "用户导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      this.download(
+        "basic/bjclass/importTemplate",
+        {
           ...this.queryParams
-        }, `导入模板_${new Date().getTime()}.xlsx`)
-      },
-  // 文件上传中处理
-      handleFileUploadProgress(event, file, fileList) {
-        this.upload.isUploading = true;
-      },
-  // 文件上传成功处理
-      handleFileSuccess(response, file, fileList) {
-        this.upload.open = false;
-        this.upload.isUploading = false;
-        this.$refs.upload.clearFiles();
-        this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-        this.getList();
-      },
-  // 提交上传文件
-      submitFileForm() {
-        this.$refs.upload.submit();
-      }
-
-
-
+        },
+        `导入模板_${new Date().getTime()}.xlsx`
+      );
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
+    }
+    // //图片删除
+    // handleRemove(file) {
+    //   console.log(file.length);
+    // },
+    // // 图片放大
+    // handlePictureCardPreview(file) {
+    //   this.dialogImageUrl = file.url;
+    //   this.dialogVisible = true;
+    // },
+    // // 图片下载
+    // handleDownload(file) {
+    //   console.log(file);
+    // }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.wrap-el-form {
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+.el-col {
+  float: none;
+  display: inline-block;
+}
+</style>

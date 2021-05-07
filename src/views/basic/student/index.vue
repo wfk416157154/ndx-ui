@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="校区名称" prop="xqmc">
         <el-input
           v-model="queryParams.xqmc"
@@ -56,7 +62,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否特长生" prop="sftcs">
+      <el-form-item label-width="100px" label="是否特长生" prop="sftcs">
         <el-select v-model="queryParams.sftcs" placeholder="请选择是否特长生" clearable size="small">
           <el-option
             v-for="dict in sftcsOptions"
@@ -66,7 +72,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="班主任姓名" prop="bzrxm">
+      <el-form-item label-width="100px" label="班主任姓名" prop="bzrxm">
         <el-input
           v-model="queryParams.bzrxm"
           placeholder="请输入班主任姓名"
@@ -134,6 +140,9 @@
           v-hasPermi="['basic:student:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -189,7 +198,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -199,119 +208,235 @@
     />
 
     <!-- 添加或修改学生信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="学生头像" prop="xstx">
-          <el-input v-model="form.xstx" placeholder="请输入学生头像" />
+    <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
+      <el-form class="wrap-el-form" ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label-width="100px" label="学生头像" prop="xstx">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-form-item>
-        <el-form-item label="校区名称" prop="xqmc">
-          <el-input v-model="form.xqmc" placeholder="请输入校区名称" />
-        </el-form-item>
-        <el-form-item label="原班级" prop="ybj">
-          <el-input v-model="form.ybj" placeholder="请输入原班级" />
-        </el-form-item>
-        <el-form-item label="日语班" prop="ryb">
-          <el-input v-model="form.ryb" placeholder="请输入日语班" />
-        </el-form-item>
-        <el-form-item label="入班时间" prop="rbsj">
-          <el-date-picker clearable size="small"
-            v-model="form.rbsj"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择入班时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="退班时间" prop="tbsj">
-          <el-date-picker clearable size="small"
-            v-model="form.tbsj"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择退班时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="学生编号" prop="xsbh">
-          <el-input v-model="form.xsbh" placeholder="请输入学生编号" />
-        </el-form-item>
-        <el-form-item label="学生姓名" prop="xsxm">
-          <el-input v-model="form.xsxm" placeholder="请输入学生姓名" />
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-radio-group v-model="form.xb">
-            <el-radio
-              v-for="dict in xbOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="选科" prop="xk">
-          <el-input v-model="form.xk" placeholder="请输入选科" />
-        </el-form-item>
-        <el-form-item label="英语分数" prop="yyfs">
-          <el-input v-model="form.yyfs" placeholder="请输入英语分数" />
-        </el-form-item>
-        <el-form-item label="综合分数" prop="zhfs">
-          <el-input v-model="form.zhfs" placeholder="请输入综合分数" />
-        </el-form-item>
-        <el-form-item label="QQ号" prop="qqh">
-          <el-input v-model="form.qqh" placeholder="请输入QQ号" />
-        </el-form-item>
-        <el-form-item label="学生电话" prop="xsdh">
-          <el-input v-model="form.xsdh" placeholder="请输入学生电话" />
-        </el-form-item>
-        <el-form-item label="家庭住址" prop="jtzz">
-          <el-input v-model="form.jtzz" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="是否特长生" prop="sftcs">
-          <el-select v-model="form.sftcs" placeholder="请选择是否特长生">
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="校区名称" prop="xqmc">
+            <!-- <el-input maxlength="30" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
+            <el-select v-model="form.xqmc" placeholder="请选择校区名称">
+              <el-option
+                v-for="item in campusName"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="原班级" prop="ybj">
+            <!-- <el-input maxlength="30" v-model="form.ybj" placeholder="请输入原班级" /> -->
+            <el-select v-model="form.ybj" placeholder="请选择原班级">
+              <el-option
+                v-for="item in originalClass"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <!-- <el-col :span="12"> -->
+        <el-form-item label-width="100px" label="日语班" prop="ryb">
+          <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
+          <el-select v-model="form.ryb" placeholder="请选择日语班">
             <el-option
-              v-for="dict in sftcsOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
+              v-for="item in japaneseClass"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="家长姓名" prop="jzxm">
-          <el-input v-model="form.jzxm" placeholder="请输入家长姓名" />
+        <!-- </el-col> -->
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="入班时间" prop="rbsj">
+            <el-date-picker
+              clearable
+              size="small"
+              v-model="form.rbsj"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择入班时间"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="退班时间" prop="tbsj">
+            <el-date-picker
+              clearable
+              size="small"
+              v-model="form.tbsj"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择退班时间"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="学生编号" prop="xsbh">
+            <el-input maxlength="10" v-model="form.xsbh" placeholder="请输入学生编号" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="学生姓名" prop="xsxm">
+            <el-input maxlength="4" v-model="form.xsxm" placeholder="请输入学生姓名" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="性别">
+            <el-radio-group v-model="form.xb">
+              <el-radio
+                v-for="dict in xbOptions"
+                :key="dict.dictValue"
+                :label="dict.dictValue"
+              >{{dict.dictLabel}}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="选科" prop="xk">
+            <el-input maxlength="30" v-model="form.xk" placeholder="请输入选科" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="英语分数" prop="yyfs">
+            <el-input maxlength="5" v-model="form.yyfs" placeholder="请输入英语分数" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="综合分数" prop="zhfs">
+            <el-input maxlength="5" v-model="form.zhfs" placeholder="请输入综合分数" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="QQ号" prop="qqh">
+            <el-input maxlength="12" v-model="form.qqh" placeholder="请输入QQ号" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="学生电话" prop="xsdh">
+            <el-input maxlength="11" v-model="form.xsdh" placeholder="请输入学生电话" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="家庭住址" prop="jtzz">
+            <el-input maxlength="50" v-model="form.jtzz" type="textarea" placeholder="请输入内容" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="是否特长生" prop="sftcs">
+            <el-select v-model="form.sftcs" placeholder="请选择是否特长生">
+              <el-option
+                v-for="dict in sftcsOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="家长姓名" prop="jzxm">
+            <el-input maxlength="4" v-model="form.jzxm" placeholder="请输入家长姓名" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="家长电话" prop="jzdh">
+            <el-input maxlength="11" v-model="form.jzdh" placeholder="请输入家长电话" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="班主任姓名" prop="bzrxm">
+            <el-input maxlength="4" v-model="form.bzrxm" placeholder="请输入班主任姓名" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="班主任电话" prop="bzrdh">
+            <el-input maxlength="11" v-model="form.bzrdh" placeholder="请输入班主任电话" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label-width="100px" label="状态">
+            <!-- <el-radio-group v-model="form.status">
+              <el-radio disabled :label="1">有效</el-radio>
+              <el-radio disabled :label="2">无效</el-radio>
+            </el-radio-group>-->
+            <el-radio-group v-model="label">
+              <el-radio disabled :label="1">有效</el-radio>
+              <el-radio disabled :label="2">无效</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <!-- <el-col :span="12"> -->
+        <el-form-item label-width="100px" label="备注" prop="remark">
+          <el-input maxlength="300" v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="家长电话" prop="jzdh">
-          <el-input v-model="form.jzdh" placeholder="请输入家长电话" />
-        </el-form-item>
-        <el-form-item label="班主任姓名" prop="bzrxm">
-          <el-input v-model="form.bzrxm" placeholder="请输入班主任姓名" />
-        </el-form-item>
-        <el-form-item label="班主任电话" prop="bzrdh">
-          <el-input v-model="form.bzrdh" placeholder="请输入班主任电话" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
+        <!-- </el-col> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 用户导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+      <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listStudent, getStudent, delStudent, addStudent, updateStudent } from "@/api/basic/student";
-
+import {
+  listStudent,
+  getStudent,
+  delStudent,
+  addStudent,
+  updateStudent
+} from "@/api/basic/student";
+import { getToken } from "@/utils/auth";
 export default {
   name: "Student",
-  components: {
-  },
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -350,12 +475,35 @@ export default {
         xk: null,
         sftcs: null,
         bzrxm: null,
-        status: null,
+        status: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
+      rules: {},
+      // 学生头像
+      imageUrl: "",
+      // 校区名称
+      campusName: [],
+      // 原班级
+      originalClass: [],
+      // 日语班
+      japaneseClass: [],
+      //状态选中
+      label: 1,
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
       }
     };
   },
@@ -370,6 +518,11 @@ export default {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
+
+    this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
+  },
+  mounted() {
+    this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   methods: {
     /** 查询学生信息列表 */
@@ -450,20 +603,23 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
       this.open = true;
       this.title = "添加学生信息";
+      this.imageUrl = null
     },
+    // 文件导入
+    handleUpload() {},
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getStudent(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -493,23 +649,135 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除学生信息编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除学生信息编号为"' + ids + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delStudent(ids);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/student/export', {
-        ...this.queryParams
-      }, `basic_student.xlsx`)
+      this.download(
+        "basic/student/export",
+        {
+          ...this.queryParams
+        },
+        `basic_student.xlsx`
+      );
+    },
+    //学生头像处理
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "用户导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      this.download(
+        "basic/bjclass/importTemplate",
+        {
+          ...this.queryParams
+        },
+        `导入模板_${new Date().getTime()}.xlsx`
+      );
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$notify({
+        title: "成功",
+        message: response.msg,
+        type: "success"
+      });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.el-col {
+  float: none;
+  display: inline-block;
+}
+.wrap-el-form {
+  padding-right: 35px;
+  box-sizing: border-box;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+
+.header {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  color: #652c11;
+  letter-spacing: 2px;
+}
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

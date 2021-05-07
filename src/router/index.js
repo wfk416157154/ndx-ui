@@ -6,6 +6,8 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 import ParentView from '@/components/ParentView';
+import teacherForm from '../views/basic/teacher/teacherForm.vue';
+import bjclassForm from '../views/basic/bjclass/bjclassForm.vue';
 
 /**
  * Note: 路由配置项
@@ -63,6 +65,16 @@ export const constantRoutes = [
         component: (resolve) => require(['@/views/index'], resolve),
         name: '首页',
         meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
+      },
+      {
+        path : "teacherForm",
+        name : "teacherForm",
+        component : teacherForm
+      },
+      {
+        path : "bjclassForm",
+        name : "bjclassForm",
+        component : bjclassForm
       }
     ]
   },
