@@ -5,7 +5,8 @@
       <el-form-item label-width="180px" label="老师头像" prop="lstx">
         <el-upload
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          :action="upload.fileUrl"
+          :headers="upload.headers"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
@@ -13,6 +14,7 @@
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
+        <el-input v-if="false" maxlength="4" v-model="form.lstx" />
       </el-form-item>
       <!-- </el-col> -->
       <el-col :span="12">
@@ -322,7 +324,7 @@ import {
   addTeacher,
   updateTeacher
 } from "@/api/basic/teacher";
-
+import { getToken } from "@/utils/auth";
 export default {
   name: "Teacher",
   components: {},
@@ -378,7 +380,23 @@ export default {
       // 校区名称
       campusName: [],
       //日语班级
-      japaneseClass : [],
+      japaneseClass: [],
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
+        // 上传图片地址
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      }
     };
   },
   created() {
@@ -548,6 +566,8 @@ export default {
     // 头像处理
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+      this.form.lstx = res.data.url;
+      console.log(res);
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";

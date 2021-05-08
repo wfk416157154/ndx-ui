@@ -213,7 +213,8 @@
         <el-form-item label-width="100px" label="学生头像" prop="xstx">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="upload.fileUrl"
+            :headers="upload.headers"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -381,7 +382,8 @@
           </el-form-item>
         </el-col>
         <!-- <el-col :span="12"> -->
-        <el-form-item label-width="100px" label="备注" prop="remark">
+        <el-form-item label-width="100px" label="
+        备注" prop="remark">
           <el-input maxlength="300" v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
         <!-- </el-col> -->
@@ -433,6 +435,7 @@ import {
   addStudent,
   updateStudent
 } from "@/api/basic/student";
+import { addImg } from "@/api/tool/common";
 import { getToken } from "@/utils/auth";
 export default {
   name: "Student",
@@ -503,8 +506,11 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
-      }
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
+        // 上传图片地址
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      uploadData: {}
     };
   },
   created() {
@@ -612,7 +618,7 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加学生信息";
-      this.imageUrl = null
+      this.imageUrl = null;
     },
     // 文件导入
     handleUpload() {},
@@ -644,6 +650,12 @@ export default {
             });
           }
         }
+        if (Object.keys(this.uploadData).length == 0) {
+          return;
+        }
+        addImg(this.uploadData).then(res => {
+          // console.log(res);
+        });
       });
     },
     /** 删除按钮操作 */
@@ -679,11 +691,11 @@ export default {
     //学生头像处理
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+      this.uploadData = res.data;
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
-
       if (!isJPG) {
         this.$message.error("上传头像图片只能是 JPG 格式!");
       }

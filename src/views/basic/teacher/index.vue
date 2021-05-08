@@ -119,7 +119,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="teacherList" @selection-change="handleSelectionChange">
+    <!-- <el-table v-loading="loading" :data="teacherList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="状态" align="center" prop="id" />
       <el-table-column label="老师头像" align="center" prop="lstx" />
@@ -169,7 +169,128 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table>-->
+    <div class="wrap-teacherList">
+      <ul>
+        <li v-for="(item,index) in 10" :key="index">
+          <div class="wrap-img">
+            <img
+              src="https://dss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1851283359,3457678391&fm=26&gp=0.jpg"
+              alt
+            />
+          </div>
+          <div class="wrap-content">
+            <div class="content-list">
+              <h4>校区名称 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>入职工龄 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>紧急联系人电话 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>日语班 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>身份证 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>毕业学校 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>老师姓名 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>电话号码 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>毕业专业 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>性别 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>家庭地址 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>是否有教师资格证 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>入职时间 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>现住址 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>备注 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <div class="content-list">
+              <h4>紧急联系人 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div>
+            <!-- <div class="content-list">
+              <h4>状态 :</h4>
+              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              </el-tooltip>
+            </div> -->
+            <router-link
+              style="background-color : rgb(24,144,255)"
+              to="/teacherInformation"
+              class="el-button"
+            >查看更多</router-link>
+          </div>
+        </li>
+      </ul>
+    </div>
 
     <pagination
       v-show="total>0"
@@ -308,6 +429,7 @@ export default {
         this.teacherList = response.rows;
         this.total = response.total;
         this.loading = false;
+        console.log(this.teacherList  )
       });
     },
     // 性别字典翻译
@@ -488,7 +610,7 @@ export default {
         this.isCertificais = false;
       }
     },
-       /** 导入按钮操作 */
+    /** 导入按钮操作 */
     handleImport() {
       this.upload.title = "用户导入";
       this.upload.open = true;
@@ -560,5 +682,69 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.wrap-teacherList {
+  width: 100%;
+  ul {
+    width: 100%;
+    box-shadow: 2px 2px 10px 2px rgba(90, 19, 19, 0.2);
+    padding: 20px 20px;
+    box-sizing: border-box;
+  }
+  li {
+    list-style: none;
+    width: 100%;
+    height: 260px;
+    border: 1px #ccc solid;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    .wrap-img {
+      width: 15%;
+      height: 100%;
+      margin-right: 30px;
+      display: inline-block;
+      position: relative;
+      img {
+        // width: 200px;
+        height: 200px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+    .wrap-content {
+      width: 80%;
+      display: inline-block;
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: #eee;
+      height: 200px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      .content-list {
+        float: left;
+        margin-right: 10px;
+        height: 30px;
+        width: 260px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        h4 {
+          display: inline;
+        }
+      }
+      .el-button {
+        position: fixed;
+        color: #fff;
+        bottom: 10px;
+        right: 20px;
+      }
+    }
+  }
 }
 </style>

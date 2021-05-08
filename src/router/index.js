@@ -8,6 +8,7 @@ import Layout from '@/layout'
 import ParentView from '@/components/ParentView';
 import teacherForm from '../views/basic/teacher/teacherForm.vue';
 import bjclassForm from '../views/basic/bjclass/bjclassForm.vue';
+import teacherInformation from '../views/basic/teacher/teacherInformation.vue';
 
 /**
  * Note: 路由配置项
@@ -69,12 +70,23 @@ export const constantRoutes = [
       {
         path : "teacherForm",
         name : "teacherForm",
-        component : teacherForm
+        component : teacherForm,
+        hidden: true,
+        meta: { title: '老师信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
       },
       {
         path : "bjclassForm",
         name : "bjclassForm",
-        component : bjclassForm
+        component : bjclassForm,
+        hidden: true,
+        meta: { title: '班级信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
+      },
+      {
+        path : "teacherInformation",
+        name : "teacherInformation",
+        component : teacherInformation,
+        hidden: true,
+        meta: { title: '老师信息主页', icon: 'dashboard', noCache: true, affix: true ,show : false}
       }
     ]
   },

@@ -3,7 +3,13 @@
     <!-- 添加或修改班级基础信息对话框 -->
     <el-form class="wrap-el-form" ref="form" :model="form" :rules="rules" label-width="80px">
       <el-form-item label-width="100px" label="开班照" prop="kbz">
-        <el-upload action="#" list-type="picture-card" :limit="3" :auto-upload="false">
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :limit="3"
+          :auto-upload="false"
+        >
           <i slot="default" class="el-icon-plus"></i>
           <div slot="file" slot-scope="{file}">
             <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
@@ -26,7 +32,13 @@
         </el-dialog>
       </el-form-item>
       <el-form-item label-width="100px" label="集体照" prop="jtz">
-        <el-upload action="#" list-type="picture-card" :limit="3" :auto-upload="false">
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :limit="3"
+          :auto-upload="false"
+        >
           <i slot="default" class="el-icon-plus"></i>
           <div slot="file" slot-scope="{file}">
             <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
@@ -171,7 +183,23 @@ export default {
       // 图片地址
       dialogImageUrl: "",
       dialogVisible: false,
-      disabled: false
+      disabled: false,
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
+        // 上传图片地址
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      }
     };
   },
   created() {
@@ -280,13 +308,13 @@ export default {
         }
       });
     },
-     handleRemove(file) {
-        console.log(file);
-      },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-      },
+    handleRemove(file) {
+      console.log(file);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    }
   }
 };
 </script>
@@ -300,7 +328,7 @@ export default {
   float: none;
   display: inline-block;
 }
-.dialog-footer{
-    float: right;
+.dialog-footer {
+  float: right;
 }
 </style>
