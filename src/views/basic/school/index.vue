@@ -87,7 +87,7 @@
 
     <el-table v-loading="loading" :data="schoolList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="状态" align="center" prop="id" />
+      <el-table-column v-if="false" label="状态" align="center" prop="id" />
       <el-table-column label="学校名称" align="center" prop="xxmc" />
       <el-table-column label="学校地址" align="center" prop="xxdz" />
       <el-table-column label="日语学生总人数" align="center" prop="ryxszrs" />

@@ -68,25 +68,25 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
       },
       {
-        path : "teacherForm",
+        path : "teacherForm/:id",
         name : "teacherForm",
         component : teacherForm,
         hidden: true,
-        meta: { title: '老师信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
+        meta: { title: '操作老师信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
       },
       {
-        path : "bjclassForm",
+        path : "bjclassForm/:id",
         name : "bjclassForm",
         component : bjclassForm,
         hidden: true,
         meta: { title: '班级信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
       },
       {
-        path : "teacherInformation",
+        path : "teacherInformation/:id",
         name : "teacherInformation",
         component : teacherInformation,
         hidden: true,
-        meta: { title: '老师信息主页', icon: 'dashboard', noCache: true, affix: true ,show : false}
+        meta: { title: '老师个人信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
       }
     ]
   },

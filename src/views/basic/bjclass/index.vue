@@ -110,9 +110,9 @@
 
     <el-table v-loading="loading" :data="bjclassList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="状态" align="center" prop="id" />
-      <el-table-column label="开班照" align="center" prop="kbz" />
-      <el-table-column label="集体照" align="center" prop="jtz" />
+      <el-table-column v-if="false" label="状态" align="center" prop="id" />
+      <el-table-column v-if="false" label="开班照" align="center" prop="kbz" />
+      <el-table-column v-if="false" label="集体照" align="center" prop="jtz" />
       <el-table-column label="校区名称" align="center" prop="xqmc" />
       <el-table-column label="年级" align="center" prop="nj" />
       <el-table-column label="日语班级名称" align="center" prop="rybjmc" />
@@ -327,18 +327,21 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.$router.push({
-        path : "/bjclassForm"
+        path : "/bjclassForm/" + "addBjclass"
       })
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
-      getBjclass(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改班级基础信息";
-      });
+       this.$router.push({
+        path : "/bjclassForm/" + id
+      })
+      // getBjclass(id).then(response => {
+      //   this.form = response.data;
+      //   this.open = true;
+      //   this.title = "修改班级基础信息";
+      // });
     },
     /** 提交按钮 */
     submitForm() {

@@ -148,8 +148,12 @@
 
     <el-table v-loading="loading" :data="studentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="状态" align="center" prop="id" />
-      <el-table-column label="学生头像" align="center" prop="xstx" />
+      <el-table-column v-if="false" label="状态" align="center" prop="id" />
+      <el-table-column label="学生头像" align="center" prop="xstx">
+        <template slot-scope="scope">
+          <img style="width : 80px; hieght : 80px" :src="scope.row.xstx" />
+        </template>
+      </el-table-column>
       <el-table-column label="校区名称" align="center" prop="xqmc" />
       <el-table-column label="原班级" align="center" prop="ybj" />
       <el-table-column label="日语班" align="center" prop="ryb" />
@@ -169,16 +173,16 @@
       <el-table-column label="选科" align="center" prop="xk" />
       <el-table-column label="英语分数" align="center" prop="yyfs" />
       <el-table-column label="综合分数" align="center" prop="zhfs" />
-      <el-table-column label="QQ号" align="center" prop="qqh" />
-      <el-table-column label="学生电话" align="center" prop="xsdh" />
+      <el-table-column label="QQ号" width="120px" align="center" prop="qqh" />
+      <el-table-column label="学生电话" width="120px" align="center" prop="xsdh" />
       <el-table-column label="家庭住址" align="center" prop="jtzz" />
       <el-table-column label="是否特长生" align="center" prop="sftcs" :formatter="sftcsFormat" />
       <el-table-column label="家长姓名" align="center" prop="jzxm" />
-      <el-table-column label="家长电话" align="center" prop="jzdh" />
+      <el-table-column label="家长电话" width="120px" align="center" prop="jzdh" />
       <el-table-column label="班主任姓名" align="center" prop="bzrxm" />
-      <el-table-column label="班主任电话" align="center" prop="bzrdh" />
+      <el-table-column label="班主任电话" width="120px" align="center" prop="bzrdh" />
       <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="备注" width="120px" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -630,6 +634,8 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改学生信息";
+        this.imageUrl = response.data.xstx
+        console.log("getStudent", response);
       });
     },
     /** 提交按钮 */
@@ -691,7 +697,9 @@ export default {
     //学生头像处理
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(res.data)
       this.uploadData = res.data;
+      this.form.xstx = res.data.wjlj;
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";

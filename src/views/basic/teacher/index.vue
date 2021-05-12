@@ -81,7 +81,7 @@
           v-hasPermi="['basic:teacher:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -101,8 +101,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['basic:teacher:remove']"
-        >删除</el-button>
-      </el-col>
+      >删除</el-button>-->
+      <!-- </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -171,125 +171,131 @@
       </el-table-column>
     </el-table>-->
     <div class="wrap-teacherList">
-      <ul>
-        <li v-for="(item,index) in 10" :key="index">
+      <ul v-if="teacherList.length != 0">
+        <li v-for="(item,index) in teacherList" :key="index">
           <div class="wrap-img">
-            <img
-              src="https://dss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1851283359,3457678391&fm=26&gp=0.jpg"
-              alt
-            />
+            <img :src="item.lstx" alt />
           </div>
           <div class="wrap-content">
             <div class="content-list">
               <h4>校区名称 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.xqmc" placement="top-start">
+                <span>{{item.xqmc}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>入职工龄 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.rzgl" placement="top-start">
+                <span>{{item.rzgl}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>紧急联系人电话 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.jjlxrdh" placement="top-start">
+                <span>{{item.jjlxrdh}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
-              <h4>日语班 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <h4>日语班级 :</h4>
+              <el-tooltip class="item" effect="dark" :content="item.rybj" placement="top-start">
+                <span>{{item.rybj}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
-              <h4>身份证 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <h4>身份证号 :</h4>
+              <el-tooltip class="item" effect="dark" :content="item.sfzh" placement="top-start">
+                <span>{{item.sfzh}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>毕业学校 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.byxx" placement="top-start">
+                <span>{{item.byxx}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>老师姓名 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.lsxm" placement="top-start">
+                <span>{{item.lsxm}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>电话号码 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.dhhm" placement="top-start">
+                <span>{{item.dhhm}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>毕业专业 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.byzy" placement="top-start">
+                <span>{{item.byzy}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>性别 :</h4>
               <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+                <span v-if="item.xb == '1'">女</span>
+                <span v-else>男</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>家庭地址 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.jtzz" placement="top-start">
+                <span>{{item.jtzz}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>是否有教师资格证 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.sfyjszgz" placement="top-start">
+                <span v-if="item.sfyjszgz == 'Y'">是</span>
+                <span v-else>否</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>入职时间 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.rzsj" placement="top-start">
+                <span>{{item.rzsj}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>现住址 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.xzz" placement="top-start">
+                <span>{{item.xzz}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>备注 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.remark" placement="top-start">
+                <span>{{item.remark}}</span>
               </el-tooltip>
             </div>
             <div class="content-list">
               <h4>紧急联系人 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+              <el-tooltip class="item" effect="dark" :content="item.jjlxrdh" placement="top-start">
+                <span>{{item.jjlxrdh}}</span>
               </el-tooltip>
             </div>
-            <!-- <div class="content-list">
-              <h4>状态 :</h4>
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
-                <span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
-              </el-tooltip>
-            </div> -->
-            <router-link
+          </div>
+          <div class="wrap-link">
+            <div
               style="background-color : rgb(24,144,255)"
-              to="/teacherInformation"
               class="el-button"
-            >查看更多</router-link>
+              @click="teacherDetails(item.id)"
+            >更多</div>
+            <div
+              style="background-color : rgb(24,144,255)"
+              class="el-button"
+              @click="handleDelete(item)"
+            >删除</div>
+            <div
+              style="background-color : rgb(24,144,255)"
+              class="el-button"
+              @click="handleUpdate(item.id)"
+            >修改</div>
           </div>
         </li>
       </ul>
+      <div v-else class="no-item">暂无数据</div>
     </div>
 
     <pagination
@@ -406,7 +412,8 @@ export default {
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
-      }
+      },
+      imageUrl: ""
     };
   },
   created() {
@@ -429,7 +436,8 @@ export default {
         this.teacherList = response.rows;
         this.total = response.total;
         this.loading = false;
-        console.log(this.teacherList  )
+        // console.log(this.teacherList);
+        // console.log(this.$route.query.imageUrl);
       });
     },
     // 性别字典翻译
@@ -514,38 +522,20 @@ export default {
       this.open = true;
       this.title = "添加老师信息";
       this.$router.push({
-        path: "/teacherForm"
+        path: "/teacherForm/" + "addTeacher"
       });
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getTeacher(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改老师信息";
+    handleUpdate(id) {
+      this.$router.push({
+        path: "/teacherForm/" + id
       });
     },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateTeacher(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addTeacher(this.form).then(response => {
-              this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+    // 老师详细信息
+    teacherDetails(id) {
+       this.$router.push({
+        path : "/teacherInformation/" + id,
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -687,64 +677,74 @@ export default {
   width: 100%;
   ul {
     width: 100%;
-    box-shadow: 2px 2px 10px 2px rgba(90, 19, 19, 0.2);
     padding: 20px 20px;
     box-sizing: border-box;
-  }
-  li {
-    list-style: none;
-    width: 100%;
-    height: 260px;
-    border: 1px #ccc solid;
-    padding: 10px;
-    box-sizing: border-box;
-    position: relative;
-    margin-bottom: 20px;
-    border-radius: 20px;
-    .wrap-img {
-      width: 15%;
-      height: 100%;
-      margin-right: 30px;
-      display: inline-block;
+    box-shadow: 2px 2px 10px 2px rgba(90, 19, 19, 0.2);
+    li {
+      list-style: none;
+      width: 100%;
+      height: 330px;
+      border: 1px #ccc solid;
+      padding: 10px;
+      box-sizing: border-box;
       position: relative;
-      img {
-        // width: 200px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      .wrap-img {
+        width: 15%;
+        height: 100%;
+        margin-right: 30px;
+        display: inline-block;
+        position: relative;
+        img {
+          // width: 200px;
+          height: 200px;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+      .wrap-content {
+        width: 80%;
+        display: inline-block;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: #eee;
         height: 200px;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-      }
-    }
-    .wrap-content {
-      width: 80%;
-      display: inline-block;
-      padding: 10px;
-      box-sizing: border-box;
-      background-color: #eee;
-      height: 200px;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      .content-list {
-        float: left;
-        margin-right: 10px;
-        height: 30px;
-        width: 260px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        cursor: pointer;
-        h4 {
-          display: inline;
+        .content-list {
+          float: left;
+          margin-right: 10px;
+          height: 30px;
+          width: 260px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          cursor: pointer;
+          h4 {
+            display: inline;
+          }
         }
       }
-      .el-button {
-        position: fixed;
-        color: #fff;
-        bottom: 10px;
-        right: 20px;
+      .wrap-link {
+        position: absolute;
+        right: 10px;
+        bottom: 0;
+        .el-button {
+          color: #fff;
+          float: right;
+          margin: 5px 5px;
+        }
       }
     }
+  }
+  .no-item {
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    color: #ccc;
   }
 }
 </style>

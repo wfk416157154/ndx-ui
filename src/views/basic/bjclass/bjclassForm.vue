@@ -7,25 +7,13 @@
           :action="upload.fileUrl"
           :headers="upload.headers"
           list-type="picture-card"
-          :limit="3"
-          :auto-upload="false"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-success="handleAvatarSuccess"
+          :limit="maxPhotoNum"
+          :file-list="files1"
         >
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-            </span>
-          </div>
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
@@ -36,26 +24,17 @@
           :action="upload.fileUrl"
           :headers="upload.headers"
           list-type="picture-card"
-          :limit="3"
-          :auto-upload="false"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-success="jtzSuccess"
+          :limit="maxPhotoNum"
+          :file-list="files2"
         >
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-            </span>
-          </div>
+          <i class="el-icon-plus"></i>
         </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt />
+        </el-dialog>
       </el-form-item>
       <el-col :span="12">
         <el-form-item label-width="100px" label="校区名称" prop="xqmc">
@@ -125,7 +104,8 @@ import {
   importTemplate
 } from "@/api/basic/bjclass";
 import { getToken } from "@/utils/auth";
-
+import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 export default {
   name: "Bjclass",
   components: {},
@@ -199,25 +179,30 @@ export default {
         url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
         // 上传图片地址
         fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
-      }
+      },
+      files1: [],
+      files2: [],
+      // 图片上传计数
+      photoNum1: 0,
+      photoNum2: 0,
+      // 最大上传次数
+      maxPhotoNum: 3
     };
   },
   created() {
-    this.getList();
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
   },
+  mounted() {
+    this.id = this.$route.params.id;
+    if (this.id != "addBjclass") {
+      this.handleUpdate(this.id);
+    } else {
+      this.reset();
+    }
+  },
   methods: {
-    /** 查询班级基础信息列表 */
-    getList() {
-      this.loading = true;
-      listBjclass(this.queryParams).then(response => {
-        this.bjclassList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
     // 状态字典翻译
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, row.status);
@@ -226,6 +211,7 @@ export default {
     cancel() {
       this.open = false;
       this.reset();
+      this.$router.go(-1);
     },
     // 表单重置
     reset() {
@@ -279,13 +265,21 @@ export default {
       this.title = "添加班级基础信息";
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    handleUpdate(id) {
       this.reset();
-      const id = row.id || this.ids;
+      // const id = row.id || this.ids;
       getBjclass(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改班级基础信息";
+        this.selectPhotoList(
+          (this.form.kbz = this.form.kbz || secretKey()),
+          "files1"
+        ); // 个人身份证正反扫描照
+        this.selectPhotoList(
+          (this.form.jtz = this.form.jtz || secretKey()),
+          "files2"
+        ); // 毕业证扫描件
       });
     },
     /** 提交按钮 */
@@ -296,24 +290,81 @@ export default {
             updateBjclass(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
-              this.getList();
+              this.$router.push({
+                path: "/basic/bjclass/" + new Date()
+              });
             });
           } else {
             addBjclass(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
-              this.getList();
+              this.$router.push({
+                path: "/basic/bjclass/" + new Date()
+              });
             });
           }
         }
       });
     },
-    handleRemove(file) {
-      console.log(file);
+
+    // 查询证件照
+    selectPhotoList(glid, file) {
+      let kzzdJson = {
+        kzzd1: glid
+      };
+      selectFileList(kzzdJson).then(res => {
+        this.photoNum = res.total;
+        this[file] = res.rows;
+      });
+    },
+    //证件照处理
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    handleAvatarSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.kbz || secretKey();
+      this.form.kbz = data.kzzd1;
+      this.photoNum1 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum1);
+      });
+    },
+    jtzSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.jtz || secretKey();
+      this.form.jtz = data.kzzd1;
+      this.photoNum1 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum2);
+      });
+    },
+    // 图片限制判断
+    ifPhotoLimit(num) {
+      if (num >= this.maxPhotoNum) {
+        this.$message({
+          message: "最多上传 3 张图片",
+          type: "warning"
+        });
+      } else {
+        this.$message({
+          message: "新增成功",
+          type: "success"
+        });
+      }
     }
   }
 };

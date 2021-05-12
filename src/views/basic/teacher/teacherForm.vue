@@ -19,7 +19,7 @@
       <!-- </el-col> -->
       <el-col :span="12">
         <el-form-item label-width="180px" label="校区名称" prop="xqmc">
-          <el-select v-model="value" placeholder="请选择校区名称">
+          <el-select v-model="form.xqmc" placeholder="请选择校区名称">
             <el-option
               v-for="item in campusName"
               :key="item.value"
@@ -31,7 +31,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="日语班级" prop="rybj">
-          <el-select v-model="value" placeholder="请选择日语班级">
+          <el-select v-model="form.rybj" placeholder="请选择日语班级">
             <el-option
               v-for="item in japaneseClass "
               :key="item.value"
@@ -117,30 +117,17 @@
       </el-col>
       <!-- <el-col :span="12"> -->
       <el-form-item label-width="180px" label="个人身份证正反扫描照" prop="grsfzsmz">
-        <el-upload action="#" list-type="picture-card" :auto-upload="false">
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleDownload(file)"
-              >
-                <i class="el-icon-download"></i>
-              </span>
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-            </span>
-          </div>
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-success="grsfzsmzSuccess"
+          :limit="maxPhotoNum"
+          :file-list="files1"
+        >
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
@@ -149,23 +136,17 @@
       <!-- </el-col> -->
       <!-- <el-col :span="12"> -->
       <el-form-item label-width="180px" label="毕业证扫描件" prop="byzsmj">
-        <el-upload action="#" list-type="picture-card" :limit="2" :auto-upload="false">
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-            </span>
-          </div>
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :limit="maxPhotoNum"
+          :file-list="files2"
+          :on-success="byzsmjSuccess"
+        >
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
@@ -174,23 +155,17 @@
       <!-- </el-col> -->
       <!-- <el-col :span="12"> -->
       <el-form-item label-width="180px" label="学位证扫描件" prop="xwzsmj">
-        <el-upload action="#" list-type="picture-card" :limit="2" :auto-upload="false">
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-            </span>
-          </div>
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :limit="maxPhotoNum"
+          :on-success="xwzsmjSuccess"
+          :file-list="files3"
+        >
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
@@ -199,23 +174,17 @@
       <!-- </el-col> -->
       <!-- <el-col :span="12"> -->
       <el-form-item label-width="180px" label="个人证件照白底蓝底" prop="grzjzbdld">
-        <el-upload action="#" list-type="picture-card" :limit="1" :auto-upload="false">
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-            </span>
-          </div>
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :limit="maxPhotoNum"
+          :on-success="grzjzbdldSuccess"
+          :file-list="files4"
+        >
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
@@ -224,23 +193,17 @@
       <!-- </el-col> -->
       <!-- <el-col :span="12"> -->
       <el-form-item label-width="180px" label="日语登记证书" prop="rydjzs">
-        <el-upload action="#" list-type="picture-card" :limit="3" :auto-upload="false">
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-            </span>
-          </div>
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :limit="maxPhotoNum"
+          :on-success="rydjzsSuccess"
+          :file-list="files5"
+        >
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
@@ -265,34 +228,42 @@
       </el-col>
       <!-- <el-col :span="12"> -->
       <el-form-item v-if="isCertificais" label-width="180px" label="教师资格证" prop="jszgz">
-        <el-upload action="#" list-type="picture-card" :limit="3" :auto-upload="false">
-          <i slot="default" class="el-icon-plus"></i>
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
-            <span class="el-upload-list__item-actions">
-              <span
-                v-if="!disabled"
-                class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
-              >
-                <i class="el-icon-delete"></i>
-              </span>
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                <i class="el-icon-zoom-in"></i>
-              </span>
-            </span>
-          </div>
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :limit="maxPhotoNum"
+          :on-success="jszgzSuccess"
+          :file-list="files6"
+        >
+          <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
         </el-dialog>
       </el-form-item>
       <!-- </el-col> -->
-      <el-col :span="12">
-        <el-form-item label-width="180px" label="其他证书" prop="qtzs">
-          <el-input v-model="form.qtzs" placeholder="请输入其他证书" />
-        </el-form-item>
-      </el-col>
+      <!-- <el-col :span="12"> -->
+      <el-form-item label-width="180px" label="其他证书" prop="qtzs">
+        <el-upload
+          :action="upload.fileUrl"
+          :headers="upload.headers"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :limit="10"
+          :on-success="qtzsSuccess"
+          :file-list="files7"
+        >
+          <i class="el-icon-plus"></i>
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt />
+        </el-dialog>
+      </el-form-item>
+      <!-- </el-col> -->
       <el-col :span="12">
         <el-form-item label-width="180px" label="状态">
           <el-radio-group v-model="form.status">
@@ -324,7 +295,9 @@ import {
   addTeacher,
   updateTeacher
 } from "@/api/basic/teacher";
+import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { getToken } from "@/utils/auth";
+import { secretKey } from "@/utils/tools";
 export default {
   name: "Teacher",
   components: {},
@@ -396,11 +369,32 @@ export default {
         url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
         // 上传图片地址
         fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
-      }
+      },
+      //老师id
+      id: "",
+      //图片列表
+      files1: [],
+      files2: [],
+      files3: [],
+      files4: [],
+      files5: [],
+      files6: [],
+      files7: [],
+      // 限制图片上传数量
+      maxPhotoNum: 3,
+      // 图片上传计数
+      photoNum1: 0,
+      photoNum2: 0,
+      photoNum3: 0,
+      photoNum4: 0,
+      photoNum4: 0,
+      photoNum6: 0,
+      photoNum7: 0,
+      // 图片的关联id
+      allGlid: ""
     };
   },
   created() {
-    this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
     });
@@ -411,16 +405,15 @@ export default {
       this.statusOptions = response.data;
     });
   },
+  mounted() {
+    this.id = this.$route.params.id;
+    if (this.id != "addTeacher") {
+      this.handleUpdate(this.id);
+    } else {
+      this.reset();
+    }
+  },
   methods: {
-    /** 查询老师信息列表 */
-    getList() {
-      this.loading = true;
-      listTeacher(this.queryParams).then(response => {
-        this.teacherList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
     // 性别字典翻译
     xbFormat(row, column) {
       return this.selectDictLabel(this.xbOptions, row.xb);
@@ -437,6 +430,7 @@ export default {
     cancel() {
       this.open = false;
       this.reset();
+      this.$router.go(-1);
     },
     // 表单重置
     reset() {
@@ -486,31 +480,58 @@ export default {
       this.queryParams.pageNum = 1;
       this.getList();
     },
-    /** 重置按钮操作 */
+    // /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加老师信息";
-    },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    handleUpdate(id) {
       this.reset();
-      const id = row.id || this.ids;
       getTeacher(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改老师信息";
+        this.imageUrl = this.form.lstx;
+        this.selectChange(this.form.sfyjszgz);
+        this.selectPhotoList(
+          (this.form.grsfzsmz = this.form.grsfzsmz || secretKey()),
+          "files1"
+        ); // 个人身份证正反扫描照
+        this.selectPhotoList(
+          (this.form.byzsmj = this.form.byzsmj || secretKey()),
+          "files2"
+        ); // 毕业证扫描件
+        this.selectPhotoList(
+          (this.form.xwzsmj = this.form.xwzsmj || secretKey()),
+          "files3"
+        ); // 学位证扫描件
+        this.selectPhotoList(
+          (this.form.grzjzbdld = this.form.grzjzbdld || secretKey()),
+          "files4"
+        ); // 个人证件照白底蓝底
+        this.selectPhotoList(
+          (this.form.rydjzs = this.form.rydjzs || secretKey()),
+          "files5"
+        ); // 日语登记证书
+        this.selectPhotoList(
+          (this.form.jszgz = this.form.jszgz || secretKey()),
+          "files6"
+        ); // 教师资格证
+        this.selectPhotoList(
+          (this.form.qtzs = this.form.qtzs || secretKey()),
+          "files7"
+        ); // 其他证书
+      });
+    },
+    // 查询证件照
+    selectPhotoList(glid, file) {
+      let kzzdJson = {
+        kzzd1: glid
+      };
+      selectFileList(kzzdJson).then(res => {
+        this.photoNum = res.total;
+        this[file] = res.rows;
       });
     },
     /** 提交按钮 */
@@ -519,55 +540,33 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateTeacher(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
+              if (response.code == 200) {
+                this.msgSuccess("修改成功");
+                this.open = false;
+                this.$router.push({
+                  path: "/basic/teacher/" + new Date()
+                });
+              }
             });
           } else {
             addTeacher(this.form).then(response => {
-              this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
+              console.log(this.form);
+              if (response.code == 200) {
+                this.msgSuccess("新增成功");
+                this.open = false;
+                this.$router.push({
+                  path: "/basic/teacher/" + new Date()
+                });
+              }
             });
           }
         }
       });
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除老师信息编号为"' + ids + '"的数据项?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(function() {
-          return delTeacher(ids);
-        })
-        .then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        });
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "basic/teacher/export",
-        {
-          ...this.queryParams
-        },
-        `basic_teacher.xlsx`
-      );
-    },
     // 头像处理
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
-      this.form.lstx = res.data.url;
-      console.log(res);
+      this.form.lstx = res.data.wjlj;
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
@@ -582,13 +581,101 @@ export default {
       return isJPG && isLt2M;
     },
     //证件照处理
-    handleRemove(file) {
-      console.log(file);
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     },
-    // 预览图片
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    grsfzsmzSuccess(response, file, fileList) {
+      console.log("grsfzsmzSuccess:", this.form.grsfzsmz);
+      let data = response.data;
+      data.kzzd1 = this.form.grsfzsmz || secretKey();
+      this.form.grsfzsmz = data.kzzd1;
+      this.photoNum1 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum1);
+      });
+    },
+    byzsmjSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.byzsmj || secretKey();
+      this.form.byzsmj = data.kzzd1;
+      this.photoNum2 = fileList.length;
+      addImg(data).then(res => {
+        this.photoNum2++;
+        this.ifPhotoLimit(this.photoNum2);
+      });
+    },
+    xwzsmjSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.xwzsmj || secretKey();
+      this.form.xwzsmj = data.kzzd1;
+      this.photoNum3 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum3);
+      });
+    },
+    grzjzbdldSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.grzjzbdld || secretKey();
+      this.form.grzjzbdld = data.kzzd1;
+      this.photoNum4 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum4);
+      });
+    },
+    rydjzsSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.rydjzs || secretKey();
+      this.form.rydjzs = data.kzzd1;
+      this.photoNum5 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum5);
+      });
+    },
+    jszgzSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.jszgz || secretKey();
+      this.form.jszgz = data.kzzd1;
+      this.photoNum6 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum6);
+      });
+    },
+    qtzsSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.qtzs || secretKey();
+      this.form.qtzs = data.kzzd1;
+      this.photoNum7 = fileList.length;
+      addImg(data).then(res => {
+        this.ifPhotoLimit(this.photoNum7);
+      });
+    },
+
+    // 图片限制判断
+    ifPhotoLimit(num) {
+      if (num >= this.maxPhotoNum) {
+        this.$message({
+          message: "最多上传 3 张图片",
+          type: "warning"
+        });
+      } else {
+        this.$message({
+          message: "新增成功",
+          type: "success"
+        });
+      }
     },
     //是否有教师资格证
     selectChange(value) {
@@ -610,9 +697,6 @@ export default {
   padding-right: 40px;
   box-sizing: border-box;
 }
-// .hide .el-upload--picture-card {
-//   display: none;
-// }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
