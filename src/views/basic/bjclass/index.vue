@@ -120,7 +120,7 @@
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="开班时间" align="center" prop="kbsj" />
       <el-table-column label="老师电话" align="center" prop="lsdh" />
-      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
+      <el-table-column v-if="false" label="状态" align="center" prop="status" :formatter="statusFormat" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -292,7 +292,7 @@ export default {
         lsxm: null,
         kbsj: null,
         lsdh: null,
-        status: "0",
+        status: "1",
         remark: null,
         userId: null,
         uName: null,

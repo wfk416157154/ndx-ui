@@ -79,7 +79,7 @@
           v-hasPermi="['basic:school:export']"
         >导出</el-button>
       </el-col>
-          <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -142,9 +142,13 @@
           <el-input maxlength="11" v-model="form.fzrdh" placeholder="请输入负责人电话" />
         </el-form-item>
         <el-form-item label-width="120px" label="状态">
-          <el-radio-group v-model="label">
-            <el-radio disabled :label="1">有效</el-radio>
-            <el-radio disabled :label="2">无效</el-radio>
+          <el-radio-group v-model="form.status">
+            <el-radio
+              disabled
+              v-for="dict in statusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictValue"
+            >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label-width="120px" label="备注" prop="remark">
@@ -157,7 +161,7 @@
       </div>
     </el-dialog>
 
-        <!-- 用户导入对话框 -->
+    <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
@@ -187,6 +191,7 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -236,21 +241,38 @@ export default {
       // 表单校验
       rules: {
         xxmc: [
-          { required: true, message: "学校名称不能为空", trigger: "blur" }
+          { required: false, message: "学校名称不能为空", trigger: "blur" }
         ],
         xxdz: [
-          { required: true, message: "学校地址不能为空", trigger: "blur" }
+          {
+            required: false,
+            message: "学校地址不能为空",
+            trigger: "blur"
+          }
         ],
-        xqfzr: [
-          { required: true, message: "校区负责人不能为空", trigger: "blur" }
+        ryxszrs: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
         ],
         fzrdh: [
-          { required: true, message: "负责人电话不能为空", trigger: "blur" }
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        xqfzr: [
+          { required: false, message: "校区负责人不能为空", trigger: "blur" }
         ]
       },
       //状态选中
       label: 1,
-          upload: {
+      upload: {
         // 是否显示弹出层（用户导入）
         open: false,
         // 弹出层标题（用户导入）
@@ -268,6 +290,9 @@ export default {
   },
   created() {
     this.getList();
+    this.getDicts("basic_status").then(response => {
+      this.statusOptions = response.data;
+    });
   },
   methods: {
     /** 查询校区基础信息列表 */
@@ -293,7 +318,7 @@ export default {
         ryxszrs: null,
         xqfzr: null,
         fzrdh: null,
-        status: "0",
+        status: "1",
         remark: null,
         userId: null,
         uName: null,

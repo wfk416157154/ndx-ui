@@ -9,7 +9,6 @@ import ParentView from '@/components/ParentView';
 import teacherForm from '../views/basic/teacher/teacherForm.vue';
 import bjclassForm from '../views/basic/bjclass/bjclassForm.vue';
 import teacherInformation from '../views/basic/teacher/teacherInformation.vue';
-
 /**
  * Note: 路由配置项
  *
@@ -68,26 +67,26 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
       },
       {
-        path : "teacherForm/:id",
-        name : "teacherForm",
-        component : teacherForm,
+        path: "teacherForm/:id",
+        name: "teacherForm",
+        component: teacherForm,
         hidden: true,
-        meta: { title: '操作老师信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
+        meta: { title: '操作老师信息', icon: 'dashboard', noCache: true, affix: false, show: false, },
       },
       {
-        path : "bjclassForm/:id",
-        name : "bjclassForm",
-        component : bjclassForm,
+        path: "bjclassForm/:id",
+        name: "bjclassForm",
+        component: bjclassForm,
         hidden: true,
-        meta: { title: '班级信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
+        meta: { title: '班级信息', icon: 'dashboard', noCache: true, affix: false, show: false, }
       },
       {
-        path : "teacherInformation/:id",
-        name : "teacherInformation",
-        component : teacherInformation,
+        path: "teacherInformation/:id",
+        name: "teacherInformation",
+        component: teacherInformation,
         hidden: true,
-        meta: { title: '老师个人信息', icon: 'dashboard', noCache: true, affix: true ,show : false}
-      }
+        meta: { title: '老师个人信息', icon: 'dashboard', noCache: true, affix: false, show: false, }
+      },
     ]
   },
   {

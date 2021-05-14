@@ -232,10 +232,10 @@
             <!-- <el-input maxlength="30" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
             <el-select v-model="form.xqmc" placeholder="请选择校区名称">
               <el-option
-                v-for="item in campusName"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in selectXqmc"
+                :key="item.id"
+                :label="item.xxmc"
+                :value="item.xxmc"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -258,10 +258,10 @@
           <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
           <el-select v-model="form.ryb" placeholder="请选择日语班">
             <el-option
-              v-for="item in japaneseClass"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in bjclassList"
+              :key="item.id"
+              :label="item.rybjmc"
+              :value="item.rybjmc"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -375,20 +375,20 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="状态">
-            <!-- <el-radio-group v-model="form.status">
-              <el-radio disabled :label="1">有效</el-radio>
-              <el-radio disabled :label="2">无效</el-radio>
-            </el-radio-group>-->
-            <el-radio-group v-model="label">
-              <el-radio disabled :label="1">有效</el-radio>
-              <el-radio disabled :label="2">无效</el-radio>
+            <el-radio-group v-model="form.status">
+              <el-radio
+                disabled
+                v-for="dict in statusOptions"
+                :key="dict.dictValue"
+                :label="dict.dictValue"
+              >{{dict.dictLabel}}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="
         备注" prop="remark">
-          <el-input maxlength="300" v-model="form.remark" placeholder="请输入备注" />
+          <el-input maxlength="300" type="textarea" v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
         <!-- </el-col> -->
       </el-form>
@@ -439,6 +439,8 @@ import {
   addStudent,
   updateStudent
 } from "@/api/basic/student";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listSchool } from "@/api/basic/school";
 import { addImg } from "@/api/tool/common";
 import { getToken } from "@/utils/auth";
 export default {
@@ -496,8 +498,6 @@ export default {
       originalClass: [],
       // 日语班
       japaneseClass: [],
-      //状态选中
-      label: 1,
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
@@ -514,7 +514,69 @@ export default {
         // 上传图片地址
         fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
-      uploadData: {}
+      uploadData: {},
+      rules: {
+        yyfs: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        zhfs: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        qqh: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        xsdh: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        jzdh: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        bzrdh: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        sfzh: [
+          {
+            required: false,
+            message: "格式不对",
+            trigger: "blur",
+            pattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/
+          }
+        ]
+      },
+      //校区名称
+      selectXqmc: [],
+      // 班级选择
+      bjclassList: []
     };
   },
   created() {
@@ -528,7 +590,9 @@ export default {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
-
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   mounted() {
@@ -542,6 +606,10 @@ export default {
         this.studentList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+      // 日语班级选项
+      listBjclass(this.queryParams).then(response => {
+        this.bjclassList = response.rows;
       });
     },
     // 性别字典翻译
@@ -585,7 +653,7 @@ export default {
         jzdh: null,
         bzrxm: null,
         bzrdh: null,
-        status: "0",
+        status: "1",
         remark: null,
         userId: null,
         uName: null,
@@ -634,7 +702,7 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改学生信息";
-        this.imageUrl = response.data.xstx
+        this.imageUrl = response.data.xstx;
         console.log("getStudent", response);
       });
     },
@@ -697,7 +765,7 @@ export default {
     //学生头像处理
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
-      console.log(res.data)
+      console.log(res.data);
       this.uploadData = res.data;
       this.form.xstx = res.data.wjlj;
     },

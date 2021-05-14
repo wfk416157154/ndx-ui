@@ -38,12 +38,28 @@
       </el-form-item>
       <el-col :span="12">
         <el-form-item label-width="100px" label="校区名称" prop="xqmc">
-          <el-input maxlength="50" v-model="form.xqmc" placeholder="请输入校区名称" />
+          <!-- <el-input maxlength="50" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
+          <el-select v-model="form.xqmc" placeholder="请输入年级">
+            <el-option
+              v-for="item in selectXqmc"
+              :key="item.id"
+              :label="item.xxmc"
+              :value="item.xxmc"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="100px" label="年级" prop="nj">
-          <el-input maxlength="30" v-model="form.nj" placeholder="请输入年级" />
+          <!-- <el-input maxlength="30" v-model="form.nj" placeholder="请输入年级" /> -->
+          <el-select v-model="form.nj" placeholder="请输入年级">
+            <el-option
+              v-for="item in selectNj"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -63,7 +79,15 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="100px" label="开班时间" prop="kbsj">
-          <el-input v-model="form.kbsj" placeholder="请输入开班时间" />
+          <!-- <el-input v-model="form.kbsj" placeholder="请输入开班时间" /> -->
+          <el-date-picker
+            clearable
+            size="mini"
+            v-model="form.kbsj"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请输入开班时间"
+          ></el-date-picker>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -75,6 +99,7 @@
         <el-form-item label-width="100px" label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
+              disabled
               v-for="dict in statusOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
@@ -103,6 +128,9 @@ import {
   updateBjclass,
   importTemplate
 } from "@/api/basic/bjclass";
+import {
+  listSchool,
+} from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
@@ -131,6 +159,10 @@ export default {
       open: false,
       // 状态字典
       statusOptions: [],
+      //校区名称
+      selectXqmc: [],
+      //年级字典
+      selectNj: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -186,12 +218,33 @@ export default {
       photoNum1: 0,
       photoNum2: 0,
       // 最大上传次数
-      maxPhotoNum: 3
+      maxPhotoNum: 3,
+      rules: {
+        bjrs: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        lsdh: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ]
+      }
     };
   },
   created() {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    this.getDicts("nianji").then(response => {
+      this.selectNj = response.data;
     });
   },
   mounted() {
@@ -201,6 +254,9 @@ export default {
     } else {
       this.reset();
     }
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
   },
   methods: {
     // 状态字典翻译
@@ -226,7 +282,7 @@ export default {
         lsxm: null,
         kbsj: null,
         lsdh: null,
-        status: "0",
+        status: "1",
         remark: null,
         userId: null,
         uName: null,

@@ -8,6 +8,23 @@ export function listStugrade(query) {
     params: query
   })
 }
+// 查询学生成绩基础表列
+export function listAll(query) {
+  return request({
+    url: '/basic/stugrade/listAll',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询学生成绩基础表列
+export function getColumnNameList(query) {
+  return request({
+    url: '/basic/stugrade/getColumnNameList',
+    method: 'get',
+    params: query
+  })
+}
 
 // 查询学生成绩基础表详细
 export function getStugrade(id) {

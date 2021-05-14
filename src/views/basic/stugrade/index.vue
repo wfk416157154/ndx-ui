@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="学生姓名" prop="xsxm">
         <el-input
           v-model="queryParams.xsxm"
@@ -77,14 +83,9 @@
           v-hasPermi="['basic:stugrade:remove']"
         >删除</el-button>
       </el-col>
-    <el-col :span="1.5">
-        <el-button
-                type="info"
-                icon="el-icon-upload2"
-                size="mini"
-                @click="handleImport"
-        >导入</el-button>
-    </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -98,17 +99,10 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="stugradeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="listAll" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="学生编号" align="center" prop="xsbh" />
-      <el-table-column label="学生姓名" align="center" prop="xsxm" />
-      <el-table-column label="日语班级" align="center" prop="rybj" />
-      <el-table-column label="文理" align="center" prop="wl" />
-      <el-table-column label="英语分数" align="center" prop="yyfs" />
-      <el-table-column label="综合成绩" align="center" prop="zhcj" />
-      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column :label="item.label" align="center" v-for="(item,index) in columnNameList" :key="index" :prop="item.prop" />
+<!--       
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -126,7 +120,7 @@
             v-hasPermi="['basic:stugrade:remove']"
           >删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <pagination
@@ -207,19 +201,23 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-
   </div>
-
-
 </template>
 
 <script>
-import { listStugrade, getStugrade, delStugrade, addStugrade, updateStugrade } from "@/api/basic/stugrade";
+import {
+  listStugrade,
+  getStugrade,
+  delStugrade,
+  addStugrade,
+  updateStugrade,
+  listAll,
+  getColumnNameList
+} from "@/api/basic/stugrade";
 import { getToken } from "@/utils/auth";
 export default {
   name: "Stugrade",
-  components: {
-  },
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -249,28 +247,49 @@ export default {
         xsxm: null,
         rybj: null,
         wl: null,
-        status: null,
+        status: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       // 用户导入参数
       upload: {
-          // 是否显示弹出层
-          open: false,
-          // 弹出层标题
-          title: "导入学生成绩基础表数据",
-          // 是否禁用上传
-          isUploading: false,
-          // 是否更新已经存在的数据
-          updateSupport: 0,
-          // 设置上传的请求头部
-          headers: { Authorization: "Bearer " + getToken() },
-          // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "basic/stugrade/importData"
+        // 是否显示弹出层
+        open: false,
+        // 弹出层标题
+        title: "导入学生成绩基础表数据",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "basic/stugrade/importData"
       },
+      rules: {
+        yyfs: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        zhcj: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ]
+      },
+      // 动态table-column
+      columnNameList : [],
+      // 获取学生成绩表
+      listAll : []
     };
   },
   created() {
@@ -287,6 +306,15 @@ export default {
         this.stugradeList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+
+      // 学生成绩表数据
+      listAll({}).then(res => {
+        this.listAll = res.rows
+      });
+      // 学生成绩表title列
+      getColumnNameList({}).then(res => {
+        this.columnNameList = res.data
       });
     },
     // 状态字典翻译
@@ -308,7 +336,7 @@ export default {
         wl: null,
         yyfs: null,
         zhcj: null,
-        status: "0",
+        status: "1",
         remark: null,
         userId: null,
         uName: null,
@@ -337,9 +365,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -350,7 +378,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getStugrade(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -380,53 +408,65 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除学生成绩基础表编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除学生成绩基础表编号为"' + ids + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delStugrade(ids);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/stugrade/export', {
-        ...this.queryParams
-      }, `学生成绩基础表.xlsx`)
+      this.download(
+        "basic/stugrade/export",
+        {
+          ...this.queryParams
+        },
+        `学生成绩基础表.xlsx`
+      );
     },
 
-      /** 导入按钮操作 */
-      handleImport() {
-          this.upload.title = "学生成绩基础表数据导入";
-          this.upload.open = true;
-      },
-      /** 下载模板操作 */
-      importTemplate() {
-          this.download('basic/stugrade/importTemplate', {
-              ...this.queryParams
-          }, `学生成绩基础表-导入模板.xlsx`)
-      },
-      // 文件上传中处理
-      handleFileUploadProgress(event, file, fileList) {
-          this.upload.isUploading = true;
-      },
-      // 文件上传成功处理
-      handleFileSuccess(response, file, fileList) {
-          this.upload.open = false;
-          this.upload.isUploading = false;
-          this.$refs.upload.clearFiles();
-          this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-          this.getList();
-      },
-      // 提交上传文件
-      submitFileForm() {
-          this.$refs.upload.submit();
-      }
-
-
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "学生成绩基础表数据导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      this.download(
+        "basic/stugrade/importTemplate",
+        {
+          ...this.queryParams
+        },
+        `学生成绩基础表-导入模板.xlsx`
+      );
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
+    }
   }
 };
 </script>

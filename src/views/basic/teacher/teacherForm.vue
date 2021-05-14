@@ -21,10 +21,10 @@
         <el-form-item label-width="180px" label="校区名称" prop="xqmc">
           <el-select v-model="form.xqmc" placeholder="请选择校区名称">
             <el-option
-              v-for="item in campusName"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in selectXqmc"
+              :key="item.id"
+              :label="item.xxmc"
+              :value="item.xxmc"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -33,10 +33,10 @@
         <el-form-item label-width="180px" label="日语班级" prop="rybj">
           <el-select v-model="form.rybj" placeholder="请选择日语班级">
             <el-option
-              v-for="item in japaneseClass "
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in bjclassList "
+              :key="item.id"
+              :label="item.rybjmc"
+              :value="item.rybjmc"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -268,6 +268,7 @@
         <el-form-item label-width="180px" label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
+              disabled
               v-for="dict in statusOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
@@ -277,7 +278,7 @@
       </el-col>
 
       <el-form-item label-width="180px" label="备注" prop="remark">
-        <el-input maxlength="300" v-model="form.remark" placeholder="请输入备注" />
+        <el-input maxlength="300" type="textarea" v-model="form.remark" placeholder="请输入备注" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -296,6 +297,8 @@ import {
   updateTeacher
 } from "@/api/basic/teacher";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import { secretKey } from "@/utils/tools";
 export default {
@@ -391,7 +394,37 @@ export default {
       photoNum6: 0,
       photoNum7: 0,
       // 图片的关联id
-      allGlid: ""
+      allGlid: "",
+      rules: {
+        jjlxrdh: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        dhhm: [
+          {
+            required: false,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        sfzh: [
+          {
+            required: false,
+            message: "格式不对",
+            trigger: "blur",
+            pattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/
+          }
+        ]
+      },
+      // 校区字典
+      selectXqmc: [],
+      // 日语班级
+      bjclassList : []
     };
   },
   created() {
@@ -412,6 +445,12 @@ export default {
     } else {
       this.reset();
     }
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
+    listBjclass(this.queryParams).then(response => {
+      this.bjclassList = response.rows;
+    });
   },
   methods: {
     // 性别字典翻译
@@ -459,7 +498,7 @@ export default {
         sfyjszgz: null,
         jszgz: null,
         qtzs: null,
-        status: "0",
+        status: "1",
         remark: null,
         userId: null,
         uName: null,
