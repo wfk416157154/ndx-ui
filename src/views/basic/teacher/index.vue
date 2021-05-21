@@ -421,7 +421,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
+        url: process.env.VUE_APP_BASE_API + "/basic/teacher/importData"
       },
       imageUrl: ""
     };
@@ -612,17 +612,17 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "用户导入";
+      this.upload.title = "老师导入";
       this.upload.open = true;
     },
     /** 下载模板操作 */
     importTemplate() {
       this.download(
-        "basic/bjclass/importTemplate",
+        "basic/teacher/importTemplate",
         {
           ...this.queryParams
         },
-        `导入模板_${new Date().getTime()}.xlsx`
+        `老师信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
     // 文件上传中处理
