@@ -1,44 +1,61 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="老师姓名" prop="lsxm">
+      <el-form-item label="申请人id" prop="sqrid">
         <el-input
-          v-model="queryParams.lsxm"
-          placeholder="请输入老师姓名"
+          v-model="queryParams.sqrid"
+          placeholder="请输入申请人id"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="未读:0;已读:1" prop="isRead">
-        <el-select v-model="queryParams.isRead" placeholder="请选择未读:0;已读:1" clearable size="small">
+      <el-form-item label="申请人姓名" prop="sqrxm">
+        <el-input
+          v-model="queryParams.sqrxm"
+          placeholder="请输入申请人姓名"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="请假类型" prop="qjlx">
+        <el-select v-model="queryParams.qjlx" placeholder="请选择请假类型" clearable size="small">
           <el-option
-            v-for="dict in isReadOptions"
+            v-for="dict in qjlxOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="课后日志类型" prop="khLogType">
-        <el-select v-model="queryParams.khLogType" placeholder="请选择课后日志类型" clearable size="small">
+      <el-form-item label="请假理由" prop="qjly">
+        <el-input
+          v-model="queryParams.qjly"
+          placeholder="请输入请假理由"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="审批状态" prop="spzt">
+        <el-select v-model="queryParams.spzt" placeholder="请选择审批状态" clearable size="small">
           <el-option
-            v-for="dict in khLogTypeOptions"
+            v-for="dict in spztOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
+      <el-form-item label="审批人" prop="spr">
+        <el-input
+          v-model="queryParams.spr"
+          placeholder="请输入审批人"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -54,7 +71,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['basic:basicTeacherWorkLog:add']"
+          v-hasPermi="['basic:teacherAttendance:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -65,7 +82,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['basic:basicTeacherWorkLog:edit']"
+          v-hasPermi="['basic:teacherAttendance:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -76,7 +93,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['basic:basicTeacherWorkLog:remove']"
+          v-hasPermi="['basic:teacherAttendance:remove']"
         >删除</el-button>
       </el-col>
     <el-col :span="1.5">
@@ -94,31 +111,37 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['basic:basicTeacherWorkLog:export']"
+          v-hasPermi="['basic:teacherAttendance:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="basicTeacherWorkLogList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="teacherAttendanceList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
 
-      <el-table-column label="老师姓名" align="center" prop="lsxm" />
-      <el-table-column label="日期" align="center" prop="date" width="180">
+
+      <el-table-column label="申请人姓名" align="center" prop="sqrxm" />
+      <el-table-column label="请假类型" align="center" prop="qjlx" :formatter="qjlxFormat" />
+      <el-table-column label="请假理由" align="center" prop="qjly" />
+      <el-table-column label="开始时间" align="center" prop="kssj" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.kssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="课程总结" align="center" prop="kczj" />
-      <el-table-column label="备课:系统日志" align="center" prop="bkXtrz" />
-      <el-table-column label="备课:补充日志" align="center" prop="bkBcrz" />
-      <el-table-column label="课后:系统日志" align="center" prop="khXtrz" />
-      <el-table-column label="课后:补充日志" align="center" prop="khBcrz" />
-      <el-table-column label="是否有考试 0:否 1:是" align="center" prop="isExam" :formatter="isExamFormat" />
-      <el-table-column label="未读:0;已读:1" align="center" prop="isRead" :formatter="isReadFormat" />
-      <el-table-column label="课后日志类型" align="center" prop="khLogType" :formatter="khLogTypeFormat" />
-      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="结束时间" align="center" prop="jssj" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.jssj, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="请假天数" align="center" prop="qjts" />
+      <el-table-column label="审批状态" align="center" prop="spzt" :formatter="spztFormat" />
+      <el-table-column label="审批时间" align="center" prop="spsj" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.spsj, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="审批人" align="center" prop="spr" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -126,14 +149,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:basicTeacherWorkLog:edit']"
+            v-hasPermi="['basic:teacherAttendance:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['basic:basicTeacherWorkLog:remove']"
+            v-hasPermi="['basic:teacherAttendance:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -147,73 +170,76 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改老师工作日志对话框 -->
+    <!-- 添加或修改老师考勤对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="老师id" prop="lsid">
-          <el-input v-model="form.lsid" placeholder="请输入老师id" />
+        <el-form-item label="关联id" prop="glid">
+          <el-input v-model="form.glid" placeholder="请输入关联id" />
         </el-form-item>
-        <el-form-item label="老师姓名" prop="lsxm">
-          <el-input v-model="form.lsxm" placeholder="请输入老师姓名" />
+        <el-form-item label="申请人id" prop="sqrid">
+          <el-input v-model="form.sqrid" placeholder="请输入申请人id" />
         </el-form-item>
-        <el-form-item label="日期" prop="date">
+        <el-form-item label="申请人姓名" prop="sqrxm">
+          <el-input v-model="form.sqrxm" placeholder="请输入申请人姓名" />
+        </el-form-item>
+        <el-form-item label="请假类型" prop="qjlx">
+          <el-select v-model="form.qjlx" placeholder="请选择请假类型">
+            <el-option
+              v-for="dict in qjlxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="请假理由" prop="qjly">
+          <el-input v-model="form.qjly" placeholder="请输入请假理由" />
+        </el-form-item>
+        <el-form-item label="开始时间" prop="kssj">
           <el-date-picker clearable size="small"
-            v-model="form.date"
+            v-model="form.kssj"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="选择日期">
+            placeholder="选择开始时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="课程总结" prop="kczj">
-          <el-input v-model="form.kczj" placeholder="请输入课程总结" />
+        <el-form-item label="结束时间" prop="jssj">
+          <el-date-picker clearable size="small"
+            v-model="form.jssj"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择结束时间">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="备课:系统日志" prop="bkXtrz">
-          <el-input v-model="form.bkXtrz" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="请假天数" prop="qjts">
+          <el-input v-model="form.qjts" placeholder="请输入请假天数" />
         </el-form-item>
-        <el-form-item label="备课:补充日志" prop="bkBcrz">
-          <el-input v-model="form.bkBcrz" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="请假节数" prop="qjjs">
+          <el-input v-model="form.qjjs" placeholder="请输入请假节数" />
         </el-form-item>
-        <el-form-item label="课后:系统日志" prop="khXtrz">
-          <el-input v-model="form.khXtrz" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="课后:补充日志" prop="khBcrz">
-          <el-input v-model="form.khBcrz" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="是否有考试 0:否 1:是" prop="isExam">
-          <el-select v-model="form.isExam" placeholder="请选择是否有考试 0:否 1:是">
+        <el-form-item label="审批状态" prop="spzt">
+          <el-select v-model="form.spzt" placeholder="请选择审批状态">
             <el-option
-              v-for="dict in isExamOptions"
+              v-for="dict in spztOptions"
               :key="dict.dictValue"
               :label="dict.dictLabel"
               :value="dict.dictValue"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="未读:0;已读:1" prop="isRead">
-          <el-select v-model="form.isRead" placeholder="请选择未读:0;已读:1">
-            <el-option
-              v-for="dict in isReadOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
+        <el-form-item label="审批时间" prop="spsj">
+          <el-date-picker clearable size="small"
+            v-model="form.spsj"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择审批时间">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="教师卫生图片" prop="jswsFile">
-          <el-input v-model="form.jswsFile" placeholder="请输入教师卫生图片" />
+        <el-form-item label="审批理由" prop="sply">
+          <el-input v-model="form.sply" placeholder="请输入审批理由" />
         </el-form-item>
-        <el-form-item label="学生表现图片" prop="xsbxFile">
-          <el-input v-model="form.xsbxFile" placeholder="请输入学生表现图片" />
-        </el-form-item>
-        <el-form-item label="课后日志类型" prop="khLogType">
-          <el-select v-model="form.khLogType" placeholder="请选择课后日志类型">
-            <el-option
-              v-for="dict in khLogTypeOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
+        <el-form-item label="审批人" prop="spr">
+          <el-input v-model="form.spr" placeholder="请输入审批人" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -223,9 +249,6 @@
               :label="dict.dictValue"
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -271,11 +294,11 @@
 </template>
 
 <script>
-import { listBasicTeacherWorkLog, getBasicTeacherWorkLog, delBasicTeacherWorkLog, addBasicTeacherWorkLog, updateBasicTeacherWorkLog } from "@/api/basic/basicTeacherWorkLog";
+import { listTeacherAttendance, getTeacherAttendance, delTeacherAttendance, addTeacherAttendance, updateTeacherAttendance } from "@/api/basic/teacherAttendance";
 import { getToken } from "@/utils/auth";
 
 export default {
-  name: "BasicTeacherWorkLog",
+  name: "TeacherAttendance",
   components: {
   },
   data() {
@@ -292,28 +315,28 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 老师工作日志表格数据
-      basicTeacherWorkLogList: [],
+      // 老师考勤表格数据
+      teacherAttendanceList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 是否有考试 0:否 1:是字典
-      isExamOptions: [],
-      // 未读:0;已读:1字典
-      isReadOptions: [],
-      // 课后日志类型:(听写:1;课文背诵:2;听力:3)字典
-      khLogTypeOptions: [],
+      // 请假类型字典
+      qjlxOptions: [],
+      // 审批状态字典
+      spztOptions: [],
       // 状态字典
       statusOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        lsxm: null,
-        isRead: null,
-        khLogType: null,
-        status: null,
+        sqrid: null,
+        sqrxm: null,
+        qjlx: null,
+        qjly: null,
+        spzt: null,
+        spr: null,
       },
       // 表单参数
       form: {},
@@ -325,7 +348,7 @@ export default {
           // 是否显示弹出层
           open: false,
           // 弹出层标题
-          title: "导入老师工作日志数据",
+          title: "导入老师考勤数据",
           // 是否禁用上传
           isUploading: false,
           // 是否更新已经存在的数据
@@ -333,46 +356,39 @@ export default {
           // 设置上传的请求头部
           headers: { Authorization: "Bearer " + getToken() },
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "basic/basicTeacherWorkLog/importData"
+          url: process.env.VUE_APP_BASE_API + "basic/teacherAttendance/importData"
       },
     };
   },
   created() {
     this.getList();
-    this.getDicts("basic_is_exam").then(response => {
-      this.isExamOptions = response.data;
+    this.getDicts("basic_qj_type").then(response => {
+      this.qjlxOptions = response.data;
     });
-    this.getDicts("basic_is_ read").then(response => {
-      this.isReadOptions = response.data;
-    });
-    this.getDicts("basic_kh_log_type").then(response => {
-      this.khLogTypeOptions = response.data;
+    this.getDicts("basic_qjsp_status").then(response => {
+      this.spztOptions = response.data;
     });
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
   },
   methods: {
-    /** 查询老师工作日志列表 */
+    /** 查询老师考勤列表 */
     getList() {
       this.loading = true;
-      listBasicTeacherWorkLog(this.queryParams).then(response => {
-        this.basicTeacherWorkLogList = response.rows;
+      listTeacherAttendance(this.queryParams).then(response => {
+        this.teacherAttendanceList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
     },
-    // 是否有考试 0:否 1:是字典翻译
-    isExamFormat(row, column) {
-      return this.selectDictLabel(this.isExamOptions, row.isExam);
+    // 请假类型字典翻译
+    qjlxFormat(row, column) {
+      return this.selectDictLabel(this.qjlxOptions, row.qjlx);
     },
-    // 未读:0;已读:1字典翻译
-    isReadFormat(row, column) {
-      return this.selectDictLabel(this.isReadOptions, row.isRead);
-    },
-    // 课后日志类型:(听写:1;课文背诵:2;听力:3)字典翻译
-    khLogTypeFormat(row, column) {
-      return this.selectDictLabel(this.khLogTypeOptions, row.khLogType);
+    // 审批状态字典翻译
+    spztFormat(row, column) {
+      return this.selectDictLabel(this.spztOptions, row.spzt);
     },
     // 状态字典翻译
     statusFormat(row, column) {
@@ -387,21 +403,23 @@ export default {
     reset() {
       this.form = {
         id: null,
-        lsid: null,
-        lsxm: null,
-        date: null,
-        kczj: null,
-        bkXtrz: null,
-        bkBcrz: null,
-        khXtrz: null,
-        khBcrz: null,
-        isExam: null,
-        isRead: null,
-        jswsFile: null,
-        xsbxFile: null,
-        khLogType: null,
+        glid: null,
+        sqrid: null,
+        sqrxm: null,
+        qjlx: null,
+        qjly: null,
+        kssj: null,
+        jssj: null,
+        qjts: null,
+        qjjs: null,
+        spzt: null,
+        spsj: null,
+        sply: null,
+        spr: null,
         status: "0",
         remark: null,
+        userId: null,
+        userName: null,
         dataOrder: null,
         createTime: null,
         updateTime: null,
@@ -433,16 +451,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加老师工作日志";
+      this.title = "添加老师考勤";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getBasicTeacherWorkLog(id).then(response => {
+      getTeacherAttendance(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改老师工作日志";
+        this.title = "修改老师考勤";
       });
     },
     /** 提交按钮 */
@@ -450,13 +468,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateBasicTeacherWorkLog(this.form).then(response => {
+            updateTeacherAttendance(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBasicTeacherWorkLog(this.form).then(response => {
+            addTeacherAttendance(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -468,12 +486,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除老师工作日志编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除老师考勤编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delBasicTeacherWorkLog(ids);
+          return delTeacherAttendance(ids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -481,21 +499,21 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/basicTeacherWorkLog/export', {
+      this.download('basic/teacherAttendance/export', {
         ...this.queryParams
-      }, `老师工作日志.xlsx`)
+      }, `老师考勤.xlsx`)
     },
 
       /** 导入按钮操作 */
       handleImport() {
-          this.upload.title = "老师工作日志数据导入";
+          this.upload.title = "老师考勤数据导入";
           this.upload.open = true;
       },
       /** 下载模板操作 */
       importTemplate() {
-          this.download('basic/basicTeacherWorkLog/importTemplate', {
+          this.download('basic/teacherAttendance/importTemplate', {
               ...this.queryParams
-          }, `老师工作日志-导入模板.xlsx`)
+          }, `老师考勤-导入模板.xlsx`)
       },
       // 文件上传中处理
       handleFileUploadProgress(event, file, fileList) {
