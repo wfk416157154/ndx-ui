@@ -70,6 +70,9 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -79,9 +82,7 @@
           v-hasPermi="['basic:school:export']"
         >导出</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
-      </el-col>
+
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -161,7 +162,7 @@
       </div>
     </el-dialog>
 
-    <!-- 用户导入对话框 -->
+    <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
@@ -192,7 +193,6 @@
       </div>
     </el-dialog>
     </div>
-  </div>
 </template>
 
 <script>
@@ -284,7 +284,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
+        url: process.env.VUE_APP_BASE_API + "/basic/school/importData"
       }
     };
   },
@@ -413,22 +413,22 @@ export default {
         {
           ...this.queryParams
         },
-        `basic_school.xlsx`
+        `校区基本信息.xlsx`
       );
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "用户导入";
+      this.upload.title = "校区信息导入";
       this.upload.open = true;
     },
     /** 下载模板操作 */
     importTemplate() {
       this.download(
-        "basic/bjclass/importTemplate",
+        "basic/school/importTemplate",
         {
           ...this.queryParams
         },
-        `导入模板_${new Date().getTime()}.xlsx`
+        `校区信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
     // 文件上传中处理
