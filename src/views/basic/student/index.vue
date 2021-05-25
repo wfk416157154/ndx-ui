@@ -510,7 +510,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
+        url: process.env.VUE_APP_BASE_API + "/basic/student/importData",
         // 上传图片地址
         fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
@@ -759,7 +759,7 @@ export default {
         {
           ...this.queryParams
         },
-        `basic_student.xlsx`
+        `学生信息基础表.xlsx`
       );
     },
     //学生头像处理
@@ -783,17 +783,17 @@ export default {
 
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "用户导入";
+      this.upload.title = "学生信息导入";
       this.upload.open = true;
     },
     /** 下载模板操作 */
     importTemplate() {
       this.download(
-        "basic/bjclass/importTemplate",
+        "basic/student/importTemplate",
         {
           ...this.queryParams
         },
-        `导入模板_${new Date().getTime()}.xlsx`
+        `学生信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
     // 文件上传中处理

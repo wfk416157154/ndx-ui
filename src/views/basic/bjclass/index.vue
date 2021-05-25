@@ -150,7 +150,7 @@
       @pagination="getList"
     />
 
-    <!-- 用户导入对话框 -->
+    <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
@@ -170,7 +170,7 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
           <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
@@ -235,13 +235,13 @@ export default {
       rules: {},
       // 用户导入参数
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
-        // 是否更新已经存在的用户数据
+        // 是否更新已经存在的数据
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
@@ -390,13 +390,13 @@ export default {
         {
           ...this.queryParams
         },
-        `basic_bjclass.xlsx`
+        `班级基本信息.xlsx`
       );
     },
 
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "用户导入";
+      this.upload.title = "班级基本信息导入";
       this.upload.open = true;
     },
     /** 下载模板操作 */
@@ -406,7 +406,7 @@ export default {
         {
           ...this.queryParams
         },
-        `导入模板_${new Date().getTime()}.xlsx`
+        `班级基本信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
     // 文件上传中处理
