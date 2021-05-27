@@ -39,7 +39,7 @@
       <el-col :span="12">
         <el-form-item label-width="100px" label="校区名称" prop="xqmc">
           <!-- <el-input maxlength="50" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
-          <el-select v-model="form.xqmc" placeholder="请输入年级">
+          <el-select v-model="form.xqmc" placeholder="请选择校区名称">
             <el-option
               v-for="item in selectXqmc"
               :key="item.id"
