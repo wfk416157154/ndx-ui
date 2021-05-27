@@ -10,25 +10,26 @@
       <el-form-item label="校区名称" prop="xqmc">
         <el-input
           v-model="queryParams.xqmc"
-          placeholder="请输入校区名称"
+          placeholder="可模糊查询校区名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="年级" prop="nj">
-        <el-input
-          v-model="queryParams.nj"
-          placeholder="请输入年级"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.nj" placeholder="请选择年级">
+          <el-option
+            v-for="item in selectNj"
+            :key="item.dictValue"
+            :label="item.dictLabel"
+            :value="item.dictLabel"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label-width="120px" label="日语班级名称" prop="rybjmc">
         <el-input
           v-model="queryParams.rybjmc"
-          placeholder="请输入日语班级名称"
+          placeholder="可模糊查询日语班级名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -37,13 +38,13 @@
       <el-form-item label="老师姓名" prop="lsxm">
         <el-input
           v-model="queryParams.lsxm"
-          placeholder="请输入老师姓名"
+          placeholder="可模糊查询老师姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <!--<el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -52,7 +53,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -156,7 +157,7 @@
       @pagination="getList"
     />
 
-    <!-- 用户导入对话框 -->
+    <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
@@ -176,7 +177,7 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
           <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
@@ -225,6 +226,8 @@ export default {
       open: false,
       // 状态字典
       statusOptions: [],
+      //年级字典
+      selectNj: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -241,13 +244,13 @@ export default {
       rules: {},
       // 用户导入参数
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
-        // 是否更新已经存在的用户数据
+        // 是否更新已经存在的数据
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
@@ -264,6 +267,9 @@ export default {
     this.getList();
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    this.getDicts("nianji").then(response => {
+      this.selectNj = response.data;
     });
   },
   methods: {
@@ -387,10 +393,9 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
-        .catch(e => {
-          console.log(e);
-        });
+        }).catch((e)=>{
+        console.log(e);
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -399,13 +404,13 @@ export default {
         {
           ...this.queryParams
         },
-        `basic_bjclass.xlsx`
+        `班级基本信息.xlsx`
       );
     },
 
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "用户导入";
+      this.upload.title = "班级基本信息导入";
       this.upload.open = true;
     },
     /** 下载模板操作 */
@@ -415,7 +420,7 @@ export default {
         {
           ...this.queryParams
         },
-        `导入模板_${new Date().getTime()}.xlsx`
+        `班级基本信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
     // 文件上传中处理

@@ -8,36 +8,38 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-input
-          v-model="queryParams.xqmc"
-          placeholder="请输入校区名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.xxmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="原班级" prop="ybj">
         <el-input
           v-model="queryParams.ybj"
-          placeholder="请输入原班级"
+          placeholder="可模糊查询原班级"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
-        <el-input
-          v-model="queryParams.ryb"
-          placeholder="请输入日语班"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.rybj" placeholder="请选择日语班级">
+          <el-option
+            v-for="item in bjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.rybjmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="学生姓名" prop="xsxm">
         <el-input
           v-model="queryParams.xsxm"
-          placeholder="请输入学生姓名"
+          placeholder="可模糊查询学生姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -75,13 +77,13 @@
       <el-form-item label-width="100px" label="班主任姓名" prop="bzrxm">
         <el-input
           v-model="queryParams.bzrxm"
-          placeholder="请输入班主任姓名"
+          placeholder="可模糊查询班主任姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <!--<el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -90,7 +92,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -242,15 +244,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="原班级" prop="ybj">
-            <!-- <el-input maxlength="30" v-model="form.ybj" placeholder="请输入原班级" /> -->
-            <el-select v-model="form.ybj" placeholder="请选择原班级">
-              <el-option
-                v-for="item in originalClass"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
+            <el-input maxlength="30" v-model="form.ybj" placeholder="请输入原班级" />
           </el-form-item>
         </el-col>
         <!-- <el-col :span="12"> -->
@@ -398,7 +392,7 @@
       </div>
     </el-dialog>
 
-    <!-- 用户导入对话框 -->
+    <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
@@ -418,7 +412,7 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
           <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
@@ -499,9 +493,9 @@ export default {
       // 日语班
       japaneseClass: [],
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
@@ -593,10 +587,14 @@ export default {
     listSchool(this.queryParams).then(response => {
       this.selectXqmc = response.rows;
     });
+    listBjclass(this.queryParams).then(response => {
+      this.bjclassList = response.rows;
+    });
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   mounted() {
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
+
   },
   methods: {
     /** 查询学生信息列表 */
@@ -750,7 +748,9 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        });
+        }).catch((e)=>{
+        console.log(e);
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

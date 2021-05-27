@@ -25,11 +25,11 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <!--<el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option label="请选择字典生成" value />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -70,6 +70,9 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -79,9 +82,7 @@
           v-hasPermi="['basic:school:export']"
         >导出</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
-      </el-col>
+
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -161,7 +162,7 @@
       </div>
     </el-dialog>
 
-    <!-- 用户导入对话框 -->
+    <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
@@ -192,7 +193,6 @@
       </div>
     </el-dialog>
     </div>
-  </div>
 </template>
 
 <script>
@@ -273,18 +273,18 @@ export default {
       //状态选中
       label: 1,
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
-        // 是否更新已经存在的用户数据
+        // 是否更新已经存在的数据
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
+        url: process.env.VUE_APP_BASE_API + "/basic/school/importData"
       }
     };
   },
@@ -404,7 +404,10 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        });
+        })
+        .catch((e)=>{
+          console.log(e);
+        })
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -413,22 +416,22 @@ export default {
         {
           ...this.queryParams
         },
-        `basic_school.xlsx`
+        `校区基本信息.xlsx`
       );
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "用户导入";
+      this.upload.title = "校区信息导入";
       this.upload.open = true;
     },
     /** 下载模板操作 */
     importTemplate() {
       this.download(
-        "basic/bjclass/importTemplate",
+        "basic/school/importTemplate",
         {
           ...this.queryParams
         },
-        `导入模板_${new Date().getTime()}.xlsx`
+        `校区信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
     // 文件上传中处理

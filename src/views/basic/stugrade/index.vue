@@ -7,19 +7,30 @@
       v-show="showSearch"
       label-width="68px"
     >
+      <el-form-item label="校区名称" prop="xqmc">
+        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.xxmc"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="日语班级" prop="rybj">
+        <el-select v-model="queryParams.ryb" placeholder="请选择日语班">
+          <el-option
+            v-for="item in bjclassList"
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.rybjmc"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="学生姓名" prop="xsxm">
         <el-input
           v-model="queryParams.xsxm"
-          placeholder="请输入学生姓名"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="日语班级" prop="rybj">
-        <el-input
-          v-model="queryParams.rybj"
-          placeholder="请输入日语班级"
+          placeholder="可模糊查询学生姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -34,7 +45,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <!--<el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -43,7 +54,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -51,7 +62,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <!--<el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -82,7 +93,7 @@
           @click="handleDelete"
           v-hasPermi="['basic:stugrade:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col>-->
       <el-col :span="1.5">
         <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
@@ -216,6 +227,8 @@ import {
   listAll,
   getColumnNameList
 } from "@/api/basic/stugrade";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 export default {
   name: "Stugrade",
@@ -291,13 +304,23 @@ export default {
       // 动态table-column
       columnNameList: [],
       // 获取学生成绩表
-      listAll: []
+      listAll : [],
+      //校区名称字典
+      selectXqmc: [],
+      // 日语班级字典
+      bjclassList: []
     };
   },
   created() {
     this.getList();
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
+    listBjclass(this.queryParams).then(response => {
+      this.bjclassList = response.rows;
     });
   },
   methods: {
@@ -309,7 +332,6 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-
       // 学生成绩表数据
       listAll({}).then(res => {
         this.listAll = res.rows;
