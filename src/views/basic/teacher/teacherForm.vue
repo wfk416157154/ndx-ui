@@ -637,12 +637,13 @@ export default {
       this.dialogVisible = true;
     },
     grsfzsmzSuccess(response, file, fileList) {
-      console.log("grsfzsmzSuccess:", this.form.grsfzsmz);
+      //console.log("grsfzsmzSuccess:", this.form.grsfzsmz);
       let data = response.data;
       data.kzzd1 = this.form.grsfzsmz || secretKey();
       this.form.grsfzsmz = data.kzzd1;
       this.photoNum1 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum1);
       });
     },
@@ -653,6 +654,7 @@ export default {
       this.photoNum2 = fileList.length;
       addImg(data).then(res => {
         this.photoNum2++;
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum2);
       });
     },
@@ -662,6 +664,7 @@ export default {
       this.form.xwzsmj = data.kzzd1;
       this.photoNum3 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum3);
       });
     },
@@ -671,6 +674,7 @@ export default {
       this.form.grzjzbdld = data.kzzd1;
       this.photoNum4 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum4);
       });
     },
@@ -680,6 +684,7 @@ export default {
       this.form.rydjzs = data.kzzd1;
       this.photoNum5 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum5);
       });
     },
@@ -689,6 +694,7 @@ export default {
       this.form.jszgz = data.kzzd1;
       this.photoNum6 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum6);
       });
     },
@@ -698,6 +704,7 @@ export default {
       this.form.qtzs = data.kzzd1;
       this.photoNum7 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum7);
       });
     },

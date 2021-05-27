@@ -10,25 +10,26 @@
       <el-form-item label="校区名称" prop="xqmc">
         <el-input
           v-model="queryParams.xqmc"
-          placeholder="请输入校区名称"
+          placeholder="可模糊查询校区名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="年级" prop="nj">
-        <el-input
-          v-model="queryParams.nj"
-          placeholder="请输入年级"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.nj" placeholder="请选择年级">
+          <el-option
+            v-for="item in selectNj"
+            :key="item.dictValue"
+            :label="item.dictLabel"
+            :value="item.dictLabel"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label-width="120px" label="日语班级名称" prop="rybjmc">
         <el-input
           v-model="queryParams.rybjmc"
-          placeholder="请输入日语班级名称"
+          placeholder="可模糊查询日语班级名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -37,13 +38,13 @@
       <el-form-item label="老师姓名" prop="lsxm">
         <el-input
           v-model="queryParams.lsxm"
-          placeholder="请输入老师姓名"
+          placeholder="可模糊查询老师姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <!--<el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -52,7 +53,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -219,6 +220,8 @@ export default {
       open: false,
       // 状态字典
       statusOptions: [],
+      //年级字典
+      selectNj: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -258,6 +261,9 @@ export default {
     this.getList();
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    this.getDicts("nianji").then(response => {
+      this.selectNj = response.data;
     });
   },
   methods: {
@@ -381,7 +387,9 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        });
+        }).catch((e)=>{
+        console.log(e);
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

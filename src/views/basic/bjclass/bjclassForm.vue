@@ -139,6 +139,7 @@ export default {
   components: {},
   data() {
     return {
+
       // 遮罩层
       loading: true,
       // 选中数组
@@ -197,13 +198,13 @@ export default {
       dialogVisible: false,
       disabled: false,
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
-        // 是否更新已经存在的用户数据
+        // 是否更新已经存在的数据
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
@@ -347,7 +348,7 @@ export default {
               this.msgSuccess("修改成功");
               this.open = false;
               this.$router.push({
-                path: "/basic/bjclass/" + new Date()
+                path: "/jcsjb/basic/bjclass/" + new Date()
               });
             });
           } else {
@@ -355,7 +356,7 @@ export default {
               this.msgSuccess("新增成功");
               this.open = false;
               this.$router.push({
-                path: "/basic/bjclass/" + new Date()
+                path: "/jcsjb/basic/bjclass/" + new Date()
               });
             });
           }
@@ -373,7 +374,7 @@ export default {
         this[file] = res.rows;
       });
     },
-    //证件照处理
+    //公共图片删除
     handleRemove(file, fileList) {
       deleteImg(file.id).then(res => {
         if (res.code == 200) {
@@ -390,21 +391,25 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+    // 开班照上传成功的回调
     handleAvatarSuccess(response, file, fileList) {
       let data = response.data;
       data.kzzd1 = this.form.kbz || secretKey();
       this.form.kbz = data.kzzd1;
       this.photoNum1 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum1);
       });
     },
+    // 集体照上传成功的回调
     jtzSuccess(response, file, fileList) {
       let data = response.data;
       data.kzzd1 = this.form.jtz || secretKey();
       this.form.jtz = data.kzzd1;
       this.photoNum1 = fileList.length;
       addImg(data).then(res => {
+        file.id=res.data.id;
         this.ifPhotoLimit(this.photoNum2);
       });
     },

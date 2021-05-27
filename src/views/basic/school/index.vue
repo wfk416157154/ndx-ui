@@ -273,13 +273,13 @@ export default {
       //状态选中
       label: 1,
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
-        // 是否更新已经存在的用户数据
+        // 是否更新已经存在的数据
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
@@ -404,7 +404,10 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        });
+        })
+        .catch((e)=>{
+          console.log(e);
+        })
     },
     /** 导出按钮操作 */
     handleExport() {

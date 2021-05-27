@@ -8,27 +8,29 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-input
-          v-model="queryParams.xqmc"
-          placeholder="请输入校区名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.xxmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="rybj">
-        <el-input
-          v-model="queryParams.rybj"
-          placeholder="请输入日语班级"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.rybj" placeholder="请选择日语班级">
+          <el-option
+            v-for="item in bjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.rybjmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="老师姓名" prop="lsxm">
         <el-input
           v-model="queryParams.lsxm"
-          placeholder="请输入老师姓名"
+          placeholder="可模糊查询老师姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -54,7 +56,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <!--<el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -63,7 +65,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -356,6 +358,8 @@ import {
   addTeacher,
   updateTeacher
 } from "@/api/basic/teacher";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 export default {
   name: "Teacher",
@@ -423,7 +427,11 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/basic/teacher/importData"
       },
-      imageUrl: ""
+      imageUrl: "",
+      //校区名称
+      selectXqmc: [],
+      // 班级选择
+      bjclassList: []
     };
   },
   created() {
@@ -436,6 +444,12 @@ export default {
     });
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
+    listBjclass(this.queryParams).then(response => {
+      this.bjclassList = response.rows;
     });
   },
   methods: {
@@ -565,7 +579,9 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        });
+        }).catch((e)=>{
+        console.log(e);
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

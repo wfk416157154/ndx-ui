@@ -1,38 +1,48 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
+        <el-form-item label="校区名称" prop="xqmc">
+          <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+            <el-option
+              v-for="item in selectXqmc"
+              :key="item.id"
+              :label="item.xxmc"
+              :value="item.xxmc"
+            ></el-option>
+          </el-select>
       </el-form-item>
       <el-form-item label="原班级" prop="ybj">
         <el-input
           v-model="queryParams.ybj"
-          placeholder="请输入原班级"
+          placeholder="可模糊查询原班级"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
-        <el-select v-model="queryParams.ryb" placeholder="请选择日语班" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+        <el-select v-model="queryParams.rybj" placeholder="请选择日语班级">
+          <el-option
+            v-for="item in bjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.rybjmc"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="学生姓名" prop="xsxm">
         <el-input
           v-model="queryParams.xsxm"
-          placeholder="请输入学生姓名"
+          placeholder="可模糊查询学生姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="日语老师姓名" prop="rylsxm">
+      <el-form-item label-width="100px" label="日语老师姓名" prop="rylsxm">
         <el-input
           v-model="queryParams.rylsxm"
-          placeholder="请输入日语老师姓名"
+          placeholder="可模糊查询日语老师姓名"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -133,7 +143,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -235,6 +245,8 @@
 
 <script>
 import { listStugaokao, getStugaokao, delStugaokao, addStugaokao, updateStugaokao } from "@/api/basic/stugaokao";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -291,10 +303,20 @@ export default {
           // 上传的地址
           url: process.env.VUE_APP_BASE_API + "basic/stugaokao/importData"
       },
+      //校区名称
+      selectXqmc: [],
+      // 班级选择
+      bjclassList: []
     };
   },
   created() {
     this.getList();
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
+    listBjclass(this.queryParams).then(response => {
+      this.bjclassList = response.rows;
+    });
   },
   methods: {
     /** 查询学生高考成绩列表 */
@@ -403,7 +425,9 @@ export default {
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        }).catch((e)=>{
+        console.log(e);
+      })
     },
     /** 导出按钮操作 */
     handleExport() {
