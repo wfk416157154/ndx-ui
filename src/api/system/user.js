@@ -108,3 +108,11 @@ export function uploadAvatar(data) {
     data: data
   })
 }
+// 用户头像上传
+export function uploadHead(data) {
+  return request({
+    url: '/system/user/profile/uploadHead',
+    method: 'put',
+    params: data
+  })
+}

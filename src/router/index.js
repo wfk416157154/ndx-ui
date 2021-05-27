@@ -71,7 +71,7 @@ export const constantRoutes = [
         name: "teacherForm",
         component: teacherForm,
         hidden: true,
-        meta: { title: '操作老师信息', icon: 'dashboard', noCache: true, affix: false, show: false, },
+        meta: { title: '操作老师信息', icon: 'dashboard', noCache: true, affix: false, show: false, }
       },
       {
         path: "bjclassForm/:id",

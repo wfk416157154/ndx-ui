@@ -120,7 +120,13 @@
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="开班时间" align="center" prop="kbsj" />
       <el-table-column label="老师电话" align="center" prop="lsdh" />
-      <el-table-column v-if="false" label="状态" align="center" prop="status" :formatter="statusFormat" />
+      <el-table-column
+        v-if="false"
+        label="状态"
+        align="center"
+        prop="status"
+        :formatter="statusFormat"
+      />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -327,16 +333,16 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.$router.push({
-        path : "/bjclassForm/" + "addBjclass"
-      })
+        path: "/bjclassForm/" + "addBjclass"
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
-       this.$router.push({
-        path : "/bjclassForm/" + id
-      })
+      this.$router.push({
+        path: "/bjclassForm/" + id
+      });
       // getBjclass(id).then(response => {
       //   this.form = response.data;
       //   this.open = true;
@@ -381,6 +387,9 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
+        })
+        .catch(e => {
+          console.log(e);
         });
     },
     /** 导出按钮操作 */

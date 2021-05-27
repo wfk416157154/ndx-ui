@@ -39,12 +39,12 @@
       <el-col :span="12">
         <el-form-item label-width="100px" label="校区名称" prop="xqmc">
           <!-- <el-input maxlength="50" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
-          <el-select v-model="form.xqmc" placeholder="请输入年级">
+          <el-select v-model="form.xqmc" @change="getschoolId" placeholder="请输入校区">
             <el-option
               v-for="item in selectXqmc"
               :key="item.id"
               :label="item.xxmc"
-              :value="item.xxmc"
+              :value="item"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -128,9 +128,7 @@ import {
   updateBjclass,
   importTemplate
 } from "@/api/basic/bjclass";
-import {
-  listSchool,
-} from "@/api/basic/school";
+import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
@@ -246,6 +244,10 @@ export default {
     this.getDicts("nianji").then(response => {
       this.selectNj = response.data;
     });
+    // 获取校区
+    listSchool(this.queryParams).then(response => {
+      this.selectXqmc = response.rows;
+    });
   },
   mounted() {
     this.id = this.$route.params.id;
@@ -254,9 +256,6 @@ export default {
     } else {
       this.reset();
     }
-    listSchool(this.queryParams).then(response => {
-      this.selectXqmc = response.rows;
-    });
   },
   methods: {
     // 状态字典翻译
@@ -362,7 +361,6 @@ export default {
         }
       });
     },
-
     // 查询证件照
     selectPhotoList(glid, file) {
       let kzzdJson = {
@@ -421,6 +419,11 @@ export default {
           type: "success"
         });
       }
+    },
+    // 保存校区id
+    getschoolId(value) {
+      this.form.xqmc = value.xxmc;
+      this.form.kzzd1 = value.id;
     }
   }
 };

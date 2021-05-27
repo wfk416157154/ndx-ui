@@ -1,53 +1,27 @@
 <template>
   <div>
-    <div class="user-info-head" @click="editCropper()"><img v-bind:src="options.img" title="点击上传头像" class="img-circle img-lg" /></div>
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body @opened="modalOpened"  @close="closeDialog()">
-      <el-row>
-        <el-col :xs="24" :md="12" :style="{height: '350px'}">
-          <vue-cropper
-            ref="cropper"
-            :img="options.img"
-            :info="true"
-            :autoCrop="options.autoCrop"
-            :autoCropWidth="options.autoCropWidth"
-            :autoCropHeight="options.autoCropHeight"
-            :fixedBox="options.fixedBox"
-            @realTime="realTime"
-            v-if="visible"
-          />
-        </el-col>
-        <el-col :xs="24" :md="12" :style="{height: '350px'}">
-          <div class="avatar-upload-preview">
-            <img :src="previews.url" :style="previews.img" />
-          </div>
-        </el-col>
-      </el-row>
-      <br />
-      <el-row>
-        <el-col :lg="2" :md="2">
-          <el-upload action="#" :http-request="requestUpload" :show-file-list="false" :before-upload="beforeUpload">
-            <el-button size="small">
-              选择
-              <i class="el-icon-upload el-icon--right"></i>
-            </el-button>
-          </el-upload>
-        </el-col>
-        <el-col :lg="{span: 1, offset: 2}" :md="2">
-          <el-button icon="el-icon-plus" size="small" @click="changeScale(1)"></el-button>
-        </el-col>
-        <el-col :lg="{span: 1, offset: 1}" :md="2">
-          <el-button icon="el-icon-minus" size="small" @click="changeScale(-1)"></el-button>
-        </el-col>
-        <el-col :lg="{span: 1, offset: 1}" :md="2">
-          <el-button icon="el-icon-refresh-left" size="small" @click="rotateLeft()"></el-button>
-        </el-col>
-        <el-col :lg="{span: 1, offset: 1}" :md="2">
-          <el-button icon="el-icon-refresh-right" size="small" @click="rotateRight()"></el-button>
-        </el-col>
-        <el-col :lg="{span: 2, offset: 6}" :md="2">
-          <el-button type="primary" size="small" @click="uploadImg()">提 交</el-button>
-        </el-col>
-      </el-row>
+    <div class="user-info-head" @click="editCropper()">
+      <img v-bind:src="options.img" title="点击上传头像" class="img-circle img-lg" />
+    </div>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      @opened="modalOpened"
+      @close="closeDialog()"
+    >
+      <el-upload
+        class="avatar-uploader"
+        :action="upload.fileUrl"
+        :headers="upload.headers"
+        :show-file-list="false"
+        :on-success="handleAvatarSuccess"
+        :before-upload="beforeAvatarUpload"
+      >
+        <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
     </el-dialog>
   </div>
 </template>
@@ -55,8 +29,8 @@
 <script>
 import store from "@/store";
 import { VueCropper } from "vue-cropper";
-import { uploadAvatar } from "@/api/system/user";
-
+import { uploadAvatar, uploadHead } from "@/api/system/user";
+import { getToken } from "@/utils/auth";
 export default {
   components: { VueCropper },
   props: {
@@ -79,21 +53,61 @@ export default {
         autoCropHeight: 200, // 默认生成截图框高度
         fixedBox: true // 固定截图框大小 不允许改变
       },
-      previews: {}
+      previews: {},
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/basic/student/importData",
+        // 上传图片地址
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      imageUrl: ""
     };
   },
+  mounted() {
+    console.log(
+      "http://192.168.0.129:9300/statics/2021/05/27/2d3a0033-bb70-4e6c-979e-c0f4f6f71c9b.jpeg"
+    );
+  },
   methods: {
+    // 头像处理
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(res);
+      this.uploadImg(res.data.url);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
     // 编辑头像
     editCropper() {
       this.open = true;
     },
     // 打开弹出层结束时的回调
     modalOpened() {
+      this.imageUrl = store.getters.avatar;
       this.visible = true;
     },
     // 覆盖默认的上传行为
-    requestUpload() {
-    },
+    requestUpload() {},
     // 向左旋转
     rotateLeft() {
       this.$refs.cropper.rotateLeft();
@@ -120,17 +134,14 @@ export default {
       }
     },
     // 上传图片
-    uploadImg() {
-      this.$refs.cropper.getCropBlob(data => {
-        let formData = new FormData();
-        formData.append("avatarfile", data);
-        uploadAvatar(formData).then(response => {
-          this.open = false;
-          this.options.img = response.imgUrl;
-          store.commit('SET_AVATAR', this.options.img);
-          this.msgSuccess("修改成功");
-          this.visible = false;
-        });
+    uploadImg(url) {
+      console.log(url);
+      uploadHead({ imgUrl: url }).then(response => {
+        this.open = false;
+        this.options.img = response.imgUrl;
+        store.commit("SET_AVATAR", this.options.img);
+        this.msgSuccess("修改成功");
+        this.visible = false;
       });
     },
     // 实时预览
@@ -139,13 +150,39 @@ export default {
     },
     // 关闭窗口
     closeDialog() {
-      this.options.img = store.getters.avatar
-	  this.visible = false;
+      this.options.img = store.getters.avatar;
+      this.visible = false;
     }
   }
 };
 </script>
 <style scoped lang="scss">
+.el-dialog:not(.is-fullscreen) {
+  margin-top: 100px !important;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 .user-info-head {
   position: relative;
   display: inline-block;
@@ -153,7 +190,7 @@ export default {
 }
 
 .user-info-head:hover:after {
-  content: '+';
+  content: "+";
   position: absolute;
   left: 0;
   right: 0;

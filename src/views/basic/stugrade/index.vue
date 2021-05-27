@@ -101,8 +101,14 @@
 
     <el-table v-loading="loading" :data="listAll" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="item.label" align="center" v-for="(item,index) in columnNameList" :key="index" :prop="item.prop" />
-<!--       
+      <el-table-column
+        :label="item.label"
+        align="center"
+        v-for="(item,index) in columnNameList"
+        :key="index"
+        :prop="item.prop"
+      />
+      <!--       
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -120,16 +126,12 @@
             v-hasPermi="['basic:stugrade:remove']"
           >删除</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>-->
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <div class="totalNum">
+      <span>共{{total}}条</span>
+    </div>
 
     <!-- 添加或修改学生成绩基础表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -287,9 +289,9 @@ export default {
         ]
       },
       // 动态table-column
-      columnNameList : [],
+      columnNameList: [],
       // 获取学生成绩表
-      listAll : []
+      listAll: []
     };
   },
   created() {
@@ -310,11 +312,11 @@ export default {
 
       // 学生成绩表数据
       listAll({}).then(res => {
-        this.listAll = res.rows
+        this.listAll = res.rows;
       });
       // 学生成绩表title列
       getColumnNameList({}).then(res => {
-        this.columnNameList = res.data
+        this.columnNameList = res.data;
       });
     },
     // 状态字典翻译
@@ -470,3 +472,13 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+   .totalNum{
+     height: 50px;
+     line-height: 50px;
+     margin-right: 20px;
+     font-size: 16px;
+     font-weight: 200;
+     float : right
+   }
+</style>

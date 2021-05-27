@@ -765,7 +765,6 @@ export default {
     //学生头像处理
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
-      console.log(res.data);
       this.uploadData = res.data;
       this.form.xstx = res.data.wjlj;
     },
