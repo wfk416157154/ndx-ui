@@ -583,7 +583,7 @@ export default {
                 this.msgSuccess("修改成功");
                 this.open = false;
                 this.$router.push({
-                  path: "/jcsjb/lsgl/teacher"
+                  path: "/jcsjb/lsgl/teacher/" + new Date()
                 });
               }
             });
@@ -594,7 +594,7 @@ export default {
                 this.msgSuccess("新增成功");
                 this.open = false;
                 this.$router.push({
-                  path: "/jcsjb/lsgl/teacher"
+                  path: "/jcsjb/lsgl/teacher/" + new Date()
                 });
               }
             });

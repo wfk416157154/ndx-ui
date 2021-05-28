@@ -346,8 +346,11 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
+      // this.$router.push({
+      //   path: "/bjclassForm/" + id
+      // });
       this.$router.push({
-        path: "/bjclassForm/" + id
+        path: "/jcsjb/basic/banji/educationalForm/" + id
       });
       // getBjclass(id).then(response => {
       //   this.form = response.data;

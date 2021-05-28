@@ -2,41 +2,7 @@
   <div class="app-container">
     <!-- 添加或修改班级基础信息对话框 -->
     <el-form class="wrap-el-form" ref="form" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label-width="100px" label="开班照" prop="kbz">
-        <el-upload
-          :action="upload.fileUrl"
-          :headers="upload.headers"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-          :on-success="handleAvatarSuccess"
-          :limit="maxPhotoNum"
-          :file-list="files1"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt />
-        </el-dialog>
-      </el-form-item>
-      <el-form-item label-width="100px" label="集体照" prop="jtz">
-        <el-upload
-          :action="upload.fileUrl"
-          :headers="upload.headers"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-          :on-success="jtzSuccess"
-          :limit="maxPhotoNum"
-          :file-list="files2"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt />
-        </el-dialog>
-      </el-form-item>
-      <el-col :span="12">
+      <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="校区名称" prop="xqmc">
           <!-- <el-input maxlength="50" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
           <el-select v-model="form.xqmc" placeholder="请选择校区名称">
@@ -44,12 +10,12 @@
               v-for="item in selectXqmc"
               :key="item.id"
               :label="item.xxmc"
-              :value="item.xxmc"
+              :value="item"
             ></el-option>
           </el-select>
         </el-form-item>
-      </el-col>
-      <el-col :span="12">
+      <!-- </el-col> -->
+      <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="年级" prop="nj">
           <!-- <el-input maxlength="30" v-model="form.nj" placeholder="请输入年级" /> -->
           <el-select v-model="form.nj" placeholder="请输入年级">
@@ -61,23 +27,18 @@
             ></el-option>
           </el-select>
         </el-form-item>
-      </el-col>
-      <el-col :span="12">
+      <!-- </el-col> -->
+      <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="日语班级名称" prop="rybjmc">
           <el-input maxlength="30" v-model="form.rybjmc" placeholder="请输入日语班级名称" />
         </el-form-item>
-      </el-col>
-      <el-col :span="12">
+      <!-- </el-col> -->
+      <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="班级人数" prop="bjrs">
           <el-input maxlength="5" v-model="form.bjrs" placeholder="请输入班级人数" />
         </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label-width="100px" label="老师姓名" prop="lsxm">
-          <el-input maxlength="4" v-model="form.lsxm" placeholder="请输入老师姓名" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
+      <!-- </el-col> -->
+      <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="开班时间" prop="kbsj">
           <!-- <el-input v-model="form.kbsj" placeholder="请输入开班时间" /> -->
           <el-date-picker
@@ -89,24 +50,7 @@
             placeholder="请输入开班时间"
           ></el-date-picker>
         </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label-width="100px" label="老师电话" prop="lsdh">
-          <el-input maxlength="11" v-model="form.lsdh" placeholder="请输入老师电话" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label-width="100px" label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              disabled
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-col>
+      <!-- </el-col> -->
 
       <el-form-item label-width="100px" label="备注" prop="remark">
         <el-input maxlength="300" v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -178,9 +122,9 @@ export default {
       rules: {},
       // 用户导入参数
       upload: {
-        // 是否显示弹出层（导入）
+        // 是否显示弹出层（用户导入）
         open: false,
-        // 弹出层标题（导入）
+        // 弹出层标题（用户导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
@@ -331,11 +275,11 @@ export default {
         this.selectPhotoList(
           (this.form.kbz = this.form.kbz || secretKey()),
           "files1"
-        ); // 开班照
+        ); // 个人身份证正反扫描照
         this.selectPhotoList(
           (this.form.jtz = this.form.jtz || secretKey()),
           "files2"
-        ); // 集体照
+        ); // 毕业证扫描件
       });
     },
     /** 提交按钮 */
@@ -445,5 +389,9 @@ export default {
 }
 .dialog-footer {
   float: right;
+}
+.app-container{
+    padding-top: 60px;
+    box-sizing: border-box;
 }
 </style>

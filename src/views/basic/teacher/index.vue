@@ -179,7 +179,7 @@
             <img :src="item.lstx" alt />
           </div>
           <div class="wrap-content">
-            <div class="wrap-content-item ">
+            <div class="wrap-content-item">
               <div class="content-list">
                 <h4>校区名称 :</h4>
                 <el-tooltip class="item" effect="dark" :content="item.xqmc" placement="top-start">
@@ -460,8 +460,6 @@ export default {
         this.teacherList = response.rows;
         this.total = response.total;
         this.loading = false;
-        // console.log(this.teacherList);
-        // console.log(this.$route.query.imageUrl);
       });
     },
     // 性别字典翻译
@@ -579,9 +577,10 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        }).catch((e)=>{
-        console.log(e);
-      });
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
