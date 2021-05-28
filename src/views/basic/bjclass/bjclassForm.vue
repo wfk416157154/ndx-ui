@@ -44,7 +44,7 @@
               v-for="item in selectXqmc"
               :key="item.id"
               :label="item.xxmc"
-              :value="item"
+              :value="item.xxmc"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -178,9 +178,9 @@ export default {
       rules: {},
       // 用户导入参数
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层（导入）
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题（导入）
         title: "",
         // 是否禁用上传
         isUploading: false,
@@ -331,11 +331,11 @@ export default {
         this.selectPhotoList(
           (this.form.kbz = this.form.kbz || secretKey()),
           "files1"
-        ); // 个人身份证正反扫描照
+        ); // 开班照
         this.selectPhotoList(
           (this.form.jtz = this.form.jtz || secretKey()),
           "files2"
-        ); // 毕业证扫描件
+        ); // 集体照
       });
     },
     /** 提交按钮 */
@@ -347,7 +347,7 @@ export default {
               this.msgSuccess("修改成功");
               this.open = false;
               this.$router.push({
-                path: "/jcsjb/basic/bjclass/" + new Date()
+                path: "/jcsjb/basic/bjclass"
               });
             });
           } else {
@@ -355,7 +355,7 @@ export default {
               this.msgSuccess("新增成功");
               this.open = false;
               this.$router.push({
-                path: "/jcsjb/basic/bjclass/" + new Date()
+                path: "/jcsjb/basic/bjclass"
               });
             });
           }
