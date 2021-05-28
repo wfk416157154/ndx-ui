@@ -247,7 +247,7 @@ export default {
       this.selectNj = response.data;
     });
     // 获取校区
-    listSchool(this.queryParams).then(response => {
+    listSchool().then(response => {
       this.selectXqmc = response.rows;
     });
   },
