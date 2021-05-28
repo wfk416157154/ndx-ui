@@ -135,6 +135,7 @@ import { secretKey } from "@/utils/tools";
 export default {
   name: "Bjclass",
   components: {},
+  inject:['reload'],
   data() {
     return {
 
@@ -246,7 +247,7 @@ export default {
       this.selectNj = response.data;
     });
     // 获取校区
-    listSchool(this.queryParams).then(response => {
+    listSchool().then(response => {
       this.selectXqmc = response.rows;
     });
   },
@@ -347,16 +348,18 @@ export default {
               this.msgSuccess("修改成功");
               this.open = false;
               this.$router.push({
-                path: "/jcsjb/basic/bjclass/" + new Date()
+                path: "/jcsjb/basic/bjclass/"
               });
+              this.reload();
             });
           } else {
             addBjclass(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.$router.push({
-                path: "/jcsjb/basic/bjclass/" + new Date()
+                path: "/jcsjb/basic/bjclass/"
               });
+              this.reload();
             });
           }
         }

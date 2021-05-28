@@ -304,6 +304,7 @@ import { secretKey } from "@/utils/tools";
 export default {
   name: "Teacher",
   components: {},
+  inject:['reload'],
   data() {
     return {
       // 遮罩层
@@ -585,17 +586,18 @@ export default {
                 this.$router.push({
                   path: "/jcsjb/lsgl/teacher/" + new Date()
                 });
+                this.reload();
               }
             });
           } else {
             addTeacher(this.form).then(response => {
-              console.log(this.form);
               if (response.code == 200) {
                 this.msgSuccess("新增成功");
                 this.open = false;
                 this.$router.push({
                   path: "/jcsjb/lsgl/teacher/" + new Date()
                 });
+                this.reload();
               }
             });
           }
