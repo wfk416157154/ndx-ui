@@ -241,15 +241,8 @@
               </div>
               <div class="content-list">
                 <h4>性别 :</h4>
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  content="Top Left 提示文字"
-                  placement="top-start"
-                >
                   <span v-if="item.xb == '1'">女</span>
                   <span v-else>男</span>
-                </el-tooltip>
               </div>
               <div class="content-list">
                 <h4>家庭地址 :</h4>

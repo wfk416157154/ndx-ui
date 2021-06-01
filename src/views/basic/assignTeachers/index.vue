@@ -88,7 +88,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
@@ -221,13 +220,12 @@ export default {
       listBjclass(this.queryParams).then(res => {
         this.optionalClasses1 = res.rows;
       });
-      console.log(this.queryParams);
     },
     // 分配老师
     assignTeachers() {
-      console.log(this.json);
+      // console.log(this.json);
       editBjclass(this.json).then(res => {
-        this.onSubmit()
+        this.onSubmit();
       });
     },
     getChecked(index) {

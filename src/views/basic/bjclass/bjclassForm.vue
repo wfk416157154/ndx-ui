@@ -348,7 +348,7 @@ export default {
               this.msgSuccess("修改成功");
               this.open = false;
               this.$router.push({
-                path: "/jcsjb/basic/bjclass/"
+                path: "/jcsjb/basic/bjclass"
               });
               this.reload();
             });
@@ -357,7 +357,7 @@ export default {
               this.msgSuccess("新增成功");
               this.open = false;
               this.$router.push({
-                path: "/jcsjb/basic/bjclass/"
+                path: "/jcsjb/basic/bjclass"
               });
               this.reload();
             });
