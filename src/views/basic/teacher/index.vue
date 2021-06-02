@@ -241,8 +241,8 @@
               </div>
               <div class="content-list">
                 <h4>性别 :</h4>
-                  <span v-if="item.xb == '1'">女</span>
-                  <span v-else>男</span>
+                <span v-if="item.xb == '1'">女</span>
+                <span v-else>男</span>
               </div>
               <div class="content-list">
                 <h4>家庭地址 :</h4>
@@ -395,7 +395,45 @@ export default {
         status: null
       },
       // 表单参数
-      form: {},
+       form : {
+        id: null,
+        lstx: null,
+        xqmc: null,
+        rybj: null,
+        lsxm: null,
+        xb: null,
+        rzsj: null,
+        rzgl: null,
+        sfzh: null,
+        dhhm: null,
+        jtzz: null,
+        xzz: null,
+        jjlxr: null,
+        jjlxrdh: null,
+        byxx: null,
+        byzy: null,
+        grsfzsmz: null,
+        byzsmj: null,
+        xwzsmj: null,
+        grzjzbdld: null,
+        rydjzs: null,
+        sfyjszgz: null,
+        jszgz: null,
+        qtzs: null,
+        status: "1",
+        remark: null,
+        userId: null,
+        uName: null,
+        orgBh: null,
+        orgName: null,
+        dataOrder: null,
+        addOrUpdateTime: null,
+        kzzd1: null,
+        kzzd2: null,
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null
+      },
       // 表单校验
       rules: {},
       // 头像

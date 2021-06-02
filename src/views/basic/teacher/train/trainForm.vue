@@ -1,6 +1,6 @@
 <template>
   <div class="trainForm">
-    <div class="time-add">
+    <!-- <div class="time-add">
       <el-button
         type="primary"
         plain
@@ -8,32 +8,51 @@
         size="mini"
         @click="dialogVisible = true"
       > 编辑 </el-button>
-    </div>
-    <el-dialog title="增加面试老师" @close="cancel" :visible.sync="dialogVisible" width="50%">
+    </div>-->
+    <el-dialog title="编辑面试老师" @close="cancel" :visible.sync="dialogVisible" width="50%">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="姓名">
-          <el-input v-model="form.xm"></el-input>
+          <el-input disabled v-model="form.xm"></el-input>
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="form.xb" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
+          <el-select disabled v-model="form.xb" placeholder="请选择性别">
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="电话号码">
-          <el-input v-model="form.dh"></el-input>
+          <el-input disabled v-model="form.dhhm"></el-input>
         </el-form-item>
-        <el-form-item label="地区">
-          <el-input v-model="form.dq"></el-input>
+        <el-form-item label="家庭住址">
+          <el-input disabled v-model="form.jtzz"></el-input>
         </el-form-item>
         <el-form-item label="期望">
-          <el-input v-model="form.qw"></el-input>
+          <el-input disabled v-model="form.yxdq"></el-input>
+        </el-form-item>
+        <el-form-item label="录入">
+          <el-input disabled v-model="form.lrrid"></el-input>
+        </el-form-item>
+        <el-form-item label="初试结果">
+          <el-select disabled v-model="form.zt" clearable placeholder="请选择">
+            <el-option
+              v-for="item in resultList"
+              :key="item.value"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="来汉时间">
-          <el-input v-model="form.lhsj"></el-input>
+          <el-date-picker
+            disabled
+            v-model="form.dhsj"
+            type="datetime"
+            placeholder="选择日期时间"
+            default-time="12:00:00"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="派遣地区">
-          <el-input v-model="form.pqdq"></el-input>
+          <el-input disabled v-model="form.pqdq"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -45,22 +64,28 @@
 </template>
 
 <script>
+import { teacherPersonnel, editTeacherPersonnel } from "@/api/basic/firstTry";
 export default {
   data() {
     return {
       dialogVisible: false,
       form: {
         xm: "",
-        dh: null,
-        lr: "",
+        dhhm: null,
+        lrrid: this.$store.state.user.name,
         xb: "",
-        qw: "",
-        dq: "",
-        tag: "",
-        lhsj: "",
-        pqdq: ""
-      }
+        yxdq: "",
+        jtzz: "",
+        mszt: ""
+      },
+      // 初试结果
+      resultList: []
     };
+  },
+  created() {
+    this.getDicts("preliminary_test_results").then(response => {
+      this.resultList = response.data;
+    });
   },
   methods: {
     // 提交按钮
@@ -69,30 +94,50 @@ export default {
         this.dialogVisible = false;
         if (valid) {
           if (this.form.id != null) {
-            console.log("add");
+            // 人事主管复试完成
+            if (1 == this.form.zt) {
+              this.form.mszt = 5; // 对应字典的 复试通过
+            } else {
+              this.form.mszt = 9; // 对应字典的 面试不通过
+            }
+            editTeacherPersonnel(this.form).then(res => {
+              this.$notify({
+                title: "成功",
+                message: res.msg,
+                type: "success"
+              });
+              this.cancel();
+            });
           } else {
-            console.log("edit");
+            teacherPersonnel(this.form).then(res => {
+              this.$notify({
+                title: "成功",
+                message: res.msg,
+                type: "success"
+              });
+              this.cancel();
+            });
           }
         }
       });
     },
     // 编辑数据渲染
-    edittiemForm(value) {
+    editFirstTryForm(value) {
       this.dialogVisible = true;
       this.form = value;
     },
     // 数据初始化
     cancel() {
+      this.$emit("getList");
       this.form = {
         xm: "",
-        dh: null,
-        lr: "",
+        dhhm: null,
+        lrrid: this.$store.state.user.name,
         xb: "",
-        qw: "",
-        dq: "",
-        tag: "",
-        lhsj: "",
-        pqdq: ""
+        yxdq: "",
+        jtzz: "",
+        id: null,
+        mszt: ""
       };
     }
   }

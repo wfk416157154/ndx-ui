@@ -16,21 +16,31 @@
         </el-form-item>
         <el-form-item label="性别">
           <el-select v-model="form.xb" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="电话号码">
-          <el-input v-model="form.dh"></el-input>
+          <el-input maxlength="11" v-model="form.dhhm"></el-input>
         </el-form-item>
-        <el-form-item label="地区">
-          <el-input v-model="form.dq"></el-input>
+        <el-form-item label="家庭住址">
+          <el-input v-model="form.jtzz"></el-input>
         </el-form-item>
         <el-form-item label="期望">
-          <el-input v-model="form.qw"></el-input>
+          <el-input v-model="form.yxdq"></el-input>
         </el-form-item>
+        <!-- <el-form-item label="初试结果">
+          <el-select v-model="form.mszt" clearable placeholder="请选择">
+            <el-option
+              v-for="item in resultList"
+              :key="item.value"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item> -->
         <el-form-item label="录入">
-          <el-input v-model="form.lr"></el-input>
+          <el-input disabled v-model="form.lrrid"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -42,19 +52,27 @@
 </template>
 
 <script>
+import { teacherPersonnel, editTeacherPersonnel } from "@/api/basic/firstTry";
 export default {
   data() {
     return {
       dialogVisible: false,
       form: {
         xm: "",
-        dh: null,
-        lr: "",
+        dhhm: null,
+        lrrid: this.$store.state.user.name,
         xb: "",
-        qw: "",
-        dq: ""
-      }
+        yxdq: "",
+        jtzz: "",
+      },
+      // 初试结果
+      resultList: []
     };
+  },
+  created() {
+    this.getDicts("preliminary_test_results").then(response => {
+      this.resultList = response.data;
+    });
   },
   methods: {
     // 提交按钮
@@ -63,9 +81,23 @@ export default {
         this.dialogVisible = false;
         if (valid) {
           if (this.form.id != null) {
-            console.log("add");
+            editTeacherPersonnel(this.form).then(res => {
+              this.$notify({
+                title: "成功",
+                message: res.msg,
+                type: "success"
+              });
+              this.cancel();
+            });
           } else {
-            console.log("edit");
+            teacherPersonnel(this.form).then(res => {
+              this.$notify({
+                title: "成功",
+                message: res.msg,
+                type: "success"
+              });
+              this.cancel();
+            });
           }
         }
       });
@@ -77,13 +109,15 @@ export default {
     },
     // 数据初始化
     cancel() {
+      this.$emit("getList");
       this.form = {
         xm: "",
-        dh: null,
-        lr: "",
+        dhhm: null,
+        lrrid: this.$store.state.user.name,
         xb: "",
-        qw: "",
-        dq: ""
+        yxdq: "",
+        jtzz: "",
+        id: null,
       };
     }
   }
