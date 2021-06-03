@@ -1,5 +1,19 @@
 <template>
   <div class="tiemForm">
+    <el-form :inline="true" label-width="68px">
+      <el-form-item label="老师姓名" prop="xxmc">
+        <el-input
+          v-model="name"
+          placeholder="请输入老师姓名"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      </el-form-item>
+    </el-form>
     <trainForm ref="trainForm" />
     <el-table ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
@@ -7,9 +21,14 @@
       <el-table-column property="xb" label="性别" :formatter="getSex"></el-table-column>
       <el-table-column property="dhhm" label="电话"></el-table-column>
       <el-table-column property="jtzz" label="家庭住址"></el-table-column>
-      <el-table-column  label="期望地区">
+      <el-table-column label="期望地区">
         <template slot-scope="scope">
-          <span v-for="(item,index) in 5" :key="index" style="margin-left: 10px">{{ scope.row.yxdq }}</span><br>
+          <span
+            v-for="(item,index) in 5"
+            :key="index"
+            style="margin-left: 10px"
+          >{{ scope.row.yxdq }}</span>
+          <br />
         </template>
       </el-table-column>
       <el-table-column property="lrrid" label="录入"></el-table-column>

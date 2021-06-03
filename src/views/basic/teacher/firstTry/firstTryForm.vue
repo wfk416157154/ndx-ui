@@ -38,7 +38,7 @@
               :value="item.dictValue"
             ></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>-->
         <el-form-item label="录入">
           <el-input disabled v-model="form.lrrid"></el-input>
         </el-form-item>
@@ -63,7 +63,7 @@ export default {
         lrrid: this.$store.state.user.name,
         xb: "",
         yxdq: "",
-        jtzz: "",
+        jtzz: ""
       },
       // 初试结果
       resultList: []
@@ -117,7 +117,7 @@ export default {
         xb: "",
         yxdq: "",
         jtzz: "",
-        id: null,
+        id: null
       };
     }
   }

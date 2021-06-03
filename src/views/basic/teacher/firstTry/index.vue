@@ -1,5 +1,19 @@
 <template>
   <div class="firstTry">
+    <el-form :inline="true" label-width="68px">
+      <el-form-item label="老师姓名" prop="xxmc">
+        <el-input
+          v-model="name"
+          placeholder="请输入老师姓名"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      </el-form-item>
+    </el-form>
     <firstTryForm @getList="getList" ref="firstTryForm" />
     <el-table ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
@@ -82,6 +96,9 @@ export default {
   box-sizing: border-box;
   .firstTry-add {
     margin-bottom: 20px;
+  }
+  .el-input__inner {
+    // width: 200px;
   }
 }
 </style>

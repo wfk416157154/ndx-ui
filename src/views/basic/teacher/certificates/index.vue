@@ -1,5 +1,19 @@
 <template>
   <div class="firstTry">
+    <el-form :inline="true" label-width="68px">
+      <el-form-item label="老师姓名" prop="xxmc">
+        <el-input
+          v-model="name"
+          placeholder="请输入老师姓名"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      </el-form-item>
+    </el-form>
     <el-table ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column property="xm" label="姓名" width="120"></el-table-column>
@@ -30,7 +44,7 @@ export default {
       currentRow: null
     };
   },
- created() {
+  created() {
     this.getDicts("tea_per_type").then(response => {
       this.status = response.data;
     });
@@ -54,8 +68,8 @@ export default {
     // 编辑老师基本信息
     handleEdit(index, row) {
       this.$router.push({
-        path : "/jcsjb/lsgl/certificatesForm/" + row.id
-      })
+        path: "/jcsjb/lsgl/certificatesForm/" + row.id
+      });
     },
     // 状态字典翻译 状态
     statusFormat(row, column) {
