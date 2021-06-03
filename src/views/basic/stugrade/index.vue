@@ -145,7 +145,7 @@
     </div>
 
     <!-- 添加或修改学生成绩基础表对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="学生编号" prop="xsbh">
           <el-input v-model="form.xsbh" placeholder="请输入学生编号" />

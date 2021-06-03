@@ -170,7 +170,7 @@
     </el-dialog>
 
       <!-- 导入对话框 -->
-      <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+      <el-dialog :close-on-click-modal="false" :title="upload.title" :visible.sync="upload.open" width="400px">
           <el-upload
                   ref="upload"
                   :limit="1"

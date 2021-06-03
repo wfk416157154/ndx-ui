@@ -271,7 +271,7 @@
     />
 
     <!-- 添加或修改文章主题对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="文章标题" prop="articleTitle">
           <el-input v-model="form.articleTitle" placeholder="请输入文章标题" />

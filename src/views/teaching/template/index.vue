@@ -117,7 +117,7 @@
     />
 
     <!-- 添加或修改教学计划模板对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="教学计划名称" prop="jxjhmc">
           <el-input v-model="form.jxjhmc" placeholder="请输入教学计划名称" />

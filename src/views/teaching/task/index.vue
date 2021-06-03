@@ -137,7 +137,7 @@
     />
 
     <!-- 添加或修改教学计划模板-教学任务对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="阶段教学任务" prop="jdjxrw">
           <el-input v-model="form.jdjxrw" placeholder="请输入阶段教学任务" />

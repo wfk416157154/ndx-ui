@@ -117,7 +117,7 @@
     />
 
     <!-- 添加或修改教室图片对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="校区名称" prop="xqmc">
           <el-select v-model="form.xqmc" placeholder="请选择校区名称">

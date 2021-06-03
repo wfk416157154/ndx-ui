@@ -108,7 +108,7 @@
     />
 
     <!-- 添加或修改已读相关信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="读取人名称" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入读取人名称" />

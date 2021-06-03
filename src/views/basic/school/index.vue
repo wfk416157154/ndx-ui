@@ -125,7 +125,7 @@
     />
 
     <!-- 添加或修改校区基础信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" append-to-body>
       <el-form class="wrap-el-form" ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label-width="120px" label="学校名称" prop="xxmc">
           <el-input maxlength="15" v-model="form.xxmc" placeholder="请输入学校名称" />
@@ -163,7 +163,7 @@
     </el-dialog>
 
     <!-- 导入对话框 -->
-    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+    <el-dialog :close-on-click-modal="false" :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
         ref="upload"
         :limit="1"

@@ -171,7 +171,7 @@
     />
 
     <!-- 添加或修改老师考勤对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="关联id" prop="glid">
           <el-input v-model="form.glid" placeholder="请输入关联id" />

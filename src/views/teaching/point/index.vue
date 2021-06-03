@@ -137,7 +137,7 @@
     />
 
     <!-- 添加或修改教学计划模板-教学任务点对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="任务点名称" prop="jxrw">
           <el-input v-model="form.jxrw" placeholder="请输入任务点名称" />

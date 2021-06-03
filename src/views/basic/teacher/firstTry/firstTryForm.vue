@@ -9,7 +9,7 @@
         @click="dialogVisible = true"
       >新增</el-button>
     </div>
-    <el-dialog title="增加面试老师" @close="cancel" :visible.sync="dialogVisible" width="50%">
+    <el-dialog :close-on-click-modal="false" title="增加面试老师" @close="cancel" :visible.sync="dialogVisible" width="50%">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="姓名">
           <el-input v-model="form.xm"></el-input>
