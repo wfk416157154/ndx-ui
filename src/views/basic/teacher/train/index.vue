@@ -11,7 +11,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
       </el-form-item>
     </el-form>
     <trainForm ref="trainForm" />
@@ -51,42 +51,10 @@ import { getItem } from "@/api/basic/firstTry";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          xm: "王小虎",
-          dh: 15676542345,
-          lr: "周老师",
-          xb: "男",
-          qw: "10k",
-          dq: "长沙",
-          tag: "合格",
-          lhsj: "2021/5/6",
-          pqdq: "北京"
-        },
-        {
-          xm: "王小虎",
-          dh: 15676542345,
-          lr: "周老师",
-          xb: "男",
-          qw: "10k",
-          dq: "长沙",
-          tag: "合格",
-          lhsj: "2021/5/6",
-          pqdq: "北京"
-        },
-        {
-          xm: "王小虎",
-          dh: 15676542345,
-          lr: "周老师",
-          xb: "男",
-          qw: "10k",
-          dq: "长沙",
-          tag: "合格",
-          lhsj: "2021/5/6",
-          pqdq: "北京"
-        }
-      ],
-      tiemForm: null
+      tableData: [],
+      tiemForm: null,
+      //查询老师条件
+      name: ""
     };
   },
   components: {
@@ -109,7 +77,11 @@ export default {
   methods: {
     //获取表格老师信息
     getList() {
-      getItem().then(res => {
+      let json = {};
+      if (this.name) {
+        json.xm = this.name;
+      }
+      getItem(json).then(res => {
         this.tableData = res.rows;
       });
     },

@@ -11,7 +11,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
       </el-form-item>
     </el-form>
     <firstTryForm @getList="getList" ref="firstTryForm" />
@@ -41,7 +41,9 @@ export default {
     return {
       tableData: [],
       currentRow: null,
-      result: []
+      result: [],
+      //查询老师条件
+      name: ""
     };
   },
   components: {
@@ -64,11 +66,14 @@ export default {
   methods: {
     //获取表格老师信息
     getList() {
-      getItem().then(res => {
+      let json = {};
+      if (this.name) {
+        json.xm = this.name;
+      }
+      getItem(json).then(res => {
         this.tableData = res.rows;
       });
     },
-
     // 编辑老师基本信息
     handleEdit(index, row) {
       // console.log(index, row);
