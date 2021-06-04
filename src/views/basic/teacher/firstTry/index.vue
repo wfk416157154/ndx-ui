@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     //获取表格老师信息
-    getList() {
+    getList() { 
       let json = {};
       if (this.name) {
         json.xm = this.name;
@@ -76,12 +76,11 @@ export default {
     },
     // 编辑老师基本信息
     handleEdit(index, row) {
-      // console.log(index, row);
       this.$refs.firstTryForm.editFirstTryForm(row);
     },
     // 状态字典翻译 状态
     statusFormat(row, column) {
-      return this.selectDictLabel(this.status, row.status);
+      return this.selectDictLabel(this.status, row.mszt);
     },
     // 状态字典翻译 性别
     getSex(row, column) {
