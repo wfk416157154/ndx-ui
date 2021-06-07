@@ -22,7 +22,7 @@
       <el-table-column property="dhhm" label="电话" width="120"></el-table-column>
       <el-table-column property="jtzz" label="家庭住址"></el-table-column>
       <el-table-column property="yxdq" label="期望地区"></el-table-column>
-      <el-table-column property="lrrid" label="录入"></el-table-column>
+      <el-table-column property="lrrid" label="录入人账号"></el-table-column>
       <el-table-column property="mszt" label="面试状态" :formatter="statusFormat"></el-table-column>
       <!-- <el-table-column property="status" label="数据状态" :formatter="statusFormat"></el-table-column> -->
       <el-table-column label="操作">
@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     //获取表格老师信息
-    getList() { 
+    getList() {
       let json = {};
       if (this.name) {
         json.xm = this.name;

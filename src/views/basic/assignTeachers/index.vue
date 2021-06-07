@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="校区">
-        <el-select v-model="formInline.xxmc" @change="listSchoolId" placeholder="活动区域">
+        <el-select v-model="formInline.xxmc" @change="listSchoolId" placeholder="请选择校区">
           <el-option
             v-for="(item,index) in listSchool"
             :key="index"
@@ -198,6 +198,7 @@ export default {
     },
     // 获取校区id
     listSchoolId(value) {
+      console.log("listSchoolId=",value)
       this.queryParams.kzzd1 = value.id;
       this.formInline.xxmc = value.xxmc;
     },
@@ -212,14 +213,20 @@ export default {
       }
       // 未分配老师的班级
       this.queryParams.sffp = 0;
+      //console.log("queryParams：",this.queryParams)
       listBjclass(this.queryParams).then(res => {
         this.optionalClasses = res.rows;
+        if(res.code==200){
+          //已分配老师的班级
+          this.queryParams.sffp = 1;
+          //console.log("queryParams1：",this.queryParams)
+          listBjclass(this.queryParams).then(res => {
+            this.optionalClasses1 = res.rows;
+          });
+        }
       });
-      //已分配老师的班级
-      this.queryParams.sffp = 1;
-      listBjclass(this.queryParams).then(res => {
-        this.optionalClasses1 = res.rows;
-      });
+      //console.log("optionalClasses:",this.optionalClasses)
+
     },
     // 分配老师
     assignTeachers() {

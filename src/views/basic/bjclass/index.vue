@@ -157,6 +157,55 @@
       @pagination="getList"
     />
 
+    <!-- 添加或修改班级基础信息对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="校区名称" prop="xqmc">
+          <el-select v-model="form.xqmc" placeholder="请选择校区名称" @change="setXqmcId">
+            <el-option
+              v-for="item in selectXqmc"
+              :key="item.id"
+              :label="item.xxmc"
+              :value="item"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="年级" prop="nj">
+          <el-select v-model="form.nj" placeholder="请输入年级">
+            <el-option
+              v-for="item in selectNj"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label-width="" label="日语班级名称"  prop="rybjmc">
+          <el-input v-model="form.rybjmc" maxlength="30" placeholder="请输入日语班级名称" />
+        </el-form-item>
+        <el-form-item label="班级人数" prop="bjrs">
+          <el-input v-model="form.bjrs" maxlength="5" placeholder="请输入班级人数" />
+        </el-form-item>
+        <el-form-item label="开班时间" prop="kbsj">
+          <el-date-picker
+          clearable
+          size="mini"
+          v-model="form.kbsj"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请输入开班时间"
+        ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input maxlength="300" v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
@@ -199,6 +248,7 @@ import {
   updateBjclass,
   importTemplate
 } from "@/api/basic/bjclass";
+import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -226,6 +276,8 @@ export default {
       open: false,
       // 状态字典
       statusOptions: [],
+      //校区名称
+      selectXqmc: [],
       //年级字典
       selectNj: [],
       // 查询参数
@@ -271,6 +323,10 @@ export default {
     this.getDicts("nianji").then(response => {
       this.selectNj = response.data;
     });
+    // 获取校区
+    listSchool().then(response => {
+      this.selectXqmc = response.rows;
+    });
   },
   methods: {
     /** 查询班级基础信息列表 */
@@ -281,6 +337,10 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+    },
+    setXqmcId(obj){
+      this.form.xqmc=obj.xxmc;
+      this.form.kzzd1=obj.id;
     },
     // 状态字典翻译
     statusFormat(row, column) {
@@ -338,17 +398,20 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.$router.push({
+      /*this.$router.push({
         path: "/bjclassForm/" + "addBjclass"
-      });
+      });*/
+      this.reset();
+      this.open = true;
+      this.title = "添加班级基础信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
-      this.$router.push({
+      /*this.$router.push({
          path: "/bjclassForm/" + id
-      });
+      });*/
       /*this.$router.push({
         path: "/jcsjb/basic/banji/educationalForm/" + id
       });*/

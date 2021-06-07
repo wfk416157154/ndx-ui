@@ -9,7 +9,7 @@
         @click="dialogVisible = true"
       >新增</el-button>
     </div>
-    <el-dialog :close-on-click-modal="false" title="增加面试老师" @close="cancel" :visible.sync="dialogVisible" width="50%">
+    <el-dialog :close-on-click-modal="false" title="增加面试老师" @close="cancel" :visible.sync="dialogVisible" width="600px">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="姓名">
           <el-input v-model="form.xm"></el-input>
@@ -26,7 +26,7 @@
         <el-form-item label="家庭住址">
           <el-input v-model="form.jtzz"></el-input>
         </el-form-item>
-        <el-form-item label="期望">
+        <el-form-item label="期望地区">
           <el-input v-model="form.yxdq"></el-input>
         </el-form-item>
         <!-- <el-form-item label="初试结果">
@@ -39,7 +39,7 @@
             ></el-option>
           </el-select>
         </el-form-item>-->
-        <el-form-item label="录入">
+        <el-form-item label-width="90px" label="录入人账号">
           <el-input disabled v-model="form.lrrid"></el-input>
         </el-form-item>
       </el-form>

@@ -32,7 +32,7 @@
         <el-form-item label="录入">
           <el-input disabled v-model="form.lrrid"></el-input>
         </el-form-item>
-        <el-form-item label="初试结果">
+        <el-form-item label="复试结果">
           <el-select v-model="form.zt" clearable placeholder="请选择">
             <el-option
               v-for="item in resultList"

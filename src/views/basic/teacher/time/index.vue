@@ -25,7 +25,7 @@
       <el-table-column property="lrrid" label="录入"></el-table-column>
       <el-table-column property="mszt" label="面试状态" :formatter="statusFormat"></el-table-column>
       <!-- <el-table-column property="status" label="数据状态" :formatter="statusFormat"></el-table-column> -->
-      <el-table-column property="zt" label="初试结果" :formatter="getResult"></el-table-column>
+      <el-table-column property="zt" label="复试结果" :formatter="getResult"></el-table-column>
       <el-table-column property="dhsj" label="来汉时间"></el-table-column>
       <el-table-column property="pqdq" label="派遣地区"></el-table-column>
       <el-table-column label="操作">

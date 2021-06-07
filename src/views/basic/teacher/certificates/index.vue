@@ -21,10 +21,10 @@
       <el-table-column property="dhhm" label="电话" width="120"></el-table-column>
       <el-table-column property="jtzz" label="家庭住址"></el-table-column>
       <el-table-column property="yxdq" label="期望地区"></el-table-column>
-      <el-table-column property="lrrid" label="录入"></el-table-column>
+      <el-table-column property="lrrid" label="录入人账号"></el-table-column>
       <el-table-column property="mszt" label="面试状态" :formatter="statusFormat"></el-table-column>
       <!-- <el-table-column property="status" label="数据状态" :formatter="statusFormat"></el-table-column> -->
-      <el-table-column property="zt" label="初试结果" :formatter="getResult"></el-table-column>
+      <el-table-column property="zt" label="复试结果" :formatter="getResult"></el-table-column>
       <el-table-column property="dhsj" label="来汉时间"></el-table-column>
       <el-table-column property="pqdq" label="派遣地区"></el-table-column>
       <el-table-column label="操作">
@@ -43,7 +43,8 @@ export default {
       tableData: [],
       currentRow: null,
       //查询老师条件
-      name: ""
+      name: "",
+      zt:"" // 复试结果:
     };
   },
   created() {
@@ -58,7 +59,7 @@ export default {
     });
   },
   mounted() {
-    this.getList();
+    this.getList({zt:"1"});// 默认查询复试结果为：满意 的数据，即表示通过复试的数据
   },
   methods: {
     //获取表格老师信息
@@ -67,12 +68,14 @@ export default {
       if (this.name) {
         json.xm = this.name;
       }
+      json.zt = "1";// 默认查询复试结果为：满意 的数据，即表示通过复试的数据
       getItem(json).then(res => {
         this.tableData = res.rows;
       });
     },
     // 编辑老师基本信息
     handleEdit(index, row) {
+      //console.log("id=",row.id)
       this.$router.push({
         path: "/jcsjb/lsgl/certificatesForm/" + row.id
       });
