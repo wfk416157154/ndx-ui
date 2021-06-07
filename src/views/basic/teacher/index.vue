@@ -735,7 +735,7 @@ export default {
     width: 100%;
     padding: 30px 30px;
     box-sizing: border-box;
-    box-shadow: 2px 2px 10px 2px rgba(90, 19, 19, 0.2);
+    
     font-family: Sans-serif !important;
     li {
       list-style: none;

@@ -16,6 +16,13 @@ export function getTrainProject(id) {
     method: 'get'
   })
 }
+// 根据主题id查询项目列表
+export function queryTrainProjectList(id) {
+  return request({
+    url: '/basic/trainTheme/queryTrainProjectList/' + id,
+    method: 'get'
+  })
+}
 
 // 新增培训项目
 export function addTrainProject(data) {

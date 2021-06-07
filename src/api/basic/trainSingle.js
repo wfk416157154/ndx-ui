@@ -17,6 +17,14 @@ export function getTrainSingle(id) {
   })
 }
 
+// 根据培训项目id查询内容
+export function queryTrainContentsingleList(id) {
+  return request({
+    url: '/basic/trainProject/queryTrainContentsingleList/' + id,
+    method: 'get'
+  })
+}
+
 // 新增培训内容（默认单选项）
 export function addTrainSingle(data) {
   return request({

@@ -46,7 +46,8 @@
       </div>
     </el-dialog>
     <!-- 主题 -->
-    <div>
+    <div class="train-box">
+      <h1>培训主题</h1>
       <!-- 主题列表 -->
       <el-table :data="themeList" @row-click.self="getProject">
         <el-table-column label="主题名称" align="center" prop="ztmc" />
@@ -100,7 +101,7 @@
       <el-dialog :close-on-click-modal="false" title="新增项目" :visible.sync="themeDialogFormVisible">
         <el-form :model="projectListForm" ref="projectList" label-width="120px">
           <el-form-item label="培训主题名称" label-width="120px">
-            <el-input v-model="projectListForm.ztmc" autocomplete="off"></el-input>
+            <el-input v-model="projectListForm.kzzd1" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="培训项目名称">
             <el-input type="textarea" v-model="projectListForm.pxxm"></el-input>
@@ -121,9 +122,10 @@
     <br />
     <br />
     <!-- 项目 -->
-    <div v-show="projectShow">
+    <div v-show="projectShow" class="train-box">
+      <h1>培训项目</h1>
       <!-- 项目列表 -->
-      <el-table :data="projectList" @row-click="getContent">
+      <el-table :data="projectList" @row-click.self="getContent">
         <el-table-column label="培训项目" align="center" prop="pxxm" />
         <el-table-column label="是否启用" align="center" prop="sfqy">
           <template slot-scope="scope">
@@ -181,7 +183,7 @@
       >
         <el-form :model="contentListForm" ref="contentList" label-width="120px">
           <el-form-item label="培训项目标题" label-width="120px">
-            <el-input v-model="contentListForm.pxxm" autocomplete="off"></el-input>
+            <el-input v-model="contentListForm.kzzd1" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="上级培训内容">
             <el-input v-model="contentListForm.sjpxnr"></el-input>
@@ -204,7 +206,7 @@
           <el-form-item label="组件名称">
             <el-select v-model="contentListForm.zjmc" placeholder="请选择">
               <el-option
-                v-for="item in whetherList"
+                v-for="item in ele"
                 :key="item.dictValue"
                 :label="item.dictLabel"
                 :value="item.dictValue"
@@ -232,7 +234,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="字数长度限制">
-            <el-input v-model="contentListForm.zscdxz"></el-input>
+            <el-input v-model="contentListForm.zdcdxz"></el-input>
           </el-form-item>
           <el-form-item label="是否启用">
             <el-switch active-value="1" inactive-value="0" v-model="contentListForm.sfqy"></el-switch>
@@ -243,25 +245,37 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="cancel3">取 消</el-button>
-          <el-button type="primary" @click="projectSubmitForm">确 定</el-button>
+          <el-button type="primary" @click="contentSubmitForm">确 定</el-button>
         </div>
       </el-dialog>
     </div>
     <br />
     <br />
     <!-- 培训内容 -->
-    <div v-show="contentShow">
+    <div v-show="contentShow" class="train-box">
+      <h1>培训内容</h1>
       <!-- 培训内容列表 -->
       <el-table :data="contentList">
         <el-table-column label="上级培训内容" align="center" prop="sjpxnr" />
         <el-table-column label="培训内容" align="center" prop="pxnr" />
-        <el-table-column label="组件名称" align="center" prop="zjmc" />
-        <el-table-column label="是否有多个选项" align="center" prop="sfydgxx" />
-        <el-table-column label="是否默认选中" align="center" prop="sfmrxz" />
-        <el-table-column label="是否必填" align="center" prop="sfbt" />
-        <el-table-column label="字数长度限制" align="center" prop="zscdxz" />
-        <el-table-column label="是否启用" align="center" prop="sfqy" />
-        <el-table-column label="排序号" align="center" prop="pxh" />
+        <el-table-column label="组件名称" align="center" :formatter="getResult1" prop="zjmc" />
+        <el-table-column label="是否有多个选项" align="center" :formatter="getResult2" prop="sfydgxx" />
+        <el-table-column label="是否默认选中" align="center" :formatter="getResult3" prop="sfmrxz" />
+        <el-table-column label="是否必填" align="center" :formatter="getResult4" prop="sfbt" />
+        <el-table-column label="字数长度限制" align="center" prop="zdcdxz" />
+        <el-table-column label="是否启用" align="center" prop="sfqy">
+          <template slot-scope="scope">
+            <div @click.stop>
+              <el-switch
+                active-value="1"
+                inactive-value="0"
+                @change="getSwitch3(scope.row)"
+                v-model=" scope.row.sfqy"
+              ></el-switch>
+            </div>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="排序号" align="center" prop="data_order" /> -->
         <el-table-column label="添加时间" align="center" prop="tjsj" />
         <el-table-column label="备注" align="center" prop="remark" />
         <el-table-column
@@ -372,7 +386,7 @@
 </template>
 
 <script>
-import contentListForm from "./contentListForm"
+import contentListForm from "./contentListForm";
 import {
   listTrainTheme,
   addTrainTheme,
@@ -383,8 +397,16 @@ import {
   listTrainProject,
   addTrainProject,
   updateTrainProject,
-  delTrainProject
+  delTrainProject,
+  queryTrainProjectList
 } from "@/api/basic/trainProject";
+import {
+  listTrainSingle,
+  updateTrainSingle,
+  addTrainSingle,
+  delTrainSingle,
+  queryTrainContentsingleList
+} from "@/api/basic/trainSingle";
 export default {
   data() {
     return {
@@ -411,41 +433,31 @@ export default {
       projectList: [],
       // 添加培训内容
       projectListForm: {
+        kzzd1: "",
         pxxm: "",
         sfqy: null,
         tjsj: "",
-        remark: ""
+        remark: "",
+        glid: ""
       },
       contentListDialogFormVisible: false,
       // 内容
-      contentList: [
-        {
-          sjpxnr: "5.组班后的班级管理",
-          pxnr: "1）教材发放",
-          zjmc: "复选框",
-          sfydgxx: "是",
-          sfmrxz: "是",
-          sfbt: "是",
-          zscdxz: "12",
-          sfqy: "是",
-          pxh: "1",
-          tjsj: "2021/6/3",
-          remark: "培训时间"
-        }
-      ],
+      contentList: [],
       // 添加培训内容 table下 form
       contentListForm: {
+        kzzd1: "",
         sjpxnr: "",
         pxnr: "",
         zjmc: "",
         sfydgxx: "",
         sfmrxz: "",
         sfbt: "",
-        zscdxz: "",
+        zdcdxz: "",
         sfqy: "",
         pxh: "",
         tjsj: "",
-        remark: ""
+        remark: "",
+        glid: ""
       },
       lastDialogFormVisible: false,
       // 培训项目内容内部form
@@ -464,9 +476,9 @@ export default {
       // 是否选项通用功能
       whetherList: [],
       // 是否显示project表格数据,
-      projectShow: true,
+      projectShow: false,
       // 是否显示content表格数据
-      contentShow: true,
+      contentShow: false,
       // 主题总条数
       total1: 0,
       // 项目总条数
@@ -474,15 +486,20 @@ export default {
       // 内容总条数
       total3: 0,
       // 是否有多个选项
-      whetherListSelect : ""
+      whetherListSelect: "",
+      // 组件选择
+      ele: ""
     };
   },
-  components : {
+  components: {
     contentListForm
   },
   created() {
     this.getDicts("train_select").then(res => {
       this.whetherList = res.data;
+    });
+    this.getDicts("train_ele").then(res => {
+      this.ele = res.data;
     });
   },
   mounted() {
@@ -512,8 +529,8 @@ export default {
     handleAdd(row) {
       this.reset();
       this.themeDialogFormVisible = true;
-      this.projectListForm.ztmc = row.ztmc;
-      this.projectListForm.glid = row.glid;
+      this.projectListForm.kzzd1 = row.ztmc;
+      this.projectListForm.glid = row.id;
     },
     /* 编辑一级主题选项 */
     handleUpdate(row) {
@@ -574,22 +591,11 @@ export default {
         }
       });
     },
-    /* 主题提交按钮 */
-    themeForm() {
-      this.$refs["themeList"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            console.log("edit");
-          } else {
-            console.log("add");
-          }
-        }
-      });
-    },
     /* 添加二级下级选项 */
     projectAdd(row) {
       this.contentListDialogFormVisible = true;
-      this.contentListForm.pxxm = row.pxxm;
+      this.contentListForm.kzzd1 = row.pxxm;
+      this.contentListForm.glid = row.id;
     },
     /* 编辑二级项目选项 */
     projectUpdate(row) {
@@ -627,7 +633,7 @@ export default {
             updateTrainProject(this.projectListForm).then(response => {
               if (response.code == 200) {
                 this.themeDialogFormVisible = false;
-                this.getProject({ glid: this.projectListForm.glid });
+                this.getProject({ id: this.projectListForm.glid });
                 this.$notify({
                   title: "成功",
                   message: response.msg,
@@ -639,7 +645,7 @@ export default {
             addTrainProject(this.projectListForm).then(response => {
               if (response.code == 200) {
                 this.themeDialogFormVisible = false;
-                this.getProject({ glid: this.projectListForm.glid });
+                this.getProject({ id: this.projectListForm.glid });
                 this.$notify({
                   title: "成功",
                   message: response.msg,
@@ -653,48 +659,92 @@ export default {
     },
     /* 添加三级下级选项 */
     contentAdd(row) {
-      console.log("contentAdd");
       this.lastDialogFormVisible = true;
       this.lastForm.pxxmmc = row.sjpxnr;
     },
     /* 编辑三级主题选项 */
-    contentUpdate() {
-      console.log("contentUpdate");
+    contentUpdate(row) {
+      this.contentListDialogFormVisible = true;
+      this.contentListForm = row;
     },
     /* 删除三级主题选项 */
-    contentDelete() {
-      console.log("contentDelete");
+    contentDelete(row) {
+      const sjpxnr = row.sjpxnr;
+      this.$confirm('是否确认删除培训主题为"' + sjpxnr + '"的数据项?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(function() {
+          return delTrainSingle(row.id);
+        })
+        .then(() => {
+          this.getContent({ glid: row.glid });
+          this.$notify({
+            title: "成功",
+            message: "删除成功",
+            type: "success"
+          });
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
     /** 培训提交按钮 */
     contentSubmitForm() {
       this.$refs["contentList"].validate(valid => {
         if (valid) {
-          if (this.form.id != null) {
-            console.log("edit");
+          if (this.contentListForm.id != null) {
+            updateTrainSingle(this.contentListForm).then(response => {
+              if (response.code == 200) {
+                this.contentListDialogFormVisible = false;
+                this.getContent({ id: this.contentListForm.glid });
+                this.$notify({
+                  title: "成功",
+                  message: response.msg,
+                  type: "success"
+                });
+              }
+            });
           } else {
-            console.log("add");
+            addTrainSingle(this.contentListForm).then(response => {
+              if (response.code == 200) {
+                this.contentListDialogFormVisible = false;
+                this.getContent({ id: this.contentListForm.glid });
+                this.$notify({
+                  title: "成功",
+                  message: response.msg,
+                  type: "success"
+                });
+              }
+            });
           }
         }
       });
     },
     // 获取项目数据
-    getProject(row, column, event) {
-      listTrainProject({ glid: row.id }).then(response => {
-        if (response.rows.length > 0) {
+    getProject(row) {
+      queryTrainProjectList(row.id).then(response => {
+        console.log(response)
+        if (response.rows && response.rows.length > 0) {
           this.projectList = response.rows;
           this.total2 = response.total;
           this.projectShow = true;
+        } else {
+          this.projectShow = false;
         }
       });
     },
     // 获取培训内容数据
-    getContent(row, column, event) {
-      console.log(row, column, event);
-      listTrainSingle({ glid: row.id }).then(response => {
-        if (response.rows.length > 0) {
-          this.projectList = response.rows;
-          this.total2 = response.total;
-          this.projectShow = true;
+    getContent(row) {
+      queryTrainContentsingleList(row.id).then(response => {
+        console.log(response)
+        if (response.rows && response.rows.length > 0) {
+          this.contentList = response.rows;
+          this.total3 = response.total;
+          this.contentShow = true;
+        } else {
+          this.contentShow = false;
         }
       });
     },
@@ -718,7 +768,19 @@ export default {
       };
       updateTrainProject(json).then(res => {
         if (res.code == 200) {
-          this.getProject({ glid: this.projectListForm.glid });
+          this.getProject({ id: this.projectListForm.glid });
+        }
+      });
+    },
+    // 内容开关事件
+    getSwitch3(row) {
+      let json = {
+        id: row.id,
+        sfqy: row.sfqy
+      };
+      updateTrainSingle(json).then(res => {
+        if (res.code == 200) {
+          this.getContent({ id: this.contentListForm.glid });
         }
       });
     },
@@ -782,8 +844,24 @@ export default {
       this.reset();
     },
     // 是否有多个选项
-    whetherSelect(value){
-      this.whetherListSelect = parseInt(value)
+    whetherSelect(value) {
+      this.whetherListSelect = parseInt(value);
+    },
+    // 状态字典翻译 组件名称
+    getResult1(row, column) {
+      return this.selectDictLabel(this.ele, row.zjmc);
+    },
+    // 状态字典翻译 是否有多个选项
+    getResult2(row, column) {
+      return this.selectDictLabel(this.whetherList, row.sfydgxx);
+    },
+    // 状态字典翻译 是否默认选中
+    getResult3(row, column) {
+      return this.selectDictLabel(this.whetherList, row.sfmrxz);
+    },
+    // 状态字典翻译 是否必填
+    getResult4(row, column) {
+      return this.selectDictLabel(this.whetherList, row.sfbt);
     }
   }
 };
@@ -795,5 +873,10 @@ export default {
   height: 100%;
   padding: 30px;
   box-sizing: border-box;
+  .train-box{
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 10px 2px rgba(90, 19, 19, 0.2);
+  }
 }
 </style>
