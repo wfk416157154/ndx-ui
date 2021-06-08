@@ -75,6 +75,9 @@
           <br />
           <span>开班时间 :</span>
           <span>{{item.kbsj}}</span>
+          <br />
+          <span>老师姓名 :</span>
+          <span>{{item.lsxm}}</span>
         </li>
       </ul>
       <pagination
@@ -198,7 +201,6 @@ export default {
     },
     // 获取校区id
     listSchoolId(value) {
-      console.log("listSchoolId=",value)
       this.queryParams.kzzd1 = value.id;
       this.formInline.xxmc = value.xxmc;
     },
@@ -206,7 +208,7 @@ export default {
     onSubmit() {
       if (this.queryParams.kzzd1 == "") {
         this.$notify.error({
-          title: "错误",
+          title: "无法查询",
           message: "请选择校区"
         });
         return;
@@ -226,14 +228,19 @@ export default {
         }
       });
       //console.log("optionalClasses:",this.optionalClasses)
-
     },
     // 分配老师
     assignTeachers() {
-      // console.log(this.json);
-      editBjclass(this.json).then(res => {
-        this.onSubmit();
-      });
+      if(undefined!=this.json.id){
+        editBjclass(this.json).then(res => {
+          this.onSubmit();
+        });
+      }else{
+        this.$notify.error({
+          title: "无法分配",
+          message: "请选择老师"
+        });
+      }
     },
     getChecked(index) {
       console.log(index);
