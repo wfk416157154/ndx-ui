@@ -149,7 +149,8 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      contentList: []
+      contentList: [],
+      total1 : ""
     };
   },
   created() {
@@ -169,7 +170,7 @@ export default {
       listTrainMultiple(this.queryParams).then(response => {
         this.contentList = response.rows;
         this.total1 = response.total;
-        console.log(response);
+        console.log(response)
       });
     },
     // 新增

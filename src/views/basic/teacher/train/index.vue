@@ -84,7 +84,6 @@
               type="text"
               icon="el-icon-delete"
               @click.stop="handleDelete(scope.row)"
-              v-hasPermi="['basic:school:remove']"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -148,21 +147,18 @@
               type="text"
               icon="el-icon-plus"
               @click.stop="projectAdd(scope.row)"
-              v-hasPermi="['basic:school:edit']"
             >添加下级选项</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-edit"
               @click.stop="projectUpdate(scope.row)"
-              v-hasPermi="['basic:school:edit']"
             >修改</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
               @click.stop="projectDelete(scope.row)"
-              v-hasPermi="['basic:school:remove']"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -184,9 +180,6 @@
         <el-form :model="contentListForm" ref="contentList" label-width="120px">
           <el-form-item label="培训项目标题" label-width="120px">
             <el-input v-model="contentListForm.kzzd1" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="上级培训内容">
-            <el-input v-model="contentListForm.sjpxnr"></el-input>
           </el-form-item>
           <el-form-item label="培训内容">
             <el-input v-model="contentListForm.pxnr"></el-input>
@@ -290,21 +283,18 @@
               type="text"
               icon="el-icon-plus"
               @click.stop="contentAdd(scope.row)"
-              v-hasPermi="['basic:school:edit']"
             >添加下级选项</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-edit"
               @click.stop="contentUpdate(scope.row)"
-              v-hasPermi="['basic:school:edit']"
             >修改</el-button>
             <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
               @click.stop="contentDelete(scope.row)"
-              v-hasPermi="['basic:school:remove']"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -316,7 +306,7 @@
         title="添加培训内容下级"
         :visible.sync="lastDialogFormVisible"
       >
-        <el-form :model="lastForm" ref="contentList" label-width="120px">
+        <el-form :model="lastForm" ref="lastContentList" label-width="120px">
           <el-form-item label="培训项目名称" label-width="120px">
             <el-input v-model="lastForm.pxxmmc" autocomplete="off"></el-input>
           </el-form-item>
@@ -378,7 +368,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="cancel4">取 消</el-button>
-          <el-button type="primary" @click="contentSubmitForm">确 定</el-button>
+          <el-button type="primary" @click="lastSubmitForm">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -465,6 +455,7 @@ export default {
         pxxmmc: null,
         sjpxnr: null,
         pxnr: null,
+        glid: null,
         sfydgxx: null,
         zjmc: null,
         sfmrxz: null,
@@ -660,7 +651,9 @@ export default {
     /* 添加三级下级选项 */
     contentAdd(row) {
       this.lastDialogFormVisible = true;
-      this.lastForm.pxxmmc = row.sjpxnr;
+      this.lastForm.sjpxnr = row.pxnr;
+      this.lastForm.glid = row.glid;
+      this.lastForm.sjpxnrid = row.id;
     },
     /* 编辑三级主题选项 */
     contentUpdate(row) {
@@ -725,7 +718,6 @@ export default {
     // 获取项目数据
     getProject(row) {
       queryTrainProjectList(row.id).then(response => {
-        console.log(response)
         if (response.rows && response.rows.length > 0) {
           this.projectList = response.rows;
           this.total2 = response.total;
@@ -738,7 +730,6 @@ export default {
     // 获取培训内容数据
     getContent(row) {
       queryTrainContentsingleList(row.id).then(response => {
-        console.log(response)
         if (response.rows && response.rows.length > 0) {
           this.contentList = response.rows;
           this.total3 = response.total;
@@ -862,6 +853,38 @@ export default {
     // 状态字典翻译 是否必填
     getResult4(row, column) {
       return this.selectDictLabel(this.whetherList, row.sfbt);
+    },
+    // 培训内容下级内容
+    lastSubmitForm(){
+       this.$refs["lastContentList"].validate(valid => {
+        if (valid) {
+          if (this.lastForm.id != null) {
+            updateTrainSingle(this.lastForm).then(response => {
+              if (response.code == 200) {
+                this.lastDialogFormVisible = false;
+                this.getContent({ id: this.lastForm.glid });
+                this.$notify({
+                  title: "成功",
+                  message: response.msg,
+                  type: "success"
+                });
+              }
+            });
+          } else {
+            addTrainSingle(this.lastForm).then(response => {
+              if (response.code == 200) {
+                this.lastDialogFormVisible = false;
+                this.getContent({ id: this.lastForm.glid });
+                this.$notify({
+                  title: "成功",
+                  message: response.msg,
+                  type: "success"
+                });
+              }
+            });
+          }
+        }
+      });
     }
   }
 };
