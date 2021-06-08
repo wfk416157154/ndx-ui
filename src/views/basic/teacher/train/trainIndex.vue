@@ -2,13 +2,7 @@
   <div class="trainIndex">
     <el-form :model="queryParams" ref="trainIndex" :inline="true" label-width="68px">
       <el-form-item label="参训人" prop="xxmc">
-        <el-input
-          v-model="queryParams.cxr"
-          placeholder="请输入学校名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.cxr" placeholder="请输入学校名称" clearable size="small" />
       </el-form-item>
       <el-form-item label-width="100px" label="状态" prop="xqfzr">
         <el-select v-model="queryParams.remark">
@@ -80,16 +74,18 @@
                 <span>1.岗位职责</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model=" trainIndexList.oneOne ? true : false"
+                  v-model=" trainIndexList.oneOne"
                   :true-label="1"
                   :false-label="0"
+                  :checked="trainIndexList.oneOne == 1 ? true : false"
                 ></el-checkbox>
               </div>
               <div>
                 <span>2.教师成长要求</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.oneTwo ? true : false"
+                  v-model="trainIndexList.oneTwo"
+                  :checked="trainIndexList.oneTwo == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -98,7 +94,8 @@
                 <span>3.南斗星公司介绍</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.oneThree ? true : false"
+                  v-model="trainIndexList.oneThree"
+                  :checked="trainIndexList.oneThree == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -107,7 +104,8 @@
                 <span>4.教师专业用语</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.oneFour ? true : false"
+                  v-model="trainIndexList.oneFour"
+                  :checked="trainIndexList.oneFour == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -121,7 +119,8 @@
                 <span>1.认识班级管理重要性</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.twoOne ? true : false"
+                  v-model="trainIndexList.twoOne"
+                  :checked="trainIndexList.twoOne == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -130,7 +129,8 @@
                 <span>2.班级管理的规范动作</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.twoTwo ? true : false"
+                  v-model="trainIndexList.twoTwo"
+                  :checked="trainIndexList.twoTwo == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -139,7 +139,8 @@
                 <span>3.教室环境和卫生管理</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.twoThree ? true : false"
+                  v-model="trainIndexList.twoThree"
+                  :checked="trainIndexList.twoThree == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -148,7 +149,8 @@
                 <span>4.试听课期间的班级管理</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.twoFour ? true : false"
+                  v-model="trainIndexList.twoFour"
+                  :checked="trainIndexList.twoFour == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -157,7 +159,8 @@
                 <span>5.组班后的班级管理</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.twoFive ? true : false"
+                  v-model="trainIndexList.twoFive"
+                  :checked="trainIndexList.twoFive == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -165,7 +168,8 @@
                   <span>1)教材发放</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.woFiveOne ? true : false"
+                    v-model="trainIndexList.woFiveOne"
+                    :checked="trainIndexList.woFiveOne == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -174,7 +178,8 @@
                   <span>2)班干部的选择</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.twoFiveTwo ? true : false"
+                    v-model="trainIndexList.twoFiveTwo"
+                    :checked="trainIndexList.twoFiveTwo == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -183,7 +188,8 @@
                   <span>3)班级事务的制定</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.twoFiveThree ? true : false"
+                    v-model="trainIndexList.twoFiveThree"
+                    :checked="trainIndexList.twoFiveThree == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -192,7 +198,8 @@
                   <span>4)学生信息收集</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.twoFiveFour ? true : false"
+                    v-model="trainIndexList.twoFiveFour"
+                    :checked="trainIndexList.twoFiveFour == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -201,7 +208,8 @@
                   <span>5)学生退班</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.twoFiveFive ? true : false"
+                    v-model="trainIndexList.twoFiveFive"
+                    :checked="trainIndexList.twoFiveFive == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -210,7 +218,8 @@
                   <span>6）学生中途进班</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.kzzd1 ? true : false"
+                    v-model="trainIndexList.kzzd1"
+                    :checked="trainIndexList.kzzd1 == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -227,7 +236,8 @@
                   <span>1)教资教态与板书</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneOne ? true : false"
+                    v-model="trainIndexList.threeOneOne"
+                    :checked="trainIndexList.threeOneOne == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -236,7 +246,8 @@
                   <span>2)教材，课表和课时安排</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneTwo ? true : false"
+                    v-model="trainIndexList.threeOneTwo"
+                    :checked="trainIndexList.threeOneTwo == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -245,7 +256,8 @@
                   <span>3)教参与视频课</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneThree ? true : false"
+                    v-model="trainIndexList.threeOneThree"
+                    :checked="trainIndexList.threeOneThree == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -254,7 +266,8 @@
                   <span>4)教学模式</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneFour ? true : false"
+                    v-model="trainIndexList.threeOneFour"
+                    :checked="trainIndexList.threeOneFour == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -263,7 +276,8 @@
                   <span>5)课堂用语</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneFive ? true : false"
+                    v-model="trainIndexList.threeOneFive"
+                    :checked="trainIndexList.threeOneFive == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -272,7 +286,8 @@
                   <span>6)作业布置</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneSix ? true : false"
+                    v-model="trainIndexList.threeOneSix"
+                    :checked="trainIndexList.threeOneSix == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -281,7 +296,8 @@
                   <span>7)兴趣教学活动的开展</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneSeven ? true : false"
+                    v-model="trainIndexList.threeOneSeven"
+                    :checked="trainIndexList.threeOneSeven == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -290,7 +306,8 @@
                   <span>8)考试制度</span>
                   <el-checkbox
                     style="float : right;margin-right : 10px"
-                    v-model="trainIndexList.threeOneEight ? true : false"
+                    v-model="trainIndexList.threeOneEight"
+                    :checked="trainIndexList.threeOneEight == 1 ? true : false"
                     :true-label="1"
                     :false-label="0"
                   ></el-checkbox>
@@ -360,7 +377,8 @@
                 <span>1.请假制度</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourOne ? true : false"
+                  v-model="trainIndexList.fourOne"
+                  :checked="trainIndexList.fourOne == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -369,7 +387,8 @@
                 <span>2.工作汇报</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourTwo ? true : false"
+                  v-model="trainIndexList.fourTwo"
+                  :checked="trainIndexList.fourTwo == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -378,7 +397,8 @@
                 <span>3.教学总结和教学简报</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourThree ? true : false"
+                  v-model="trainIndexList.fourThree"
+                  :checked="trainIndexList.fourThree == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -387,7 +407,8 @@
                 <span>4.绩效考核</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourFour ? true : false"
+                  v-model="trainIndexList.fourFour"
+                  :checked="trainIndexList.fourFour == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -396,7 +417,8 @@
                 <span>5.督导组</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourFive ? true : false"
+                  v-model="trainIndexList.fourFive"
+                  :checked="trainIndexList.fourFive == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -405,7 +427,8 @@
                 <span>6.保密制度和奖金发放</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourSix ? true : false"
+                  v-model="trainIndexList.fourSix"
+                  :checked="trainIndexList.fourSix == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -414,7 +437,8 @@
                 <span>7.财务制度</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourSeven ? true : false"
+                  v-model="trainIndexList.fourSeven"
+                  :checked="trainIndexList.fourSeven == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -423,7 +447,8 @@
                 <span>8.APP及后台操作</span>
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fourEight ? true : false"
+                  v-model="trainIndexList.fourEight"
+                  :checked="trainIndexList.fourEight == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -443,7 +468,8 @@
                 <br />
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fiveTwo ? true : false"
+                  v-model="trainIndexList.fiveTwo"
+                  :checked="trainIndexList.fiveTwo == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -453,7 +479,8 @@
                 <br />
                 <el-checkbox
                   style="float : right;margin-right : 10px"
-                  v-model="trainIndexList.fiveThree ? true : false"
+                  v-model="trainIndexList.fiveThree"
+                  :checked="trainIndexList.fiveThree == 1 ? true : false"
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
@@ -637,7 +664,6 @@ export default {
     },
     // 提交按钮
     contentSubmitForm() {
-      console.log(this.trainIndexList.id);
       if (this.trainIndexList.id != null) {
         updateStaticform(this.trainIndexList).then(res => {
           this.$notify({
@@ -672,8 +698,21 @@ export default {
         if (res.rows && res.rows.length > 0) {
           this.trainIndexList = res.rows[0];
           this.trainIndexList.glid = row.id;
+          for (const key in this.trainIndexList) {
+            if (this.trainIndexList.hasOwnProperty(key)) {
+              if (
+                parseInt(this.trainIndexList[key]) == 0 ||
+                parseInt(this.trainIndexList[key]) == 1
+              ) {
+                this.$set(
+                  this.trainIndexList,
+                  key,
+                  parseInt(this.trainIndexList[key])
+                );
+              }
+            }
+          }
         }
-        console.log(res);
       });
     },
     // 编辑
@@ -707,7 +746,7 @@ export default {
     },
     //置空
     reset() {
-      trainIndexList = {
+      this.trainIndexList = {
         id: null,
         glid: null,
         oneOne: null,
