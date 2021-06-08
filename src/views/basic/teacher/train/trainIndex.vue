@@ -47,14 +47,14 @@
             type="text"
             icon="el-icon-plus"
             @click="getTrainIndex(scope.row)"
-            v-hasPermi="['basic:school:edit']"
+            v-hasPermi="['basic:teacherTrain:edit']"
           >查看培训内容</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="trainIndexUpdate(scope.row)"
-            v-hasPermi="['basic:school:edit']"
+            v-hasPermi="['basic:teacherTrain:edit']"
           >修改</el-button>>
         </template>
       </el-table-column>
