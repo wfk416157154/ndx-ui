@@ -574,9 +574,13 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加老师信息";
-      this.$router.push({
-        path: "/teacherForm/" + "addTeacher"
-      });
+      // 获取页面中参数配置的路由
+      this.getConfigKey("addTeacher").then(resp=>{
+        this.router=resp.msg;
+        this.$router.push({
+          path: this.router
+        });
+      })
     },
     /** 修改按钮操作 */
     handleUpdate(id) {
@@ -735,7 +739,7 @@ export default {
     width: 100%;
     padding: 30px 30px;
     box-sizing: border-box;
-    
+
     font-family: Sans-serif !important;
     li {
       list-style: none;
