@@ -121,7 +121,7 @@
           v-hasPermi="['basic:student:edit']"
         >修改</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!--<el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -131,7 +131,7 @@
           @click="handleDelete"
           v-hasPermi="['basic:student:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -250,12 +250,12 @@
         <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="日语班" prop="ryb">
           <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
-          <el-select v-model="form.ryb" placeholder="请选择日语班">
+          <el-select v-model="form.ryb" placeholder="请选择日语班" @change="selectBjclass" >
             <el-option
               v-for="item in bjclassList"
               :key="item.id"
               :label="item.rybjmc"
-              :value="item.rybjmc"
+              :value="item"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -610,6 +610,10 @@ export default {
         this.bjclassList = response.rows;
       });
     },
+    selectBjclass(obj){
+      this.form.ryb=obj.rybjmc;
+      this.form.kzzd1=obj.id;
+    },
     // 性别字典翻译
     xbFormat(row, column) {
       return this.selectDictLabel(this.xbOptions, row.xb);
@@ -701,7 +705,7 @@ export default {
         this.open = true;
         this.title = "修改学生信息";
         this.imageUrl = response.data.xstx;
-        console.log("getStudent", response);
+        //console.log("getStudent", response);
       });
     },
     /** 提交按钮 */
