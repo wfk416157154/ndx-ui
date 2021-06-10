@@ -23,6 +23,10 @@ import Pagination from "@/components/Pagination";
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar"
 
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -52,6 +56,7 @@ Vue.component('RightToolbar', RightToolbar)
 
 Vue.use(permission)
 Vue.use(install)
+Vue.use(VXETable)
 
 /**
  * If you don't want to use mock-server
