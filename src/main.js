@@ -13,6 +13,7 @@ import router from './router'
 import permission from './directive/permission'
 import { download } from '@/utils/request'
 
+import install from '@/utils/preventReClick'
 import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
@@ -50,6 +51,7 @@ Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
 
 Vue.use(permission)
+Vue.use(install)
 
 /**
  * If you don't want to use mock-server
