@@ -5,6 +5,8 @@ const user = {
   state: {
     token: getToken(),
     name: '',
+    glrid: '',
+    nickName: '',
     avatar: '',
     roles: [],
     permissions: []
@@ -22,6 +24,12 @@ const user = {
     },
     SET_USERID: (state, userId) => {
       state.userId = userId
+    },
+    SET_GLRID: (state, glrid) => {
+      state.glrid = glrid
+    },
+    SET_NICKNAME: (state, nickName) => {
+      state.nickName = nickName
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -67,7 +75,9 @@ const user = {
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }
+          commit('SET_NICKNAME', user.nickName)
           commit('SET_NAME', user.userName)
+          commit('SET_GLRID', user.glrid)
           commit('SET_USERID', user.userId)
           commit('SET_AVATAR', avatar)
           resolve(res)
@@ -89,7 +99,7 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

@@ -145,6 +145,12 @@
       <el-col :span="1.5">
         <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" :disabled="single" @click="addStuTalk">添加学生谈话</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" :disabled="single" @click="lookStuTalk">查看谈话内容</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -392,6 +398,71 @@
       </div>
     </el-dialog>
 
+    <!-- 老师学生谈话数据表格对话框 -->
+    <el-dialog :title="title" :visible.sync="openStuGrid" width="1000px" append-to-body>
+      <el-table v-loading="loading" :data="teacherTalkList" @selection-change="">
+        <el-table-column type="selection" width="55" v-if="false" align="center" />
+        <el-table-column label="id" align="center" v-if="false" prop="id" />
+        <el-table-column label="老师姓名" align="center" prop="lsxm" />
+        <el-table-column label="学生姓名" align="center" prop="xsxm" />
+        <el-table-column label="谈话时间" align="center" prop="thsj" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.thsj, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="谈话原因" align="center" prop="thyy" />
+        <el-table-column label="谈话内容" align="center" prop="thnr" />
+        <el-table-column label="备注" align="center" prop="remark" />
+      </el-table>
+
+      <!--<pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />-->
+    </el-dialog>
+
+    <!-- 添加或修改老师学生谈话对话框 -->
+    <el-dialog :title="title" :visible.sync="openStu" width="500px" append-to-body>
+      <el-form ref="stuform" :model="formStu" :rules="rules" label-width="80px">
+        <!--<el-form-item label="老师id" prop="lsid">
+          <el-input v-model="formStu.lsid" placeholder="请输入老师id" />
+        </el-form-item>-->
+        <el-form-item label="老师姓名" prop="lsxm">
+          <el-input v-model="formStu.lsxm" readonly placeholder="请输入老师姓名" />
+        </el-form-item>
+        <!--<el-form-item label="学生id" prop="xsid">
+          <el-input v-model="formStu.xsid" placeholder="请输入学生id" />
+        </el-form-item>-->
+        <el-form-item label="学生姓名" prop="xsxm">
+          <el-input v-model="formStu.xsxm" readonly placeholder="请输入学生姓名" />
+        </el-form-item>
+        <el-form-item label="谈话时间" prop="thsj">
+          <el-date-picker clearable size="small"
+                          v-model="formStu.thsj"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="选择谈话时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="谈话原因" prop="thyy">
+          <el-input v-model="formStu.thyy" placeholder="请输入谈话原因" />
+        </el-form-item>
+        <el-form-item label="谈话内容" prop="thnr">
+          <el-input v-model="formStu.thnr" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="formStu.remark" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitStuForm">确 定</el-button>
+        <el-button @click="cancelStu">取 消</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 导入对话框 -->
     <el-dialog :close-on-click-modal="false" :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
@@ -433,6 +504,7 @@ import {
   addStudent,
   updateStudent
 } from "@/api/basic/student";
+import { listTeacherTalk, getTeacherTalk, delTeacherTalk, addTeacherTalk, updateTeacherTalk } from "@/api/basic/teacherTalk";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
 import { addImg } from "@/api/tool/common";
@@ -446,6 +518,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      stuRow: null,
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -456,10 +529,16 @@ export default {
       total: 0,
       // 学生信息表格数据
       studentList: [],
+      // 老师谈话内容表格数据
+      teacherTalkList:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否显示弹出层
+      openStu: false,
+      // 是否显示弹出层
+      openStuGrid:false,
       // 性别字典
       xbOptions: [],
       // 是否特长生字典
@@ -482,6 +561,8 @@ export default {
       },
       // 表单参数
       form: {},
+      // 表单参数
+      formStu: {},
       // 表单校验
       rules: {},
       // 学生头像
@@ -610,6 +691,16 @@ export default {
         this.bjclassList = response.rows;
       });
     },
+
+    /** 查询老师学生谈话列表 */
+    getTeacherTalkList(id) {
+      this.loading = true;
+      listTeacherTalk({xsid:id}).then(response => {
+        this.teacherTalkList = response.rows;
+        this.loading = false;
+      });
+    },
+
     selectBjclass(obj){
       this.form.ryb=obj.rybjmc;
       this.form.kzzd1=obj.id;
@@ -629,6 +720,11 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.reset();
+    },
+    // 取消按钮
+    cancelStu() {
+      this.openStu = false;
       this.reset();
     },
     // 表单重置
@@ -671,6 +767,30 @@ export default {
       };
       this.resetForm("form");
     },
+    // 表单重置
+    resetStu() {
+      this.formStu = {
+        id: null,
+        lsid: null,
+        lsxm: null,
+        xsid: null,
+        xsxm: null,
+        thsj: null,
+        thyy: null,
+        thnr: null,
+        remark: null,
+        userId: null,
+        userName: null,
+        createTime: null,
+        updateTime: null,
+        kzzd1: null,
+        kzzd2: null,
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null
+      };
+      this.resetForm("formStu");
+    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -683,7 +803,10 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
+      selection.map(item => {
+        this.ids =item.id;
+        this.stuRow=item;
+      });
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -705,7 +828,6 @@ export default {
         this.open = true;
         this.title = "修改学生信息";
         this.imageUrl = response.data.xstx;
-        //console.log("getStudent", response);
       });
     },
     /** 提交按钮 */
@@ -730,7 +852,6 @@ export default {
           return;
         }
         addImg(this.uploadData).then(res => {
-          // console.log(res);
         });
       });
     },
@@ -818,7 +939,41 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
-    }
+    },
+    //添加谈话内容
+    addStuTalk(){
+      let loginUser=this.$store.state.user;
+      this.formStu.lsid=loginUser.glrid;
+      this.formStu.lsxm=loginUser.nickName;
+      this.formStu.xsid=this.stuRow.id;
+      this.formStu.xsxm=this.stuRow.xsxm;
+      this.openStu = true;
+      this.title = "添加学生谈话";
+    },
+    // 查看谈话内容
+    lookStuTalk(){
+      this.openStuGrid=true;
+      const id = this.ids;
+      this.getTeacherTalkList(id);
+    },
+    /** 提交按钮 */
+    submitStuForm() {
+      this.$refs["stuform"].validate(valid => {
+        if (valid) {
+          if (this.formStu.id != null) {
+            updateTeacherTalk(this.formStu).then(response => {
+              this.msgSuccess("修改谈话内容成功");
+              this.openStu = false;
+            });
+          } else {
+            addTeacherTalk(this.formStu).then(response => {
+              this.msgSuccess("新增谈话内容成功");
+              this.openStu = false;
+            });
+          }
+        }
+      });
+    },
   }
 };
 </script>
