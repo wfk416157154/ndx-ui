@@ -33,7 +33,7 @@
           <el-input disabled v-model="form.lrrid"></el-input>
         </el-form-item>
         <el-form-item label="复试结果">
-          <el-select v-model="form.zt" clearable placeholder="请选择">
+          <el-select v-model="form.zt" @change="isIfSelect" clearable placeholder="请选择">
             <el-option
               v-for="item in resultList"
               :key="item.value"
@@ -42,7 +42,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="来汉时间">
+        <el-form-item v-if="isIf" label="来汉时间">
           <el-date-picker
             v-model="form.dhsj"
             type="datetime"
@@ -50,7 +50,7 @@
             default-time="12:00:00"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="派遣地区">
+        <el-form-item v-if="isIf" label="派遣地区">
           <el-input v-model="form.pqdq"></el-input>
         </el-form-item>
       </el-form>
@@ -75,10 +75,12 @@ export default {
         xb: "",
         yxdq: "",
         jtzz: "",
-        mszt: ""
+        mszt: "",
       },
       // 初试结果
-      resultList: []
+      resultList: [],
+      // 是否隐藏显示
+      isIf : false,
     };
   },
   created() {
@@ -100,6 +102,7 @@ export default {
               this.form.mszt = 9; // 对应字典的 面试不通过
             }
             editTeacherPersonnel(this.form).then(res => {
+              this.$emit("getList")
               this.$notify({
                 title: "成功",
                 message: res.msg,
@@ -124,6 +127,7 @@ export default {
     editFirstTryForm(value) {
       this.dialogVisible = true;
       this.form = value;
+      this.isIfSelect(this.form.zt)
     },
     // 数据初始化
     cancel() {
@@ -138,6 +142,10 @@ export default {
         id: null,
         mszt: ""
       };
+    },
+    // 是否满意开关
+    isIfSelect(value){
+      this.isIf = value == "1" ? true : false;
     }
   }
 };

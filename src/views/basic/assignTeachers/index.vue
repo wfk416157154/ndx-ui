@@ -134,29 +134,6 @@ export default {
         status: null,
         kzzd1: ""
       },
-      // 选中班级
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
       // 老师姓名
       teacherNames: {},
       // 校区
@@ -191,13 +168,15 @@ export default {
       });
     },
     // 选中老师
-    getIeacherName(value, num, bjclass) {
+    getIeacherName(ls, num, bjclass) {
+      console.log(ls)
       this.json = {
         id: bjclass.id,
-        lsxm: value.lsxm,
-        lsdh: value.dhhm
+        lsxm: ls.lsxm,
+        lsdh: ls.dhhm,
+        kzzd2 : ls.id
       };
-      this.teacherNames[num] = value.lsxm;
+      this.teacherNames[num] = ls.lsxm;
     },
     // 获取校区id
     listSchoolId(value) {
@@ -215,19 +194,16 @@ export default {
       }
       // 未分配老师的班级
       this.queryParams.sffp = 0;
-      //console.log("queryParams：",this.queryParams)
       listBjclass(this.queryParams).then(res => {
         this.optionalClasses = res.rows;
         if(res.code==200){
           //已分配老师的班级
           this.queryParams.sffp = 1;
-          //console.log("queryParams1：",this.queryParams)
           listBjclass(this.queryParams).then(res => {
             this.optionalClasses1 = res.rows;
           });
         }
       });
-      //console.log("optionalClasses:",this.optionalClasses)
     },
     // 分配老师
     assignTeachers() {
