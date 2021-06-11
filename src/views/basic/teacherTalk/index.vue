@@ -89,7 +89,6 @@
 
     <el-table v-loading="loading" :data="teacherTalkList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="学生姓名" align="center" prop="xsxm" />
       <el-table-column label="谈话时间" align="center" prop="thsj" width="180">
@@ -131,9 +130,6 @@
     <!-- 添加或修改老师学生谈话对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="老师id" prop="lsid">
-          <el-input v-model="form.lsid" placeholder="请输入老师id" />
-        </el-form-item>
         <el-form-item label="老师姓名" prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名" />
         </el-form-item>

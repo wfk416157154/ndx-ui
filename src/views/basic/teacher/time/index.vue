@@ -14,7 +14,7 @@
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
       </el-form-item>
     </el-form>
-    <tiemForm ref="tiemForm" />
+    <tiemForm ref="tiemForm" @getList="getList" />
     <el-table ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column property="xm" label="姓名" width="120"></el-table-column>
@@ -30,7 +30,7 @@
       <el-table-column property="pqdq" label="派遣地区"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,7 +78,6 @@ export default {
     },
     // 编辑老师基本信息
     handleEdit(index, row) {
-      // console.log(index, row);
       this.$refs.tiemForm.editFirstTryForm(row);
     },
     // 状态字典翻译 状态
