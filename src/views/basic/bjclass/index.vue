@@ -106,6 +106,9 @@
           v-hasPermi="['basic:bjclass:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload" :disabled="single" size="mini"  @click="onUploadPhoto">查看照片</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -201,8 +204,53 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 上传班级的开班照和集体照对话框 -->
+    <el-dialog :title="title" :visible.sync="imageOpen" width="800px" append-to-body>
+      <!-- 添加或修改班级基础信息对话框 -->
+      <el-form class="wrap-el-form" ref="photoForm" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label-width="100px" label="开班照" prop="kbz">
+          <el-upload
+            :action="upload.fileUrl"
+            :headers="upload.headers"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-success="handleAvatarSuccess"
+            :limit="maxPhotoNum"
+            :file-list="files1"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt />
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label-width="100px" label="集体照" prop="jtz">
+          <el-upload
+            :action="upload.fileUrl"
+            :headers="upload.headers"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-success="jtzSuccess"
+            :limit="maxPhotoNum"
+            :file-list="files2"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt />
+          </el-dialog>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="submitPhotoForm">保存</el-button>
+        <el-button @click="cancelPhoto">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -250,6 +298,8 @@ import {
 } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
+import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 
 export default {
   name: "Bjclass",
@@ -274,6 +324,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      imageOpen:false,
       // 状态字典
       statusOptions: [],
       //校区名称
@@ -307,12 +358,21 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData"
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
+        // 上传图片地址
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
       // 图片地址
       dialogImageUrl: "",
       dialogVisible: false,
-      disabled: false
+      disabled: false,
+      files1: [],
+      files2: [],
+      // 图片上传计数
+      photoNum1: 0,
+      photoNum2: 0,
+      // 最大上传次数
+      maxPhotoNum: 3,
     };
   },
   created() {
@@ -407,6 +467,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      console.log("row:",row.id)
       this.reset();
       const id = row.id || this.ids;
       /*this.$router.push({
@@ -420,6 +481,85 @@ export default {
          this.open = true;
          this.title = "修改班级基础信息";
       });
+    },
+    onUploadPhoto(row){
+      const id = row.id || this.ids;
+      getBjclass(id).then(response => {
+        this.form = response.data;
+        this.imageOpen = true;
+        this.title = "查看班级的图片信息";
+        this.selectPhotoList(
+          (this.form.kbz = this.form.kbz || secretKey()),
+          "files1"
+        ); // 开班照
+        this.selectPhotoList(
+          (this.form.jtz = this.form.jtz || secretKey()),
+          "files2"
+        ); // 集体照
+      });
+    },
+    // 查询证件照
+    selectPhotoList(glid, file) {
+      let kzzdJson = {
+        kzzd1: glid
+      };
+      selectFileList(kzzdJson).then(res => {
+        this.photoNum = res.total;
+        this[file] = res.rows;
+      });
+    },
+    //公共图片删除
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    // 开班照上传成功的回调
+    handleAvatarSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.kbz || secretKey();
+      this.form.kbz = data.kzzd1;
+      this.photoNum1 = fileList.length;
+      addImg(data).then(res => {
+        file.id=res.data.id;
+        this.ifPhotoLimit(this.photoNum1);
+      });
+    },
+    // 集体照上传成功的回调
+    jtzSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.jtz || secretKey();
+      this.form.jtz = data.kzzd1;
+      this.photoNum1 = fileList.length;
+      addImg(data).then(res => {
+        file.id=res.data.id;
+        this.ifPhotoLimit(this.photoNum2);
+      });
+    },
+    // 图片限制判断
+    ifPhotoLimit(num) {
+      if (num >= this.maxPhotoNum) {
+        this.$message({
+          message: "最多上传 3 张图片",
+          type: "warning"
+        });
+      } else {
+        this.$message({
+          message: "新增成功",
+          type: "success"
+        });
+      }
     },
     /** 提交按钮 */
     submitForm() {
@@ -440,6 +580,22 @@ export default {
           }
         }
       });
+    },
+    submitPhotoForm(){
+      this.$refs["photoForm"].validate(valid => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateBjclass(this.form).then(response => {
+              this.msgSuccess("保存成功");
+              this.imageOpen = false;
+            });
+          }
+        }
+      });
+    },
+    cancelPhoto(){
+      this.imageOpen = false;
+      this.reset();
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -498,26 +654,14 @@ export default {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.$alert(response.msg, "结果", { dangerouslyUseHTMLString: true });
       this.getList();
     },
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
     }
-    // //图片删除
-    // handleRemove(file) {
-    //   console.log(file.length);
-    // },
-    // // 图片放大
-    // handlePictureCardPreview(file) {
-    //   this.dialogImageUrl = file.url;
-    //   this.dialogVisible = true;
-    // },
-    // // 图片下载
-    // handleDownload(file) {
-    //   console.log(file);
-    // }
+
   }
 };
 </script>

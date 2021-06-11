@@ -13,6 +13,7 @@ import router from './router'
 import permission from './directive/permission'
 import { download } from '@/utils/request'
 
+import install from '@/utils/preventReClick'
 import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
@@ -23,6 +24,10 @@ import Pagination from "@/components/Pagination";
 import RightToolbar from "@/components/RightToolbar"
 // jquery
 import $ from 'jquery'
+
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -53,6 +58,8 @@ Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
 
 Vue.use(permission)
+Vue.use(install)
+Vue.use(VXETable)
 
 /**
  * If you don't want to use mock-server
