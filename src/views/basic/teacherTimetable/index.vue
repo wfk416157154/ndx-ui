@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
       <el-form-item label="年份" prop="nf">
-        <el-select v-model="queryParams.nf" placeholder="请选择年份" clearable size="small">
+        <el-select v-model="queryParams.kzzd2" placeholder="请选择年份" clearable size="small">
           <el-option
             v-for="dict in yearList"
             :key="dict.dictValue"
@@ -11,16 +11,6 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label-width="80px" label="学期" prop="xq">
-        <el-select v-model="queryParams.sfyjszgz" placeholder="请选择学期" clearable size="small">
-          <el-option
-            v-for="dict in sfyjszgzOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>-->
       <el-form-item label="课表类型" prop="kbType">
         <el-select v-model="queryParams.kbType" placeholder="请选择课表类型" clearable size="small">
           <el-option
@@ -80,7 +70,7 @@
       <el-col :span="18" :xs="24">
         <el-card>
           <div slot="header" class="clearfix">
-            <span>课表</span>
+            <span>{{kbName}}</span>
           </div>
           <el-tabs v-model="tabsActiveTab">
             <el-tab-pane label="班级课表" name="kb">
@@ -324,7 +314,31 @@ export default {
       // 班级信息
       listBjclass: [],
       // 表单参数
-      form: {},
+      form: {
+        id: null,
+        bjid: null,
+        kbType: null,
+        kssj: null,
+        jssj: null,
+        kcType: null,
+        monday: null,
+        tuesday: null,
+        wednesday: null,
+        thursday: null,
+        friday: null,
+        saturday: null,
+        sunday: null,
+        remark: null,
+        userId: null,
+        userName: null,
+        createTime: null,
+        updateTime: null,
+        kzzd1: null,
+        kzzd2: null,
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null
+      },
       // 班级课程表格数据
       classCourseList: [],
       // 标记编辑的第几行
@@ -338,8 +352,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         kbType: null,
-        nf: null,
-        xq: null
+        kzzd2: null,
+        bjid: null
       },
       // 年份字典
       yearList: [],
@@ -348,7 +362,9 @@ export default {
       // 是否有课
       isCourse: [],
       // 课程类型
-      kcType: []
+      kcType: [],
+      // 课表名字
+      kbName: ""
     };
   },
   created() {
@@ -378,7 +394,9 @@ export default {
       });
     },
     //查询课表
-    handleQuery() {},
+    handleQuery() {
+      this.switchingClasses(this.activeTab);
+    },
     //新增
     submitTimetable() {
       this.reset();
@@ -397,13 +415,23 @@ export default {
     // 切换班级课表
     switchingClasses(bjid) {
       this.classCourseList = [];
+      this.queryParams.bjid = bjid;
       // 获取班级课表
-      listClassCourse({ bjid: bjid }).then(res => {
+      listClassCourse(this.queryParams).then(res => {
         if (res.rows.length > 0) {
           res.rows.map((value, index) => {
             for (let i = 0; i < this.kcType.length; i++) {
               if (this.kcType[i].dictValue == value.kcType) {
                 value.kcType = this.kcType[i].dictLabel;
+              }
+            }
+            if (value.kbType != null) {
+              for (let i = 0; i < this.kbTypeOptions.length; i++) {
+                if (this.kbTypeOptions[i].dictValue == "1") {
+                  this.kbName = this.kbTypeOptions[i].dictLabel;
+                } else {
+                  this.kbName = this.kbTypeOptions[i].dictLabel;
+                }
               }
             }
             value.monday = this.formatterDict(value.monday);
@@ -418,17 +446,33 @@ export default {
         }
       });
     },
+    // 数据中文转化
     formatterDict(obj) {
-      //console.log("formatterDict", obj);
-
       for (let i = 0; i < this.isCourse.length; i++) {
         if (this.isCourse[i].dictValue == obj) {
           return (obj = this.isCourse[i].dictLabel);
         }
       }
     },
+    // 老师课表编辑
     submitOpen(row) {
-      this.form = row;
+      for (const key in row) {
+        if (row.hasOwnProperty(key)) {
+          if (row[key] == "有课") {
+            this.form[key] = "1";
+          } else if (row[key] == "无课") {
+            this.form[key] = "0";
+          } else if (key == "kcType") {
+            for (let i = 0; i < this.kcType.length; i++) {
+              if (this.kcType[i].dictLabel == row[key]) {
+                this.form[key] = this.kcType[i].dictValue;
+              }
+            }
+          } else {
+            this.form[key] = row[key];
+          }
+        }
+      }
       this.open = true;
     },
     // 表单重置
