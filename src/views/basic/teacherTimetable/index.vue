@@ -90,7 +90,7 @@
                   icon="el-icon-check"
                   size="mini"
                   @click="submitTimetable"
-                >提交课表</el-button>
+                >新增课表</el-button>
               </div>
               <div class="class-table">
                 <div class="table-wrapper">
@@ -110,235 +110,70 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(item,index) in classCourseList" :key="index">
+                        <tr
+                          @click="submitOpen(item)"
+                          v-for="(item,index) in classCourseList"
+                          :key="index"
+                        >
                           <td>
                             <div
                               style="width : 100%; height : 60px; line-height : 60px;"
-                              @click="dataPicker(index)"
                             >{{item.kssj}} - {{item.jssj}}</div>
                           </td>
                           <td>
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'kcType' + index,'kcType',index)"
-                            >
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['kcType' + index]"
                               >{{item.kcType}}</div>
-                              <el-select
-                                :class="[item.kcType == 1 ? 'yesClass' : '']"
-                                :ref="'kcType' + index"
-                                @change="blurForm(item,'kcType' + index,'kcType')"
-                                v-if="!item['kcType' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.kcType"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in kcType"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.monday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'monday' + index,'monday',index)"
-                            >
+                          <td :class="[item.monday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['monday' + index]"
                               >{{item.monday}}</div>
-                              <el-select
-                                :class="[item.monday == 1 ? 'yesClass' : '']"
-                                :ref="'monday' + index"
-                                @blur="blurForm(item,'monday' + index,'monday')"
-                                v-if="!item['monday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.monday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.tuesday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'tuesday' + index,'tuesday',index)"
-                            >
+                          <td :class="[item.tuesday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['tuesday' + index]"
                               >{{item.tuesday}}</div>
-                              <el-select
-                                :class="[item.tuesday == 1 ? 'yesClass' : '']"
-                                :ref="'tuesday' + index"
-                                @blur="blurForm(item,'tuesday' + index,'tuesday')"
-                                v-if="!item['tuesday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.tuesday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.wednesday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'wednesday' + index,'wednesday',index)"
-                            >
+                          <td :class="[item.wednesday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['wednesday' + index]"
                               >{{item.wednesday}}</div>
-                              <el-select
-                                :class="[item.wednesday == 1 ? 'yesClass' : '']"
-                                :ref="'wednesday' + index"
-                                @blur="blurForm(item,'wednesday' + index,'wednesday')"
-                                v-if="!item['wednesday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.wednesday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.thursday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'thursday' + index,'thursday',index)"
-                            >
+                          <td :class="[item.thursday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['thursday' + index]"
                               >{{item.thursday}}</div>
-                              <el-select
-                                :class="[item.thursday == 1 ? 'yesClass' : '']"
-                                :ref="'thursday' + index"
-                                @blur="blurForm(item,'thursday' + index,'thursday')"
-                                v-if="!item['thursday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.thursday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.friday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'friday' + index,'friday',index)"
-                            >
+                          <td :class="[item.friday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['friday' + index]"
                               >{{item.friday}}</div>
-                              <el-select
-                                :class="[item.friday == 1 ? 'yesClass' : '']"
-                                :ref="'friday' + index"
-                                @blur="blurForm(item,'friday' + index,'friday')"
-                                v-if="!item['friday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.friday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.saturday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'saturday' + index,'saturday',index)"
-                            >
+                          <td :class="[item.saturday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['saturday' + index]"
                               >{{item.saturday}}</div>
-                              <el-select
-                                :class="[item.saturday == 1 ? 'yesClass' : '']"
-                                :ref="'saturday' + index"
-                                @blur="blurForm(item,'saturday' + index,'saturday')"
-                                v-if="!item['saturday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.saturday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
-                          <td :class="[item.sunday == 1 ? 'yesClass' : 'noClass']">
-                            <div
-                              style="width : 100%; height : 100%"
-                              @click="textSwitch(item,'sunday' + index,'sunday',index)"
-                            >
+                          <td :class="[item.sunday == '有课' ? 'yesClass' : 'noClass']">
+                            <div style="width : 100%; height : 100%">
                               <div
                                 style="width : 100%; height : 60px; line-height : 60px"
-                                v-if="item['sunday' + index]"
                               >{{item.sunday}}</div>
-                              <el-select
-                                :class="[item.sunday == 1 ? 'yesClass' : '']"
-                                :ref="'sunday' + index"
-                                @blur="blurForm(item,'sunday' + index,'sunday')"
-                                v-if="!item['sunday' + index] "
-                                id="TextArea1"
-                                class="inputStyle"
-                                v-model="form.sunday"
-                                style="width : 100%; height :100%"
-                              >
-                                <el-option
-                                  v-for="item in isCourse"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                ></el-option>
-                              </el-select>
                             </div>
                           </td>
                         </tr>
@@ -353,18 +188,113 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="上课时间" :close-on-click-modal="false" :visible.sync="open" width="40%">
-      <el-date-picker
-        v-model="getDate"
-        type="datetimerange"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        :default-time="['12:00:00']"
-        value-format=" yyyy-MM-dd HH:mm"
-        format="yyyy-MM-dd HH:mm"
-      ></el-date-picker>
+    <el-dialog :visible.sync="open" width="700px" append-to-body>
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="上课时间" prop="sj">
+          <el-time-picker
+            v-model="startTime"
+            :picker-options="{
+            selectableRange: '18:30:00 - 20:30:00'
+           }"
+            value-format=" yyyy-MM-dd HH:mm"
+            format="HH:mm"
+            placeholder="任意时间点"
+          ></el-time-picker>
+          <el-time-picker
+            @change="getTime"
+            v-model="getDate"
+            arrow-control
+            value-format=" yyyy-MM-dd HH:mm"
+            format="HH:mm"
+            :picker-options="{
+            selectableRange: '18:30:00 - 20:30:00'
+           }"
+            placeholder="任意时间点"
+          ></el-time-picker>
+        </el-form-item>
+        <el-form-item label="课程类型" prop="wednesday">
+          <el-select v-model="form.kcType" placeholder="请选择">
+            <el-option
+              v-for="item in kcType"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周一" prop="monday">
+          <el-select v-model="form.monday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周二" prop="tuesday">
+          <el-select v-model="form.tuesday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周三" prop="wednesday">
+          <el-select v-model="form.wednesday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周四" prop="thursday">
+          <el-select v-model="form.thursday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周五" prop="friday">
+          <el-select v-model="form.friday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周六" prop="saturday">
+          <el-select v-model="form.saturday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="周日" prop="sunday">
+          <el-select v-model="form.sunday" placeholder="请选择">
+            <el-option
+              v-for="item in isCourse"
+              :key="item.dictLabel"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="getPicker">确 定</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="open = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -382,6 +312,7 @@ import {
 export default {
   data() {
     return {
+      startTime: "",
       // 班级id
       activeTab: "",
       // 班级课表选择
@@ -429,11 +360,9 @@ export default {
     });
     this.getDicts("is_course").then(response => {
       this.isCourse = response.data;
-      // console.log(this.isCourse)
     });
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
-      // console.log(this.isCourse)
     });
   },
   mounted() {
@@ -450,61 +379,19 @@ export default {
     },
     //查询课表
     handleQuery() {},
-    // 提交课表
+    //新增
     submitTimetable() {
-      updateClassCourse(this.form[this.rowNum]).then(res => {
-        if (res.code == 200) {
-          this.switchingClasses(this.form[this.rowNum].bjid);
-          this.rowNum = null;
-        }
-      });
-    },
-    // 打开时间选择遮罩
-    dataPicker(index) {
-      if (this.rowNum == null || this.rowNum == index) {
-        this.rowNum = index;
-        this.open = true;
-      } else {
-        this.textSwitch();
-      }
+      this.reset();
+      this.open = true;
     },
     // 时间处理
-    getPicker() {
-      this.open = false;
-      let arr = [];
-      if (this.getDate == null) {
-        this.rowNum = null;
-        return;
-      }
-      this.getDate.forEach(value => {
+    getTime(date) {
+      let arr = [this.startTime, date];
+      this.form.sj = [];
+      arr.forEach(value => {
         let index = value.lastIndexOf(" ");
         value = value.substring(index + 1, value.length);
-        arr.push(value);
-      });
-      this.getDate = null;
-      this.form[this.rowNum].sj = arr;
-      this.classCourseList[this.rowNum].kssj = this.form[this.rowNum].sj[0];
-      this.classCourseList[this.rowNum].jssj = this.form[this.rowNum].sj[1];
-    },
-    // 课表编辑标签自动聚集
-    textSwitch(value, ref, name, index) {
-      if (this.rowNum == null) {
-        this.rowNum = index;
-      } else if (this.rowNum != index) {
-        this.$notify({
-          title: "警告",
-          message: `请先提交第${this.rowNum + 1}行编辑数据`,
-          type: "warning"
-        });
-        return;
-      }
-      // console.log(this.form[name])
-      // console.log(value[name])
-      // this.form[name] = value[name];
-      value[ref] = false;
-      // 自动聚焦
-      this.$nextTick(() => {
-        this.$refs[ref][0].focus();
+        this.form.sj.push(value);
       });
     },
     // 切换班级课表
@@ -514,36 +401,92 @@ export default {
       listClassCourse({ bjid: bjid }).then(res => {
         if (res.rows.length > 0) {
           res.rows.map((value, index) => {
-            value["kcType" + index] = true;
-            value["monday" + index] = true;
-            value["tuesday" + index] = true;
-            value["wednesday" + index] = true;
-            value["thursday" + index] = true;
-            value["friday" + index] = true;
-            value["saturday" + index] = true;
-            value["sunday" + index] = true;
-            value.bjid = bjid;
+            for (let i = 0; i < this.kcType.length; i++) {
+              if (this.kcType[i].dictValue == value.kcType) {
+                value.kcType = this.kcType[i].dictLabel;
+              }
+            }
+            value.monday = this.formatterDict(value.monday);
+            value.tuesday = this.formatterDict(value.tuesday);
+            value.wednesday = this.formatterDict(value.wednesday);
+            value.thursday = this.formatterDict(value.thursday);
+            value.friday = this.formatterDict(value.friday);
+            value.saturday = this.formatterDict(value.saturday);
+            value.sunday = this.formatterDict(value.sunday);
             this.classCourseList.push(value);
           });
-          this.form = res.rows;
         }
       });
     },
-    // 选择编辑的行
-    controlForm(num) {
-      if (this.rowNum == null) {
-        this.rowNum = num;
-      } else if (this.rowNum != num) {
-        this.$notify({
-          title: "警告",
-          message: `请先提交第${this.rowNum + 1}行编辑数据`,
-          type: "warning"
-        });
+    formatterDict(obj) {
+      //console.log("formatterDict", obj);
+
+      for (let i = 0; i < this.isCourse.length; i++) {
+        if (this.isCourse[i].dictValue == obj) {
+          return (obj = this.isCourse[i].dictLabel);
+        }
       }
     },
-    // 数据编辑后回显
-    blurForm(value, ref, name) {
-      value[name] = this.form[name];
+    submitOpen(row) {
+      this.form = row;
+      this.open = true;
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        bjid: null,
+        kbType: null,
+        kssj: null,
+        jssj: null,
+        kcType: null,
+        monday: null,
+        tuesday: null,
+        wednesday: null,
+        thursday: null,
+        friday: null,
+        saturday: null,
+        sunday: null,
+        remark: null,
+        userId: null,
+        userName: null,
+        createTime: null,
+        updateTime: null,
+        kzzd1: null,
+        kzzd2: null,
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null
+      };
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          this.form.bjid = this.activeTab;
+          if (this.form.id != null) {
+            updateClassCourse(this.form).then(response => {
+              this.$notify({
+                title: "成功",
+                message: "修改成功",
+                type: "success"
+              });
+              this.open = false;
+              this.switchingClasses(this.activeTab);
+            });
+          } else {
+            addClassCourse(this.form).then(response => {
+              this.$notify({
+                title: "成功",
+                message: "新增成功",
+                type: "success"
+              });
+              this.open = false;
+              this.switchingClasses(this.activeTab);
+            });
+          }
+        }
+      });
     }
   }
 };
@@ -552,7 +495,6 @@ export default {
 <style lang="scss" scoped>
 .wrap-info {
   position: relative;
-  //  box-shadow: 2px 2px 10px 2px rgba(90, 19, 19, 0.2);
   .text-center {
     width: 150px;
     height: 150px;
@@ -599,6 +541,7 @@ export default {
           height: 100%;
           color: #fff;
           line-height: 12px;
+          cursor: pointer;
           .inputStyle {
             width: 100%;
             height: auto;
@@ -609,7 +552,6 @@ export default {
             outline: none;
             text-align: center;
             color: #fff;
-            // background-color: rgb(9, 94, 89);
             background-color: rgba(19, 206, 102, 0.8);
           }
         }
