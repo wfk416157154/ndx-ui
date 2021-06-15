@@ -106,6 +106,7 @@
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="角色权重" prop="dataRoleWeight" width="100" />
       <el-table-column label="显示顺序" prop="roleSort" width="100" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
@@ -166,9 +167,13 @@
         <el-form-item label="权限字符" prop="roleKey">
           <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
         </el-form-item>
+        <el-form-item label="角色权重" prop="dataRoleWeight">
+          <el-input-number v-model="form.dataRoleWeight" controls-position="right" :min="1"  :max="999"  />
+        </el-form-item>
         <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
         </el-form-item>
+
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
@@ -445,7 +450,8 @@ export default {
         deptIds: [],
         menuCheckStrictly: true,
         deptCheckStrictly: true,
-        remark: undefined
+        remark: undefined,
+        dataRoleWeight:0
       };
       this.resetForm("form");
     },
