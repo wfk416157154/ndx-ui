@@ -169,7 +169,6 @@ export default {
     },
     // 选中老师
     getIeacherName(ls, num, bjclass) {
-      console.log(ls)
       this.json = {
         id: bjclass.id,
         lsxm: ls.lsxm,
@@ -218,9 +217,9 @@ export default {
         });
       }
     },
-    getChecked(index) {
-      console.log(index);
-    }
+    // getChecked(index) {
+    //   console.log(index);
+    // }
   }
 };
 </script>
