@@ -10,6 +10,42 @@ export function listUser(query) {
   })
 }
 
+// 查询未分配该角色的用户
+export function selectNotInRoleUser(query) {
+  return request({
+    url: '/system/user/selectNotInRoleUser',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询已分配该角色的用户
+export function selectInRoleUser(query) {
+  return request({
+    url: '/system/user/selectInRoleUser',
+    method: 'get',
+    params: query
+  })
+}
+
+// 角色添加多个用户
+export function addRoleUser(data) {
+  return request({
+    url: '/system/user/insertRoleUser',
+    method: 'post',
+    data: data
+  })
+}
+
+// 角色删除用户
+export function delRoleUser(data) {
+  return request({
+    url: '/system/user/delUserRole',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查询用户详细
 export function getUser(userId) {
   return request({
