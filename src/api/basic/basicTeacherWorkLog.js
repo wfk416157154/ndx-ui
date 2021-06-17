@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 查询老师所在的班级信息及课表课程信息
+export function workLogListQuery(query) {
+  return request({
+    url: '/basic/basicTeacherWorkLog/workLogListQuery',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师工作日志列表
 export function listBasicTeacherWorkLog(query) {
   return request({

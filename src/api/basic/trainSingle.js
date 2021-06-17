@@ -8,6 +8,14 @@ export function listTrainSingle(query) {
     params: query
   })
 }
+// 查询培训内容确认
+export function queryTrainContentAffirm(query) {
+  return request({
+    url: '/basic/trainTheme/queryTrainContentAffirm',
+    method: 'get',
+    params: query
+  })
+}
 
 // 查询培训内容（默认单选项）详细
 export function getTrainSingle(id) {

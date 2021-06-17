@@ -307,9 +307,9 @@
         :visible.sync="lastDialogFormVisible"
       >
         <el-form :model="lastForm" ref="lastContentList" label-width="120px">
-          <el-form-item label="培训项目名称" label-width="120px">
+          <!-- <el-form-item label="培训项目名称" label-width="120px">
             <el-input v-model="lastForm.pxxmmc" autocomplete="off"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="上级培训内容">
             <el-input v-model="lastForm.sjpxnr"></el-input>
           </el-form-item>
@@ -584,6 +584,7 @@ export default {
     },
     /* 添加二级下级选项 */
     projectAdd(row) {
+      this.reset()
       this.contentListDialogFormVisible = true;
       this.contentListForm.kzzd1 = row.pxxm;
       this.contentListForm.glid = row.id;
@@ -650,6 +651,7 @@ export default {
     },
     /* 添加三级下级选项 */
     contentAdd(row) {
+      this.reset()
       this.lastDialogFormVisible = true;
       this.lastForm.sjpxnr = row.pxnr;
       this.lastForm.glid = row.glid;

@@ -184,7 +184,7 @@
           <el-time-picker
             v-model="startTime"
             :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
+            selectableRange: '00:00:00 - 23:59:00'
            }"
             value-format=" yyyy-MM-dd HH:mm"
             format="HH:mm"
@@ -197,7 +197,7 @@
             value-format=" yyyy-MM-dd HH:mm"
             format="HH:mm"
             :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
+            selectableRange: '00:00:00 - 23:59:00'
            }"
             placeholder="任意时间点"
           ></el-time-picker>
