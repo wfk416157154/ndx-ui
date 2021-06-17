@@ -26,6 +26,15 @@ export function getBasicTeacherWorkLog(id) {
   })
 }
 
+// 保存老师工作日志
+export function addSave(data) {
+  return request({
+    url: '/basic/basicTeacherWorkLog/save',
+    method: 'post',
+    data: data
+  })
+}
+
 // 新增老师工作日志
 export function addBasicTeacherWorkLog(data) {
   return request({
