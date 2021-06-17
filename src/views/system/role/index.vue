@@ -278,7 +278,7 @@
         </el-table>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-if="delButton" @click="delRoleUser">确定删除</el-button>
+        <el-button type="primary" v-if="delButton" @click="delRoleUser">删除该角色的用户</el-button>
         <el-button type="primary" v-if="addButton" @click="submitRoleUserForm">确定分配</el-button>
         <el-button @click="cancelRoleUser">取 消</el-button>
       </div>
