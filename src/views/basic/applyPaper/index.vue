@@ -34,64 +34,16 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['basic:examinationPaper:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['basic:examinationPaper:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['basic:examinationPaper:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['basic:examinationPaper:export']"
-        >导出</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">申请试卷</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <div style="margin : 20px">
-      <el-button type="primary" size="mini" @click="alreadySendOut">已发送</el-button>
-      <el-button type="primary" size="mini" @click="notSendOut">未发送</el-button>
-    </div>
-
     <el-table
       v-loading="loading"
       :data="examinationPaperList"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="班级" align="center" prop="bjmc" />
       <el-table-column label="老师" align="center" prop="ls" />
       <el-table-column label="教材" align="center" prop="jcmc" />
@@ -113,6 +65,7 @@
           <span>{{ parseTime(scope.row.fssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="发送人" align="center" prop="fsr" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -121,7 +74,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['basic:examinationPaper:edit']"
-          >发送试卷</el-button>
+          >下载</el-button>
           <el-button
             size="mini"
             type="text"
@@ -141,19 +94,13 @@
     />
 
     <!-- 添加或修改考卷对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="班级id" prop="bjid">
-          <el-input v-model="form.bjid" placeholder="请输入班级id" />
+        <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
+          <el-input v-model="form.lsid" placeholder="请输入老师姓名" />
         </el-form-item>
-        <el-form-item label="班级名称" prop="bjmc">
-          <el-input v-model="form.bjmc" placeholder="请输入班级名称" />
-        </el-form-item>
-        <el-form-item label="老师id" prop="lsid">
-          <el-input v-model="form.lsid" placeholder="请输入老师id" />
-        </el-form-item>
-        <el-form-item label="考试类型" prop="kslx">
-          <el-select v-model="form.kslx" placeholder="请选择考试类型">
+        <el-form-item label="班级" label-width="120px" prop="bjmc">
+          <el-select v-model="form.kslx" placeholder="请选择班级">
             <el-option
               v-for="dict in kslxOptions"
               :key="dict.dictValue"
@@ -162,102 +109,44 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="考试内容" prop="ksnr">
-          <el-input v-model="form.ksnr" placeholder="请输入考试内容" />
+        <el-form-item label="教材" label-width="120px" prop="kslx">
+          <span>日语基础</span>
         </el-form-item>
-        <el-form-item label="考试范围" prop="ksfw">
+        <el-form-item label="考试类型" label-width="120px" prop="ksnr">
+          <el-select v-model="form.kslx" placeholder="请输入考试类型">
+            <el-option
+              v-for="dict in kslxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="考试范围" label-width="120px" prop="ksfw">
           <el-input v-model="form.ksfw" placeholder="请输入考试范围" />
         </el-form-item>
-        <el-form-item label="教材id" prop="jcid">
-          <el-input v-model="form.jcid" placeholder="请输入教材id" />
-        </el-form-item>
-        <el-form-item label="教材名称" prop="jcmc">
-          <el-input v-model="form.jcmc" placeholder="请输入教材名称" />
-        </el-form-item>
-        <el-form-item label="教务试卷状态" prop="jwsjzt">
-          <el-input v-model="form.jwsjzt" placeholder="请输入教务试卷状态" />
-        </el-form-item>
-        <el-form-item label="老师试卷状态" prop="lssjzt">
-          <el-input v-model="form.lssjzt" placeholder="请输入老师试卷状态" />
-        </el-form-item>
-        <el-form-item label="考试开始时间" prop="kskssj">
+        <el-form-item label="考试开始时间" label-width="120px" prop="kskssj">
           <el-date-picker
-            clearable
-            size="small"
             v-model="form.kskssj"
-            type="date"
-            value-format="yyyy-MM-dd"
+            type="datetime"
+            value-format=" yyyy-MM-dd HH:mm"
             placeholder="选择考试开始时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="考试结束时间" prop="ksjssj">
+        <el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
           <el-date-picker
-            clearable
-            size="small"
-            v-model="form.ksjssj"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择考试结束时间"
+            v-model="form.jskssj"
+            type="datetime"
+            value-format=" yyyy-MM-dd HH:mm"
+            placeholder="选择考试开始时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="考试时间文本" prop="kssjwb">
+        <el-form-item label="备注" label-width="120px" prop="kssjwb">
           <el-input v-model="form.kssjwb" placeholder="请输入考试时间文本" />
-        </el-form-item>
-        <el-form-item label="发送时间" prop="fssj">
-          <el-date-picker
-            clearable
-            size="small"
-            v-model="form.fssj"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择发送时间"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="发送人id" prop="fsrid">
-          <el-input v-model="form.fsrid" placeholder="请输入发送人id" />
-        </el-form-item>
-        <el-form-item label="发送人名称" prop="fsrmc">
-          <el-input v-model="form.fsrmc" placeholder="请输入发送人名称" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item label="排序号" prop="dataOrder">
-          <el-input v-model="form.dataOrder" placeholder="请输入排序号" />
-        </el-form-item>
-        <el-form-item label="修改或录入时间" prop="addOrUpdateTime">
-          <el-date-picker
-            clearable
-            size="small"
-            v-model="form.addOrUpdateTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择修改或录入时间"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="扩展字段1" prop="kzzd1">
-          <el-input v-model="form.kzzd1" placeholder="请输入扩展字段1" />
-        </el-form-item>
-        <el-form-item label="扩展字段2" prop="kzzd2">
-          <el-input v-model="form.kzzd2" placeholder="请输入扩展字段2" />
-        </el-form-item>
-        <el-form-item label="扩展字段3" prop="kzzd3">
-          <el-input v-model="form.kzzd3" placeholder="请输入扩展字段3" />
-        </el-form-item>
-        <el-form-item label="扩展字段4" prop="kzzd4">
-          <el-input v-model="form.kzzd4" placeholder="请输入扩展字段4" />
-        </el-form-item>
-        <el-form-item label="扩展字段5" prop="kzzd5">
-          <el-input v-model="form.kzzd5" placeholder="请输入扩展字段5" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="submitForm">提交</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -304,7 +193,7 @@ import {
   updateExaminationPaper
 } from "@/api/basic/examinationPaper";
 import { getToken } from "@/utils/auth";
-
+import { listBjclass } from "@/api/basic/bjclass";
 export default {
   name: "ExaminationPaper",
   components: {},
@@ -367,14 +256,18 @@ export default {
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "basic/examinationPaper/importData"
-      }
+      },
+      // 用户关联id
+      glrid: ""
     };
   },
   created() {
     this.getList();
+    this.getListBjclass();
     this.getDicts("examination_type").then(response => {
       this.kslxOptions = response.data;
     });
+    // 获取关联人id
   },
   methods: {
     /** 查询考卷列表 */
@@ -384,6 +277,14 @@ export default {
         this.examinationPaperList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    // 获取老师所带班级
+    getListBjclass() {
+      this.glrid = this.$store.state.user.glrid;
+
+      listBjclass({ kzzd2: this.glrid }).then(res => {
+        console.log(res);
       });
     },
     // 考试类型字典翻译

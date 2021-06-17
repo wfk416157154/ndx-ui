@@ -577,7 +577,6 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
-        console.log(valid);
         if (valid) {
           if (this.form.id != null) {
             updateTeacher(this.form).then(response => {
@@ -656,7 +655,6 @@ export default {
       this.form.byzsmj = data.kzzd1;
       this.photoNum2 = fileList.length;
       addImg(data).then(res => {
-        this.photoNum2++;
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum2);
       });

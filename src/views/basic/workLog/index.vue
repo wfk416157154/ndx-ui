@@ -21,7 +21,7 @@
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 5}"
             placeholder="请输入内容"
-            v-model="ruleForm.kc"
+            v-model="ruleForm.kczj"
           ></el-input>
         </div>
       </div>
@@ -39,7 +39,7 @@
                   disabled
                   type="textarea"
                   :autosize="{ minRows: 5, maxRows: 5}"
-                  v-model="ruleForm.lsrz"
+                  v-model="ruleForm.bkXtrz"
                 ></el-input>
               </el-form-item>
             </div>
@@ -49,7 +49,7 @@
                   resize="none"
                   type="textarea"
                   :autosize="{ minRows: 5, maxRows: 5}"
-                  v-model="ruleForm.bcrz"
+                  v-model="ruleForm.bkBcrz"
                 ></el-input>
               </el-form-item>
             </div>
@@ -64,15 +64,15 @@
         <div class="in-class-list">
           <div class="in-class-content">
             <ul>
-              <li v-for="(item,index) in 10" :key="index">
-                <el-form-item label="早自习">
-                  <el-input v-model="ruleForm.kbrz"></el-input>
+              <li v-for="(item,index) in ruleForm.basicTeacherWorkLogLessonList" :key="index">
+                <el-form-item :label="item.courseTypeName">
+                  <el-input v-model="ruleForm.basicTeacherWorkLogLessonList[index].content"></el-input>
                 </el-form-item>
               </li>
             </ul>
-            <el-form-item label="补充" label-width="120px">
+            <!-- <el-form-item label="补充" label-width="120px">
               <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 4}" v-model="ruleForm.bc"></el-input>
-            </el-form-item>
+            </el-form-item>-->
           </div>
         </div>
       </div>
@@ -90,22 +90,23 @@
                   disabled
                   type="textarea"
                   :autosize="{ minRows: 5, maxRows: 5}"
-                  v-model="ruleForm.lsrz"
+                  v-model="ruleForm.khXtrz"
                 ></el-input>
               </el-form-item>
             </div>
-            <div style="margin-left : 120px ;margin-bottom : 10px">
+            <!-- <div style="margin-left : 120px ;margin-bottom : 10px">
               <el-checkbox v-model="ruleForm.tx">听写</el-checkbox>
               <el-checkbox v-model="ruleForm.kwbs">课文背诵</el-checkbox>
               <el-checkbox v-model="ruleForm.tl">听力</el-checkbox>
-            </div>
+            </div>-->
             <div class="history-log-content">
               <el-form-item label="补充日志" label-width="120px">
                 <el-input
                   resize="none"
                   type="textarea"
+                  placeholder="听写 课文背诵 听力"
                   :autosize="{ minRows: 5, maxRows: 5}"
-                  v-model="ruleForm.bcrz"
+                  v-model="ruleForm.khBcrz"
                 ></el-input>
               </el-form-item>
             </div>
@@ -125,63 +126,83 @@
                 <el-radio-group
                   style="width : 200px"
                   @change="examinationStatus"
-                  v-model="ruleForm.sfyks"
+                  v-model="ruleForm.isExam"
                 >
-                  <el-radio :label="1">是</el-radio>
-                  <el-radio :label="0">否</el-radio>
+                  <el-radio label="1">是</el-radio>
+                  <el-radio label="0">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </div>
             <div v-if="ifExamination" class="examination-upload">
               <div style="width : 50%; display: inline-block">
-                <el-form-item label="状态">
-                  <el-select v-model="ruleForm.remark">
-                    <el-option label="区域一" value="shanghai"></el-option>
+                <el-form-item label="考试状态">
+                  <el-select v-model="ruleForm.kzzd2">
+                    <el-option
+                      v-for="(item,index) in getExaminationStatus"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="考试类型">
-                  <el-select v-model="ruleForm.kslx">
-                    <el-option label="区域一" value="shanghai"></el-option>
+                  <el-select v-model="ruleForm.kzzd3">
+                    <el-option
+                      v-for="(item,index) in getExaminationType"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="考试名称">
-                  <el-input style="width :90%" v-model="ruleForm.ksmc"></el-input>
+                  <el-input style="width :90%" placeholder="请输入考试名称" v-model="ruleForm.kzzd4"></el-input>
                 </el-form-item>
               </div>
               <div class="button">
-                <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">上传</el-button>
+                <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
               </div>
             </div>
           </div>
           <!-- 课堂照片 -->
           <div class="class-photos">
             <div>
-              <h4>教室卫生</h4>
-              <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible">
-                <img width="100%" :src="dialogImageUrl" alt />
-              </el-dialog>
+              <el-form-item label-width="100px" label="教室卫生" prop="qtzs">
+                <el-upload
+                  :action="upload.fileUrl"
+                  :headers="upload.headers"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :limit="maxPhotoNum"
+                  :on-success="jswsSuccess"
+                  :file-list="files1"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt />
+                </el-dialog>
+              </el-form-item>
             </div>
             <div>
-              <h4>学生表现</h4>
-              <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible">
-                <img width="100%" :src="dialogImageUrl" alt />
-              </el-dialog>
+              <el-form-item label-width="100px" label="学生表现" prop="qtzs">
+                <el-upload
+                  :action="upload.fileUrl"
+                  :headers="upload.headers"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :limit="maxPhotoNum"
+                  :on-success="xsbxSuccess"
+                  :file-list="files2"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt />
+                </el-dialog>
+              </el-form-item>
             </div>
           </div>
           <!-- 备注 -->
@@ -191,7 +212,7 @@
                 type="textarea"
                 :autosize="{ minRows: 4, maxRows: 4}"
                 placeholder="请输入内容"
-                v-model="ruleForm.bz"
+                v-model="ruleForm.remark"
               ></el-input>
             </el-form-item>
           </div>
@@ -206,7 +227,7 @@
                 :value="item.value"
               ></el-option>
             </el-select>
-            <el-button type="primary">发送</el-button>
+            <el-button type="primary" @click="sendOut">发送</el-button>
           </div>
         </div>
       </div>
@@ -246,21 +267,15 @@
 </template>
 
 <script>
-import { workLogListQuery } from "../../../api/basic/basicTeacherWorkLog";
+import { workLogListQuery, addSave } from "@/api/basic/basicTeacherWorkLog";
 import { getToken } from "@/utils/auth";
+import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
-      ruleForm: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
-      },
+      //日志集合
+      ruleForm: {},
       rules: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
@@ -298,19 +313,22 @@ export default {
         ],
         desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }]
       },
+      // 文件图片上传
       upload: {
-        // 是否显示弹出层
+        // 是否显示弹出层（用户导入）
         open: false,
-        // 弹出层标题
-        title: "导入老师学生谈话数据",
+        // 弹出层标题（用户导入）
+        title: "",
         // 是否禁用上传
         isUploading: false,
-        // 是否更新已经存在的数据
+        // 是否更新已经存在的用户数据
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "basic/teacherTalk/importData"
+        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
+        // 上传图片地址
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
       // 教室图片
       dialogImageUrl: "",
@@ -339,8 +357,40 @@ export default {
           value: "选项5",
           label: "北京烤鸭"
         }
-      ]
+      ],
+      // 课中数据
+      basicTeacherWorkLogLessonList: [],
+      // 课程数据
+      kcType: [],
+      // // 课后 听说读写
+      // khLogType : [],
+      // 个人日志 考试上传状态
+      getExaminationStatus: [],
+      // 个人日志 考试类型
+      getExaminationType: [],
+      // 限制图片上传数量
+      maxPhotoNum: 5,
+      //图片列表
+      files1: [],
+      files2: [],
+      // 图片上传计数
+      photoNum1: 0,
+      photoNum2: 0
     };
+  },
+  created() {
+    this.getDicts("kc_type").then(response => {
+      this.kcType = response.data;
+    });
+    this.getDicts("examination_status").then(response => {
+      this.getExaminationStatus = response.data;
+    });
+    this.getDicts("examination_type").then(response => {
+      this.getExaminationType = response.data;
+    });
+    // this.getDicts("kh_log_type").then(response => {
+    //   this.khLogType = response.data;
+    // });
   },
   mounted() {
     this.getList();
@@ -353,33 +403,32 @@ export default {
         kzzd1: "202106158170307455f835e6850ed84b93a019c65f4b0234c4"
       };
       workLogListQuery(json).then(res => {
-        console.log(res);
+        this.ruleForm = res.data[0];
+        this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+          for (let i = 0; i < this.kcType.length; i++) {
+            if (this.kcType[i].dictValue == value.courseType) {
+              value.courseTypeName = this.kcType[i].dictLabel;
+              this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+            }
+          }
+        });
+        this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+        // 教室卫生照片回显
+        this.selectPhotoList(
+          (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+          "files1"
+        );
+        // 学生表现照片回显
+        this.selectPhotoList(
+          (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+          "files2"
+        );
       });
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
     },
     /** 导入按钮操作 */
     handleImport() {
       this.upload.title = "考试成绩导入";
       this.upload.open = true;
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
     },
     // 下载模板操作
     importTemplate() {
@@ -410,6 +459,85 @@ export default {
     //是否有考试
     examinationStatus(value) {
       this.ifExamination = value ? true : false;
+    },
+    // 图片上传 大图
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    //图片删除
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    // 教室卫生图片上传成功回调
+    jswsSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.ruleForm.jswsFile || secretKey();
+      this.ruleForm.jswsFile = data.kzzd1;
+      this.photoNum1 = fileList.length;
+      addImg(data).then(res => {
+        file.id = res.data.id;
+        this.ifPhotoLimit(this.photoNum1);
+      });
+    },
+    // 学生表现图片上传成功回调
+    xsbxSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.ruleForm.xsbxFile || secretKey();
+      this.ruleForm.xsbxFile = data.kzzd1;
+      this.photoNum2 = fileList.length;
+      addImg(data).then(res => {
+        file.id = res.data.id;
+        this.ifPhotoLimit(this.photoNum2);
+      });
+    },
+    // 图片限制判断
+    ifPhotoLimit(num) {
+      if (num >= this.maxPhotoNum) {
+        this.$message({
+          message: "最多上传 5 张图片",
+          type: "warning"
+        });
+      } else {
+        this.$message({
+          message: "新增成功",
+          type: "success"
+        });
+      }
+    },
+    // 查询照片
+    selectPhotoList(glid, file) {
+      let kzzdJson = {
+        kzzd1: glid
+      };
+      // console.log(kzzdJson)
+      selectFileList(kzzdJson).then(res => {
+        // console.log(res);
+        this.photoNum = res.total;
+        this[file] = res.rows;
+      });
+    },
+    // 发送
+    sendOut() {
+      addSave(this.ruleForm).then(res => {
+        if (res.code == 200) {
+          this.getList()
+          this.$notify({
+            title: "成功",
+            message: "发送成功",
+            type: "success"
+          });
+        }
+      });
     }
   }
 };
@@ -556,6 +684,7 @@ export default {
       .wrap-examination {
         width: 100%;
         height: 100%;
+        margin-bottom: 20px;
         .examination-text {
           float: left;
           width: 20%;

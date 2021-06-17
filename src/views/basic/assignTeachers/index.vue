@@ -217,9 +217,6 @@ export default {
         });
       }
     },
-    // getChecked(index) {
-    //   console.log(index);
-    // }
   }
 };
 </script>
