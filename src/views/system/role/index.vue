@@ -136,6 +136,21 @@
             size="mini"
             type="text"
             icon="el-icon-circle-check"
+            @click="handleDistributionUser(scope.row)"
+            v-hasPermi="['']"
+          >角色分配用户</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-circle-check"
+            @click="handleInRoleUser(scope.row)"
+            v-hasPermi="['']"
+          >查看已分配用户</el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-circle-check"
             @click="handleDataScope(scope.row)"
             v-hasPermi="['system:role:edit']"
           >数据权限</el-button>
@@ -249,10 +264,35 @@
         <el-button @click="cancelDataScope">取 消</el-button>
       </div>
     </el-dialog>
+
+
+    <el-dialog :title="title" :visible.sync="openUserPage" width="800px" append-to-body>
+
+      <el-table v-loading="userloading" :data="userList" @selection-change="handleSelectionUserChange">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="用户编号" align="center" key="userId" prop="userId"  />
+          <el-table-column label="用户账号" align="center" key="userName" prop="userName"  />
+          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName"  />
+          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName"  />
+          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber"  width="120" />
+        </el-table>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-if="delButton" @click="delRoleUser">确定删除</el-button>
+        <el-button type="primary" v-if="addButton" @click="submitRoleUserForm">确定分配</el-button>
+        <el-button @click="cancelRoleUser">取 消</el-button>
+      </div>
+
+    </el-dialog>
+
+
+
   </div>
 </template>
 
 <script>
+
+import { selectNotInRoleUser,selectInRoleUser,addRoleUser,delRoleUser } from "@/api/system/user";
 import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from "@/api/system/role";
 import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
 import { treeselect as deptTreeselect, roleDeptTreeselect } from "@/api/system/dept";
@@ -261,10 +301,15 @@ export default {
   name: "Role",
   data() {
     return {
+      delButton: false,
+      addButton:false,
       // 遮罩层
       loading: true,
+      userloading:true,
       // 选中数组
       ids: [],
+      // 选中数组
+      userids: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -273,12 +318,16 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      usertotal:0,
       // 角色表格数据
       roleList: [],
+      //用户表格数据
+      userList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      openUserPage:false,
       // 是否显示弹出层（数据权限）
       openDataScope: false,
       menuExpand: false,
@@ -324,8 +373,15 @@ export default {
         roleKey: undefined,
         status: undefined
       },
+      // 查询参数
+      userqueryParams: {
+        pageNum: 1,
+        pageSize: 10,
+      },
       // 表单参数
       form: {},
+      userRoleForm:{},
+      rowRoleId:"",
       defaultProps: {
         children: "children",
         label: "label"
@@ -472,6 +528,11 @@ export default {
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
+    // 用户表格多选框选中数据
+    handleSelectionUserChange(selection){
+      this.userids = selection.map(item => item.userId);
+      //console.log("handleSelectionUserChange=",this.userids)
+    },
     // 树权限（展开/折叠）
     handleCheckedTreeExpand(value, type) {
       if (type == 'menu') {
@@ -520,8 +581,8 @@ export default {
         this.$nextTick(() => {
           roleMenu.then(res => {
             let checkedKeys = res.checkedKeys
+            this.$nextTick(()=>{
             checkedKeys.forEach((v) => {
-                this.$nextTick(()=>{
                     this.$refs.menu.setChecked(v, true ,false);
                 })
             })
@@ -529,6 +590,67 @@ export default {
         });
         this.title = "修改角色";
       });
+    },
+    // 角色分配用户（查询未分配该角色的用户）
+    handleDistributionUser(row){
+      this.delButton=false;
+      this.addButton=true;
+      this.title="查询未分配该角色的用户";
+      this.openUserPage=true;
+      this.userloading = true;
+      this.rowRoleId=row.roleId;
+      selectNotInRoleUser({roleId:row.roleId}).then(response => {
+          this.userList = response.rows;
+          this.total = response.total;
+          this.userloading = false;
+        }
+      );
+    },
+    //查询已分配该角色的用户
+    handleInRoleUser(row){
+      this.delButton=true;
+      this.addButton=false;
+      this.title="查询已分配该角色的用户";
+      this.userloading = true;
+      this.openUserPage=true;
+      this.rowRoleId=row.roleId;
+      selectInRoleUser({roleId:row.roleId}).then(response => {
+          this.userList = response.rows;
+          this.total = response.total;
+          this.userloading = false;
+        }
+      );
+    },
+    submitRoleUserForm(){
+      if(this.userids.length>0){
+        this.userRoleForm={
+          userIds:this.userids,
+          roleId:this.rowRoleId
+        };
+        addRoleUser(this.userRoleForm).then(res=>{
+          this.openUserPage=false;
+          this.msgSuccess("角色分配成功");
+        });
+      }else{
+        this.msgError("请选择一个用户进行角色分配！！！");
+      }
+    },
+    delRoleUser(){
+      if(this.userids.length>0){
+        this.userRoleForm={
+          userIds:this.userids,
+          roleId:this.rowRoleId
+        };
+        delRoleUser(this.userRoleForm).then(res=>{
+          this.openUserPage=false;
+          this.msgSuccess("角色删除成功");
+        });
+      }else{
+        this.msgError("请选择一个用户进行角色删除！！！");
+      }
+    },
+    cancelRoleUser(){
+      this.openUserPage=false;
     },
     /** 选择角色权限范围触发 */
     dataScopeSelectChange(value) {
@@ -573,6 +695,7 @@ export default {
         }
       });
     },
+
     /** 提交按钮（数据权限） */
     submitDataScope: function() {
       if (this.form.roleId != undefined) {
