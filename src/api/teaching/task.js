@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询教学计划模板-教学任务列表
 export function listTask(query) {
   return request({
-    url: '/teaching/task/list',
+    url: '/basic/task/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listTask(query) {
 // 查询教学计划模板-教学任务详细
 export function getTask(id) {
   return request({
-    url: '/teaching/task/' + id,
+    url: '/basic/task/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getTask(id) {
 // 新增教学计划模板-教学任务
 export function addTask(data) {
   return request({
-    url: '/teaching/task',
+    url: '/basic/task',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addTask(data) {
 // 修改教学计划模板-教学任务
 export function updateTask(data) {
   return request({
-    url: '/teaching/task',
+    url: '/basic/task',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateTask(data) {
 // 删除教学计划模板-教学任务
 export function delTask(id) {
   return request({
-    url: '/teaching/task/' + id,
+    url: '/basic/task/' + id,
     method: 'delete'
   })
 }

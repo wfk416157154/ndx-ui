@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询教材类型列表
 export function listType(query) {
   return request({
-    url: '/teaching/type/list',
+    url: '/basic/type/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listType(query) {
 // 查询教材类型详细
 export function getType(id) {
   return request({
-    url: '/teaching/type/' + id,
+    url: '/basic/type/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getType(id) {
 // 新增教材类型
 export function addType(data) {
   return request({
-    url: '/teaching/type',
+    url: '/basic/type',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addType(data) {
 // 修改教材类型
 export function updateType(data) {
   return request({
-    url: '/teaching/type',
+    url: '/basic/type',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateType(data) {
 // 删除教材类型
 export function delType(id) {
   return request({
-    url: '/teaching/type/' + id,
+    url: '/basic/type/' + id,
     method: 'delete'
   })
 }
