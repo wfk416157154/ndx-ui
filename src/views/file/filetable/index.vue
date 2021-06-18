@@ -356,11 +356,12 @@ export default {
         })
     },
     /** 导出按钮操作 */
-    handleExport() {
+    handleExport2() {
       this.download('file/filetable/export', {
         ...this.queryParams
       }, `file_filetable.xlsx`)
-    }
+    },
+
   }
 };
 </script>
