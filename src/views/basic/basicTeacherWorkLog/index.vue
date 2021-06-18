@@ -190,7 +190,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="未读:0;已读:1" prop="isRead">
-          <el-select v-model="form.isRead" placeholder="请选择未读:0;已读:1">
+          <el-select v-model="form.isRead" placeholder="请选择未读:">
             <el-option
               v-for="dict in isReadOptions"
               :key="dict.dictValue"
