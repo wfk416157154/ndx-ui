@@ -240,7 +240,7 @@
         :limit="1"
         accept=".xlsx, .xls"
         :headers="upload.headers"
-        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :action="upload.fileUrl"
         :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
@@ -271,6 +271,7 @@ import { workLogListQuery, addSave } from "@/api/basic/basicTeacherWorkLog";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
+import { updateExaminationPaper } from "@/api/basic/examinationPaper";
 export default {
   data() {
     return {
@@ -388,9 +389,6 @@ export default {
     this.getDicts("examination_type").then(response => {
       this.getExaminationType = response.data;
     });
-    // this.getDicts("kh_log_type").then(response => {
-    //   this.khLogType = response.data;
-    // });
   },
   mounted() {
     this.getList();
@@ -446,11 +444,19 @@ export default {
     },
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
+      console.log(response);
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
       this.getList();
+      let json = {
+        lssjzt: "4",
+        id :""
+      };
+      updateExaminationPaper(json).then(res => {
+        console.log(res);
+      });
     },
     // 提交上传文件
     submitFileForm() {
@@ -530,7 +536,7 @@ export default {
     sendOut() {
       addSave(this.ruleForm).then(res => {
         if (res.code == 200) {
-          this.getList()
+          this.getList();
           this.$notify({
             title: "成功",
             message: "发送成功",

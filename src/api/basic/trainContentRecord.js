@@ -26,6 +26,15 @@ export function addTrainContentRecord(data) {
   })
 }
 
+// 保存培训内容记录集合
+export function getSaveList(data) {
+  return request({
+    url: '/basic/trainContentRecord/saveList',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改培训内容记录
 export function updateTrainContentRecord(data) {
   return request({

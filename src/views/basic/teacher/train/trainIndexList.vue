@@ -80,7 +80,10 @@
                   style="margin: 10px 10px;display : inline-block"
                   v-if="items.sjpxnrid == null"
                 >{{j + 1}} {{items.pxnr}}</span>
-                <span style="margin : 10px 10px;display : inline-block" v-else>{{j + 1}} {{items.pxnr}}</span>
+                <span
+                  style="margin : 10px 10px;display : inline-block"
+                  v-else
+                >{{j + 1}} {{items.pxnr}}</span>
                 <el-checkbox
                   v-if="items.zjmc == '1'"
                   style="float : right;margin-right : 10px; margin : 10px 10px;"
@@ -169,20 +172,12 @@
 import { listTeacherTrain, updateTeacherTrain } from "@/api/basic/teacherTrain";
 import {
   listStaticform,
-  getStaticform,
-  delStaticform,
   addStaticform,
   updateStaticform
 } from "@/api/basic/staticform";
 import { listTrainTheme } from "@/api/basic/trainTheme";
-import {
-  listTrainProject,
-  addTrainProject,
-  updateTrainProject,
-  delTrainProject,
-  queryTrainProjectList
-} from "@/api/basic/trainProject";
 import { queryTrainContentAffirm } from "@/api/basic/trainSingle";
+import { getSaveList} from "@/api/basic/trainContentRecord";
 export default {
   data() {
     return {
@@ -243,19 +238,10 @@ export default {
         this.projectList = res.data;
         this.themeName = this.projectList.ztmc;
       });
-      // listTrainTheme({ sfqy: 1 }).then(async res => {
-      //   this.themeName = res.rows[0].ztmc;
-      //   let themeId = res.rows[0].id;
-      //   // 获取主题id 查询项目
-      //   let projectResult = await queryTrainProjectList(themeId);
-      //   this.projectList = projectResult.rows;
-      //   this.projectList.map(async (value, index) => {
-      //     let projectId = value.id;
-      //     let projectArr = await queryTrainContentsingleList(projectId);
-      //     let contentListName = "contentResult" + index;
-      //     this.$set(this.contentResult, contentListName, projectArr.rows);
-      //   });
-      // });
+      // 保存培训内容记录集合
+      listTrainContentRecord().then(res => {
+        console.log(res);
+      });
     },
     // 提交按钮
     contentSubmitForm() {
@@ -271,7 +257,6 @@ export default {
         });
       } else {
         addStaticform(this.trainIndexList).then(res => {
-          console.log(res);
           this.$notify({
             title: "成功",
             message: res.msg,
