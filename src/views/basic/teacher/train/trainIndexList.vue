@@ -177,7 +177,7 @@ import {
 } from "@/api/basic/staticform";
 import { listTrainTheme } from "@/api/basic/trainTheme";
 import { queryTrainContentAffirm } from "@/api/basic/trainSingle";
-import { getSaveList} from "@/api/basic/trainContentRecord";
+import { postSaveList} from "@/api/basic/trainContentRecord";
 export default {
   data() {
     return {

@@ -387,7 +387,7 @@ export default {
   methods: {
     // 班级列表基础信息
     getList() {
-      listBjclass({ lsxm: this.$store.state.user.glrid }).then(res => {
+      listBjclass({ kzzd2: this.$store.state.user.glrid }).then(res => {
         this.listBjclass = res.rows;
         this.activeTab = this.listBjclass[0].id;
         this.switchingClasses(this.activeTab);

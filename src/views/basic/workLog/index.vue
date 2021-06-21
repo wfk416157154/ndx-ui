@@ -1,11 +1,30 @@
 <template>
   <div class="work-log">
+    <el-form ref="forms" :inline="true" label-width="80px">
+      <el-form-item label="选择班级">
+        <el-select v-model="bjNameId">
+          <el-option
+            v-for="(item,index) in getListBjclass"
+            :key="index"
+            :label="item.rybjmc"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="选择班级">
+        <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="datetime" placeholder="选择日期时间"></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="getWorkLogListQuery(bjNameId,logTiem)">日志查询</el-button>
+      </el-form-item>
+    </el-form>
     <el-form
       :model="ruleForm"
       :rules="rules"
       ref="ruleForm"
       label-width="100px"
       class="demo-ruleForm"
+      v-if="ifForm"
     >
       <div class="clearfix" style="margin-bottom : 10px">
         <el-button style="float: right" type="primary" icon="el-icon-search" size="medium">查看工作日志</el-button>
@@ -156,7 +175,14 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="考试名称">
-                  <el-input style="width :90%" placeholder="请输入考试名称" v-model="ruleForm.kzzd4"></el-input>
+                  <el-select v-model="ruleForm.kzzd4" placeholder="请输入选择">
+                    <el-option
+                      v-for="(item,index) in getListExaminationPaper"
+                      :key="index"
+                      :label="item.ksfw"
+                      :value="item.id"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
               </div>
               <div class="button">
@@ -219,12 +245,12 @@
           <!-- 发送到人 -->
           <div class="send-out">
             <h4>发送到人</h4>
-            <el-select v-model="ruleForm.fsr" filterable multiple placeholder="请选择">
+            <el-select v-model="ruleForm.kzzd5" filterable multiple placeholder="请选择">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in getListUser"
+                :key="item.userId"
+                :label="item.nickName"
+                :value="item.userId"
               ></el-option>
             </el-select>
             <el-button type="primary" @click="sendOut">发送</el-button>
@@ -245,6 +271,7 @@
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
         :auto-upload="false"
+        :data="{ksmc : getKsName,kslx : ruleForm.kzzd3,kssj : getKssj}"
         drag
       >
         <i class="el-icon-upload"></i>
@@ -272,6 +299,10 @@ import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
 import { updateExaminationPaper } from "@/api/basic/examinationPaper";
+import { listExaminationPaper } from "@/api/basic/examinationPaper";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listUser } from "@/api/system/user";
+import { listClassCourse } from "@/api/basic/classCourse";
 export default {
   data() {
     return {
@@ -326,10 +357,10 @@ export default {
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
-        // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
-        // 上传图片地址
-        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        // 上传考试成绩地址
+        fileUrl:
+          process.env.VUE_APP_BASE_API +
+          "/basic/examinationPaper/importClassGradeData"
       },
       // 教室图片
       dialogImageUrl: "",
@@ -337,28 +368,7 @@ export default {
       // 是否有考试
       ifExamination: false,
       // 发送人
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
+      getListUser: [],
       // 课中数据
       basicTeacherWorkLogLessonList: [],
       // 课程数据
@@ -376,7 +386,25 @@ export default {
       files2: [],
       // 图片上传计数
       photoNum1: 0,
-      photoNum2: 0
+      photoNum2: 0,
+      // 获取考试名称
+      getListExaminationPaper: [],
+      // 老师所带班级
+      bjNameId: "",
+      // 日志填写时间
+      logTiem: "",
+      // 班级名称
+      bjName: "",
+      // 班级信息数据
+      getListBjclass: [],
+      // 课中数据
+      listClassCourse: [],
+      // 课中开始时间
+      getKssj: "",
+      // 考试范围[名称]
+      getKsName: "",
+      // 显示日志
+      ifForm: false
     };
   },
   created() {
@@ -396,44 +424,106 @@ export default {
   methods: {
     // 获取课中课表信息
     getList() {
-      let json = {
-        lsid: "202106158174553586164977e3534f46dba4673f3bbc6da884",
-        kzzd1: "202106158170307455f835e6850ed84b93a019c65f4b0234c4"
-      };
-      workLogListQuery(json).then(res => {
-        this.ruleForm = res.data[0];
-        this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
-          for (let i = 0; i < this.kcType.length; i++) {
-            if (this.kcType[i].dictValue == value.courseType) {
-              value.courseTypeName = this.kcType[i].dictLabel;
-              this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
-            }
-          }
+      // 获取班级信息
+      listBjclass({ kzzd2: this.$store.state.user.glrid }).then(res => {
+        this.getListBjclass = res.rows;
+        // 获取个人日志 考试范围
+        listExaminationPaper().then(res => {
+          this.getListExaminationPaper = res.rows;
         });
-        this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
-        // 教室卫生照片回显
-        this.selectPhotoList(
-          (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-          "files1"
-        );
-        // 学生表现照片回显
-        this.selectPhotoList(
-          (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-          "files2"
-        );
+      });
+      // 获取用户列表
+      listUser().then(res => {
+        this.getListUser = res.rows;
+      });
+    },
+    // 查询某一班级日志
+    async getWorkLogListQuery(bjid, date) {
+      date =
+        date &&
+        date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      this.ifForm = true;
+      for (let i = 0; i < this.getListBjclass.length; i++) {
+        if (this.getListBjclass[i].id == bjid) {
+          this.bjName = this.getListBjclass[i].rybjmc;
+        }
+      }
+      // 课表获取
+      let listClassCourseResult = await listClassCourse({ bjid: bjid });
+      this.listClassCourse = listClassCourseResult.rows;
+      // 课中数据
+      let dataInClass = [];
+      this.listClassCourse.forEach(value => {
+        for (let i = 0; i < this.kcType.length; i++) {
+          if (value.kcType == this.kcType[i].dictValue) {
+            dataInClass.push({
+              courseTypeName: this.kcType[i].dictLabel,
+              courseType: this.kcType[i].dictValue,
+              content: ""
+            });
+          }
+        }
+      });
+      let json = {
+        // 老师id
+        lsid: this.$store.state.user.glrid,
+        // 班级 id
+        kzzd1: bjid,
+        // 时间
+        date: date
+      };
+      this.ruleForm = json;
+      // 获取日志信息
+      workLogListQuery(json).then(res => {
+        console.log(res);
+        if (res.data.length != 0) {
+          this.ruleForm = res.data[0];
+          this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+            for (let i = 0; i < this.kcType.length; i++) {
+              if (this.kcType[i].dictValue == value.courseType) {
+                value.courseTypeName = this.kcType[i].dictLabel;
+                this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+              }
+            }
+          });
+          this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+          // 教室卫生照片回显
+          this.selectPhotoList(
+            (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+            "files1"
+          );
+          // 学生表现照片回显
+          this.selectPhotoList(
+            (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+            "files2"
+          );
+        }
+        if (
+          this.ruleForm.basicTeacherWorkLogLessonList &&
+          this.ruleForm.basicTeacherWorkLogLessonList.length == 0
+        ) {
+          this.ruleForm.basicTeacherWorkLogLessonList = dataInClass;
+        }
       });
     },
     /** 导入按钮操作 */
     handleImport() {
       this.upload.title = "考试成绩导入";
       this.upload.open = true;
+      for (let j = 0; j < this.getListExaminationPaper.length; j++) {
+        if (this.getListExaminationPaper[j].id == this.ruleForm.kzzd4) {
+          this.getKssj = this.getListExaminationPaper[j].kskssj;
+          this.getKsName = this.getListExaminationPaper[j].ksfw;
+          return;
+        }
+      }
     },
     // 下载模板操作
     importTemplate() {
       this.download(
-        "basic/teacherTalk/importTemplate",
+        "basic/examinationPaper/importClassGradeTemplate",
         {
-          ...this.queryParams
+          rybjmc: this.bjName
         },
         `考试-导入模板.xlsx`
       );
@@ -444,7 +534,6 @@ export default {
     },
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
-      console.log(response);
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
@@ -452,10 +541,15 @@ export default {
       this.getList();
       let json = {
         lssjzt: "4",
-        id :""
+        id: this.ruleForm.kzzd4
       };
+      // 改变老师试卷状态
       updateExaminationPaper(json).then(res => {
-        console.log(res);
+        this.$notify({
+          title: "成功",
+          message: res.msg,
+          type: "success"
+        });
       });
     },
     // 提交上传文件
@@ -525,18 +619,24 @@ export default {
       let kzzdJson = {
         kzzd1: glid
       };
-      // console.log(kzzdJson)
       selectFileList(kzzdJson).then(res => {
-        // console.log(res);
         this.photoNum = res.total;
         this[file] = res.rows;
       });
     },
     // 发送
     sendOut() {
+      // 暂时不发送到人 null
+      this.ruleForm.kzzd5 = null;
       addSave(this.ruleForm).then(res => {
         if (res.code == 200) {
+          this.getWorkLogListQuery(this.bjNameId, this.logTiem);
           this.getList();
+          // 保存日志id到对应试卷
+          updateExaminationPaper({
+            id: this.ruleForm.kzzd4,
+            kzzd3: res.data.id
+          }).then(res => {});
           this.$notify({
             title: "成功",
             message: "发送成功",

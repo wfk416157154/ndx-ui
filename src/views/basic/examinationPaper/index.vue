@@ -304,12 +304,11 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      console.log(row);
       this.examinationInformationId = row.id;
       this.upload.open = true;
     },
     // 考卷发送
-    submitForm() {
+    submitForm(row) {
       this.$confirm("确定是否发送?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -327,7 +326,7 @@ export default {
             });
           }
         })
-        .catch(() => {
+        .catch((err) => {
           this.$message({
             type: "info",
             message: "已取消发送"
@@ -367,6 +366,7 @@ export default {
         type: "success"
       });
       data.kzzd1 = this.examinationInformationId;
+     
       // 保存文件上传地址
       addFile(data).then(res => {});
       this.getList();
