@@ -120,8 +120,6 @@
                 <vxe-table-column title="周日" align="center" field="sunday" :edit-render="{name: '$select', options: isCourse}"  />
                 <vxe-table-column title="备注" align="center" field="remark" />
               </vxe-table>
-
-
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -139,7 +137,7 @@ import {
   addClassCourse,
   updateClassCourse
 } from "@/api/basic/classCourse";
-import {delClassCourse} from "../../../api/basic/classCourse";
+import {delClassCourse} from "@/api/basic/classCourse";
 export default {
   data() {
     return {

@@ -28,6 +28,9 @@ const user = {
     SET_GLRID: (state, glrid) => {
       state.glrid = glrid
     },
+    SET_DATAROLEWEIGHTID: (state, dataRoleWeightId) => {
+      state.dataRoleWeightId = dataRoleWeightId
+    },
     SET_NICKNAME: (state, nickName) => {
       state.nickName = nickName
     },
@@ -79,6 +82,7 @@ const user = {
           commit('SET_NAME', user.userName)
           commit('SET_GLRID', user.glrid)
           commit('SET_USERID', user.userId)
+          commit('SET_DATAROLEWEIGHTID', user.dataRoleWeightId)
           commit('SET_AVATAR', avatar)
           resolve(res)
         }).catch(error => {
@@ -88,7 +92,7 @@ const user = {
     },
 
     // 刷新token
-    RefreshToken({commit, state}) {
+    RefreshToken({ commit, state }) {
       return new Promise((resolve, reject) => {
         refreshToken(state.token).then(res => {
           setExpiresIn(res.data)
