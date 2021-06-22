@@ -260,7 +260,6 @@ export default {
     submitTimetable() {
       const $table = this.$refs.xTable
       const result = $table.getRecordset()
-      console.log(`insertRecords=`,result)
       if(result.insertRecords.length>0){
         for (let i = 0; i < result.insertRecords.length; i++) {
             result.insertRecords[i].bjid=this.queryParams.bjid
