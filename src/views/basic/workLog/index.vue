@@ -290,6 +290,19 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 考试成绩分析总结 -->
+    <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzj" width="60%">
+      <el-form label-width="120px">
+        <el-form-item label="考试总结">
+          <el-input type="textarea" :autosize="{ minRows: 8, maxRows: 10}" v-model="getKscjzj"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="kscjzj = false">取 消</el-button>
+        <el-button type="primary" @click="addKscjfxzj">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -365,6 +378,7 @@ export default {
       // 教室图片
       dialogImageUrl: "",
       dialogVisible: false,
+      kscjzj: false,
       // 是否有考试
       ifExamination: false,
       // 发送人
@@ -404,7 +418,9 @@ export default {
       // 考试范围[名称]
       getKsName: "",
       // 显示日志
-      ifForm: false
+      ifForm: false,
+      // 考试分析总结
+      getKscjzj: ""
     };
   },
   created() {
@@ -537,7 +553,10 @@ export default {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.$notify({
+        message: response.msg,
+        type: "success"
+      });
       this.getList();
       let json = {
         lssjzt: "4",
@@ -545,11 +564,7 @@ export default {
       };
       // 改变老师试卷状态
       updateExaminationPaper(json).then(res => {
-        this.$notify({
-          title: "成功",
-          message: res.msg,
-          type: "success"
-        });
+        this.kscjzj = true;
       });
     },
     // 提交上传文件
@@ -558,7 +573,7 @@ export default {
     },
     //是否有考试
     examinationStatus(value) {
-      this.ifExamination = value ? true : false;
+      this.ifExamination = value == "1" ? true : false;
     },
     // 图片上传 大图
     handlePictureCardPreview(file) {
@@ -628,15 +643,18 @@ export default {
     sendOut() {
       // 暂时不发送到人 null
       this.ruleForm.kzzd5 = null;
-      addSave(this.ruleForm).then(res => {
+      addSave(this.ruleForm).then(async res => {
         if (res.code == 200) {
           this.getWorkLogListQuery(this.bjNameId, this.logTiem);
           this.getList();
-          // 保存日志id到对应试卷
-          updateExaminationPaper({
-            id: this.ruleForm.kzzd4,
-            kzzd3: res.data.id
-          }).then(res => {});
+          if (this.ruleForm.kzzd4) {
+            let jsonObj = {
+              id: this.ruleForm.kzzd4,
+              kzzd3: res.data.id
+            };
+            // 保存日志id到对应试卷
+            await updateExaminationPaper(jsonObj);
+          }
           this.$notify({
             title: "成功",
             message: "发送成功",
@@ -644,6 +662,10 @@ export default {
           });
         }
       });
+    },
+    // 考试分析总结
+    addKscjfxzj() {
+      this.kscjzj = false;
     }
   }
 };

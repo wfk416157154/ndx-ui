@@ -138,7 +138,7 @@ import {
   addClassCourse,
   updateClassCourse
 } from "@/api/basic/classCourse";
-import {delClassCourse} from "../../../api/basic/classCourse";
+import {delClassCourse} from "@/api/basic/classCourse";
 export default {
   data() {
     return {
