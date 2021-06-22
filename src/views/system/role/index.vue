@@ -183,7 +183,21 @@
           <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
         </el-form-item>
         <el-form-item label="角色权重" prop="dataRoleWeight">
-          <el-input-number v-model="form.dataRoleWeight" controls-position="right" :min="1"  :max="999"  />
+          <el-select
+            v-model="form.dataRoleWeight"
+            placeholder="角色权重"
+            clearable
+            size="small"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="dict in dataRoleWeightOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+          <!--<el-input-number v-model="form.dataRoleWeight" controls-position="right" :min="1"  :max="999"  />-->
         </el-form-item>
         <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
@@ -365,6 +379,7 @@ export default {
       menuOptions: [],
       // 部门列表
       deptOptions: [],
+      dataRoleWeightOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -405,6 +420,10 @@ export default {
     this.getDicts("sys_normal_disable").then(response => {
       this.statusOptions = response.data;
     });
+    this.getDicts("dataRoleId").then(response => {
+      this.dataRoleWeightOptions = response.data;
+    });
+
   },
   methods: {
     /** 查询角色列表 */

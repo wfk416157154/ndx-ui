@@ -107,8 +107,8 @@
                 :edit-config="{trigger: 'click', mode: 'cell', icon: 'fa fa-pencil', showStatus: true}"
               >
                 <vxe-table-column type="checkbox" width="60"></vxe-table-column>
-                <vxe-table-column title="id" align="center" field="id" :visible="true" />
-                <vxe-table-column title="班级id" align="center" field="bjid" :visible="true" />
+                <vxe-table-column title="id" align="center" field="id" :visible="false" />
+                <vxe-table-column title="班级id" align="center" field="bjid" :visible="false" />
                 <vxe-table-column title="课表类型" align="center" field="kbType" :edit-render="{name: '$select' , options: kbTypeOptions}" />
                 <vxe-table-column title="课程类型" align="center" field="kcType" :edit-render="{name: '$select', options: kcType}" />
                 <vxe-table-column title="周一" align="center" field="monday"  :edit-render="{name: '$select', options: isCourse}"  />
@@ -120,7 +120,6 @@
                 <vxe-table-column title="周日" align="center" field="sunday" :edit-render="{name: '$select', options: isCourse}"  />
                 <vxe-table-column title="备注" align="center" field="remark" />
               </vxe-table>
-
 
             </el-tab-pane>
           </el-tabs>
