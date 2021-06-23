@@ -22,6 +22,8 @@ import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels,r
 import Pagination from "@/components/Pagination";
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar"
+// 字典标签组件（使用频繁可在全局挂载）
+import DictTag from '@/components/DictTag'
 // jquery
 import $ from 'jquery'
 
@@ -57,6 +59,7 @@ Vue.prototype.msgInfo = function (msg) {
 // 全局组件挂载
 Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
+Vue.component('DictTag', DictTag)
 
 Vue.use(permission)
 Vue.use(install)
