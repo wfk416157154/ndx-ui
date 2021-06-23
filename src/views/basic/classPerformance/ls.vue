@@ -41,7 +41,7 @@
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
         <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
-        <el-button type="primary" class="el-btn" plain>导出成绩</el-button>
+        <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -55,7 +55,7 @@
             <h4>老师性别 :</h4>&nbsp;
             <span v-if="item.lsxb == '1'">男</span>
             <span v-if="item.lsxb == '0'">女</span>
-          </div> -->
+          </div>-->
           <div class="student-information">
             <h4>所属校区 :</h4>&nbsp;
             <span>{{item.xqmc}}</span>
@@ -66,7 +66,7 @@
           </div>
           <div class="student-information">
             <h4>进班平均英语成绩 :</h4>&nbsp;
-            <span>{{item.bj}}</span>
+            <span>{{item.jbpjyycj}}</span>
           </div>
         </div>
         <div class="wrap-right">
@@ -78,7 +78,7 @@
               <span @click="selectDtate(3)">年</span>
               <span @click="selectDtate()">全部</span>
             </div>
-          </div> -->
+          </div>-->
           <!-- <div class="wrap-input">
             <div class="wrap-title" v-if="isShow == 3">
               <span class="title-content">年考</span>
@@ -91,7 +91,7 @@
               <span class="title-content">期中</span>
               <span class="title-content">期末</span>
             </div>
-          </div> -->
+          </div>-->
           <div class="wrap-chart">
             <div
               :id="index"
@@ -296,6 +296,16 @@ export default {
       this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
+    },
+    // 导出成绩按钮
+    handleExport() {
+      this.download(
+        "basic/teacher/export",
+        {
+          ...this.queryParams
+        },
+        `basic_teacher.xlsx`
+      );
     }
   }
 };

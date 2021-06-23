@@ -32,7 +32,7 @@
       <!-- 课程 -->
       <div class="wrap-log">
         <div class="curriculum-title">
-          <span>课程 :</span>
+          <span>课程</span>
         </div>
         <div class="log-content">
           <el-input
@@ -47,7 +47,7 @@
       <!-- 备课 -->
       <div class="wrap-preparation clearfix">
         <div class="preparation-title">
-          <span>备课 :</span>
+          <span>备课</span>
         </div>
         <div class="preparation-list">
           <div class="wrap-history">
@@ -78,7 +78,7 @@
       <!-- 课中 -->
       <div class="in-class clearfix">
         <div class="in-class-title clearfix">
-          <span>课中 :</span>
+          <span>课中</span>
         </div>
         <div class="in-class-list">
           <div class="in-class-content">
@@ -98,7 +98,7 @@
       <!-- 课后 -->
       <div class="wrap-preparation clearfix">
         <div class="preparation-title">
-          <span>课后 :</span>
+          <span>课后</span>
         </div>
         <div class="preparation-list">
           <div class="wrap-history">
@@ -153,9 +153,9 @@
               </el-form-item>
             </div>
             <div v-if="ifExamination" class="examination-upload">
-              <div style="width : 50%; display: inline-block">
-                <el-form-item label="考试状态">
-                  <el-select v-model="ruleForm.kzzd2">
+              <div style="width : 500px; display: inline-block">
+                <el-form-item label-width="100px" label="考试状态">
+                  <el-select v-model="ruleForm.kzzd2" placeholder="请选择考试状态">
                     <el-option
                       v-for="(item,index) in getExaminationStatus"
                       :key="index"
@@ -164,8 +164,8 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="考试类型">
-                  <el-select v-model="ruleForm.kzzd3">
+                <el-form-item label-width="100px" label="考试类型">
+                  <el-select v-model="ruleForm.kzzd3" placeholder="请选择考试类型">
                     <el-option
                       v-for="(item,index) in getExaminationType"
                       :key="index"
@@ -174,8 +174,8 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="考试名称">
-                  <el-select v-model="ruleForm.kzzd4" placeholder="请输入选择">
+                <el-form-item label-width="100px" label="考试名称">
+                  <el-select v-model="ruleForm.kzzd4" placeholder="请选择考试名称">
                     <el-option
                       v-for="(item,index) in getListExaminationPaper"
                       :key="index"
@@ -186,7 +186,7 @@
                 </el-form-item>
               </div>
               <div class="button">
-                <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+                <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入成绩</el-button>
               </div>
             </div>
           </div>
@@ -687,18 +687,21 @@ export default {
       text-align: center;
       border-right: 2px #ccc solid;
       float: left;
+      background-color: #84af9b;
+      color: #fff;
       span {
         line-height: 150px;
       }
     }
     .log-content {
-      padding: 10px;
+      padding: 15px;
       box-sizing: border-box;
       float: right;
       width: 80%;
       height: 100%;
       padding-left: 20px;
       box-sizing: border-box;
+      background-color: #AEDD81;
     }
   }
   .wrap-preparation {
@@ -713,6 +716,8 @@ export default {
       text-align: center;
       border-right: 2px #ccc solid;
       float: left;
+      background-color: #84af9b;
+      color: #fff;
       span {
         line-height: 300px;
       }
@@ -723,6 +728,7 @@ export default {
       height: 100%;
       padding: 10px;
       box-sizing: border-box;
+      background-color: #AEDD81;
       .wrap-history {
         width: 100%;
         .history-log-content {
@@ -743,17 +749,21 @@ export default {
     .in-class-title {
       width: 20%;
       height: 100%;
-      text-align: center;
+      // text-align: center;
       float: left;
       border-right: 2px #ccc solid;
       position: absolute;
       top: 0;
       bottom: 0;
+      background-color: #84af9b;
+      color: #fff;
       span {
         position: absolute;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
         top: 50%;
         transform: translateY(-50%);
-        transform: translateX(-50%);
       }
     }
     .in-class-list {
@@ -762,6 +772,7 @@ export default {
       height: 100%;
       padding: 10px;
       box-sizing: border-box;
+      background-color: #AEDD81;
       .in-class-content {
         width: 100%;
         height: 100%;
@@ -799,6 +810,8 @@ export default {
       position: absolute;
       top: 0;
       bottom: 0;
+      background-color: #84af9b;
+      color: #fff;
       span {
         position: absolute;
         top: 50%;
@@ -810,21 +823,43 @@ export default {
       width: 80%;
       height: 100%;
       float: right;
+      background-color: #AEDD81;
       .wrap-examination {
         width: 100%;
         height: 100%;
         margin-bottom: 20px;
         .examination-text {
-          float: left;
-          width: 20%;
+          // float: left;
+          // width: 20%;
         }
         .examination-upload {
-          width: 60%;
-          height: 160px;
-          float: right;
-          background-color: #ccc;
+          padding: 20px;
+          box-sizing: border-box;
+          background-color: greenyellow;
+          // background-image: linear-gradient( to right, greenyellow , green);
+          background: linear-gradient(
+            to right,
+            #bb313e25,
+            // #bb313e25,
+            // #d7222925,
+            // #dd4a1625,
+            // #e4761525,
+            // #f5c50025,
+            // #f0e92725,
+            // #b1ce2425,
+            // #48a93525,
+            // #03944525,
+            // #157c4f25,
+            // #176a5825,
+            // #1b556325,
+            // #1d386f25,
+            // #1d386f25,
+            // #20277825,
+            // #52266325,
+            // #8a244b25
+          );
           .button {
-            display: inline-block;
+            margin-left: 100px;
           }
         }
       }
