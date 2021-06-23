@@ -80,7 +80,7 @@
           </el-select>
         </el-form-item>
         <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
-        <el-button type="primary" class="el-btn" plain>导出成绩</el-button>
+        <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -105,7 +105,7 @@
           </div>
           <div class="student-information">
             <h4>进班平均英语成绩 :</h4>&nbsp;
-            <span>{{item.bj}}</span>
+            <span>{{item.jbpjyycj}}</span>
           </div>
         </div>
         <div class="wrap-right">
@@ -323,6 +323,16 @@ export default {
       this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
+    },
+    // 导出按钮操作
+    handleExport() {
+      this.download(
+        "basic/teacher/export",
+        {
+          ...this.queryParams
+        },
+        `basic_teacher.xlsx`
+      );
     }
   }
 };
