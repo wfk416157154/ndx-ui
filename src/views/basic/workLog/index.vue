@@ -35,13 +35,16 @@
           <span>课程</span>
         </div>
         <div class="log-content">
-          <el-input
-            resize="none"
-            type="textarea"
-            :autosize="{ minRows: 5, maxRows: 5}"
-            placeholder="请输入内容"
-            v-model="ruleForm.kczj"
-          ></el-input>
+          <el-form-item label-width="120px" prop="kczj">
+            <el-input
+              @blur="sendOut"
+              resize="none"
+              type="textarea"
+              :autosize="{ minRows: 5, maxRows: 5}"
+              placeholder="请输入内容"
+              v-model="ruleForm.kczj"
+            ></el-input>
+          </el-form-item>
         </div>
       </div>
       <!-- 备课 -->
@@ -253,7 +256,7 @@
                 :value="item.userId"
               ></el-option>
             </el-select>
-            <el-button type="primary" @click="sendOut">发送</el-button>
+            <el-button type="primary" @click="sendOut(true)">发送</el-button>
           </div>
         </div>
       </div>
@@ -318,47 +321,14 @@ import {
 import { listBjclass } from "@/api/basic/bjclass";
 import { listUser } from "@/api/system/user";
 import { listClassCourse } from "@/api/basic/classCourse";
+import { addExamSummary } from "@/api/basic/examSummary";
 export default {
   data() {
     return {
       //日志集合
       ruleForm: {},
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
-        ],
-        region: [
-          { required: true, message: "请选择活动区域", trigger: "change" }
-        ],
-        date1: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择日期",
-            trigger: "change"
-          }
-        ],
-        date2: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择时间",
-            trigger: "change"
-          }
-        ],
-        type: [
-          {
-            type: "array",
-            required: true,
-            message: "请至少选择一个活动性质",
-            trigger: "change"
-          }
-        ],
-        resource: [
-          { required: true, message: "请选择活动资源", trigger: "change" }
-        ],
-        desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }]
+        kczj: [{ required: true, message: "请填写课程日志", trigger: "blur" }]
       },
       // 文件图片上传
       upload: {
@@ -422,7 +392,9 @@ export default {
       // 显示日志
       ifForm: false,
       // 考试分析总结
-      getKscjzj: ""
+      getKscjzj: "",
+      // 日志id
+      rzid: ""
     };
   },
   created() {
@@ -525,6 +497,20 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
+      if (this.ruleForm.kczj == null) {
+        this.$notify({
+          message: "请先填写课程日志",
+          type: "error"
+        });
+        return;
+      }
+      if (!this.ruleForm.kzzd4) {
+        this.$notify({
+          message: "请选择考试名称",
+          type: "error"
+        });
+        return;
+      }
       this.upload.title = "考试成绩导入";
       this.upload.open = true;
       for (let j = 0; j < this.getListExaminationPaper.length; j++) {
@@ -641,7 +627,7 @@ export default {
       });
     },
     // 发送
-    sendOut() {
+    sendOut(value) {
       // 暂时不发送到人 null
       this.ruleForm.kzzd5 = null;
       addSave(this.ruleForm).then(async res => {
@@ -653,20 +639,42 @@ export default {
               id: this.ruleForm.kzzd4,
               kzzd3: res.data.id
             };
+            this.rzid = res.data.id;
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
           }
-          this.$notify({
-            title: "成功",
-            message: "发送成功",
-            type: "success"
-          });
+          // 点击发送按钮弹出
+          if (value == true) {
+            this.$notify({
+              message: "日志发送成功",
+              type: "success"
+            });
+          } else {
+            if (!this.ruleForm.kczj) {
+              return;
+            }
+            this.$notify({
+              message: "日志保存成功",
+              type: "success"
+            });
+          }
         }
       });
     },
     // 考试分析总结
     addKscjfxzj() {
       this.kscjzj = false;
+      let json = {
+        teacherWorklogId: this.rzid,
+        examPaperId: this.ruleForm.kzzd4,
+        ksfxzj: this.getKscjzj
+      };
+      addExamSummary(json).then(res => {
+        this.$notify({
+          message: res.msg,
+          type: "success"
+        });
+      });
     }
   }
 };
@@ -701,7 +709,7 @@ export default {
       height: 100%;
       padding-left: 20px;
       box-sizing: border-box;
-      background-color: #AEDD81;
+      background-color: #aedd81;
     }
   }
   .wrap-preparation {
@@ -728,7 +736,7 @@ export default {
       height: 100%;
       padding: 10px;
       box-sizing: border-box;
-      background-color: #AEDD81;
+      background-color: #aedd81;
       .wrap-history {
         width: 100%;
         .history-log-content {
@@ -772,7 +780,7 @@ export default {
       height: 100%;
       padding: 10px;
       box-sizing: border-box;
-      background-color: #AEDD81;
+      background-color: #aedd81;
       .in-class-content {
         width: 100%;
         height: 100%;
@@ -823,7 +831,7 @@ export default {
       width: 80%;
       height: 100%;
       float: right;
-      background-color: #AEDD81;
+      background-color: #aedd81;
       .wrap-examination {
         width: 100%;
         height: 100%;
@@ -841,22 +849,22 @@ export default {
             to right,
             #bb313e25,
             // #bb313e25,
-            // #d7222925,
-            // #dd4a1625,
-            // #e4761525,
-            // #f5c50025,
-            // #f0e92725,
-            // #b1ce2425,
-            // #48a93525,
-            // #03944525,
-            // #157c4f25,
-            // #176a5825,
-            // #1b556325,
-            // #1d386f25,
-            // #1d386f25,
-            // #20277825,
-            // #52266325,
-            // #8a244b25
+              // #d7222925,
+              // #dd4a1625,
+              // #e4761525,
+              // #f5c50025,
+              // #f0e92725,
+              // #b1ce2425,
+              // #48a93525,
+              // #03944525,
+              // #157c4f25,
+              // #176a5825,
+              // #1b556325,
+              // #1d386f25,
+              // #1d386f25,
+              // #20277825,
+              // #52266325,
+              // #8a244b25
           );
           .button {
             margin-left: 100px;
