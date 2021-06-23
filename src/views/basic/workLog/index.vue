@@ -311,8 +311,10 @@ import { workLogListQuery, addSave } from "@/api/basic/basicTeacherWorkLog";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
-import { updateExaminationPaper } from "@/api/basic/examinationPaper";
-import { listExaminationPaper } from "@/api/basic/examinationPaper";
+import {
+  updateExaminationPaper,
+  listExaminationPaper
+} from "@/api/basic/examinationPaper";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listUser } from "@/api/system/user";
 import { listClassCourse } from "@/api/basic/classCourse";
@@ -491,7 +493,6 @@ export default {
       this.ruleForm = json;
       // 获取日志信息
       workLogListQuery(json).then(res => {
-        console.log(res);
         if (res.data.length != 0) {
           this.ruleForm = res.data[0];
           this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {

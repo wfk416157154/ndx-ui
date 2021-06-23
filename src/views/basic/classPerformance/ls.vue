@@ -3,61 +3,70 @@
     <div class="wrap-statisticalChartTtem">
       <el-form ref="form" :inline="true" :model="form" label-width="100px">
         <el-form-item label="日语班级">
-          <el-select width="100px" height="“10px" v-model="form.rybj" placeholder="请选择班级">
-            <el-option label="武汉一班" value="武汉"></el-option>
-            <el-option label="武汉二班" value="长沙"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="学期">
-          <el-select width="100px" height="“10px" v-model="form.yf" placeholder="请选择校区">
-            <el-option label="武汉" value="武汉"></el-option>
-            <el-option label="长沙" value="长沙"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="考试范围" label-width="120px">
           <el-select
             width="100px"
             height="“10px"
-            @change="selectYear(form[index],item.id)"
-            v-model="form.zsdfw"
-            placeholder="请选择知识点范围"
+            @change="getClassId"
+            v-model="form.bjid"
+            placeholder="请选择班级"
           >
-            <el-option label="1" value="2020"></el-option>
-            <el-option label="2" value="2021"></el-option>
+            <el-option
+              v-for="(item,index) in getBjClass"
+              :label="item.rybjmc"
+              :value="item.id"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="学期">
+          <el-select width="100px" height="“10px" v-model="form.xq" placeholder="请选择校区">
+            <el-option label="上学期" value="0"></el-option>
+            <el-option label="下学期" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="考试范围" label-width="120px">
+          <el-select width="100px" height="“10px" v-model="form.ksfw" placeholder="请选择知识点范围">
+            <el-option
+              v-for="(item,index) in getExaminationPaper"
+              :label="item.ksfw"
+              :value="item.id"
+              :key="index"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="最高分">
-          <el-input v-model="form.zdz" placeholder="请输入最高分"></el-input>
+          <el-input v-model="form.maxfs" placeholder="请输入最高分"></el-input>
         </el-form-item>
         <el-form-item label="最低分">
-          <el-input v-model="form.zxz" placeholder="请输入最低分"></el-input>
+          <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
-        <el-button type="primary" class="el-btn" plain>查询</el-button>
+        <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
         <el-button type="primary" class="el-btn" plain>导出成绩</el-button>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
       <li v-for="(item,index) in listClassGradeItem" :key="index">
         <div class="wrap-left">
-          <div class="student-information">
+          <!-- <div class="student-information">
             <h4>老师姓名 :</h4>&nbsp;
             <span>{{item.lsxm}}</span>
           </div>
           <div class="student-information">
-            <h4>老师电话 :</h4>&nbsp;
-            <span>{{item.lsdh}}</span>
-          </div>
+            <h4>老师性别 :</h4>&nbsp;
+            <span v-if="item.lsxb == '1'">男</span>
+            <span v-if="item.lsxb == '0'">女</span>
+          </div> -->
           <div class="student-information">
             <h4>所属校区 :</h4>&nbsp;
             <span>{{item.xqmc}}</span>
           </div>
           <div class="student-information">
             <h4>日语班级 :</h4>&nbsp;
-            <span>{{item.rybjmc}}</span>
+            <span>{{item.rybj}}</span>
           </div>
           <div class="student-information">
-            <h4>班级人数 :</h4>&nbsp;
-            <span>{{item.bjrs}}</span>
+            <h4>进班平均英语成绩 :</h4>&nbsp;
+            <span>{{item.bj}}</span>
           </div>
         </div>
         <div class="wrap-right">
@@ -69,8 +78,8 @@
               <span @click="selectDtate(3)">年</span>
               <span @click="selectDtate()">全部</span>
             </div>
-          </div>
-          <div class="wrap-input">
+          </div> -->
+          <!-- <div class="wrap-input">
             <div class="wrap-title" v-if="isShow == 3">
               <span class="title-content">年考</span>
             </div>
@@ -82,7 +91,7 @@
               <span class="title-content">期中</span>
               <span class="title-content">期末</span>
             </div>
-          </div>-->
+          </div> -->
           <div class="wrap-chart">
             <div
               :id="index"
@@ -90,8 +99,8 @@
               style="width : 90%; height : 340px; display: inline-block;"
             ></div>
             <div class="chart-nav">
-              <h4 style="color: #FFCC00" @click="selectChart('bar')">柱状图</h4>
-              <h4 style="color: #33CC00" @click="selectChart('line')">折线图</h4>
+              <h4 style="color: #FFCC00" @click="selectChart('bar' ,index)">柱状图</h4>
+              <h4 style="color: #33CC00" @click="selectChart('line' ,index)">折线图</h4>
             </div>
           </div>
         </div>
@@ -109,17 +118,18 @@
   </div>
 </template>
 
+
 <script>
 import * as echarts from "echarts";
-import { listClassGrade, getListAll } from "@/api/basic/classPerformance";
+import { listClassGrade } from "@/api/basic/classPerformance";
+import { listSchool } from "@/api/basic/school";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listExaminationPaper } from "@/api/basic/examinationPaper";
 export default {
   name: "statisticalChartTtem",
   data() {
     return {
-      form: {
-        nian: "1223",
-        yue: ""
-      },
+      form: {},
       itemList: [1, 2, 3],
       // 统计图数据模板
       option: {
@@ -163,7 +173,6 @@ export default {
           }
         ]
       },
-      isShow: 1,
       //请求数据页码参数
       queryList: {
         pageNum: 1,
@@ -179,27 +188,52 @@ export default {
       listClassGradeItem: [],
       // 分页数据表
       pagination: {},
-      // 列名
-      columnNameList: [],
-      // 列数据
-      columnDataList: []
+      // 班级
+      getBjClass: [],
+      // 考试范围
+      getExaminationPaper: [],
+      // echart 图形化实例
+      obj: {}
     };
   },
+  created() {
+    this.getDicts("year-list").then(response => {
+      this.getYear = response.data;
+    });
+  },
   mounted() {
+    this.getSchoolId();
     this.getListClassGrade();
   },
   methods: {
-    // 获取班级成绩
+    // 获取班级
+    getSchoolId() {
+      listBjclass({ kzzd2: this.$store.state.user.glrid }).then(res => {
+        this.getBjClass = res.rows;
+      });
+    },
+    // 获取考试范围
+    getClassId(classId) {
+      listExaminationPaper({
+        bjid: classId,
+        lsid: this.$store.state.user.glrid
+      }).then(res => {
+        this.getExaminationPaper = res.rows;
+      });
+    },
+    //获取班级成绩
     getListClassGrade(pageNum) {
       if (pageNum && typeof pageNum != "object") {
         this.queryList.pageNum = pageNum;
       } else if (pageNum && typeof pageNum == "object") {
         this.queryList = pageNum;
       }
+      // 获取当前老师班级成绩
+      this.queryList.lsid = this.$store.state.user.glrid;
       listClassGrade(this.queryList).then(res => {
         if (res.code == 200) {
-          this.listClassGradeItem = getClassGrade.rows;
-          this.pagination.total = getClassGrade.total;
+          this.listClassGradeItem = res.rows;
+          this.pagination.total = res.total;
           this.getChart(this.listClassGradeItem);
         } else {
           this.$notify.error({
@@ -218,50 +252,50 @@ export default {
       console.log("月", value);
     },
     // 切换统计图模型
-    selectChart(value) {
-      this.option.series[0].type = value;
-      this.getListClassGrade();
+    selectChart(value, index) {
+      this.obj[index].series[0].type = value;
+      // this.getListClassGrade();
+      this.getChart(this.listClassGradeItem, index);
     },
     // 可视化统计图
-    getChart(item) {
+    getChart(item, index) {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
-          let obj = {};
-          obj[i] = this.option;
-          obj[i].xAxis[0].data = [];
-          obj[i].series[0].data = [];
+          this.obj[i] = this.option;
+          this.obj[i].xAxis[0].data = [];
+          this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
-          obj[i + "a"] = echarts.init(chartDom);
-          //   obj[i + "a"].on("click", a => {
-          //     this.$router.push({
-          //       path: "/index/studentAchievementStatistics",
-          //       query: {
-          //         rybjmc: item[i].rybjmc,
-          //         ksmc: a.name
-          //       }
-          //     });
-          //   });
-          for (let j = 0; j < item[i].listMap.length; j++) {
-            if (j >= item[i].listMap.length - 1) {
-              continue;
-            } else {
-              obj[i].xAxis[0].data.push(item[i].listMap[j].label);
-              obj[i].series[0].data.push(item[i].listMap[j].grade);
-              obj[i].series[0].name = item[i].xsxm;
+          this.obj[i + "a"] = echarts.init(chartDom);
+          if (item[i].everyTimeGradeInfoQueries.length != 0) {
+            for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
+              if (j >= item[i].everyTimeGradeInfoQueries.length - 1) {
+                continue;
+              } else {
+                this.obj[i].xAxis[0].data.push(
+                  item[i].everyTimeGradeInfoQueries[j].ksmc
+                );
+                this.obj[i].series[0].data.push(
+                  item[i].everyTimeGradeInfoQueries[j].pjfs
+                );
+                this.obj[i].series[0].name = `(${item[i].rybj})班平均分`;
+              }
             }
+            this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
           }
-          obj[i] && obj[i + "a"].setOption(obj[i]);
         }
       });
-    },
-    selectDtate(value) {
-      this.isShow = value;
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+    // 查询按钮
+    getAchievement() {
+      this.form.lsid = this.$store.state.user.glrid;
+      this.queryList = Object.assign(this.form, this.queryList);
+      this.getListClassGrade();
     }
   }
 };
@@ -293,7 +327,7 @@ export default {
     li {
       list-style: none;
       width: 100%;
-      height: 350px;
+      // height: 380px;
       border: 1px #ccc solid;
       border-radius: 30px;
       overflow: hidden;
@@ -301,15 +335,13 @@ export default {
       padding-top: 10px;
       box-sizing: border-box;
       .wrap-left {
-        width: 22%;
-        height: 100%;
-        background-color: #fff;
-        padding: 20px;
+        padding-left: 20px;
         box-sizing: border-box;
-        float: left;
         .student-information {
           font-size: 14px;
           height: 50px;
+          margin-right: 30px;
+          float: left;
           h4 {
             display: inline-block;
             text-align: center;
@@ -317,7 +349,7 @@ export default {
         }
       }
       .wrap-right {
-        width: 78%;
+        width: 100%;
         height: 100%;
         float: left;
         .wrap-conversion {
