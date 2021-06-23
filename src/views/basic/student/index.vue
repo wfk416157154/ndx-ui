@@ -253,7 +253,7 @@
             <el-input maxlength="30" v-model="form.ybj" placeholder="请输入原班级" />
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="12"> -->
+        <el-col :span="12">
         <el-form-item label-width="100px" label="日语班" prop="ryb">
           <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
           <el-select v-model="form.ryb" placeholder="请选择日语班" @change="selectBjclass" >
@@ -265,7 +265,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <!-- </el-col> -->
+        </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="入班时间" prop="rbsj">
             <el-date-picker
@@ -278,23 +278,7 @@
             ></el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label-width="100px" label="退班时间" prop="tbsj">
-            <el-date-picker
-              clearable
-              size="small"
-              v-model="form.tbsj"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="选择退班时间"
-            ></el-date-picker>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label-width="100px" label="学生编号" prop="xsbh">
-            <el-input maxlength="10" v-model="form.xsbh" placeholder="请输入学生编号" />
-          </el-form-item>
-        </el-col>
+
         <el-col :span="12">
           <el-form-item label-width="100px" label="学生姓名" prop="xsxm">
             <el-input maxlength="4" v-model="form.xsxm" placeholder="请输入学生姓名" />
@@ -374,6 +358,19 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item label-width="100px" label="退班时间" prop="tbsj">
+            <el-date-picker
+              clearable
+              size="small"
+              v-model="form.tbsj"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择退班时间"
+              disabled="false"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <!--<el-col :span="12">
           <el-form-item label-width="100px" label="状态">
             <el-radio-group v-model="form.status">
               <el-radio
@@ -384,7 +381,7 @@
               >{{dict.dictLabel}}</el-radio>
             </el-radio-group>
           </el-form-item>
-        </el-col>
+        </el-col>-->
         <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="
         备注" prop="remark">
@@ -426,7 +423,7 @@
 
     <!-- 添加或修改老师学生谈话对话框 -->
     <el-dialog :title="title" :visible.sync="openStu" width="500px" append-to-body>
-      <el-form ref="stuform" :model="formStu" :rules="rules" label-width="80px">
+      <el-form ref="stuform" :model="formStu" :rules="thrules" label-width="80px">
         <!--<el-form-item label="老师id" prop="lsid">
           <el-input v-model="formStu.lsid" placeholder="请输入老师id" />
         </el-form-item>-->
@@ -483,7 +480,7 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
+          <!--<el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据-->
           <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
@@ -563,8 +560,6 @@ export default {
       form: {},
       // 表单参数
       formStu: {},
-      // 表单校验
-      rules: {},
       // 学生头像
       imageUrl: "",
       // 校区名称
@@ -590,10 +585,26 @@ export default {
         fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
       uploadData: {},
+      // 表单校验
       rules: {
+        xqmc: [
+          { required: true, message: "请选择一个校区名称", trigger: "blur" }
+        ],
+        ybj: [
+          { required: true, message: "请选择原班级", trigger: "blur" }
+        ],
+        ryb: [
+          { required: true, message: "请输入日语班级名称", trigger: "blur" }
+        ],
+        xsxm: [
+          { required: true, message: "请输入学生姓名", trigger: "blur" }
+        ],
+        xk: [
+          { required: true, message: "不能为空", trigger: "blur" }
+        ],
         yyfs: [
           {
-            required: false,
+            required: true,
             message: "格式不对,只能填写数字",
             trigger: "blur",
             pattern: /^[0-9]+$/
@@ -601,7 +612,7 @@ export default {
         ],
         zhfs: [
           {
-            required: false,
+            required: true,
             message: "格式不对,只能填写数字",
             trigger: "blur",
             pattern: /^[0-9]+$/

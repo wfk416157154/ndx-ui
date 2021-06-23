@@ -161,7 +161,7 @@
     />
 
     <!-- 添加或修改班级基础信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="校区名称" prop="xqmc">
           <el-select v-model="form.xqmc" placeholder="请选择校区名称" @change="setXqmcId">
@@ -183,7 +183,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label-width="" label="日语班级名称"  prop="rybjmc">
+        <el-form-item label-width="110px" label="日语班级名称"  prop="rybjmc">
           <el-input v-model="form.rybjmc" maxlength="30" placeholder="请输入日语班级名称" />
         </el-form-item>
         <el-form-item label="班级人数" prop="bjrs">
@@ -212,7 +212,7 @@
     <!-- 上传班级的开班照和集体照对话框 -->
     <el-dialog :title="title" :visible.sync="imageOpen" width="800px" append-to-body>
       <!-- 添加或修改班级基础信息对话框 -->
-      <el-form class="wrap-el-form" ref="photoForm" :model="form" :rules="rules" label-width="80px">
+      <el-form class="wrap-el-form" ref="photoForm" :model="form" label-width="80px">
         <el-form-item label-width="100px" label="开班照" prop="kbz">
           <el-upload
             :action="upload.fileUrl"
@@ -344,7 +344,20 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        xqmc: [
+          { required: true, message: "请选择一个校区名称", trigger: "blur" }
+        ],
+        nj: [
+          { required: true, message: "请选择年级", trigger: "blur" }
+        ],
+        rybjmc: [
+          { required: true, message: "请输入日语班级名称", trigger: "blur" }
+        ],
+        kbsj: [
+          { required: true, message: "请选择开班时间", trigger: "blur" }
+        ],
+      },
       // 用户导入参数
       upload: {
         // 是否显示弹出层（导入）

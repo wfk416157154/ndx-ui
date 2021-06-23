@@ -119,7 +119,7 @@
         :key="index"
         :prop="item.prop"
       />
-      <!--       
+      <!--
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -333,7 +333,7 @@ export default {
         this.loading = false;
       });
       // 学生成绩表数据
-      listAll({}).then(res => {
+      listAll(this.queryParams).then(res => {
         this.listAll = res.rows;
       });
       // 学生成绩表title列

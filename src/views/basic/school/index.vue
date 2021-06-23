@@ -241,7 +241,7 @@ export default {
       // 表单校验
       rules: {
         xxmc: [
-          { required: false, message: "学校名称不能为空", trigger: "blur" }
+          { required: true, message: "学校名称不能为空", trigger: "blur" }
         ],
         xxdz: [
           {
