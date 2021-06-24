@@ -18,6 +18,15 @@ export function listBasicTeacherWorkLog(query) {
   })
 }
 
+// 查看老师日志主页面
+export function homePageQuery(query) {
+  return request({
+    url: '/basic/basicTeacherWorkLog/homePageQuery',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师工作日志详细
 export function getBasicTeacherWorkLog(id) {
   return request({
