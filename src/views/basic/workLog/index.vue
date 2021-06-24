@@ -661,7 +661,7 @@ export default {
         });
       } else {
         this.$message({
-          message: "新增成功",
+          message: "图片上传成功",
           type: "success"
         });
       }
@@ -678,38 +678,49 @@ export default {
     },
     // 发送
     sendOut(value) {
-      // 暂时不发送到人 null
-      this.ruleForm.kzzd5 = null;
-      addSave(this.ruleForm).then(async res => {
-        if (res.code == 200) {
-          this.getWorkLogListQuery(this.bjNameId, this.logTiem);
-          this.getList();
-          if (this.ruleForm.kzzd4) {
-            let jsonObj = {
-              id: this.ruleForm.kzzd4,
-              kzzd3: res.data.id
-            };
-            this.rzid = res.data.id;
-            // 保存日志id到对应试卷
-            await updateExaminationPaper(jsonObj);
-          }
-          // 点击发送按钮弹出
-          if (value == true) {
-            this.$notify({
-              message: "日志发送成功",
-              type: "success"
-            });
-          } else {
-            if (!this.ruleForm.kczj) {
-              return;
+      this.$refs["ruleForm"].validate((valid) => {
+        if (valid) {
+          // 暂时不发送到人 null
+          this.ruleForm.kzzd5 = null;
+          addSave(this.ruleForm).then(async res => {
+            if (res.code == 200) {
+              this.getWorkLogListQuery(this.bjNameId, this.logTiem);
+              this.getList();
+              if (this.ruleForm.kzzd4) {
+                let jsonObj = {
+                  id: this.ruleForm.kzzd4,
+                  kzzd3: res.data.id
+                };
+                this.rzid = res.data.id;
+                // 保存日志id到对应试卷
+                await updateExaminationPaper(jsonObj);
+              }
+              // 点击发送按钮弹出
+              if (value == true) {
+                this.$notify({
+                  message: "日志发送成功",
+                  type: "success"
+                });
+              } else {
+                if (!this.ruleForm.kczj) {
+                  return;
+                }
+                this.$notify({
+                  message: "日志保存成功",
+                  type: "success"
+                });
+              }
             }
-            this.$notify({
-              message: "日志保存成功",
-              type: "success"
-            });
-          }
+          });
+        } else {
+          this.$notify({
+            message: "请先填写日志内容",
+            type: "error"
+          });
+          return false;
         }
       });
+
     },
     // 考试分析总结
     addKscjfxzj() {
@@ -898,23 +909,6 @@ export default {
           background: linear-gradient(
             to right,
             #bb313e25,
-            // #bb313e25,
-              // #d7222925,
-              // #dd4a1625,
-              // #e4761525,
-              // #f5c50025,
-              // #f0e92725,
-              // #b1ce2425,
-              // #48a93525,
-              // #03944525,
-              // #157c4f25,
-              // #176a5825,
-              // #1b556325,
-              // #1d386f25,
-              // #1d386f25,
-              // #20277825,
-              // #52266325,
-              // #8a244b25
           );
           .button {
             margin-left: 100px;

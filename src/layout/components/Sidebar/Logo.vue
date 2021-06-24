@@ -35,7 +35,7 @@
     },
     data() {
       return {
-        title: '若依管理系统',
+        title: '南斗星高考外语',
         logo: logoImg
       }
     }
