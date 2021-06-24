@@ -11,7 +11,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="选择班级">
+      <el-form-item label="选择日期">
         <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="datetime" placeholder="选择日期时间"></el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -198,7 +198,7 @@
             <div>
               <el-form-item label-width="100px" label="教室卫生" prop="qtzs">
                 <el-upload
-                  :action="upload.fileUrl"
+                  :action="upload.imgUrl"
                   :headers="upload.headers"
                   list-type="picture-card"
                   :on-preview="handlePictureCardPreview"
@@ -217,7 +217,7 @@
             <div>
               <el-form-item label-width="100px" label="学生表现" prop="qtzs">
                 <el-upload
-                  :action="upload.fileUrl"
+                  :action="upload.imgUrl"
                   :headers="upload.headers"
                   list-type="picture-card"
                   :on-preview="handlePictureCardPreview"
@@ -345,7 +345,9 @@ export default {
         // 上传考试成绩地址
         fileUrl:
           process.env.VUE_APP_BASE_API +
-          "/basic/examinationPaper/importClassGradeData"
+          "/basic/examinationPaper/importClassGradeData",
+        // 上传图片地址
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
       // 教室图片
       dialogImageUrl: "",
@@ -429,6 +431,13 @@ export default {
     },
     // 查询某一班级日志
     async getWorkLogListQuery(bjid, date) {
+      if (!bjid || !date) {
+        this.$notify({
+          message: "请选择班级和日期",
+          type: "warning"
+        });
+        return;
+      }
       date =
         date &&
         date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
@@ -582,6 +591,13 @@ export default {
     },
     // 教室卫生图片上传成功回调
     jswsSuccess(response, file, fileList) {
+      if (response.code == 500) {
+        this.$notify({
+          message: "上传失败",
+          type: "error"
+        });
+        return;
+      }
       let data = response.data;
       data.kzzd1 = this.ruleForm.jswsFile || secretKey();
       this.ruleForm.jswsFile = data.kzzd1;
