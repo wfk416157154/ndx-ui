@@ -327,11 +327,11 @@ export default {
     // 导出按钮操作
     handleExport() {
       this.download(
-        "basic/teacher/export",
+        "basic/everytime/export",
         {
           ...this.queryParams
         },
-        `basic_teacher.xlsx`
+        `班级成绩表.xlsx`
       );
     }
   }

@@ -297,14 +297,14 @@ export default {
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
     },
-    // 导出成绩按钮
+    // 导出按钮操作
     handleExport() {
       this.download(
-        "basic/teacher/export",
+        "basic/everytime/export",
         {
           ...this.queryParams
         },
-        `basic_teacher.xlsx`
+        `班级成绩表.xlsx`
       );
     }
   }
