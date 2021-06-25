@@ -428,6 +428,39 @@ export default {
       listUser().then(res => {
         this.getListUser = res.rows;
       });
+      // 日志主页进来的详情页
+      let logId = this.$route.params.id;
+      workLogListQuery({ id: logId }).then(res => {
+        if (res.data.length != 0) {
+          this.ifForm = true;
+          this.ruleForm = res.data[0];
+          this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+            for (let i = 0; i < this.kcType.length; i++) {
+              if (this.kcType[i].dictValue == value.courseType) {
+                value.courseTypeName = this.kcType[i].dictLabel;
+                this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+              }
+            }
+          });
+          this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+          // 教室卫生照片回显
+          this.selectPhotoList(
+            (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+            "files1"
+          );
+          // 学生表现照片回显
+          this.selectPhotoList(
+            (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+            "files2"
+          );
+        }
+        if (
+          this.ruleForm.basicTeacherWorkLogLessonList &&
+          this.ruleForm.basicTeacherWorkLogLessonList.length == 0
+        ) {
+          this.ruleForm.basicTeacherWorkLogLessonList = dataInClass;
+        }
+      });
     },
     // 查询某一班级日志
     async getWorkLogListQuery(bjid, date) {
@@ -463,6 +496,7 @@ export default {
           }
         }
       });
+
       let json = {
         // 老师id
         lsid: this.$store.state.user.glrid,
