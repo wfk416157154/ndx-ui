@@ -7,10 +7,10 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="班级名称" prop="bjmc">
+      <el-form-item label="日语班级" prop="bjmc">
         <el-input
           v-model="queryParams.bjmc"
-          placeholder="请输入班级名称"
+          placeholder="请输入日语班级名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -45,17 +45,17 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="班级" align="center" prop="bjmc" />
-      <el-table-column label="老师" align="center" prop="fsrmc" />
+      <el-table-column label="日语班级" align="center" prop="bjmc" />
+      <el-table-column label="日语老师" align="center" prop="fsrmc" />
       <el-table-column label="教材" align="center" prop="jcmc" />
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
       <el-table-column label="考试范围" align="center" prop="ksfw" />
-      <el-table-column label="考试开始时间" align="center" prop="kskssj" width="180">
+      <el-table-column label="考试时间" align="center" prop="kskssj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="考试结束时间" align="center" prop="ksjssj" width="180">
+      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
@@ -222,7 +222,7 @@ export default {
   methods: {
     /** 查询考卷列表 */
     getList(value) {
-      if (value != "") {
+      if (undefined!=value) {
         this.queryParams.jwsjzt = value;
       }
       this.loading = true;
@@ -299,6 +299,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.form.lsxm=this.$store.state.user.nickName
       this.open = true;
       this.title = "添加考卷";
     },
@@ -366,7 +367,7 @@ export default {
         type: "success"
       });
       data.kzzd1 = this.examinationInformationId;
-     
+
       // 保存文件上传地址
       addFile(data).then(res => {});
       this.getList();

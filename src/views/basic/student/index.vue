@@ -108,7 +108,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['basic:student:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -119,7 +120,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['basic:student:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <!--<el-col :span="1.5">
         <el-button
@@ -140,31 +142,41 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['basic:student:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" :disabled="single" @click="addStuTalk">添加学生谈话</el-button>
+        <el-button type="info" icon="el-icon-upload2" size="mini" :disabled="single" @click="addStuTalk">添加学生谈话
+        </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" :disabled="single" @click="lookStuTalk">查看谈话内容</el-button>
+        <el-button type="info" icon="el-icon-upload2" size="mini" :disabled="single" @click="lookStuTalk">查看谈话内容
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="studentList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column v-if="false" label="状态" align="center" prop="id" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column v-if="false" label="状态" align="center" prop="id"/>
       <el-table-column label="学生头像" align="center" prop="xstx">
         <template slot-scope="scope">
-          <img style="width : 80px; hieght : 80px" :src="scope.row.xstx" />
+          <img style="width : 80px; hieght : 80px" :src="scope.row.xstx"/>
         </template>
       </el-table-column>
-      <el-table-column label="校区名称" align="center" prop="xqmc" />
-      <el-table-column label="原班级" align="center" prop="ybj" />
-      <el-table-column label="日语班" align="center" prop="ryb" />
+      <el-table-column label="学生姓名" align="center" prop="xsxm">
+        <template slot-scope="scope">
+          <a href="#"><span style="margin-left: 10px"
+                            @click="showStudentDetailsPage(scope.row)">{{ scope.row.xsxm }}</span></a>
+        </template>
+      </el-table-column>
+      <el-table-column label="学生编号" align="center" prop="xsbh"/>
+      <el-table-column label="校区名称" align="center" prop="xqmc"/>
+      <el-table-column label="原班级" align="center" prop="ybj"/>
+      <el-table-column label="日语班" align="center" prop="ryb"/>
       <el-table-column label="入班时间" align="center" prop="rbsj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.rbsj, '{y}-{m}-{d}') }}</span>
@@ -175,22 +187,20 @@
           <span>{{ parseTime(scope.row.tbsj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="学生编号" align="center" prop="xsbh" />
-      <el-table-column label="学生姓名" align="center" prop="xsxm" />
-      <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
-      <el-table-column label="选科" align="center" prop="xk" />
-      <el-table-column label="英语分数" align="center" prop="yyfs" />
-      <el-table-column label="综合分数" align="center" prop="zhfs" />
-      <el-table-column label="QQ号" width="120px" align="center" prop="qqh" />
-      <el-table-column label="学生电话" width="120px" align="center" prop="xsdh" />
-      <el-table-column label="家庭住址" align="center" prop="jtzz" />
-      <el-table-column label="是否特长生" align="center" prop="sftcs" :formatter="sftcsFormat" />
-      <el-table-column label="家长姓名" align="center" prop="jzxm" />
-      <el-table-column label="家长电话" width="120px" align="center" prop="jzdh" />
-      <el-table-column label="班主任姓名" align="center" prop="bzrxm" />
-      <el-table-column label="班主任电话" width="120px" align="center" prop="bzrdh" />
-      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
-      <el-table-column label="备注" width="120px" align="center" prop="remark" />
+      <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat"/>
+      <el-table-column label="选科" align="center" prop="xk"/>
+      <el-table-column label="英语分数" align="center" prop="yyfs"/>
+      <el-table-column label="综合分数" align="center" prop="zhfs"/>
+      <el-table-column label="QQ号" width="120px" align="center" prop="qqh"/>
+      <el-table-column label="学生电话" width="120px" align="center" prop="xsdh"/>
+      <el-table-column label="家庭住址" align="center" prop="jtzz"/>
+      <el-table-column label="是否特长生" align="center" prop="sftcs" :formatter="sftcsFormat"/>
+      <el-table-column label="家长姓名" align="center" prop="jzxm"/>
+      <el-table-column label="家长电话" width="120px" align="center" prop="jzdh"/>
+      <el-table-column label="班主任姓名" align="center" prop="bzrxm"/>
+      <el-table-column label="班主任电话" width="120px" align="center" prop="bzrdh"/>
+      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat"/>
+      <el-table-column label="备注" width="120px" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -199,14 +209,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['basic:student:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['basic:student:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -231,7 +243,7 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <img v-if="imageUrl" :src="imageUrl" class="avatar"/>
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
@@ -250,21 +262,21 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="原班级" prop="ybj">
-            <el-input maxlength="30" v-model="form.ybj" placeholder="请输入原班级" />
+            <el-input maxlength="30" v-model="form.ybj" placeholder="请输入原班级"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label-width="100px" label="日语班" prop="ryb">
-          <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
-          <el-select v-model="form.ryb" placeholder="请选择日语班" @change="selectBjclass" >
-            <el-option
-              v-for="item in bjclassList"
-              :key="item.id"
-              :label="item.rybjmc"
-              :value="item"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+          <el-form-item label-width="100px" label="日语班" prop="ryb">
+            <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
+            <el-select v-model="form.ryb" placeholder="请选择日语班" @change="selectBjclass">
+              <el-option
+                v-for="item in bjclassList"
+                :key="item.id"
+                :label="item.rybjmc"
+                :value="item"
+              ></el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="入班时间" prop="rbsj">
@@ -281,7 +293,7 @@
 
         <el-col :span="12">
           <el-form-item label-width="100px" label="学生姓名" prop="xsxm">
-            <el-input maxlength="4" v-model="form.xsxm" placeholder="请输入学生姓名" />
+            <el-input maxlength="4" v-model="form.xsxm" placeholder="请输入学生姓名"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -291,38 +303,39 @@
                 v-for="dict in xbOptions"
                 :key="dict.dictValue"
                 :label="dict.dictValue"
-              >{{dict.dictLabel}}</el-radio>
+              >{{dict.dictLabel}}
+              </el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="选科" prop="xk">
-            <el-input maxlength="30" v-model="form.xk" placeholder="请输入选科" />
+            <el-input maxlength="30" v-model="form.xk" placeholder="请输入选科"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="英语分数" prop="yyfs">
-            <el-input maxlength="5" v-model="form.yyfs" placeholder="请输入英语分数" />
+            <el-input maxlength="5" v-model="form.yyfs" placeholder="请输入英语分数"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="综合分数" prop="zhfs">
-            <el-input maxlength="5" v-model="form.zhfs" placeholder="请输入综合分数" />
+            <el-input maxlength="5" v-model="form.zhfs" placeholder="请输入综合分数"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="QQ号" prop="qqh">
-            <el-input maxlength="12" v-model="form.qqh" placeholder="请输入QQ号" />
+            <el-input maxlength="12" v-model="form.qqh" placeholder="请输入QQ号"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="学生电话" prop="xsdh">
-            <el-input maxlength="11" v-model="form.xsdh" placeholder="请输入学生电话" />
+            <el-input maxlength="11" v-model="form.xsdh" placeholder="请输入学生电话"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="家庭住址" prop="jtzz">
-            <el-input maxlength="50" v-model="form.jtzz" type="textarea" placeholder="请输入内容" />
+            <el-input maxlength="50" v-model="form.jtzz" type="textarea" placeholder="请输入内容"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -339,22 +352,22 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="家长姓名" prop="jzxm">
-            <el-input maxlength="4" v-model="form.jzxm" placeholder="请输入家长姓名" />
+            <el-input maxlength="4" v-model="form.jzxm" placeholder="请输入家长姓名"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="家长电话" prop="jzdh">
-            <el-input maxlength="11" v-model="form.jzdh" placeholder="请输入家长电话" />
+            <el-input maxlength="11" v-model="form.jzdh" placeholder="请输入家长电话"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="班主任姓名" prop="bzrxm">
-            <el-input maxlength="4" v-model="form.bzrxm" placeholder="请输入班主任姓名" />
+            <el-input maxlength="4" v-model="form.bzrxm" placeholder="请输入班主任姓名"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="班主任电话" prop="bzrdh">
-            <el-input maxlength="11" v-model="form.bzrdh" placeholder="请输入班主任电话" />
+            <el-input maxlength="11" v-model="form.bzrdh" placeholder="请输入班主任电话"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -385,7 +398,7 @@
         <!-- <el-col :span="12"> -->
         <el-form-item label-width="100px" label="
         备注" prop="remark">
-          <el-input maxlength="300" type="textarea" v-model="form.remark" placeholder="请输入备注" />
+          <el-input maxlength="300" type="textarea" v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
         <!-- </el-col> -->
       </el-form>
@@ -398,18 +411,32 @@
     <!-- 老师学生谈话数据表格对话框 -->
     <el-dialog :title="title" :visible.sync="openStuGrid" width="1000px" append-to-body>
       <el-table v-loading="loading" :data="teacherTalkList" @selection-change="">
-        <el-table-column type="selection" width="55" v-if="false" align="center" />
-        <el-table-column label="id" align="center" v-if="false" prop="id" />
-        <el-table-column label="老师姓名" align="center" prop="lsxm" />
-        <el-table-column label="学生姓名" align="center" prop="xsxm" />
+        <el-table-column type="selection" width="55" v-if="false" align="center"/>
+        <el-table-column label="id" align="center" v-if="false" prop="id"/>
+        <el-table-column label="老师姓名" align="center" prop="lsxm"/>
+        <el-table-column label="学生姓名" align="center" prop="xsxm"/>
         <el-table-column label="谈话时间" align="center" prop="thsj" width="180">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.thsj, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="谈话原因" align="center" prop="thyy" />
-        <el-table-column label="谈话内容" align="center" prop="thnr" />
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column label="谈话原因" align="center" prop="thyy"/>
+        <el-table-column label="谈话内容" align="center" prop="thnr"/>
+        <el-table-column label="备注" align="center" prop="remark"/>
+        <el-table-column label="操作" align="center" prop="remark">
+          <template slot-scope="scope">
+            <a href="#" v-if="null!=scope.row.kzzd1">
+              <span style="margin-left: 10px;color: dodgerblue" @click="downloadTalkUploadFile(scope.row)">
+                下载谈话文件
+              </span>
+            </a>
+            <a href="#" v-else>
+              <span style="margin-left: 10px;color: red">
+                未上传
+              </span>
+            </a>
+          </template>
+        </el-table-column>
       </el-table>
 
       <!--<pagination
@@ -423,18 +450,18 @@
 
     <!-- 添加或修改老师学生谈话对话框 -->
     <el-dialog :title="title" :visible.sync="openStu" width="500px" append-to-body>
-      <el-form ref="stuform" :model="formStu" :rules="thrules" label-width="80px">
+      <el-form ref="stuform" :model="formStu" :rules="stuformrules" label-width="80px">
         <!--<el-form-item label="老师id" prop="lsid">
           <el-input v-model="formStu.lsid" placeholder="请输入老师id" />
         </el-form-item>-->
         <el-form-item label="老师姓名" prop="lsxm">
-          <el-input v-model="formStu.lsxm" readonly placeholder="请输入老师姓名" />
+          <el-input v-model="formStu.lsxm" readonly placeholder="请输入老师姓名"/>
         </el-form-item>
         <!--<el-form-item label="学生id" prop="xsid">
           <el-input v-model="formStu.xsid" placeholder="请输入学生id" />
         </el-form-item>-->
         <el-form-item label="学生姓名" prop="xsxm">
-          <el-input v-model="formStu.xsxm" readonly placeholder="请输入学生姓名" />
+          <el-input v-model="formStu.xsxm" readonly placeholder="请输入学生姓名"/>
         </el-form-item>
         <el-form-item label="谈话时间" prop="thsj">
           <el-date-picker clearable size="small"
@@ -445,17 +472,37 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="谈话原因" prop="thyy">
-          <el-input v-model="formStu.thyy" placeholder="请输入谈话原因" />
+          <el-input v-model="formStu.thyy" placeholder="请输入谈话原因"/>
         </el-form-item>
         <el-form-item label="谈话内容" prop="thnr">
-          <el-input v-model="formStu.thnr" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="formStu.thnr" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="formStu.remark" placeholder="请输入备注" />
+          <el-input v-model="formStu.remark" placeholder="请输入备注"/>
         </el-form-item>
+        <el-form-item label="文件上传" prop="kzzd1">
+          <el-upload
+            class="upload-demo"
+            ref="uploadFile"
+            :disabled="uploadFileDisabled"
+            drag
+            :limit="1"
+            :headers="uploadFile.headers"
+            :action="uploadFile.fileUrl"
+            :before-upload="beforeFileUpload"
+            :on-progress="handleFileUploadProgress"
+            :on-success="handleXsthFileSuccess"
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">仅限上传一个文件，且文件大小不超过2M</div>
+          </el-upload>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitStuForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click :disabled="submitStuFormButton" @click="submitStuForm">确 定
+        </el-button>
         <el-button @click="cancelStu">取 消</el-button>
       </div>
     </el-dialog>
@@ -494,547 +541,623 @@
 </template>
 
 <script>
-import {
-  listStudent,
-  getStudent,
-  delStudent,
-  addStudent,
-  updateStudent
-} from "@/api/basic/student";
-import { listTeacherTalk, getTeacherTalk, delTeacherTalk, addTeacherTalk, updateTeacherTalk } from "@/api/basic/teacherTalk";
-import { listBjclass } from "@/api/basic/bjclass";
-import { listSchool } from "@/api/basic/school";
-import { addImg } from "@/api/tool/common";
-import { getToken } from "@/utils/auth";
-export default {
-  name: "Student",
-  components: {},
-  data() {
-    return {
-      // 遮罩层
-      loading: true,
-      // 选中数组
-      ids: [],
-      stuRow: null,
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 学生信息表格数据
-      studentList: [],
-      // 老师谈话内容表格数据
-      teacherTalkList:[],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
-      // 是否显示弹出层
-      openStu: false,
-      // 是否显示弹出层
-      openStuGrid:false,
-      // 性别字典
-      xbOptions: [],
-      // 是否特长生字典
-      sftcsOptions: [],
-      // 状态字典
-      statusOptions: [],
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        xqmc: null,
-        ybj: null,
-        ryb: null,
-        xsxm: null,
-        xb: null,
-        xk: null,
-        sftcs: null,
-        bzrxm: null,
-        status: null
-      },
-      // 表单参数
-      form: {},
-      // 表单参数
-      formStu: {},
-      // 学生头像
-      imageUrl: "",
-      // 校区名称
-      campusName: [],
-      // 原班级
-      originalClass: [],
-      // 日语班
-      japaneseClass: [],
-      upload: {
-        // 是否显示弹出层（导入）
-        open: false,
-        // 弹出层标题（导入）
-        title: "",
-        // 是否禁用上传
-        isUploading: false,
-        // 是否更新已经存在的用户数据
-        updateSupport: 0,
-        // 设置上传的请求头部
-        headers: { Authorization: "Bearer " + getToken() },
-        // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/student/importData",
-        // 上传图片地址
-        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
-      },
-      uploadData: {},
-      // 表单校验
-      rules: {
-        xqmc: [
-          { required: true, message: "请选择一个校区名称", trigger: "blur" }
-        ],
-        ybj: [
-          { required: true, message: "请选择原班级", trigger: "blur" }
-        ],
-        ryb: [
-          { required: true, message: "请输入日语班级名称", trigger: "blur" }
-        ],
-        xsxm: [
-          { required: true, message: "请输入学生姓名", trigger: "blur" }
-        ],
-        xk: [
-          { required: true, message: "不能为空", trigger: "blur" }
-        ],
-        yyfs: [
-          {
-            required: true,
-            message: "格式不对,只能填写数字",
-            trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ],
-        zhfs: [
-          {
-            required: true,
-            message: "格式不对,只能填写数字",
-            trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ],
-        qqh: [
-          {
-            required: false,
-            message: "格式不对,只能填写数字",
-            trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ],
-        xsdh: [
-          {
-            required: false,
-            message: "格式不对,只能填写数字",
-            trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ],
-        jzdh: [
-          {
-            required: false,
-            message: "格式不对,只能填写数字",
-            trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ],
-        bzrdh: [
-          {
-            required: false,
-            message: "格式不对,只能填写数字",
-            trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ],
-        sfzh: [
-          {
-            required: false,
-            message: "格式不对",
-            trigger: "blur",
-            pattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/
-          }
-        ]
-      },
-      //校区名称
-      selectXqmc: [],
-      // 班级选择
-      bjclassList: []
-    };
-  },
-  created() {
-    this.getList();
-    this.getDicts("sys_user_sex").then(response => {
-      this.xbOptions = response.data;
-    });
-    this.getDicts("sys_yes_no").then(response => {
-      this.sftcsOptions = response.data;
-    });
-    this.getDicts("basic_status").then(response => {
-      this.statusOptions = response.data;
-    });
-    listSchool(this.queryParams).then(response => {
-      this.selectXqmc = response.rows;
-    });
-    listBjclass(this.queryParams).then(response => {
-      this.bjclassList = response.rows;
-    });
-    this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
-  },
-  mounted() {
-    this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
+  import {
+    listStudent,
+    getStudent,
+    delStudent,
+    addStudent,
+    updateStudent
+  } from "@/api/basic/student";
+  import {
+    listTeacherTalk,
+    getTeacherTalk,
+    delTeacherTalk,
+    addTeacherTalk,
+    updateTeacherTalk
+  } from "@/api/basic/teacherTalk";
+  import {listBjclass} from "@/api/basic/bjclass";
+  import {listSchool} from "@/api/basic/school";
+  import {addImg, addFile} from "@/api/tool/common";
+  import {getToken} from "@/utils/auth";
+  import {secretKey} from "@/utils/tools";
 
-  },
-  methods: {
-    /** 查询学生信息列表 */
-    getList() {
-      this.loading = true;
-      listStudent(this.queryParams).then(response => {
-        this.studentList = response.rows;
-        this.total = response.total;
-        this.loading = false;
+  export default {
+    name: "Student",
+    components: {},
+    data() {
+      return {
+        // 遮罩层
+        loading: true,
+        submitStuFormButton: false,
+        // 选中数组
+        ids: [],
+        stuRow: null,
+        // 非单个禁用
+        single: true,
+        // 非多个禁用
+        multiple: true,
+        // 显示搜索条件
+        showSearch: true,
+        // 默认启用
+        uploadFileDisabled: false,
+        // 总条数
+        total: 0,
+        // 学生信息表格数据
+        studentList: [],
+        // 老师谈话内容表格数据
+        teacherTalkList: [],
+        // 弹出层标题
+        title: "",
+        // 是否显示弹出层
+        open: false,
+        // 是否显示弹出层
+        openStu: false,
+        // 是否显示弹出层
+        openStuGrid: false,
+        // 性别字典
+        xbOptions: [],
+        // 是否特长生字典
+        sftcsOptions: [],
+        // 状态字典
+        statusOptions: [],
+        // 查询参数
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          xqmc: null,
+          ybj: null,
+          ryb: null,
+          xsxm: null,
+          xb: null,
+          xk: null,
+          sftcs: null,
+          bzrxm: null,
+          status: null
+        },
+        // 表单参数
+        form: {},
+        // 表单参数
+        formStu: {},
+        // 学生头像
+        imageUrl: "",
+        // 校区名称
+        campusName: [],
+        // 原班级
+        originalClass: [],
+        // 日语班
+        japaneseClass: [],
+        upload: {
+          // 是否显示弹出层（导入）
+          open: false,
+          // 弹出层标题（导入）
+          title: "",
+          // 是否禁用上传
+          isUploading: false,
+          // 是否更新已经存在的用户数据
+          updateSupport: 0,
+          // 设置上传的请求头部
+          headers: {Authorization: "Bearer " + getToken()},
+          // 上传的地址
+          url: process.env.VUE_APP_BASE_API + "/basic/student/importData",
+          // 上传图片地址
+          fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        },
+        uploadFile:{
+          // 设置上传的请求头部
+          headers: {Authorization: "Bearer " + getToken()},
+          fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        },
+        uploadData: {},
+        // 表单校验
+        rules: {
+          xqmc: [
+            {required: true, message: "请选择一个校区名称", trigger: "blur"}
+          ],
+          ybj: [
+            {required: true, message: "请选择原班级", trigger: "blur"}
+          ],
+          ryb: [
+            {required: true, message: "请输入日语班级名称", trigger: "blur"}
+          ],
+          xsxm: [
+            {required: true, message: "请输入学生姓名", trigger: "blur"}
+          ],
+          xk: [
+            {required: true, message: "不能为空", trigger: "blur"}
+          ],
+          yyfs: [
+            {
+              required: true,
+              message: "格式不对,只能填写数字",
+              trigger: "blur",
+              pattern: /^[0-9]+$/
+            }
+          ],
+          zhfs: [
+            {
+              required: true,
+              message: "格式不对,只能填写数字",
+              trigger: "blur",
+              pattern: /^[0-9]+$/
+            }
+          ],
+          qqh: [
+            {
+              required: false,
+              message: "格式不对,只能填写数字",
+              trigger: "blur",
+              pattern: /^[0-9]+$/
+            }
+          ],
+          xsdh: [
+            {
+              required: false,
+              message: "格式不对,只能填写数字",
+              trigger: "blur",
+              pattern: /^[0-9]+$/
+            }
+          ],
+          jzdh: [
+            {
+              required: false,
+              message: "格式不对,只能填写数字",
+              trigger: "blur",
+              pattern: /^[0-9]+$/
+            }
+          ],
+          bzrdh: [
+            {
+              required: false,
+              message: "格式不对,只能填写数字",
+              trigger: "blur",
+              pattern: /^[0-9]+$/
+            }
+          ],
+          sfzh: [
+            {
+              required: false,
+              message: "格式不对",
+              trigger: "blur",
+              pattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/
+            }
+          ]
+        },
+        stuformrules: {},
+        //校区名称
+        selectXqmc: [],
+        // 班级选择
+        bjclassList: []
+      };
+    },
+    created() {
+      this.getList();
+      this.getDicts("sys_user_sex").then(response => {
+        this.xbOptions = response.data;
       });
-      // 日语班级选项
+      this.getDicts("sys_yes_no").then(response => {
+        this.sftcsOptions = response.data;
+      });
+      this.getDicts("basic_status").then(response => {
+        this.statusOptions = response.data;
+      });
+      listSchool(this.queryParams).then(response => {
+        this.selectXqmc = response.rows;
+      });
       listBjclass(this.queryParams).then(response => {
         this.bjclassList = response.rows;
       });
+      this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
     },
-
-    /** 查询老师学生谈话列表 */
-    getTeacherTalkList(id) {
-      this.loading = true;
-      listTeacherTalk({xsid:id}).then(response => {
-        this.teacherTalkList = response.rows;
-        this.loading = false;
-      });
+    mounted() {
+      this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
     },
-
-    selectBjclass(obj){
-      this.form.ryb=obj.rybjmc;
-      this.form.kzzd1=obj.id;
-    },
-    // 性别字典翻译
-    xbFormat(row, column) {
-      return this.selectDictLabel(this.xbOptions, row.xb);
-    },
-    // 是否特长生字典翻译
-    sftcsFormat(row, column) {
-      return this.selectDictLabel(this.sftcsOptions, row.sftcs);
-    },
-    // 状态字典翻译
-    statusFormat(row, column) {
-      return this.selectDictLabel(this.statusOptions, row.status);
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 取消按钮
-    cancelStu() {
-      this.openStu = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        xstx: null,
-        xqmc: null,
-        ybj: null,
-        ryb: null,
-        rbsj: null,
-        tbsj: null,
-        xsbh: null,
-        xsxm: null,
-        xb: "0",
-        xk: null,
-        yyfs: null,
-        zhfs: null,
-        qqh: null,
-        xsdh: null,
-        jtzz: null,
-        sftcs: null,
-        jzxm: null,
-        jzdh: null,
-        bzrxm: null,
-        bzrdh: null,
-        status: "1",
-        remark: null,
-        userId: null,
-        uName: null,
-        orgBh: null,
-        orgName: null,
-        dataOrder: null,
-        addOrUpdateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null
-      };
-      this.resetForm("form");
-    },
-    // 表单重置
-    resetStu() {
-      this.formStu = {
-        id: null,
-        lsid: null,
-        lsxm: null,
-        xsid: null,
-        xsxm: null,
-        thsj: null,
-        thyy: null,
-        thnr: null,
-        remark: null,
-        userId: null,
-        userName: null,
-        createTime: null,
-        updateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null
-      };
-      this.resetForm("formStu");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      selection.map(item => {
-        this.ids =item.id;
-        this.stuRow=item;
-      });
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加学生信息";
-      this.imageUrl = null;
-    },
-    // 文件导入
-    handleUpload() {},
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getStudent(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改学生信息";
-        this.imageUrl = response.data.xstx;
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateStudent(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addStudent(this.form).then(response => {
-              this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-        if (Object.keys(this.uploadData).length == 0) {
-          return;
-        }
-        addImg(this.uploadData).then(res => {
-        });
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除学生信息编号为"' + ids + '"的数据项?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(function() {
-          return delStudent(ids);
+    methods: {
+      showStudentDetailsPage(row) {
+        // 获取页面中参数配置的路由
+        this.getConfigKey("showStudentDetails").then(resp => {
+          this.router = resp.msg;
+          this.$router.push({
+            path: this.router + row.id
+          });
         })
-        .then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        }).catch((e)=>{
-        console.log(e);
-      });
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "basic/student/export",
-        {
-          ...this.queryParams
-        },
-        `学生信息基础表.xlsx`
-      );
-    },
-    //学生头像处理
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-      this.uploadData = res.data;
-      this.form.xstx = res.data.wjlj;
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
+      },
+      /** 查询学生信息列表 */
+      getList() {
+        this.loading = true;
+        listStudent(this.queryParams).then(response => {
+          this.studentList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+        // 日语班级选项
+        listBjclass(this.queryParams).then(response => {
+          this.bjclassList = response.rows;
+        });
+      },
 
-    /** 导入按钮操作 */
-    handleImport() {
-      this.upload.title = "学生信息导入";
-      this.upload.open = true;
-    },
-    /** 下载模板操作 */
-    importTemplate() {
-      this.download(
-        "basic/student/importTemplate",
-        {
-          ...this.queryParams
-        },
-        `学生信息导入模板_${new Date().getTime()}.xlsx`
-      );
-    },
-    // 文件上传中处理
-    handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true;
-    },
-    // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
-      this.upload.open = false;
-      this.upload.isUploading = false;
-      this.$refs.upload.clearFiles();
-      this.$notify({
-        title: "成功",
-        message: response.msg,
-        type: "success"
-      });
-      this.getList();
-    },
-    // 提交上传文件
-    submitFileForm() {
-      this.$refs.upload.submit();
-    },
-    //添加谈话内容
-    addStuTalk(){
-      let loginUser=this.$store.state.user;
-      this.formStu.lsid=loginUser.glrid;
-      this.formStu.lsxm=loginUser.nickName;
-      this.formStu.xsid=this.stuRow.id;
-      this.formStu.xsxm=this.stuRow.xsxm;
-      this.openStu = true;
-      this.title = "添加学生谈话";
-    },
-    // 查看谈话内容
-    lookStuTalk(){
-      this.openStuGrid=true;
-      const id = this.ids;
-      this.getTeacherTalkList(id);
-    },
-    /** 提交按钮 */
-    submitStuForm() {
-      this.$refs["stuform"].validate(valid => {
-        if (valid) {
-          if (this.formStu.id != null) {
-            updateTeacherTalk(this.formStu).then(response => {
-              this.msgSuccess("修改谈话内容成功");
-              this.openStu = false;
-            });
-          } else {
+      /** 查询老师学生谈话列表 */
+      getTeacherTalkList(id) {
+        this.loading = true;
+        listTeacherTalk({xsid: id}).then(response => {
+          this.teacherTalkList = response.rows;
+          this.loading = false;
+        });
+      },
+
+      selectBjclass(obj) {
+        this.form.ryb = obj.rybjmc;
+        this.form.kzzd1 = obj.id;
+      },
+      // 性别字典翻译
+      xbFormat(row, column) {
+        return this.selectDictLabel(this.xbOptions, row.xb);
+      },
+      // 是否特长生字典翻译
+      sftcsFormat(row, column) {
+        return this.selectDictLabel(this.sftcsOptions, row.sftcs);
+      },
+      // 状态字典翻译
+      statusFormat(row, column) {
+        return this.selectDictLabel(this.statusOptions, row.status);
+      },
+      // 取消按钮
+      cancel() {
+        this.open = false;
+        this.reset();
+      },
+      // 取消按钮
+      cancelStu() {
+        this.openStu = false;
+        this.reset();
+      },
+      // 表单重置
+      reset() {
+        this.form = {
+          id: null,
+          xstx: null,
+          xqmc: null,
+          ybj: null,
+          ryb: null,
+          rbsj: null,
+          tbsj: null,
+          xsbh: null,
+          xsxm: null,
+          xb: "0",
+          xk: null,
+          yyfs: null,
+          zhfs: null,
+          qqh: null,
+          xsdh: null,
+          jtzz: null,
+          sftcs: null,
+          jzxm: null,
+          jzdh: null,
+          bzrxm: null,
+          bzrdh: null,
+          status: "1",
+          remark: null,
+          userId: null,
+          uName: null,
+          orgBh: null,
+          orgName: null,
+          dataOrder: null,
+          addOrUpdateTime: null,
+          kzzd1: null,
+          kzzd2: null,
+          kzzd3: null,
+          kzzd4: null,
+          kzzd5: null
+        };
+        this.resetForm("form");
+      },
+      // 表单重置
+      resetStu() {
+        this.formStu = {
+          id: null,
+          lsid: null,
+          lsxm: null,
+          xsid: null,
+          xsxm: null,
+          thsj: null,
+          thyy: null,
+          thnr: null,
+          remark: null,
+          userId: null,
+          userName: null,
+          createTime: null,
+          updateTime: null,
+          kzzd1: null,
+          kzzd2: null,
+          kzzd3: null,
+          kzzd4: null,
+          kzzd5: null
+        };
+        this.resetForm("formStu");
+      },
+      /** 搜索按钮操作 */
+      handleQuery() {
+        this.queryParams.pageNum = 1;
+        this.getList();
+      },
+      /** 重置按钮操作 */
+      resetQuery() {
+        this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      // 多选框选中数据
+      handleSelectionChange(selection) {
+        selection.map(item => {
+          this.ids = item.id;
+          this.stuRow = item;
+        });
+        this.single = selection.length !== 1;
+        this.multiple = !selection.length;
+      },
+      /** 新增按钮操作 */
+      handleAdd() {
+        this.reset();
+        this.open = true;
+        this.title = "添加学生信息";
+        this.imageUrl = null;
+      },
+      // 文件导入
+      handleUpload() {
+      },
+      /** 修改按钮操作 */
+      handleUpdate(row) {
+        this.reset();
+        const id = row.id || this.ids;
+        getStudent(id).then(response => {
+          this.form = response.data;
+          this.open = true;
+          this.title = "修改学生信息";
+          this.imageUrl = response.data.xstx;
+        });
+      },
+      /** 提交按钮 */
+      submitForm() {
+        this.$refs["form"].validate(valid => {
+          if (valid) {
+            if (this.form.id != null) {
+              updateStudent(this.form).then(response => {
+                this.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+            } else {
+              addStudent(this.form).then(response => {
+                this.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          }
+          if (Object.keys(this.uploadData).length == 0) {
+            return;
+          }
+          addImg(this.uploadData).then(res => {
+          });
+        });
+      },
+      /** 删除按钮操作 */
+      handleDelete(row) {
+        const ids = row.id || this.ids;
+        this.$confirm(
+          '是否确认删除学生信息编号为"' + ids + '"的数据项?',
+          "警告",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(function () {
+            return delStudent(ids);
+          })
+          .then(() => {
+            this.getList();
+            this.msgSuccess("删除成功");
+          }).catch((e) => {
+          console.log(e);
+        });
+      },
+      /** 导出按钮操作 */
+      handleExport() {
+        this.download(
+          "basic/student/export",
+          {
+            ...this.queryParams
+          },
+          `学生信息基础表.xlsx`
+        );
+      },
+      //学生头像处理
+      handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
+        this.uploadData = res.data;
+        this.form.xstx = res.data.wjlj;
+      },
+      beforeAvatarUpload(file) {
+        const isJPG = file.type === "image/jpeg";
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isJPG) {
+          this.$message.error("上传头像图片只能是 JPG 格式!");
+        }
+        if (!isLt2M) {
+          this.$message.error("上传头像图片大小不能超过 2MB!");
+        }
+        return isJPG && isLt2M;
+      },
+
+      beforeFileUpload(file) {
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+          this.$message.error("上传文件大小不能超过 2MB!");
+        }
+        return isLt2M;
+      },
+
+      /** 导入按钮操作 */
+      handleImport() {
+        this.upload.title = "学生信息导入";
+        this.upload.open = true;
+      },
+      /** 下载模板操作 */
+      importTemplate() {
+        this.download(
+          "basic/student/importTemplate",
+          {
+            ...this.queryParams
+          },
+          `学生信息导入模板_${new Date().getTime()}.xlsx`
+        );
+      },
+      // 文件上传中处理
+      handleFileUploadProgress(event, file, fileList) {
+        this.upload.isUploading = true;
+        this.submitStuFormButton = true;
+      },
+      // 文件上传成功处理
+      handleFileSuccess(response, file, fileList) {
+        this.upload.open = false;
+        this.upload.isUploading = false;
+        this.$refs.upload.clearFiles();
+        this.$notify({
+          title: "上传成功",
+          message: response.msg,
+          type: "success"
+        });
+        this.getList();
+      },
+      // 学生谈话文件上传成功处理
+      handleXsthFileSuccess(response, file, fileList) {
+        this.formStu.id = secretKey();
+        this.upload.open = false;
+        this.upload.isUploading = false;
+        let obj = response.data
+        obj.kzzd1 = this.formStu.id
+        this.uploadFileDisabled = true
+        addFile(obj).then(res => {
+          this.$notify({
+            title: "上传成功",
+            message: response.msg,
+            type: "success"
+          });
+          this.formStu.kzzd1 = obj.name
+          this.submitStuFormButton=false
+        });
+
+      },
+      // 提交上传文件
+      submitFileForm() {
+        this.$refs.upload.submit();
+      },
+      //添加谈话内容
+      addStuTalk() {
+        this.resetStu();
+        this.uploadFileDisabled = false
+        let loginUser = this.$store.state.user;
+        this.formStu.lsid = loginUser.glrid;
+        this.formStu.lsxm = loginUser.nickName;
+        this.formStu.xsid = this.stuRow.id;
+        this.formStu.xsxm = this.stuRow.xsxm;
+        this.openStu = true;
+        this.title = "添加学生谈话";
+        this.$nextTick(()=>{// 页面元素加载完成后执行该方法
+          this.$refs.uploadFile.clearFiles();
+        })
+      },
+      // 查看谈话内容
+      lookStuTalk() {
+        this.openStuGrid = true;
+        const id = this.ids;
+        this.getTeacherTalkList(id);
+      },
+      // 下载谈话文件
+      downloadTalkUploadFile(row) {
+        this.download(
+          "file/filetable/download",
+          {
+            wjmc: row.kzzd1
+          },
+          row.kzzd1
+        );
+      },
+      /** 提交按钮 */
+      submitStuForm() {
+        this.$refs["stuform"].validate(valid => {
+          if (valid) {
+            /*if (this.formStu.id != null) {
+              updateTeacherTalk(this.formStu).then(response => {
+                this.msgSuccess("修改谈话内容成功");
+                this.openStu = false;
+              });
+            } else {*/
             addTeacherTalk(this.formStu).then(response => {
               this.msgSuccess("新增谈话内容成功");
               this.openStu = false;
             });
+            /* }*/
           }
-        }
-      });
-    },
-  }
-};
+        });
+      },
+    }
+  };
 </script>
 <style lang="scss" scoped>
-.el-col {
-  float: none;
-  display: inline-block;
-}
-.wrap-el-form {
-  padding-right: 35px;
-  box-sizing: border-box;
-}
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
+  .el-col {
+    float: none;
+    display: inline-block;
+  }
 
-.header {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  color: #652c11;
-  letter-spacing: 2px;
-}
-.content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .wrap-el-form {
+    padding-right: 35px;
+    box-sizing: border-box;
+  }
+
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+
+  .header {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #652c11;
+    letter-spacing: 2px;
+  }
+
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 </style>

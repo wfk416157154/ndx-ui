@@ -7,10 +7,10 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="班级名称" prop="bjmc">
+      <el-form-item label="日语班级" prop="bjmc">
         <el-input
           v-model="queryParams.bjmc"
-          placeholder="请输入班级名称"
+          placeholder="请输入日语班级"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -44,17 +44,17 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="班级" align="center" prop="bjmc" />
+      <el-table-column label="日语班级" align="center" prop="bjmc" />
       <el-table-column label="老师" align="center" prop="fsrmc" />
       <el-table-column label="教材" align="center" prop="jcmc" />
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
       <el-table-column label="考试范围" align="center" prop="ksfw" />
-      <el-table-column label="考试开始时间" align="center" prop="kskssj" width="180">
+      <el-table-column label="考试时间" align="center" prop="kskssj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="考试结束时间" align="center" prop="ksjssj" width="180">
+      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
@@ -90,10 +90,10 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="fsrmc">
-          <el-input v-model="form.fsrmc" placeholder="请输入老师姓名" />
+          <el-input v-model="form.fsrmc" placeholder="请输入老师姓名" readonly />
         </el-form-item>
-        <el-form-item label="班级" label-width="120px" prop="bjid">
-          <el-select v-model="form.bjid" @change="getClassList" placeholder="请选择班级">
+        <el-form-item label="日语班级" label-width="120px" prop="bjid">
+          <el-select v-model="form.bjid" @change="getClassList" placeholder="请选择日语班级">
             <el-option
               v-for="dict in classList"
               :key="dict.id"
@@ -123,26 +123,26 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-input v-model="form.ksfw" placeholder="请输入考试范围" />
+          <el-input v-model="form.ksfw" placeholder="请输入考试范围"  maxLength="40" />
         </el-form-item>
-        <el-form-item label="考试开始时间" label-width="120px" prop="kskssj">
+        <el-form-item label="考试时间" label-width="120px" prop="kskssj">
           <el-date-picker
             v-model="form.kskssj"
-            type="datetime"
-            value-format=" yyyy-MM-dd HH:mm"
-            placeholder="选择考试开始时间"
+            type="date"
+            value-format=" yyyy-MM-dd"
+            placeholder="选择考试时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
+        <!--<el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
           <el-date-picker
             v-model="form.ksjssj"
             type="datetime"
             value-format=" yyyy-MM-dd HH:mm"
             placeholder="选择考试开始时间"
           ></el-date-picker>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="备注" label-width="120px" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入考试时间文本" />
+          <el-input v-model="form.remark" placeholder="" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -363,6 +363,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.form.fsrmc=this.$store.state.user.nickName
       this.open = true;
       this.title = "添加考卷";
     },
@@ -393,7 +394,7 @@ export default {
         {
           kzzd1: row.id
         },
-        `考卷.zip`
+        `考卷-${new Date().getTime()}.zip`
       );
       // 修改老师试卷状态
       this.submitForm(row);
