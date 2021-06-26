@@ -9,16 +9,11 @@
     >
       <el-form-item label="校区名称" prop="xqmc">
         <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
-          <el-option
-            v-for="item in selectXqmc"
-            :key="item.id"
-            :label="item.xxmc"
-            :value="item.xxmc"
-          ></el-option>
+          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="日语班级" prop="kzzd1">
-        <el-select v-model="queryParams.kzzd1" placeholder="请选择日语班">
+      <el-form-item label="日语班级" prop="rybj">
+        <el-select v-model="queryParams.rybj" placeholder="请选择日语班">
           <el-option
             v-for="item in bjclassList"
             :key="item.id"
@@ -142,7 +137,7 @@
     </div>
 
     <!-- 成绩分析 -->
-    <chart v-if="allData" :query="queryParams" />
+    <chart ref="chart" v-if="allData" :query="queryParams" />
 
     <!-- 添加或修改学生成绩基础表对话框 -->
     <el-dialog
@@ -342,33 +337,30 @@ export default {
   },
   methods: {
     /** 查询学生成绩基础表列表 */
-    getList() {
+    async getList() {
       this.loading = true;
-      // listStugrade(this.queryParams).then(response => {
-      //   this.stugradeList = response.rows;
-      //   this.total = response.total;
-      //   this.loading = false;
-      // });
       // 学生成绩表数据
-      listAll(this.queryParams).then(res => {
-        console.log(this.queryParams);
-
-        if (res.rows && res.rows.length > 0) {
-          this.listAll = res.rows;
-          this.total = res.total;
-          this.listAll.forEach(value => {
-            if (value.xsxm == this.queryParams.xsxm) {
-              this.allData = true;
-            }
-          });
-        } else {
-          if (!this.queryParams.xsxm) {
-            return;
+      let res = await listAll(this.queryParams);
+      if (res.rows && res.rows.length > 0) {
+        this.listAll = res.rows;
+        this.total = res.total;
+        this.listAll.forEach(value => {
+          if (value.xsxm == this.queryParams.xsxm) {
+            this.allData = true;
           }
-          this.$notify.error({
-            title: "错误",
-            message: `不存在"${this.queryParams.xsxm}"学生`
-          });
+        });
+      } else {
+        if (!this.queryParams.xsxm) {
+          return;
+        }
+        this.$notify.error({
+          title: "错误",
+          message: `不存在"${this.queryParams.xsxm}"学生`
+        });
+      }
+      this.$nextTick(() => {
+        if (this.$refs.chart) {
+          this.$refs.chart.getChart();
         }
       });
       // 学生成绩表title列
@@ -530,6 +522,16 @@ export default {
     },
     // 全部按钮
     getWhole() {
+      (this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        xsxm: null,
+        rybj: null,
+        wl: null,
+        status: null
+      }),
+        (this.studentsList = null);
+      this.getList();
       this.allData = false;
     },
     // 平均数
@@ -566,17 +568,15 @@ export default {
     },
     // 搜索学生
     chooseStudents(xsxm) {
-      console.log(xsxm);
+      // console.log(this.queryParams.xsbh)
       this.queryParams.xsxm = xsxm;
-      console.log(this.queryParams);
       let json = {
         pageNum: 1,
         pageSize: 5,
-        xsxm : this.queryParams.xsxm
+        xsxm: this.queryParams.xsxm
       };
       // 学生成绩表数据
       listStudent(json).then(res => {
-        console.log(res);
         this.studentsList = res.rows;
       });
     }

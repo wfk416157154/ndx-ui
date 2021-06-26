@@ -7,120 +7,70 @@
       <div class="title-content __float">
         <div>
           <i></i>
-          <span>考试范围 :</span>
-          <span>19.11.5日五十音图寒暄语</span>
+          <span>60分以下次数 :</span>
+          <span>{{fraction150.onegrade}}</span>
         </div>
         <div>
           <i></i>
-          <span>考试时间 :</span>
-          <span>2021/6/21</span>
+          <span>60-80分的次数 :</span>
+          <span>{{fraction150.twograde}}</span>
         </div>
         <div>
           <i></i>
-          <span>考试类型 :</span>
-          <span>课考</span>
-        </div>
-        <div>
-          <i></i>
-          <span>60分以下人数 :</span>
-          <span>5</span>
-        </div>
-        <div>
-          <i></i>
-          <span>60-80分的人数 :</span>
-          <span>26</span>
-        </div>
-        <div>
-          <i></i>
-          <span>80-100分的人数 :</span>
-          <span>12</span>
+          <span>80-100分的次数 :</span>
+          <span>{{fraction150.threegrade}}</span>
         </div>
         <div>
           <i></i>
           <span>最高分 :</span>
-          <span>98</span>
+          <span>{{fraction150.maxgrade}}</span>
         </div>
         <div>
           <i></i>
           <span>最低分 :</span>
-          <span>27</span>
+          <span>{{fraction150.mingrade}}</span>
         </div>
         <div>
           <i></i>
           <span>平均分 :</span>
-          <span>73.2</span>
-        </div>
-        <div>
-          <i></i>
-          <span>考试人数 :</span>
-          <span>43</span>
-        </div>
-        <div>
-          <i></i>
-          <span>缺考人数 :</span>
-          <span>3</span>
+          <span>{{fraction150.avggrade}}</span>
         </div>
       </div>
     </div>
     <div class="wrap-score-chart __float clearfix">
       <div class="right-chart __float">
-        <div id="pie1" style="width: 100%;height:100%;"></div>
+        <div id="pie2" style="width: 100%;height:100%;"></div>
       </div>
       <div class="title-content __float">
         <div>
           <i></i>
-          <span>考试范围 :</span>
-          <span>19.11.5日五十音图寒暄语</span>
+          <span>60分以下次数 :</span>
+          <span>{{fraction100.onegrade}}</span>
         </div>
         <div>
           <i></i>
-          <span>考试时间 :</span>
-          <span>2021/6/21</span>
+          <span>60-80分的次数 :</span>
+          <span>{{fraction100.twograde}}</span>
         </div>
         <div>
           <i></i>
-          <span>考试类型 :</span>
-          <span>课考</span>
-        </div>
-        <div>
-          <i></i>
-          <span>60分以下人数 :</span>
-          <span>5</span>
-        </div>
-        <div>
-          <i></i>
-          <span>60-80分的人数 :</span>
-          <span>26</span>
-        </div>
-        <div>
-          <i></i>
-          <span>80-100分的人数 :</span>
-          <span>12</span>
+          <span>80-100分的次数 :</span>
+          <span>{{fraction100.threegrade}}</span>
         </div>
         <div>
           <i></i>
           <span>最高分 :</span>
-          <span>98</span>
+          <span>{{fraction100.maxgrade}}</span>
         </div>
         <div>
           <i></i>
           <span>最低分 :</span>
-          <span>27</span>
+          <span>{{fraction100.mingrade}}</span>
         </div>
         <div>
           <i></i>
           <span>平均分 :</span>
-          <span>73.2</span>
-        </div>
-        <div>
-          <i></i>
-          <span>考试人数 :</span>
-          <span>43</span>
-        </div>
-        <div>
-          <i></i>
-          <span>缺考人数 :</span>
-          <span>3</span>
+          <span>{{fraction100.avggrade}}</span>
         </div>
       </div>
     </div>
@@ -128,11 +78,15 @@
 </template>
 
 <script>
-import { listAll, getColumnNameList,getStudentGradeEverytime } from "@/api/basic/stugrade";
+import {
+  listAll,
+  getColumnNameList,
+  getStudentGradeEverytime
+} from "@/api/basic/stugrade";
 export default {
   data() {
     return {
-      option1: {
+      option: {
         title: {
           text: "成绩统计",
           top: "bottom",
@@ -213,17 +167,19 @@ export default {
       // 获取学生成绩表
       listAll: [],
       // 饼状图数据统计
-      chartList: {}
+      chartList: {},
+      // 详细数据
+      getStudentGradeEverytimeList: {},
+      fraction100: {},
+      fraction150: {},
+      arr1: [],
+      arr2: []
     };
   },
   props: ["query"],
-  mounted() {
-    console.log(this.query);
-    this.getChart();
-  },
   methods: {
     getChart() {
-      if (this.query.xsxm) {
+      if (!this.query.xsxm) {
         return;
       }
       let json = {
@@ -231,33 +187,21 @@ export default {
         kjid: this.query.ksfw,
         ksmc: this.query.ksmc
       };
-      // 学生成绩表title列
-      getColumnNameList(json).then(res => {
-        this.columnNameList = res.data;
-        for (let i = 0; i < 5; i++) {
-          this.columnNameList[i].fixed = true;
-        }
-      });
-      // 学生成绩表数据
-      listAll(json).then(res => {
-        this.listAll = res.rows;
-        this.total = res.total;
-        this.getExaminationType.forEach(value => {
-          if (this.listAll[this.listAll.length - 1].kslx == value.dictValue) {
-            this.listAll[this.listAll.length - 1].kslxmc = value.dictLabel;
-          }
-        });
-        this.chartList = this.listAll[this.listAll.length - 1];
-        // 考试分制
-        this.option1.graphic.style.text = this.chartList.mf + "分制";
-        this.option1.series[0].data[0].value = this.chartList.yxbfb;
-        this.option1.series[0].data[1].value = this.chartList.hgbfb;
-        this.option1.series[0].data[2].value = this.chartList.bhgbfb;
-        let myChart1 = this.$echarts.init(document.getElementById("pie1"));
-        myChart1.setOption(this.option1);
+      // 学生成绩详细饼状图
+      getStudentGradeEverytime({ xsbh: this.query.xsbh }).then(res => {
+        this.getStudentGradeEverytimeList = res.data.countGrade;
+        this.fraction100 = this.getStudentGradeEverytimeList["100"];
+        this.fraction150 = this.getStudentGradeEverytimeList["150"];
+        console.log("fraction100", this.getStudentGradeEverytimeList);
+        this.arr1 = JSON.parse(JSON.stringify(this.option));
+        this.arr2 = JSON.parse(JSON.stringify(this.option));
+        this.arr1.graphic.style.text = "150分制";
+        this.arr1.graphic.style.text = "100分制";
       });
       let myChart1 = this.$echarts.init(document.getElementById("pie1"));
-      myChart1.setOption(this.option1);
+      let myChart2 = this.$echarts.init(document.getElementById("pie2"));
+      myChart1.setOption(this.arr1);
+      myChart2.setOption(this.arr2);
     }
   }
 };
