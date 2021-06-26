@@ -17,24 +17,32 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="日语班级" prop="rybj">
-        <el-select v-model="queryParams.ryb" placeholder="请选择日语班">
+      <el-form-item label="日语班级" prop="kzzd1">
+        <el-select v-model="queryParams.kzzd1" placeholder="请选择日语班">
           <el-option
             v-for="item in bjclassList"
             :key="item.id"
             :label="item.rybjmc"
-            :value="item.rybjmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="学生姓名" prop="xsxm">
-        <el-input
-          v-model="queryParams.xsxm"
-          placeholder="可模糊查询学生姓名"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="学生姓名" prop="xsbh">
+        <el-select
+          v-model="queryParams.xsbh"
+          filterable
+          remote
+          reserve-keyword
+          :remote-method="chooseStudents"
+          placeholder="请选择/搜索学生"
+        >
+          <el-option
+            v-for="item in studentsList"
+            :key="item.id"
+            :label="item.xsxm"
+            :value="item.xsbh"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="文理" prop="wl">
         <el-input
@@ -56,7 +64,8 @@
         </el-select>
       </el-form-item>-->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">查询</el-button>
+        <el-button type="primary" size="mini" @click="getWhole">全部</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -109,43 +118,40 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-
-    <el-table v-loading="loading" :data="listAll" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column
-        :label="item.label"
-        align="center"
-        v-for="(item,index) in columnNameList"
-        :key="index"
-        :prop="item.prop"
-      />
-      <!--
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:stugrade:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['basic:stugrade:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>-->
-    </el-table>
-
-    <div class="totalNum">
-      <span>共{{total}}条</span>
+    <div>
+      <el-table
+        :data="listAll"
+        border
+        :summary-method="getSummaries"
+        show-summary
+        @selection-change="handleSelectionChange"
+        style="width: 100%"
+      >
+        <el-table-column
+          :fixed="item.fixed"
+          :label="item.label"
+          align="center"
+          v-for="(item,index) in columnNameList"
+          :key="index"
+          :prop="item.prop"
+        />
+      </el-table>
+      <div class="totalNum">
+        <span>共{{total}}条</span>
+      </div>
     </div>
 
+    <!-- 成绩分析 -->
+    <chart v-if="allData" :query="queryParams" />
+
     <!-- 添加或修改学生成绩基础表对话框 -->
-    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :close-on-click-modal="false"
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+    >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="学生编号" prop="xsbh">
           <el-input v-model="form.xsbh" placeholder="请输入学生编号" />
@@ -230,11 +236,15 @@ import {
 import { listBjclass } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
+import { listStudent } from "@/api/basic/student";
+import chart from "./chart";
 export default {
   name: "Stugrade",
   components: {},
   data() {
     return {
+      // 所有数据详细数据切换
+      allData: false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -304,15 +314,16 @@ export default {
       // 动态table-column
       columnNameList: [],
       // 获取学生成绩表
-      listAll : [],
+      listAll: [],
       //校区名称字典
       selectXqmc: [],
       // 日语班级字典
-      bjclassList: []
+      bjclassList: [],
+      // 学生list
+      studentsList: []
     };
   },
   created() {
-    this.getList();
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
@@ -323,22 +334,49 @@ export default {
       this.bjclassList = response.rows;
     });
   },
+  components: {
+    chart
+  },
+  mounted() {
+    this.getList();
+  },
   methods: {
     /** 查询学生成绩基础表列表 */
     getList() {
       this.loading = true;
-      listStugrade(this.queryParams).then(response => {
-        this.stugradeList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+      // listStugrade(this.queryParams).then(response => {
+      //   this.stugradeList = response.rows;
+      //   this.total = response.total;
+      //   this.loading = false;
+      // });
       // 学生成绩表数据
       listAll(this.queryParams).then(res => {
-        this.listAll = res.rows;
+        console.log(this.queryParams);
+
+        if (res.rows && res.rows.length > 0) {
+          this.listAll = res.rows;
+          this.total = res.total;
+          this.listAll.forEach(value => {
+            if (value.xsxm == this.queryParams.xsxm) {
+              this.allData = true;
+            }
+          });
+        } else {
+          if (!this.queryParams.xsxm) {
+            return;
+          }
+          this.$notify.error({
+            title: "错误",
+            message: `不存在"${this.queryParams.xsxm}"学生`
+          });
+        }
       });
       // 学生成绩表title列
       getColumnNameList({}).then(res => {
         this.columnNameList = res.data;
+        for (let i = 0; i < 5; i++) {
+          this.columnNameList[i].fixed = true;
+        }
       });
     },
     // 状态字典翻译
@@ -459,7 +497,6 @@ export default {
         `学生成绩基础表.xlsx`
       );
     },
-
     /** 导入按钮操作 */
     handleImport() {
       this.upload.title = "学生成绩基础表数据导入";
@@ -490,17 +527,69 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
+    },
+    // 全部按钮
+    getWhole() {
+      this.allData = false;
+    },
+    // 平均数
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "平均分";
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] += "分";
+        } else {
+          sums[index] = "N/A";
+        }
+      });
+      for (let i = 1; i < 3; i++) {
+        sums[i] = "";
+      }
+      for (let i = 3; i < sums.length; i++) {
+        sums[i] = (parseInt(sums[i]) / this.listAll.length).toFixed(2) + "分";
+      }
+      return sums;
+    },
+    // 搜索学生
+    chooseStudents(xsxm) {
+      console.log(xsxm);
+      this.queryParams.xsxm = xsxm;
+      console.log(this.queryParams);
+      let json = {
+        pageNum: 1,
+        pageSize: 5,
+        xsxm : this.queryParams.xsxm
+      };
+      // 学生成绩表数据
+      listStudent(json).then(res => {
+        console.log(res);
+        this.studentsList = res.rows;
+      });
     }
   }
 };
 </script>
 <style lang="scss">
-   .totalNum{
-     height: 50px;
-     line-height: 50px;
-     margin-right: 20px;
-     font-size: 16px;
-     font-weight: 200;
-     float : right
-   }
+.totalNum {
+  height: 50px;
+  line-height: 50px;
+  margin-right: 20px;
+  font-size: 16px;
+  font-weight: 200;
+  float: right;
+}
 </style>

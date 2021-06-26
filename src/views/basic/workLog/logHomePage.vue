@@ -73,8 +73,8 @@
                 <span>{{item.date}}</span>
               </div>
               <div class="log-header-right __float">
-                <el-tag type="success">已读</el-tag>
-                <!-- <el-tag type="warning">未读</el-tag> -->
+                <el-tag type="success" v-if="item.isRead == '0'">未读</el-tag>
+                <el-tag type="info" v-if="item.isRead == '1'">已读</el-tag>
               </div>
             </div>
             <div class="title-content">
@@ -209,10 +209,10 @@ export default {
       );
     },
     // 跳转详情页面
-    toDetails(id){
-        this.$router.push({
-            path : "/lsgl/log/workLogs/" + id
-        })
+    toDetails(id) {
+      this.$router.push({
+        path: "/lsgl/log/workLogs/" + id
+      });
     }
   }
 };

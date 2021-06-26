@@ -26,6 +26,15 @@ export function getColumnNameList(query) {
   })
 }
 
+// 统计学生的每次考试成绩和成绩统计分析
+export function getStudentGradeEverytime(query) {
+  return request({
+    url: '/basic/stugrade/getStudentGradeEverytime',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询学生成绩基础表详细
 export function getStugrade(id) {
   return request({
