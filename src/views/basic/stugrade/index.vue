@@ -8,12 +8,12 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
-          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+        <el-select v-model="queryParams.xqmc" :disabled="xqmcDisabled" placeholder="请选择校区名称" @change="xqmcOnChange" >
+          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"  ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="rybj">
-        <el-select v-model="queryParams.rybj" placeholder="请选择日语班">
+        <el-select v-model="queryParams.rybj" :disabled="rybjDisabled" placeholder="请选择日语班" @change="rybjOnChange" >
           <el-option
             v-for="item in bjclassList"
             :key="item.id"
@@ -28,6 +28,7 @@
           filterable
           remote
           reserve-keyword
+          :disabled="xsbhDisabled"
           :remote-method="chooseStudents"
           placeholder="请选择/搜索学生"
         >
@@ -39,7 +40,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="文理" prop="wl">
+      <!--<el-form-item label="文理" prop="wl">
         <el-input
           v-model="queryParams.wl"
           placeholder="请输入文理"
@@ -48,7 +49,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!--<el-form-item label="状态" prop="status">
+      <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -315,7 +316,10 @@ export default {
       // 日语班级字典
       bjclassList: [],
       // 学生list
-      studentsList: []
+      studentsList: [],
+      xqmcDisabled:false,
+      rybjDisabled:true,
+      xsbhDisabled:true
     };
   },
   created() {
@@ -324,9 +328,6 @@ export default {
     });
     listSchool(this.queryParams).then(response => {
       this.selectXqmc = response.rows;
-    });
-    listBjclass(this.queryParams).then(response => {
-      this.bjclassList = response.rows;
     });
   },
   components: {
@@ -375,9 +376,19 @@ export default {
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, row.status);
     },
+    xqmcOnChange(id){
+      listBjclass({kzzd1:id}).then(response => {
+        this.bjclassList = response.rows;
+      });
+      this.queryParams.rybj=null
+      this.rybjDisabled=false
+    },
+    rybjOnChange(id){
+      this.xsbhDisabled=false
+    },
     // 取消按钮
     cancel() {
-      this.open = false;
+      this.open = false
       this.reset();
     },
     // 表单重置
@@ -414,6 +425,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.rybjDisabled=true
+      this.xsbhDisabled=true
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -533,6 +546,8 @@ export default {
         (this.studentsList = null);
       this.getList();
       this.allData = false;
+      this.rybjDisabled=true
+      this.xsbhDisabled=true
     },
     // 平均数
     getSummaries(param) {
@@ -568,14 +583,12 @@ export default {
     },
     // 搜索学生
     chooseStudents(xsxm) {
-      // console.log(this.queryParams.xsbh)
       this.queryParams.xsxm = xsxm;
       let json = {
-        pageNum: 1,
-        pageSize: 5,
+        kzzd1:this.queryParams.bjid,
         xsxm: this.queryParams.xsxm
       };
-      // 学生成绩表数据
+      // 学生基础数据表
       listStudent(json).then(res => {
         this.studentsList = res.rows;
       });
