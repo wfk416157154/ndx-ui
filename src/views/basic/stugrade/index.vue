@@ -8,12 +8,12 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" @change="getListBjclass" placeholder="请选择校区名称">
-          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+        <el-select v-model="queryParams.xqmc" :disabled="xqmcDisabled" placeholder="请选择校区名称" @change="xqmcOnChange" >
+          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"  ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="rybj">
-        <el-select v-model="queryParams.kzzd1" placeholder="请选择日语班">
+        <el-select v-model="queryParams.rybj" :disabled="rybjDisabled" placeholder="请选择日语班" @change="rybjOnChange" >
           <el-option
             v-for="item in bjclassList"
             :key="item.id"
@@ -341,12 +341,6 @@ export default {
         this.selectXqmc = response.rows;
       });
     },
-    // 获取班级
-    getListBjclass(xqid) {
-      listBjclass({kzzd1 : xqid}).then(response => {
-        this.bjclassList = response.rows;
-      });
-    },
     /** 查询学生成绩基础表列表 */
     async getList() {
       this.loading = true;
@@ -356,7 +350,6 @@ export default {
       }
       // 学生成绩表数据
       let res = await listAll(listAllJson);
-      console.log(res);
       if (res.rows && res.rows.length > 0) {
         this.listAll = res.rows;
         this.total = res.total;
