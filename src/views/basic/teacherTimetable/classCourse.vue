@@ -79,7 +79,7 @@
                   type="primary"
                   icon="el-icon-plus"
                   size="mini"
-                  @click="insertTimetable()"
+                  @click="insertTimetable(-1)"
                 >新增课表</el-button>
                 <el-button
                   type="success"
@@ -92,6 +92,7 @@
                   type="danger"
                   icon="el-icon-delete"
                   size="mini"
+                  :disabled="btnDisabled"
                   @click="deleteData"
                 >删除选中行</el-button>
               </div>
@@ -102,6 +103,7 @@
                 keep-source
                 ref="xTable"
                 max-height="700"
+                @checkbox-change="onselectionchange"
                 :cell-style="renderColor"
                 :data="classCourseList"
                 :edit-config="{trigger: 'click', mode: 'cell', icon: 'fa fa-pencil', showStatus: true}"
@@ -143,6 +145,7 @@ export default {
   data() {
     return {
       startTime: "",
+      btnDisabled:true,
       // 班级id
       activeTab: "",
       // 班级课表选择
@@ -238,19 +241,30 @@ export default {
     },
     getCourse(){
       /** 查询班级课程列表 */
-      this.loading = true;
+      this.loading = true
       listClassCourse(this.queryParams).then(response => {
-        this.classCourseList = response.rows;
-        this.total = response.total;
-        this.loading = false;
+        this.classCourseList = response.rows
+        this.total = response.total
+        this.loading = false
       });
     },
     //查询课表
     handleQuery() {
       this.getCourse();
     },
+    onselectionchange(row){
+      if(row.records.length>0){
+        this.btnDisabled=false
+      }else{
+        this.btnDisabled=true
+      }
+    },
     //新增课表
     insertTimetable(row){
+      if(null==this.queryParams.kzzd2){
+        this.msgError("请选择该新增课表的所属年份！")
+        return;
+      }
       const $table = this.$refs.xTable
       const record = {
       }
@@ -263,14 +277,15 @@ export default {
       if(result.insertRecords.length>0){
         for (let i = 0; i < result.insertRecords.length; i++) {
             result.insertRecords[i].bjid=this.queryParams.bjid
+            result.insertRecords[i].kzzd2=this.queryParams.kzzd2
             addClassCourse(result.insertRecords[i]).then(response => {
           });
         }
         this.msgSuccess("新增成功");
       }
       if(result.updateRecords.length>0){
-        for (let i = 0; i < result.insertRecords.length; i++) {
-            updateClassCourse(result.insertRecords[i]).then(response => {
+        for (let i = 0; i < result.updateRecords.length; i++) {
+            updateClassCourse(result.updateRecords[i]).then(response => {
           });
         }
         this.msgSuccess("修改成功");
@@ -281,20 +296,25 @@ export default {
     deleteData(){
       const $table = this.$refs.xTable
       const removeRecords = $table.getCheckboxRecords()
-
       this.$confirm('是否确认删除?', "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       }).then(function() {
+        $table.removeCheckboxRow();
         let arr=[]
         for (let i = 0; i < removeRecords.length; i++) {
+          if(undefined==removeRecords[i].id){
+            continue;
+          }
           arr.push(removeRecords[i].id);
         }
-        return delClassCourse(arr);
+        if(arr.length>0){
+          return delClassCourse(arr);
+        }
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+        this.msgSuccess("数据删除成功");
       }).catch((e)=>{
         console.log(e);
       })

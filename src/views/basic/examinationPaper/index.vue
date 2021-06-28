@@ -299,7 +299,6 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.form.lsxm=this.$store.state.user.nickName
       this.open = true;
       this.title = "添加考卷";
     },
