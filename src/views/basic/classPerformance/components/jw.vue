@@ -107,6 +107,9 @@
             <h4>进班平均英语成绩 :</h4>&nbsp;
             <span>{{item.jbpjyycj}}</span>
           </div>
+          <div class="student-information" style="float :right">
+            <el-button type="primary" plain @click="toPerformanceAnalysis(item.bjid)">成绩分析</el-button>
+          </div>
         </div>
         <div class="wrap-right">
           <!-- <div class="wrap-conversion">
@@ -333,6 +336,15 @@ export default {
         },
         `班级成绩表.xlsx`
       );
+    },
+    // 成绩分析
+    toPerformanceAnalysis(bjid) {
+      // 动态获取路由地址
+      // this.getConfigKey("classPerformanceDetails").then(res => {
+      //   this.$router.push({
+      //     path: res.msg + bjid
+      //   });
+      // });
     }
   }
 };

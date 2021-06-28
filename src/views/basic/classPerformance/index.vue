@@ -13,19 +13,18 @@ export default {
   data() {
     return {
       // 用户权重
-      dataRoleWeightId: "",
+      dataRoleWeightId: ""
     };
   },
   components: {
     jw,
-    ls,
+    ls
   },
   created() {},
   mounted() {
     this.dataRoleWeightId = this.$store.state.user.dataRoleWeightId;
   },
-  methods: {
-  }
+  methods: {}
 };
 </script>
 

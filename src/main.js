@@ -77,6 +77,8 @@ Vue.use(VXETable)
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
+import "echarts/lib/component/legend";
+
 
 Vue.config.productionTip = false;
 import echarts from 'echarts'

@@ -280,11 +280,15 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      if (this.queryParams.rybj && this.queryParams.ksfw) {
-        if (this.$refs.getChart) {
-          this.$refs.getChart.getChart();
-        }
+      if (this.queryParams.ksmc && this.queryParams.ksfw) {
+        // this.allData = false;
+        // if (this.$refs.getChart) {
+        //   this.$refs.getChart.getChart();
+        // }
         this.allData = false;
+        this.$nextTick(() => {
+          this.$refs.getChart.getChart();
+        });
       }
       this.queryParams.pageNum = 1;
       this.getList();

@@ -73,10 +73,10 @@
           <span>{{chartList.qkrs}}</span>
         </div>
       </div>
-      <div class="analysis-and-summary">
-        <p>考试分析总结</p>
-        <span>{{getKsfxzj}}</span>
-      </div>
+    </div>
+    <div class="analysis-and-summary">
+      <p>考试分析总结</p>
+      <span>{{getKsfxzj}}</span>
     </div>
   </div>
 </template>
@@ -87,28 +87,6 @@ import { listExamSummary } from "@/api/basic/examSummary";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ],
       option1: {
         title: {
           text: "成绩统计",
@@ -129,18 +107,18 @@ export default {
                  return content;//返回可以含有html中标签
              },*/ //自定义鼠标悬浮交互信息提示，鼠标放在饼状图上时触发事件
         },
-        // legend: {
-        //   show: true,
-        //   orient: "vertical",
-        //   x: "left",
-        //   data: ["50%-学生1", "25%-老师", "25%-家长"]
-        // },
+        legend: {
+          show: true,
+          orient: "vertical",
+          x: "left",
+          data: ["80至100分", "60至80分", "60分及以下"]
+        },
         graphic: {
           type: "text",
           left: "center",
           top: "center",
           style: {
-            text: "100分制",
+            text: "",
             textAlign: "center",
             font: "italic bolder 16px cursive",
             fill: "#fff",
@@ -152,13 +130,14 @@ export default {
           {
             name: "成绩统计", //tooltip提示框中显示内容
             type: "pie", //图形类型，如饼状图，柱状图等
-            radius: ["35%", "65%"], //饼图的半径，数组的第一项是内半径，第二项是外半径。支持百分比，本例设置成环形图。具体可以看文档或改变其值试一试
+            radius: ["40%", "60%"], //饼图的半径，数组的第一项是内半径，第二项是外半径。支持百分比，本例设置成环形图。具体可以看文档或改变其值试一试
             //roseType:'area',是否显示成南丁格尔图，默认false
             itemStyle: {
               normal: {
                 label: {
                   show: false,
-                  textStyle: { color: "#3c4858", fontSize: "18" },
+                  position: 'inside',
+                  textStyle: { color: "#3c4858", fontSize: "14" },
                   formatter: function(val) {
                     //让series 中的文字进行换行
                     return val.name.split("-").join("\n");
@@ -177,9 +156,9 @@ export default {
               }
             },
             data: [
-              { value: null, name: "80至100分" },
-              { value: null, name: "60至80分" },
-              { value: null, name: "60分" }
+              { value: 50, name: "80至100分" },
+              { value: 25, name: "60至80分" },
+              { value: 25, name: "60分及以下" }
             ],
             color: ["#51CEC6", "#FFB703", "#5FA0FA"] //各个区域颜色
           }
@@ -202,7 +181,7 @@ export default {
   methods: {
     getChart() {
       let json = {
-        kzzd1: this.query.rybj,
+        kzzd1: this.query.kzzd1,
         kjid: this.query.ksfw,
         ksmc: this.query.ksmc
       };
@@ -244,6 +223,8 @@ export default {
 .score-chart {
   width: 100%;
   height: 100%;
+  background: #909399;
+
   .__float {
     float: left;
   }
@@ -252,7 +233,6 @@ export default {
     height: 100%;
     padding: 40px;
     box-sizing: border-box;
-    background: #909399;
     .left-table {
       width: 50%;
     }
@@ -279,22 +259,24 @@ export default {
         margin-right: 10px;
       }
     }
-    .analysis-and-summary {
-      display: inline-block;
-      width: 50%;
-      // height: 300px;
-      background: #f2f6fc;
-      padding: 20px;
-      padding-top: 0px;
-      box-sizing: border-box;
-      border-radius: 20px;
-      p {
-        color: #606266;
-      }
-      span {
-        // 强制换行
-        word-wrap: break-word;
-      }
+  }
+  .analysis-and-summary {
+    display: inline-block;
+    width: 50%;
+    // height: 300px;
+    background: #f2f6fc;
+    padding: 20px;
+    padding-top: 0px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    margin-left: 40px;
+    margin-bottom: 40px;
+    p {
+      color: #606266;
+    }
+    span {
+      // 强制换行
+      word-wrap: break-word;
     }
   }
 }
