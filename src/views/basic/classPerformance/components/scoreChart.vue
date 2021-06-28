@@ -2,7 +2,14 @@
   <div class="score-chart">
     <div class="wrap-score-chart clearfix">
       <div class="left-table __float">
-        <el-table :data="listAll" border style="width: 100%">
+        <el-table
+          :data="listAll"
+          border
+          :cell-style="addClass"
+          :summary-method="getSummaries"
+          show-summary
+          style="width: 100%"
+        >
           <el-table-column
             :fixed="item.fixed"
             :label="item.label"
@@ -10,7 +17,27 @@
             v-for="(item,index) in columnNameList"
             :key="index"
             :prop="item.prop"
-          />
+          >
+            <template slot-scope="scope">
+              <span
+                v-if="item.prop == 'xsxm' || item.prop == 'rybj' || item.prop == 'wl' || item.prop == 'zhcj'"
+              >{{scope.row[item.prop]}}</span>
+              <div v-else>
+                <div
+                  v-if="scope.row[item.colour] == 1"
+                  style="background : #67C23A; display : inline-block ; width :100%;color : #fff"
+                >{{scope.row[item.prop]}}</div>
+                <span
+                  v-if="scope.row[item.colour] == 2"
+                  style="background : #E6A23C; display : inline-block ; width :100%;color : #fff"
+                >{{scope.row[item.prop]}}</span>
+                <span
+                  v-if="scope.row[item.colour] == 3"
+                  style="background : red; display : inline-block ; width :100%;color : #fff"
+                >{{scope.row[item.prop]}}</span>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="right-chart __float">
@@ -136,7 +163,7 @@ export default {
               normal: {
                 label: {
                   show: false,
-                  position: 'inside',
+                  position: "inside",
                   textStyle: { color: "#3c4858", fontSize: "14" },
                   formatter: function(val) {
                     //让series 中的文字进行换行

@@ -348,6 +348,7 @@ export default {
     padding: 40px;
     box-sizing: border-box;
     background: #909399;
+    border-radius: 20px;
     .right-chart {
       width: 60%;
       height: 300px;

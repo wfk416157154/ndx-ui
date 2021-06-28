@@ -161,7 +161,7 @@ export default {
         series: [
           {
             name: "",
-            type: "bar",
+            type: "line",
             stack: "总量",
             data: []
           }

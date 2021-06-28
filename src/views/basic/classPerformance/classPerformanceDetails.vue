@@ -71,7 +71,27 @@
           v-for="(item,index) in columnNameList"
           :key="index"
           :prop="item.prop"
-        />
+        >
+          <template slot-scope="scope">
+            <span
+              v-if="item.prop == 'xsxm' || item.prop == 'rybj' || item.prop == 'wl' || item.prop == 'zhcj'"
+            >{{scope.row[item.prop]}}</span>
+            <div v-else>
+              <div
+                v-if="scope.row[item.colour] == 1"
+                style="background : #67C23A; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</div>
+              <span
+                v-if="scope.row[item.colour] == 2"
+                style="background : #E6A23C; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</span>
+              <span
+                v-if="scope.row[item.colour] == 3"
+                style="background : red; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</span>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="totalNum">
         <span>共{{total}}条</span>
