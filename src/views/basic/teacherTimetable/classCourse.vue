@@ -79,21 +79,25 @@
                   type="primary"
                   icon="el-icon-plus"
                   size="mini"
-                  @click="insertTimetable()"
-                >新增课表</el-button>
+                  @click="insertTimetable(-1)"
+                >新增课表
+                </el-button>
                 <el-button
                   type="success"
                   icon="el-icon-check"
                   size="mini"
                   @click="submitTimetable()"
-                >保存课表</el-button>
+                >保存课表
+                </el-button>
 
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
                   size="mini"
+                  :disabled="btnDisabled"
                   @click="deleteData"
-                >删除选中行</el-button>
+                >删除选中行
+                </el-button>
               </div>
 
               <vxe-table
@@ -102,23 +106,35 @@
                 keep-source
                 ref="xTable"
                 max-height="700"
+                @checkbox-change="onselectionchange"
                 :cell-style="renderColor"
                 :data="classCourseList"
                 :edit-config="{trigger: 'click', mode: 'cell', icon: 'fa fa-pencil', showStatus: true}"
+                :edit-rules="{kbType:[{required:true,trigger:'change'}],kcType:[{required:true,trigger:'change'}]}"
+                :valid-config="{autoPos:true,showMessage:true}"
               >
                 <vxe-table-column type="checkbox" width="60"></vxe-table-column>
-                <vxe-table-column title="id" align="center" field="id" :visible="false" />
-                <vxe-table-column title="班级id" align="center" field="bjid" :visible="false" />
-                <vxe-table-column title="课表类型" align="center" field="kbType" :edit-render="{name: '$select' , options: kbTypeOptions}" />
-                <vxe-table-column title="课程类型" align="center" field="kcType" :edit-render="{name: '$select', options: kcType}" />
-                <vxe-table-column title="周一" align="center" field="monday"  :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="周二" align="center" field="tuesday" :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="周三" align="center" field="wednesday" :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="周四" align="center" field="thursday" :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="周五" align="center" field="friday" :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="周六" align="center" field="saturday" :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="周日" align="center" field="sunday" :edit-render="{name: '$select', options: isCourse}"  />
-                <vxe-table-column title="备注" align="center" field="remark" />
+                <vxe-table-column title="id" align="center" field="id" :visible="false"/>
+                <vxe-table-column title="班级id" align="center" field="bjid" :visible="false"/>
+                <vxe-table-column title="课表类型" align="center" field="kbType"
+                                  :edit-render="{name: '$select' , options: kbTypeOptions}"/>
+                <vxe-table-column title="课程类型" align="center" field="kcType"
+                                  :edit-render="{name: '$select', options: kcType}"/>
+                <vxe-table-column title="周一" align="center" field="monday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="周二" align="center" field="tuesday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="周三" align="center" field="wednesday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="周四" align="center" field="thursday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="周五" align="center" field="friday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="周六" align="center" field="saturday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="周日" align="center" field="sunday"
+                                  :edit-render="{name: '$select', options: isCourse}"/>
+                <vxe-table-column title="备注" align="center" field="remark"/>
               </vxe-table>
 
             </el-tab-pane>
@@ -131,209 +147,244 @@
 </template>
 
 <script>
-import { listBjclass } from "@/api/basic/bjclass";
-import {
-  listClassCourse,
-  saveList,
-  addClassCourse,
-  updateClassCourse
-} from "@/api/basic/classCourse";
-import {delClassCourse} from "@/api/basic/classCourse";
-export default {
-  data() {
-    return {
-      startTime: "",
-      // 班级id
-      activeTab: "",
-      // 班级课表选择
-      tabsActiveTab: "kb",
-      // 遮罩
-      open: false,
-      // 数据切换
-      show: {},
-      // 班级信息
-      listBjclass: [],
-      // 表单参数
-      form: {
-        id: null,
-        bjid: null,
-        kbType: null,
-        kssj: null,
-        jssj: null,
-        kcType: null,
-        monday: null,
-        tuesday: null,
-        wednesday: null,
-        thursday: null,
-        friday: null,
-        saturday: null,
-        sunday: null,
-        remark: null,
-        userId: null,
-        userName: null,
-        createTime: null,
-        updateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null
-      },
-      // 班级课程表格数据
-      classCourseList: [],
-      // 标记编辑的第几行
-      rowNum: null,
-      // 上课时间
-      getDate: null,
-      // 提交课表json数据;
-      jsonFrom: {},
-      // 查询课表
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        kbType: null,
-        kzzd2: null,
-        bjid: null
-      },
-      // 年份字典
-      yearList: [],
-      // 课表类型
-      kbTypeOptions: [],
-      kbTypeOptionsEL:[],
-      // 是否有课
-      isCourse: [],
-      // 课程类型
-      kcType: [],
-      // 课表名字
-      kbName: ""
-    };
-  },
-  created() {
-    this.getDicts("year-list").then(response => {
-      this.yearList = response.data;
-    });
-    this.getDicts("kb_type").then(response => {
-      this.kbTypeOptions=this.renderDict(response.data);
-      this.kbTypeOptionsEL=response.data;
-    });
-    this.getDicts("is_course").then(response => {
-      this.isCourse = this.renderDict(response.data);
-    });
-    this.getDicts("kc_type").then(response => {
-      this.kcType = this.renderDict(response.data);
-    });
-  },
-  mounted() {
-    this.getList();
-  },
-  methods: {
-    // 班级列表基础信息
-    getList() {
-      listBjclass({ kzzd2: this.$store.state.user.glrid }).then(res => {
-        this.listBjclass = res.rows;
-        this.activeTab = this.listBjclass[0].id;
-        this.switchingClasses(this.activeTab);
-      });
-      this.getCourse();
+  import {listBjclass} from "@/api/basic/bjclass";
+  import {
+    listClassCourse,
+    saveList,
+    addClassCourse,
+    updateClassCourse
+  } from "@/api/basic/classCourse";
+  import {delClassCourse} from "@/api/basic/classCourse";
+
+  export default {
+    data() {
+      return {
+        startTime: "",
+        btnDisabled: true,
+        // 班级id
+        activeTab: "",
+        // 班级课表选择
+        tabsActiveTab: "kb",
+        // 遮罩
+        open: false,
+        // 数据切换
+        show: {},
+        // 班级信息
+        listBjclass: [],
+        // 表单参数
+        form: {
+          id: null,
+          bjid: null,
+          kbType: null,
+          kssj: null,
+          jssj: null,
+          kcType: null,
+          monday: null,
+          tuesday: null,
+          wednesday: null,
+          thursday: null,
+          friday: null,
+          saturday: null,
+          sunday: null,
+          remark: null,
+          userId: null,
+          userName: null,
+          createTime: null,
+          updateTime: null,
+          kzzd1: null,
+          kzzd2: null,
+          kzzd3: null,
+          kzzd4: null,
+          kzzd5: null
+        },
+        // 班级课程表格数据
+        classCourseList: [],
+        // 标记编辑的第几行
+        rowNum: null,
+        // 上课时间
+        getDate: null,
+        // 提交课表json数据;
+        jsonFrom: {},
+        // 查询课表
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          kbType: null,
+          kzzd2: null,
+          bjid: null
+        },
+        // 年份字典
+        yearList: [],
+        // 课表类型
+        kbTypeOptions: [],
+        kbTypeOptionsEL: [],
+        // 是否有课
+        isCourse: [],
+        // 课程类型
+        kcType: [],
+        // 课表名字
+        kbName: ""
+      };
     },
-    getCourse(){
-      /** 查询班级课程列表 */
-      this.loading = true;
-      listClassCourse(this.queryParams).then(response => {
-        this.classCourseList = response.rows;
-        this.total = response.total;
-        this.loading = false;
+    created() {
+      this.getDicts("year-list").then(response => {
+        this.yearList = response.data;
+      });
+      this.getDicts("kb_type").then(response => {
+        this.kbTypeOptions = this.renderDict(response.data);
+        this.kbTypeOptionsEL = response.data;
+      });
+      this.getDicts("is_course").then(response => {
+        this.isCourse = this.renderDict(response.data);
+      });
+      this.getDicts("kc_type").then(response => {
+        this.kcType = this.renderDict(response.data);
       });
     },
-    //查询课表
-    handleQuery() {
-      this.getCourse();
-    },
-    //新增课表
-    insertTimetable(row){
-      const $table = this.$refs.xTable
-      const record = {
-      }
-      const { row: newRow } = $table.insertAt(record, row)
-    },
-    // 保存课表
-    submitTimetable() {
-      const $table = this.$refs.xTable
-      const result = $table.getRecordset()
-      if(result.insertRecords.length>0){
-        for (let i = 0; i < result.insertRecords.length; i++) {
-            result.insertRecords[i].bjid=this.queryParams.bjid
-            addClassCourse(result.insertRecords[i]).then(response => {
-          });
-        }
-        this.msgSuccess("新增成功");
-      }
-      if(result.updateRecords.length>0){
-        for (let i = 0; i < result.insertRecords.length; i++) {
-            updateClassCourse(result.insertRecords[i]).then(response => {
-          });
-        }
-        this.msgSuccess("修改成功");
-      }
+    mounted() {
       this.getList();
     },
-    // 删除选中行
-    deleteData(){
-      const $table = this.$refs.xTable
-      const removeRecords = $table.getCheckboxRecords()
-
-      this.$confirm('是否确认删除?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function() {
-        let arr=[]
-        for (let i = 0; i < removeRecords.length; i++) {
-          arr.push(removeRecords[i].id);
+    methods: {
+      // 班级列表基础信息
+      getList() {
+        listBjclass({kzzd2: this.$store.state.user.glrid}).then(res => {
+          this.listBjclass = res.rows;
+          this.activeTab = this.listBjclass[0].id;
+          this.switchingClasses(this.activeTab);
+        });
+      },
+      getCourse() {
+        /** 查询班级课程列表 */
+        this.loading = true
+        listClassCourse(this.queryParams).then(response => {
+          this.classCourseList = response.rows
+          this.total = response.total
+          this.loading = false
+        });
+      },
+      //查询课表
+      handleQuery() {
+        this.getCourse();
+      },
+      onselectionchange(row) {
+        if (row.records.length > 0) {
+          this.btnDisabled = false
+        } else {
+          this.btnDisabled = true
         }
-        return delClassCourse(arr);
-      }).then(() => {
-        this.getList();
-        this.msgSuccess("删除成功");
-      }).catch((e)=>{
-        console.log(e);
-      })
+      },
+      //新增课表
+      insertTimetable(row) {
+        if (null == this.queryParams.kzzd2) {
+          this.msgError("请选择该新增课表的所属年份！")
+          return;
+        }
+        const $table = this.$refs.xTable
+        const record = {
+          monday: 0,
+          tuesday: 0,
+          wednesday: 0,
+          thursday: 0,
+          friday: 0,
+          saturday: 0,
+          sunday: 0,
+        }
+        const {row: newRow} = $table.insertAt(record, row)
+      },
+      // 保存课表
+      async submitTimetable() {
+        const $table = this.$refs.xTable
+        const result = $table.getRecordset()
+        let flag = false;
+        await $table.fullValidate(result.insertRecords, res => {
+          if (undefined != res) {
+            flag = true;
+          }
+        })
+        if (flag) {
+          this.msgError("请选择课表类型和课程类型！")
+          return;
+        }
+        if (result.insertRecords.length > 0) {
+          for (let i = 0; i < result.insertRecords.length; i++) {
+            result.insertRecords[i].bjid = this.queryParams.bjid
+            result.insertRecords[i].kzzd2 = this.queryParams.kzzd2
+            await addClassCourse(result.insertRecords[i]).then(response => {
+            });
+          }
+          this.msgSuccess("新增成功");
+        }
+        if (result.updateRecords.length > 0) {
+          for (let i = 0; i < result.updateRecords.length; i++) {
+            await updateClassCourse(result.updateRecords[i]).then(response => {
+            });
+          }
+          this.msgSuccess("修改成功");
+        }
+        this.getCourse();
+      },
+      // 删除选中行
+      deleteData() {
+        const $table = this.$refs.xTable
+        const removeRecords = $table.getCheckboxRecords()
+        this.$confirm('是否确认删除?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function () {
+          $table.removeCheckboxRow();
+          let arr = []
+          for (let i = 0; i < removeRecords.length; i++) {
+            if (undefined == removeRecords[i].id) {
+              continue;
+            }
+            arr.push(removeRecords[i].id);
+          }
+          if (arr.length > 0) {
+            return delClassCourse(arr);
+          }
+        }).then(() => {
+          this.getList();
+          this.msgSuccess("数据删除成功");
+        }).catch((e) => {
+          console.log(e);
+        })
 
-    },
-    // 切换班级课表
-    switchingClasses(bjid) {
-      this.queryParams.bjid = bjid;
-      this.getCourse();
-    },
-    renderColor ({ row, rowIndex, column }) {
-      if("monday"==column.property){
-        return this.rtnCellType(row.monday);
-      }
-      if("tuesday"==column.property){
-        return this.rtnCellType(row.tuesday);
-      }
-      if("wednesday"==column.property){
-        return this.rtnCellType(row.wednesday);
-      }
-      if("thursday"==column.property){
-        return this.rtnCellType(row.thursday);
-      }
-      if("friday"==column.property){
-        return this.rtnCellType(row.friday);
-      }
-      if("saturday"==column.property){
-        return this.rtnCellType(row.saturday);
-      }
-      if("sunday"==column.property){
-        return this.rtnCellType(row.sunday);
-      }
-    },
-    rtnCellType(value){
-      if("1"==value){
-        return {backgroundColor: '#187',color: '#ffffff'};
+      },
+      // 切换班级课表
+      switchingClasses(bjid) {
+        this.queryParams.bjid = bjid;
+        this.getCourse();
+      },
+      renderColor({row, rowIndex, column}) {
+        if ("monday" == column.property) {
+          return this.rtnCellType(row.monday);
+        }
+        if ("tuesday" == column.property) {
+          return this.rtnCellType(row.tuesday);
+        }
+        if ("wednesday" == column.property) {
+          return this.rtnCellType(row.wednesday);
+        }
+        if ("thursday" == column.property) {
+          return this.rtnCellType(row.thursday);
+        }
+        if ("friday" == column.property) {
+          return this.rtnCellType(row.friday);
+        }
+        if ("saturday" == column.property) {
+          return this.rtnCellType(row.saturday);
+        }
+        if ("sunday" == column.property) {
+          return this.rtnCellType(row.sunday);
+        }
+      },
+      rtnCellType(value) {
+        if ("1" == value) {
+          return {backgroundColor: '#187', color: '#ffffff'};
+        }
       }
     }
-  }
-};
+  };
 </script>
 
