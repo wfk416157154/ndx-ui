@@ -259,20 +259,15 @@ export default {
   props: ["query"],
   methods: {
     getChart() {
-      if (!this.query.xsxm) {
+      if (!this.query) {
         return;
       }
-      let json = {
-        kzzd1: this.query.rybj,
-        kjid: this.query.ksfw,
-        ksmc: this.query.ksmc
-      };
       // 学生成绩详细饼状图
-      getStudentGradeEverytime({ xsbh: this.query.xsbh }).then(res => {
+      getStudentGradeEverytime({ xsbh: this.query }).then(res => {
         this.getStudentGradeEverytimeList = res.data.countGrade;
         this.fraction100 = this.getStudentGradeEverytimeList["100"];
         this.fraction150 = this.getStudentGradeEverytimeList["150"];
-        // console.log(this.getStudentGradeEverytimeList)
+        console.log(this.getStudentGradeEverytimeList)
         if (JSON.stringify(this.fraction100) == "{}") {
           this.optionIf1 = false;
         } else if (JSON.stringify(this.fraction150) == "{}") {

@@ -170,7 +170,7 @@
       <el-table-column label="学生姓名" align="center" prop="xsxm">
         <template slot-scope="scope">
           <a href="#"><span style="margin-left: 10px"
-                            @click="showStudentDetailsPage(scope.row)">{{ scope.row.xsxm }}</span></a>
+           @click="showStudentDetailsPage(scope.row)">{{ scope.row.xsxm }}</span></a>
         </template>
       </el-table-column>
       <el-table-column label="学生编号" align="center" prop="xsbh"/>
