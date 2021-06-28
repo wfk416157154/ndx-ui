@@ -8,12 +8,22 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" :disabled="xqmcDisabled" placeholder="请选择校区名称" @change="xqmcOnChange" >
-          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"  ></el-option>
+        <el-select
+          v-model="queryParams.xqmc"
+          :disabled="xqmcDisabled"
+          placeholder="请选择校区名称"
+          @change="xqmcOnChange"
+        >
+          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="rybj">
-        <el-select v-model="queryParams.rybj" :disabled="rybjDisabled" placeholder="请选择日语班" @change="rybjOnChange" >
+        <el-select
+          v-model="queryParams.rybj"
+          :disabled="rybjDisabled"
+          placeholder="请选择日语班"
+          @change="rybjOnChange"
+        >
           <el-option
             v-for="item in bjclassList"
             :key="item.id"
@@ -317,9 +327,9 @@ export default {
       bjclassList: [],
       // 学生list
       studentsList: [],
-      xqmcDisabled:false,
-      rybjDisabled:true,
-      xsbhDisabled:true
+      xqmcDisabled: false,
+      rybjDisabled: true,
+      xsbhDisabled: true
     };
   },
   created() {
@@ -332,7 +342,7 @@ export default {
   },
   mounted() {
     this.getList();
-    this.getListSchool()
+    this.getListSchool();
   },
   methods: {
     // 获取校区
@@ -345,9 +355,9 @@ export default {
     async getList() {
       this.loading = true;
       let listAllJson = {
-        xsbh :this.queryParams.xsbh,
-        kzzd1 : this.queryParams.kzzd1,
-      }
+        xsbh: this.queryParams.xsbh,
+        kzzd1: this.queryParams.kzzd1
+      };
       // 学生成绩表数据
       let res = await listAll(listAllJson);
       if (res.rows && res.rows.length > 0) {
@@ -356,6 +366,7 @@ export default {
         this.listAll.forEach(value => {
           if (value.xsbh == this.queryParams.xsbh) {
             this.allData = true;
+            this.allData ? this.monitor() : null;
           }
         });
       } else {
@@ -367,11 +378,6 @@ export default {
           message: `不存在编号为"${this.queryParams.xsbh}"的学生`
         });
       }
-      this.$nextTick(() => {
-        if (this.$refs.chart) {
-          this.$refs.chart.getChart();
-        }
-      });
       // 学生成绩表title列
       getColumnNameList({}).then(res => {
         this.columnNameList = res.data;
@@ -380,23 +386,31 @@ export default {
         }
       });
     },
+    // 组件加载完毕成功后执行
+    monitor() {
+      this.$nextTick(() => {
+        if (this.$refs.chart) {
+          this.$refs.chart.getChart();
+        }
+      });
+    },
     // 状态字典翻译
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, row.status);
     },
-    xqmcOnChange(id){
-      listBjclass({kzzd1:id}).then(response => {
+    xqmcOnChange(id) {
+      listBjclass({ kzzd1: id }).then(response => {
         this.bjclassList = response.rows;
       });
-      this.queryParams.rybj=null
-      this.rybjDisabled=false
+      this.queryParams.rybj = null;
+      this.rybjDisabled = false;
     },
-    rybjOnChange(id){
-      this.xsbhDisabled=false
+    rybjOnChange(id) {
+      this.xsbhDisabled = false;
     },
     // 取消按钮
     cancel() {
-      this.open = false
+      this.open = false;
       this.reset();
     },
     // 表单重置
@@ -433,8 +447,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.rybjDisabled=true
-      this.xsbhDisabled=true
+      this.rybjDisabled = true;
+      this.xsbhDisabled = true;
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -554,8 +568,8 @@ export default {
         (this.studentsList = null);
       this.getList();
       this.allData = false;
-      this.rybjDisabled=true
-      this.xsbhDisabled=true
+      this.rybjDisabled = true;
+      this.xsbhDisabled = true;
     },
     // 平均数
     getSummaries(param) {
@@ -593,7 +607,7 @@ export default {
     chooseStudents(xsxm) {
       this.queryParams.xsxm = xsxm;
       let json = {
-        kzzd1:this.queryParams.bjid,
+        kzzd1: this.queryParams.bjid,
         xsxm: this.queryParams.xsxm
       };
       // 学生基础数据表
