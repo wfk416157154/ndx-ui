@@ -202,7 +202,6 @@ export default {
       getStudent(this.form.id).then(response => {
         this.form = response.data;
         if (this.form) {
-          console.log(response);
           this.$nextTick(() => {
             this.$refs.chart.getChart();
           });

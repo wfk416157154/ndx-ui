@@ -259,14 +259,9 @@ export default {
   props: ["query"],
   methods: {
     getChart() {
-      if (!this.query.xsxm) {
+      if (!this.query.xsbh) {
         return;
       }
-      let json = {
-        kzzd1: this.query.rybj,
-        kjid: this.query.ksfw,
-        ksmc: this.query.ksmc
-      };
       // 学生成绩详细饼状图
       getStudentGradeEverytime({ xsbh: this.query.xsbh }).then(res => {
         this.getStudentGradeEverytimeList = res.data.countGrade;
@@ -278,10 +273,54 @@ export default {
         } else if (JSON.stringify(this.fraction150) == "{}") {
           this.optionIf = false;
         }
+        // 100 分制
         this.option1.graphic.style.text = "100分制";
+        this.option1.series[0].data[0].value = Math.round(
+          (parseInt(this.fraction100.onegrade) /
+            (parseInt(this.fraction100.onegrade) +
+              parseInt(this.fraction100.twograde) +
+              parseInt(this.fraction100.threegrade))) *
+            100
+        );
+        this.option1.series[0].data[1].value = Math.round(
+          (parseInt(this.fraction100.twograde) /
+            (parseInt(this.fraction100.onegrade) +
+              parseInt(this.fraction100.twograde) +
+              parseInt(this.fraction100.threegrade))) *
+            100
+        );
+        this.option1.series[0].data[2].value = Math.round(
+          (parseInt(this.fraction100.threegrade) /
+            (parseInt(this.fraction100.onegrade) +
+              parseInt(this.fraction100.twograde) +
+              parseInt(this.fraction100.threegrade))) *
+            100
+        );
+        // 150分制
         let myChart2 = this.$echarts.init(document.getElementById("pie2"));
         myChart2.setOption(this.option1);
         this.option.graphic.style.text = "150分制";
+        this.option.series[0].data[0].value = Math.round(
+          (parseInt(this.fraction150.onegrade) /
+            (parseInt(this.fraction150.onegrade) +
+              parseInt(this.fraction150.twograde) +
+              parseInt(this.fraction150.threegrade))) *
+            100
+        );
+        this.option.series[0].data[1].value = Math.round(
+          (parseInt(this.fraction150.twograde) /
+            (parseInt(this.fraction150.onegrade) +
+              parseInt(this.fraction150.twograde) +
+              parseInt(this.fraction150.threegrade))) *
+            100
+        );
+        this.option.series[0].data[2].value = Math.round(
+          (parseInt(this.fraction150.threegrade) /
+            (parseInt(this.fraction150.onegrade) +
+              parseInt(this.fraction150.twograde) +
+              parseInt(this.fraction150.threegrade))) *
+            100
+        );
         let myChart1 = this.$echarts.init(document.getElementById("pie1"));
         myChart1.setOption(this.option);
       });
