@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选择日期">
-        <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="datetime" placeholder="选择日期时间"></el-date-picker>
+        <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="date" placeholder="选择日期时间"></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getWorkLogListQuery(bjNameId,logTiem)">日志查询</el-button>
