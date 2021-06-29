@@ -14,7 +14,7 @@
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
       </el-form-item>
     </el-form>
-    <el-table ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
+    <el-table  border ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column property="xm" label="姓名" width="120"></el-table-column>
       <el-table-column property="xb" label="性别" :formatter="getSex" width="120"></el-table-column>

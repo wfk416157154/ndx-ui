@@ -86,7 +86,12 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="schoolList" @selection-change="handleSelectionChange">
+    <el-table
+      border
+      v-loading="loading"
+      :data="schoolList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column v-if="false" label="状态" align="center" prop="id" />
       <el-table-column label="学校名称" align="center" prop="xxmc" />
@@ -125,7 +130,7 @@
     />
 
     <!-- 添加或修改校区基础信息对话框 -->
-    <el-dialog :close-on-click-modal="false"  :title="title" :visible.sync="open" append-to-body>
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" append-to-body>
       <el-form class="wrap-el-form" ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label-width="120px" label="学校名称" prop="xxmc">
           <el-input maxlength="15" v-model="form.xxmc" placeholder="请输入学校名称" />
@@ -192,7 +197,7 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -405,9 +410,9 @@ export default {
           this.getList();
           this.msgSuccess("删除成功");
         })
-        .catch((e)=>{
+        .catch(e => {
           console.log(e);
-        })
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

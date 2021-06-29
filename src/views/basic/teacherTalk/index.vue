@@ -87,7 +87,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="teacherTalkList" @selection-change="handleSelectionChange">
+    <el-table  border v-loading="loading" :data="teacherTalkList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="学生姓名" align="center" prop="xsxm" />

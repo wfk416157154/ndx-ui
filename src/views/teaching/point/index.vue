@@ -99,7 +99,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="pointList" @selection-change="handleSelectionChange">
+    <el-table  border v-loading="loading" :data="pointList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="状态" align="center" prop="id" />
       <el-table-column label="任务点名称" align="center" prop="jxrw" />

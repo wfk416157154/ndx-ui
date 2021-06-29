@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="关联id" prop="glid">
         <el-input
           v-model="queryParams.glid"
@@ -140,14 +146,9 @@
           v-hasPermi="['basic:performance:remove']"
         >删除</el-button>
       </el-col>
-    <el-col :span="1.5">
-        <el-button
-                type="info"
-                icon="el-icon-upload2"
-                size="mini"
-                @click="handleImport"
-        >导入</el-button>
-    </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -161,7 +162,12 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="performanceList" @selection-change="handleSelectionChange">
+    <el-table
+      border
+      v-loading="loading"
+      :data="performanceList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="关联id" align="center" prop="glid" />
@@ -205,7 +211,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -215,7 +221,13 @@
     />
 
     <!-- 添加或修改学生日常表现对话框 -->
-    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :close-on-click-modal="false"
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+    >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="表现类型" prop="bxlx">
           <el-input v-model="form.bxlx" placeholder="请输入表现类型" />
@@ -224,20 +236,24 @@
           <el-input v-model="form.bxms" placeholder="请输入表现描述" />
         </el-form-item>
         <el-form-item label="开始时间" prop="kssj">
-          <el-date-picker clearable size="small"
+          <el-date-picker
+            clearable
+            size="small"
             v-model="form.kssj"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="选择开始时间">
-          </el-date-picker>
+            placeholder="选择开始时间"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="结束时间" prop="jssj">
-          <el-date-picker clearable size="small"
+          <el-date-picker
+            clearable
+            size="small"
             v-model="form.jssj"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="选择结束时间">
-          </el-date-picker>
+            placeholder="选择结束时间"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="老师姓名" prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名" />
@@ -279,50 +295,52 @@
       </div>
     </el-dialog>
 
-      <!-- 导入对话框 -->
-      <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
-          <el-upload
-                  ref="upload"
-                  :limit="1"
-                  accept=".xlsx, .xls"
-                  :headers="upload.headers"
-                  :action="upload.url + '?updateSupport=' + upload.updateSupport"
-                  :disabled="upload.isUploading"
-                  :on-progress="handleFileUploadProgress"
-                  :on-success="handleFileSuccess"
-                  :auto-upload="false"
-                  drag
-          >
-              <i class="el-icon-upload"></i>
-              <div class="el-upload__text">
-                  将文件拖到此处，或
-                  <em>点击上传</em>
-              </div>
-              <div class="el-upload__tip" slot="tip">
-                  <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
-                  <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
-              </div>
-              <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
-          </el-upload>
-          <div slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="submitFileForm">确 定</el-button>
-              <el-button @click="upload.open = false">取 消</el-button>
-          </div>
-      </el-dialog>
-
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+      <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
+          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
-
-
 </template>
 
 <script>
-import { listPerformance, getPerformance, delPerformance, addPerformance, updatePerformance } from "@/api/basic/performance";
+import {
+  listPerformance,
+  getPerformance,
+  delPerformance,
+  addPerformance,
+  updatePerformance
+} from "@/api/basic/performance";
 import { getToken } from "@/utils/auth";
 
 export default {
   name: "Performance",
-  components: {
-  },
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -366,23 +384,22 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       // 用户导入参数
       upload: {
-          // 是否显示弹出层
-          open: false,
-          // 弹出层标题
-          title: "导入学生日常表现数据",
-          // 是否禁用上传
-          isUploading: false,
-          // 是否更新已经存在的数据
-          updateSupport: 0,
-          // 设置上传的请求头部
-          headers: { Authorization: "Bearer " + getToken() },
-          // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "basic/performance/importData"
-      },
+        // 是否显示弹出层
+        open: false,
+        // 弹出层标题
+        title: "导入学生日常表现数据",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "basic/performance/importData"
+      }
     };
   },
   created() {
@@ -452,9 +469,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -465,7 +482,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getPerformance(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -495,53 +512,65 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除学生日常表现编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除学生日常表现编号为"' + ids + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delPerformance(ids);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/performance/export', {
-        ...this.queryParams
-      }, `学生日常表现.xlsx`)
+      this.download(
+        "basic/performance/export",
+        {
+          ...this.queryParams
+        },
+        `学生日常表现.xlsx`
+      );
     },
 
-      /** 导入按钮操作 */
-      handleImport() {
-          this.upload.title = "学生日常表现数据导入";
-          this.upload.open = true;
-      },
-      /** 下载模板操作 */
-      importTemplate() {
-          this.download('basic/performance/importTemplate', {
-              ...this.queryParams
-          }, `学生日常表现-导入模板.xlsx`)
-      },
-      // 文件上传中处理
-      handleFileUploadProgress(event, file, fileList) {
-          this.upload.isUploading = true;
-      },
-      // 文件上传成功处理
-      handleFileSuccess(response, file, fileList) {
-          this.upload.open = false;
-          this.upload.isUploading = false;
-          this.$refs.upload.clearFiles();
-          this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-          this.getList();
-      },
-      // 提交上传文件
-      submitFileForm() {
-          this.$refs.upload.submit();
-      }
-
-
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "学生日常表现数据导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      this.download(
+        "basic/performance/importTemplate",
+        {
+          ...this.queryParams
+        },
+        `学生日常表现-导入模板.xlsx`
+      );
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
+    }
   }
 };
 </script>

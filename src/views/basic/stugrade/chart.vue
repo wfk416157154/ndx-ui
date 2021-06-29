@@ -140,7 +140,7 @@ export default {
               normal: {
                 label: {
                   show: false,
-                  position: 'inside',
+                  position: "inside",
                   textStyle: { color: "#3c4858", fontSize: "14" },
                   // position: "inside", //此处将展示的文字在内部展示
                   formatter: function(val) {
@@ -218,7 +218,7 @@ export default {
               normal: {
                 label: {
                   show: false,
-                  position: 'inside',
+                  position: "inside",
                   textStyle: { color: "#3c4858", fontSize: "14" },
                   formatter: function(val) {
                     //让series 中的文字进行换行
@@ -262,49 +262,39 @@ export default {
   },
   props: ["query"],
   methods: {
-    arrToStr(array){
-      let str=""
+    arrToStr(array) {
+      let str = "";
       for (let i = 0; i < array.length; i++) {
-        str+=array[i]+",";
+        str += array[i] + ",";
       }
       return str;
     },
     getChart() {
       if (!this.query.xsbh) {
-        this.msgInfo("请输入学生姓名！")
+        this.msgInfo("请输入学生姓名！");
         return;
       }
-      let kslx=this.query.kslx
-      if(undefined!=kslx&&kslx.length>0){
-        kslx=this.arrToStr(kslx)
+      let kslx = this.query.kslx;
+      if (undefined != kslx && kslx.length > 0) {
+        kslx = this.arrToStr(kslx);
       }
-      let obj={
+      let obj = {
         xsbh: this.query.xsbh,
         kslx: kslx
-      }
+      };
       // 学生成绩详细饼状图
       getStudentGradeEverytime(obj).then(res => {
-        this.optionIf= true
-        this.optionIf1= true
+        this.optionIf = true;
+        this.optionIf1 = true;
         this.getStudentGradeEverytimeList = res.data.countGrade;
-        console.log("getStudentGradeEverytimeList:",this.getStudentGradeEverytimeList)
-
         this.fraction100 = this.getStudentGradeEverytimeList["100"];
         this.fraction150 = this.getStudentGradeEverytimeList["150"];
-        console.log("fraction100:",this.fraction100)
-        console.log("fraction150:",this.fraction150)
-        // console.log(this.getStudentGradeEverytimeList)
-
-
         if (this.fraction100 == undefined) {
           this.optionIf1 = false;
         } else if (this.fraction150 == undefined) {
           this.optionIf = false;
         }
-        console.log("this.optionIf1:",this.optionIf1)
-
-        if(this.optionIf1){
-          let myChart2 = this.$echarts.init(document.getElementById("pie2"));
+        if (this.optionIf1) {
           // 100 分制
           this.option1.graphic.style.text = "100分制";
           this.option1.series[0].data[0].value = Math.round(
@@ -312,28 +302,28 @@ export default {
               (parseInt(this.fraction100.onegrade) +
                 parseInt(this.fraction100.twograde) +
                 parseInt(this.fraction100.threegrade))) *
-            100
+              100
           );
           this.option1.series[0].data[1].value = Math.round(
             (parseInt(this.fraction100.twograde) /
               (parseInt(this.fraction100.onegrade) +
                 parseInt(this.fraction100.twograde) +
                 parseInt(this.fraction100.threegrade))) *
-            100
+              100
           );
           this.option1.series[0].data[2].value = Math.round(
             (parseInt(this.fraction100.onegrade) /
               (parseInt(this.fraction100.onegrade) +
                 parseInt(this.fraction100.twograde) +
                 parseInt(this.fraction100.threegrade))) *
-            100
+              100
           );
-          myChart2.setOption(this.option1);
+          this.$nextTick(function() {
+            let myChart2 = this.$echarts.init(document.getElementById("pie2"));
+            myChart2.setOption(this.option1);
+          });
         }
-        console.log("this.optionIf:",this.optionIf)
-
-        if(this.optionIf){
-          let myChart1 = this.$echarts.init(document.getElementById("pie1"));
+        if (this.optionIf) {
           // 150分制
           this.option.graphic.style.text = "150分制";
           this.option.series[0].data[0].value = Math.round(
@@ -341,23 +331,26 @@ export default {
               (parseInt(this.fraction150.onegrade) +
                 parseInt(this.fraction150.twograde) +
                 parseInt(this.fraction150.threegrade))) *
-            100
+              100
           );
           this.option.series[0].data[1].value = Math.round(
             (parseInt(this.fraction150.twograde) /
               (parseInt(this.fraction150.onegrade) +
                 parseInt(this.fraction150.twograde) +
                 parseInt(this.fraction150.threegrade))) *
-            100
+              100
           );
           this.option.series[0].data[2].value = Math.round(
             (parseInt(this.fraction150.onegrade) /
               (parseInt(this.fraction150.onegrade) +
                 parseInt(this.fraction150.twograde) +
                 parseInt(this.fraction150.threegrade))) *
-            100
+              100
           );
-          myChart1.setOption(this.option);
+          this.$nextTick(function() {
+            let myChart1 = this.$echarts.init(document.getElementById("pie1"));
+            myChart1.setOption(this.option);
+          });
         }
       });
     }
