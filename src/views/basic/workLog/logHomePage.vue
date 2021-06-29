@@ -1,10 +1,8 @@
 <template>
   <div class="Log-home-page">
-    <el-form ref="queryParams" :inline="true" :model="queryParams" label-width="100px">
+    <el-form ref="queryParams" :inline="true" :model="queryParams" >
       <el-form-item label="校区">
         <el-select
-          width="80px"
-          height="“10px"
           v-model="queryParams.xqid"
           @change="getSchoolId"
           placeholder="请选择校区"
@@ -18,7 +16,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级">
-        <el-select width="80px" height="“10px" v-model="queryParams.rybid" placeholder="请选择班级">
+        <el-select  v-model="queryParams.rybid" placeholder="请选择班级">
           <el-option
             v-for="(item,index) in getBjClass"
             :label="item.rybjmc"
@@ -30,7 +28,7 @@
       <el-form-item label="老师姓名">
         <el-input v-model="queryParams.lsxm" placeholder="请输入老师姓名"></el-input>
       </el-form-item>
-      <el-form-item label="日期">
+      <el-form-item label="日志日期">
         <el-date-picker
           v-model="queryParams.sj"
           type="datetimerange"
@@ -41,9 +39,9 @@
         ></el-date-picker>
       </el-form-item>
       <el-button type="primary" class="el-btn" plain @click="getList">查询</el-button>
-      <el-button type="primary" class="el-btn" plain @click="handleExport">导出日志</el-button>
+      <el-button type="primary" class="el-btn" plain disabled @click="handleExport">导出日志</el-button>
     </el-form>
-    <div class="wrap-log-list">
+    <div class="wrap-log-list" >
       <ul>
         <li v-for="(item,index) in allLogs" :key="index">
           <div class="personal-information __float">

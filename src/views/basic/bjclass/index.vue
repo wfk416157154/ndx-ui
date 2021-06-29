@@ -112,7 +112,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="bjclassList" @selection-change="handleSelectionChange">
+    <el-table border v-loading="loading" :data="bjclassList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column v-if="false" label="状态" align="center" prop="id" />
       <el-table-column v-if="false" label="开班照" align="center" prop="kbz" />
