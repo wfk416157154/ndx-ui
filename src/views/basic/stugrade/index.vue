@@ -17,9 +17,9 @@
           <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="日语班级" prop="rybj">
+      <el-form-item label="日语班级" prop="kzzd1">
         <el-select
-          v-model="queryParams.rybj"
+          v-model="queryParams.kzzd1"
           :disabled="rybjDisabled"
           placeholder="请选择日语班"
           @change="rybjOnChange"
@@ -48,6 +48,20 @@
             :label="item.xsxm"
             :value="item.xsbh"
           ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="考试类型" prop="kslx">
+        <el-select
+          v-model="queryParams.kslx"
+          placeholder="请选择考试类型"
+          multiple
+        >
+          <el-option
+            v-for="dict in getExaminationType"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
         </el-select>
       </el-form-item>
       <!--<el-form-item label="文理" prop="wl">
@@ -277,6 +291,8 @@ export default {
         pageSize: 10,
         xsxm: null,
         rybj: null,
+        kzzd1:null,
+        kslx:[],
         wl: null,
         status: null
       },
@@ -329,12 +345,17 @@ export default {
       studentsList: [],
       xqmcDisabled: false,
       rybjDisabled: true,
-      xsbhDisabled: true
+      xsbhDisabled: true,
+      //  考试类型
+      getExaminationType: []
     };
   },
   created() {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    this.getDicts("examination_type").then(response => {
+      this.getExaminationType = response.data;
     });
   },
   components: {
@@ -402,7 +423,7 @@ export default {
       listBjclass({ kzzd1: id }).then(response => {
         this.bjclassList = response.rows;
       });
-      this.queryParams.rybj = null;
+      this.queryParams.kzzd1 = null;
       this.rybjDisabled = false;
     },
     rybjOnChange(id) {
@@ -562,6 +583,7 @@ export default {
         pageSize: 10,
         xsxm: null,
         rybj: null,
+        kzzd1:null,
         wl: null,
         status: null
       }),
@@ -607,7 +629,7 @@ export default {
     chooseStudents(xsxm) {
       this.queryParams.xsxm = xsxm;
       let json = {
-        kzzd1: this.queryParams.bjid,
+        kzzd1: this.queryParams.kzzd1,
         xsxm: this.queryParams.xsxm
       };
       // 学生基础数据表
