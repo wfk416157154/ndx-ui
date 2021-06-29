@@ -79,7 +79,12 @@
         </el-col>
       </el-form>
     </el-collapse-item>
-    <StudentDetailsChart :query="form.xsbh " ref="chart" />
+    <el-collapse-item name="3">
+      <template slot="title">
+        <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">成绩统计</span>
+      </template>
+      <StudentDetailsChart :query="form.xsbh " ref="chart" />
+    </el-collapse-item>
     <el-collapse-item name="2">
       <template slot="title">
         <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">老师谈话</span>
@@ -128,7 +133,7 @@ export default {
   data() {
     return {
       loading: false,
-      activeNames: ["1", "2"],
+      activeNames: ["1", "2","3"],
       form: {
         id: null,
         xstx: null,
@@ -191,7 +196,7 @@ export default {
     });
   },
   components: {
-    StudentDetailsChart,
+    StudentDetailsChart
   },
   mounted() {
     this.form.id = this.$route.params.id;

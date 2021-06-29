@@ -1,80 +1,101 @@
 <template>
   <div class="score-chart">
-    <div
-      v-if="optionIf"
-      class="wrap-score-chart __float clearfix"
-      style="border-right: 4px #fff solid"
-    >
-      <div class="right-chart __float">
-        <div id="pie1" style="width: 100%;height:100%;"></div>
-      </div>
-      <div class="title-content __float">
-        <div>
-          <i></i>
-          <span>60分以下次数 :</span>
-          <span>{{fraction150.onegrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>60-80分的次数 :</span>
-          <span>{{fraction150.twograde}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>80-100分的次数 :</span>
-          <span>{{fraction150.threegrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最高分 :</span>
-          <span>{{fraction150.maxgrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最低分 :</span>
-          <span>{{fraction150.mingrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>平均分 :</span>
-          <span>{{fraction150.avggrade}}</span>
-        </div>
-      </div>
+    <div>
+      <el-table
+        :data="listAll"
+        border
+        :cell-style="addClass"
+        :summary-method="getSummaries"
+        show-summary
+        style="width: 100%"
+      >
+        <el-table-column
+          :fixed="item.fixed"
+          :label="item.label"
+          align="center"
+          v-for="(item,index) in columnNameList"
+          :key="index"
+          :prop="item.prop"
+        />
+      </el-table>
     </div>
-    <div v-if="optionIf1" class="wrap-score-chart __float clearfix">
-      <div class="right-chart __float">
-        <div id="pie2" style="width: 100%;height:100%;"></div>
+    <div class="wrap-chart">
+      <div
+        v-if="optionIf"
+        class="wrap-score-chart __float clearfix"
+        style="border-right: 4px #fff solid"
+      >
+        <div class="right-chart __float">
+          <div id="pie1" style="width: 100%;height:100%;"></div>
+        </div>
+        <div class="title-content __float">
+          <div>
+            <i></i>
+            <span>60分以下次数 :</span>
+            <span>{{fraction150.onegrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>60-80分的次数 :</span>
+            <span>{{fraction150.twograde}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>80-100分的次数 :</span>
+            <span>{{fraction150.threegrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>最高分 :</span>
+            <span>{{fraction150.maxgrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>最低分 :</span>
+            <span>{{fraction150.mingrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>平均分 :</span>
+            <span>{{fraction150.avggrade}}</span>
+          </div>
+        </div>
       </div>
-      <div class="title-content __float">
-        <div>
-          <i></i>
-          <span>60分以下次数 :</span>
-          <span>{{fraction100.onegrade}}</span>
+      <div v-if="optionIf1" class="wrap-score-chart __float clearfix">
+        <div class="right-chart __float">
+          <div id="pie2" style="width: 100%;height:100%;"></div>
         </div>
-        <div>
-          <i></i>
-          <span>60-80分的次数 :</span>
-          <span>{{fraction100.twograde}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>80-100分的次数 :</span>
-          <span>{{fraction100.threegrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最高分 :</span>
-          <span>{{fraction100.maxgrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最低分 :</span>
-          <span>{{fraction100.mingrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>平均分 :</span>
-          <span>{{fraction100.avggrade}}</span>
+        <div class="title-content __float">
+          <div>
+            <i></i>
+            <span>60分以下次数 :</span>
+            <span>{{fraction100.onegrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>60-80分的次数 :</span>
+            <span>{{fraction100.twograde}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>80-100分的次数 :</span>
+            <span>{{fraction100.threegrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>最高分 :</span>
+            <span>{{fraction100.maxgrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>最低分 :</span>
+            <span>{{fraction100.mingrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>平均分 :</span>
+            <span>{{fraction100.avggrade}}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -90,7 +111,7 @@ import {
 export default {
   data() {
     return {
-       option: {
+      option: {
         title: {
           text: "成绩统计",
           top: "bottom",
@@ -140,7 +161,7 @@ export default {
               normal: {
                 label: {
                   show: false,
-                  position: 'inside',
+                  position: "inside",
                   textStyle: { color: "#3c4858", fontSize: "14" },
                   // position: "inside", //此处将展示的文字在内部展示
                   formatter: function(val) {
@@ -218,7 +239,7 @@ export default {
               normal: {
                 label: {
                   show: false,
-                  position: 'inside',
+                  position: "inside",
                   textStyle: { color: "#3c4858", fontSize: "14" },
                   formatter: function(val) {
                     //让series 中的文字进行换行
@@ -257,7 +278,11 @@ export default {
       fraction100: {},
       fraction150: {},
       optionIf: true,
-      optionIf1: true
+      optionIf1: true,
+      // 动态table-column
+      columnNameList: [],
+      // 获取学生成绩表
+      listAll: []
     };
   },
   props: ["query"],
@@ -266,6 +291,18 @@ export default {
       if (!this.query) {
         return;
       }
+      // 学生成绩表数据
+      listAll({ xsbh: this.query }).then(res => {
+        this.listAll = res.rows;
+        this.total = res.total;
+      });
+      // 学生成绩表title列
+      getColumnNameList({ xsbh: this.query }).then(res => {
+        this.columnNameList = res.data;
+        for (let i = 0; i < 5; i++) {
+          this.columnNameList[i].fixed = true;
+        }
+      });
       // 学生成绩详细饼状图
       getStudentGradeEverytime({ xsbh: this.query }).then(res => {
         this.getStudentGradeEverytimeList = res.data.countGrade;
@@ -344,33 +381,37 @@ export default {
   .__float {
     float: left;
   }
-  .wrap-score-chart {
-    width: 50%;
-    height: 100%;
-    padding: 40px;
-    box-sizing: border-box;
-    background: #909399;
-    .right-chart {
-      width: 50%;
-      height: 300px;
-    }
-    .title-content {
+  .wrap-chart {
+    margin-top: 40px;
+    .wrap-score-chart {
       width: 50%;
       height: 100%;
-      font-size: 14px;
-      padding: 10px;
+      padding: 40px;
       box-sizing: border-box;
-      color: #fff;
-      span {
-        line-height: 25px;
+      background: #909399;
+      border-radius: 20px;
+      .right-chart {
+        width: 50%;
+        height: 300px;
       }
-      i {
-        display: inline-block;
-        background-color: #67c23a;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
+      .title-content {
+        width: 50%;
+        height: 100%;
+        font-size: 14px;
+        padding: 10px;
+        box-sizing: border-box;
+        color: #fff;
+        span {
+          line-height: 25px;
+        }
+        i {
+          display: inline-block;
+          background-color: #67c23a;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
       }
     }
   }
