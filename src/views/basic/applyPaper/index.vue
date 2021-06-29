@@ -89,7 +89,7 @@
 
     <!-- 添加或修改考卷对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formState" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="fsrmc">
           <el-input v-model="form.fsrmc" placeholder="请输入老师姓名" readonly />
         </el-form-item>
@@ -365,28 +365,33 @@ export default {
     handleAdd() {
       this.reset();
       this.form.fsrmc = this.$store.state.user.nickName;
+      this.form.lsid = this.$store.state.user.glrid;
       this.open = true;
       this.title = "添加考卷";
     },
     /** 提交按钮 */
     submitForm(status) {
-      if (status != null) {
-        this.form = status;
-        this.form.lssjzt = "3";
+      if (status === "3") {
+        // this.form = status;
+        this.form.lssjzt = status;
       }
-      if (this.form.id != null) {
-        updateExaminationPaper(this.form).then(response => {
-          this.msgSuccess("修改成功");
-          this.open = false;
-          this.getList();
-        });
-      } else {
-        addExaminationPaper(this.form).then(response => {
-          this.msgSuccess("新增成功");
-          this.open = false;
-          this.getList();
-        });
-      }
+      this.$refs.formState.validate(valid => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateExaminationPaper(this.form).then(response => {
+              this.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addExaminationPaper(this.form).then(response => {
+              this.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
     },
     /** 下载试卷 */
     handleExport(row) {
@@ -398,7 +403,7 @@ export default {
         `考卷-${new Date().getTime()}.zip`
       );
       // 修改老师试卷状态
-      this.submitForm(row);
+      this.submitForm("3");
     },
     /** 导入按钮操作 */
     handleImport() {
