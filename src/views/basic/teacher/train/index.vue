@@ -49,7 +49,7 @@
     <div class="train-box">
       <h1>培训主题</h1>
       <!-- 主题列表 -->
-      <el-table :data="themeList" @row-click.self="getProject">
+      <el-table  border :data="themeList" @row-click.self="getProject">
         <el-table-column label="主题名称" align="center" prop="ztmc" />
         <el-table-column label="是否启用" align="center" prop="sfqy">
           <template slot-scope="scope">
@@ -124,7 +124,7 @@
     <div v-show="projectShow" class="train-box">
       <h1>培训项目</h1>
       <!-- 项目列表 -->
-      <el-table :data="projectList" @row-click.self="getContent">
+      <el-table  border :data="projectList" @row-click.self="getContent">
         <el-table-column label="培训项目" align="center" prop="pxxm" />
         <el-table-column label="是否启用" align="center" prop="sfqy">
           <template slot-scope="scope">
@@ -248,7 +248,7 @@
     <div v-show="contentShow" class="train-box">
       <h1>培训内容</h1>
       <!-- 培训内容列表 -->
-      <el-table :data="contentList">
+      <el-table  border :data="contentList">
         <el-table-column label="上级培训内容" align="center" prop="sjpxnr" />
         <el-table-column label="培训内容" align="center" prop="pxnr" />
         <el-table-column label="组件名称" align="center" :formatter="getResult1" prop="zjmc" />

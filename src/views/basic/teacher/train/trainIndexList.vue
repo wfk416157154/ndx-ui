@@ -20,7 +20,7 @@
     </el-form>
 
     <!-- 培训主页table -->
-    <el-table :data="teacherList">
+    <el-table border :data="teacherList">
       <el-table-column label="参训人" align="center" prop="cxr" />
       <el-table-column label="培训时间" align="center" prop="pxsj" />
       <el-table-column label="实习班级" align="center" prop="sxbj" />
@@ -177,7 +177,7 @@ import {
 } from "@/api/basic/staticform";
 import { listTrainTheme } from "@/api/basic/trainTheme";
 import { queryTrainContentAffirm } from "@/api/basic/trainSingle";
-import { postSaveList} from "@/api/basic/trainContentRecord";
+import { postSaveList } from "@/api/basic/trainContentRecord";
 export default {
   data() {
     return {

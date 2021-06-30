@@ -89,7 +89,7 @@
       <template slot="title">
         <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">老师谈话</span>
       </template>
-      <el-table v-loading="loading" :data="teacherTalkList" @selection-change>
+      <el-table  border v-loading="loading" :data="teacherTalkList" >
         <el-table-column type="selection" width="55" v-if="false" align="center" />
         <el-table-column label="id" align="center" v-if="false" prop="id" />
         <el-table-column label="老师姓名" align="center" prop="lsxm" />

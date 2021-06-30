@@ -40,6 +40,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <el-table
+      border
       v-loading="loading"
       :data="examinationPaperList"
       @selection-change="handleSelectionChange"
@@ -222,7 +223,7 @@ export default {
   methods: {
     /** 查询考卷列表 */
     getList(value) {
-      if (undefined!=value) {
+      if (undefined != value) {
         this.queryParams.jwsjzt = value;
       }
       this.loading = true;
@@ -326,7 +327,7 @@ export default {
             });
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message({
             type: "info",
             message: "已取消发送"
