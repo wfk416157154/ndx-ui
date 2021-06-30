@@ -267,6 +267,7 @@ export default {
       for (let i = 0; i < array.length; i++) {
         str += array[i] + ",";
       }
+      str=str.substr(0, str.length - 1);
       return str;
     },
     getChart() {

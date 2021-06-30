@@ -313,6 +313,7 @@
         queryParams: {
           pageNum: 1,
           pageSize: 10,
+          xqmc: null,
           xsxm: null,
           rybj: null,
           kzzd1: null,
@@ -386,10 +387,18 @@
       chart
     },
     mounted() {
-      this.getList();
+      // this.getList();
       this.getListSchool();
     },
     methods: {
+      arrToStr(array) {
+      let str = "";
+      for (let i = 0; i < array.length; i++) {
+        str += array[i] + ",";
+      }
+      str=str.substr(0, str.length - 1);
+      return str;
+    },
       // 获取校区
       getListSchool() {
         listSchool(this.queryParams).then(response => {
@@ -399,10 +408,18 @@
       /** 查询学生成绩基础表列表 */
       async getList() {
         this.loading = true;
+        let one=this.queryParams.kslx;
+        if (undefined != one && one.length > 0) {
+        one = this.arrToStr(one);
+       }
         let listAllJson = {
           xsbh: this.queryParams.xsbh,
-          kzzd1: this.queryParams.kzzd1
+          kzzd1: this.queryParams.kzzd1,
+           xqmc: this.queryParams.xqmc,
+           xsxm: this.queryParams.xsxm,
+           kslx: one,
         };
+
         // 学生成绩表数据
         let res = await listAll(listAllJson);
         if (res.rows && res.rows.length > 0) {
@@ -424,7 +441,7 @@
           });
         }
         // 学生成绩表title列
-        getColumnNameList({}).then(res => {
+        getColumnNameList(listAllJson).then(res => {
           this.columnNameList = res.data;
           for (let i = 0; i < 5; i++) {
             this.columnNameList[i].fixed = true;
@@ -487,6 +504,9 @@
       },
       /** 搜索按钮操作 */
       handleQuery() {
+        if(this.queryParams.kzzd1==null||this.queryParams.xqmc==null){
+          this.msgError("请选择校区和班级后再查询");
+        }
         this.queryParams.pageNum = 1;
         this.getList();
       },
@@ -495,7 +515,7 @@
         this.rybjDisabled = true;
         this.xsbhDisabled = true;
         this.resetForm("queryForm");
-        this.handleQuery();
+
       },
       // 多选框选中数据
       handleSelectionChange(selection) {
