@@ -7,14 +7,15 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="日语班级" prop="bjmc">
-        <el-input
-          v-model="queryParams.bjmc"
-          placeholder="请输入日语班级"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="日语班级" prop="bjid">
+        <el-select v-model="queryParams.bjid" @change="getClassList" placeholder="请选择日语班级">
+          <el-option
+            v-for="dict in classList"
+            :key="dict.id"
+            :label="dict.rybjmc"
+            :value="dict.id"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="考试类型" prop="kslx">
         <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" clearable size="small">
@@ -114,7 +115,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="form.kslx" placeholder="请输入考试类型">
+          <el-select v-model="form.kslx" plac输入eholder="请考试类型">
             <el-option
               v-for="dict in kslxOptions"
               :key="dict.dictValue"
@@ -224,6 +225,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        bjid: null,
         bjmc: null,
         kslx: null,
         ksnr: null,
@@ -242,7 +244,23 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        bjid: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        jcid: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        kslx: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        ksfw: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ],
+        kskssj: [
+          { required: true, message: '必填', trigger: 'blur' }
+        ]
+      },
       // 用户导入参数
       upload: {
         // 是否显示弹出层

@@ -10,7 +10,7 @@
       <el-form-item label="校区名称" prop="xqmc">
         <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
           <el-option
-            v-for="item in selectXqmc"
+            v-for="item in schoolList"
             :key="item.id"
             :label="item.xxmc"
             :value="item.xxmc"
@@ -56,13 +56,14 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选科" prop="xk">
-        <el-input
-          v-model="queryParams.xk"
-          placeholder="请输入选科"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.xk" placeholder="请选择选科" clearable size="small">
+          <el-option
+            v-for="dict in xkOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label-width="100px" label="是否特长生" prop="sftcs">
         <el-select v-model="queryParams.sftcs" placeholder="请选择是否特长生" clearable size="small">
@@ -204,7 +205,7 @@
         </template>
       </el-table-column>
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
-      <el-table-column label="选科" align="center" prop="xk" />
+      <el-table-column label="选科" align="center" prop="xk" :formatter="xkFormat" />
       <el-table-column label="英语分数" align="center" prop="yyfs" />
       <el-table-column label="综合分数" align="center" prop="zhfs" />
       <el-table-column label="QQ号" width="120px" align="center" prop="qqh" />
@@ -263,10 +264,9 @@
         </el-form-item>
         <el-col :span="12">
           <el-form-item label-width="100px" label="校区名称" prop="xqmc">
-            <!-- <el-input maxlength="30" v-model="form.xqmc" placeholder="请输入校区名称" /> -->
             <el-select v-model="form.xqmc" placeholder="请选择校区名称">
               <el-option
-                v-for="item in selectXqmc"
+                v-for="item in schoolList"
                 :key="item.id"
                 :label="item.xxmc"
                 :value="item.xxmc"
@@ -322,8 +322,14 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label-width="100px" label="选科" prop="xk">
-            <el-input maxlength="30" v-model="form.xk" placeholder="请输入选科" />
+          <el-form-item label-width="100px" label="选科" >
+            <el-radio-group v-model="form.xk">
+              <el-radio
+                v-for="dict in xkOptions"
+                :key="dict.dictValue"
+                :label="dict.dictValue"
+              >{{dict.dictLabel}}</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -621,6 +627,8 @@ export default {
       openStuGrid: false,
       // 性别字典
       xbOptions: [],
+      // xk字典
+      xkOptions: [],
       // 是否特长生字典
       sftcsOptions: [],
       // 状态字典
@@ -638,6 +646,9 @@ export default {
         sftcs: null,
         bzrxm: null,
         status: null
+      },
+      xqQueryParams: {
+        id: null ,//班级关联校区id
       },
       // 表单参数
       form: {},
@@ -742,8 +753,8 @@ export default {
         ]
       },
       stuformrules: {},
-      //校区名称
-      selectXqmc: [],
+      //校区信息
+      schoolList: [],
       // 班级选择
       bjclassList: []
     };
@@ -753,18 +764,27 @@ export default {
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
     });
+    this.getDicts("xkType").then(response => {
+      this.xkOptions = response.data;
+    });
     this.getDicts("sys_yes_no").then(response => {
       this.sftcsOptions = response.data;
     });
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
-    listSchool(this.queryParams).then(response => {
-      this.selectXqmc = response.rows;
-    });
     listBjclass(this.queryParams).then(response => {
-      this.bjclassList = response.rows;
+      this.bjclassList = response.rows
+      // this.xqQueryParams.id = response.rows[0].kzzd1
+      // listSchool(this.xqQueryParams).then(response => {
+      //   this.schoolList = response.rows;
+      // });
     });
+    listSchool(this.queryParams).then(response => {
+      this.schoolList = response.rows;
+    });
+
+
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   mounted() {
@@ -810,6 +830,10 @@ export default {
     // 性别字典翻译
     xbFormat(row, column) {
       return this.selectDictLabel(this.xbOptions, row.xb);
+    },
+    // 选科字典翻译
+    xkFormat(row, column) {
+      return this.selectDictLabel(this.xkOptions, row.xk);
     },
     // 是否特长生字典翻译
     sftcsFormat(row, column) {

@@ -43,7 +43,7 @@
           <el-select
             style="width : 120px; height : 20px;margin-right : 40px"
             v-model="teacherNames[index]"
-            placeholder="请选择老师"
+            filterable placeholder="请选择老师"
             @change="getIeacherName(teacherNames[index],index,classItem)"
           >
             <el-option v-for="item in teacherList" :key="item.id" :label="item.lsxm" :value="item"></el-option>
