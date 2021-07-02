@@ -9,6 +9,44 @@ export function listMenu(query) {
   })
 }
 
+// 查询某菜单下的按钮功能权限
+export function findMenuPermissionByMenuId(query) {
+  return request({
+    url: '/system/menu/findMenuPermissionByMenuId',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询所有的权限方法
+export function listAllPreAuthorizeMethods(query) {
+  return request({
+    url: '/system/menu/listAllRequestMappingPreAuthorizeMethods',
+    method: 'get',
+    params: query
+  })
+}
+
+// 刷新缓存
+export function refreshCache(query) {
+  return request({
+    url: '/system/menu/refreshCache',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
+// 菜单-添加按钮功能
+export function menuAddPermission(data) {
+  return request({
+    url: '/system/menu/menuAddPermission',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查询菜单详细
 export function getMenu(menuId) {
   return request({

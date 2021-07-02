@@ -47,7 +47,13 @@
       row-key="menuId"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
+      <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="250px">
+        <template slot-scope="scope">
+          <span  v-if="scope.row.menuType=='M'" style="color:#f8ac59 "  >{{scope.row.menuName}}</span >
+          <span  v-else-if="scope.row.menuType=='C'" style="color: #13ce66" >{{scope.row.menuName}}</span >
+          <span  v-else-if="scope.row.menuType=='F'" style="color: red" >{{scope.row.menuName}}</span >
+        </template>
+      </el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="100">
         <template slot-scope="scope">
           <svg-icon :icon-class="scope.row.icon" />
@@ -64,6 +70,13 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button size="mini"
+           type="text"
+            v-if="scope.row.menuType == 'C'"
+           icon="el-icon-edit"
+           @click="guanlianUrl(scope.row)"
+           v-hasPermi=""
+          >关联按钮功能</el-button>
           <el-button size="mini"
             type="text"
             icon="el-icon-edit"
@@ -108,7 +121,7 @@
               <el-radio-group v-model="form.menuType">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
-                <el-radio label="F">按钮</el-radio>
+                <el-radio label="F">按钮功能</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -204,11 +217,76 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 添加或修改按钮功能url -->
+    <el-dialog :title="title" :visible.sync="urlopen" width="1500px" append-to-body>
+      <el-form ref="urlform" :model="urlform" :rules="urlrules" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="上级菜单">
+              <treeselect
+                v-model="urlform.parentId"
+                :options="menuOptions"
+                :normalizer="normalizer"
+                :show-count="true"
+                placeholder="选择上级菜单"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="菜单类型" prop="menuType">
+              <el-radio-group v-model="urlform.menuType">
+                <el-radio label="M">目录</el-radio>
+                <el-radio label="C">菜单</el-radio>
+                <el-radio label="F">按钮功能</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="菜单名称" prop="menuName">
+              <el-input v-model="urlform.menuName" placeholder="请输入菜单名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" >
+            <div style="text-align: center">
+              <el-transfer
+                style="text-align: left; display: inline-block;width: 1500px"
+                v-model="menuValue"
+                filterable
+                :left-default-checked="[]"
+                :right-default-checked="rightData"
+                :titles="['未添加的权限标识', '已添加的权限标识']"
+                :button-texts="['移除', '添加']"
+                :format="{
+                    noChecked: '${total}',
+                    hasChecked: '${checked}/${total}'
+                  }"
+                @change="handleChange"
+                :data="menuData">
+                <span slot-scope="{ option }">
+                <el-tooltip class="item" effect="dark" :content="option.key +'-'+option.label" placement="top">
+                  <span >
+                    {{ option.key }} - {{ option.label }}
+                  </span>
+                </el-tooltip>
+                </span>
+                <el-button class="transfer-footer" slot="left-footer" type="danger" @click="refreshBtn" size="small">刷新缓存</el-button>
+              </el-transfer>
+            </div>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitUrlForm">确 定</el-button>
+        <el-button @click="cancelUrl">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { listMenu, getMenu, delMenu, addMenu, updateMenu } from "@/api/system/menu";
+import { listMenu, getMenu, delMenu, addMenu, updateMenu ,listAllPreAuthorizeMethods,menuAddPermission,findMenuPermissionByMenuId,refreshCache} from "@/api/system/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import IconSelect from "@/components/IconSelect";
@@ -218,6 +296,9 @@ export default {
   components: { Treeselect, IconSelect },
   data() {
     return {
+      menuValue:[],
+      menuData: [],
+      rightData:[],
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -230,6 +311,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      urlopen: false,
       // 显示状态数据字典
       visibleOptions: [],
       // 菜单状态数据字典
@@ -241,6 +323,7 @@ export default {
       },
       // 表单参数
       form: {},
+      urlform: {},
       // 表单校验
       rules: {
         menuName: [
@@ -252,6 +335,14 @@ export default {
         path: [
           { required: true, message: "路由地址不能为空", trigger: "blur" }
         ]
+      },
+      urlrules:{
+        menuName: [
+          { required: true, message: "菜单名称不能为空", trigger: "blur" }
+        ],
+        orderNum: [
+          { required: true, message: "菜单顺序不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -332,6 +423,23 @@ export default {
       };
       this.resetForm("form");
     },
+    urlReset() {
+      this.urlform = {
+        menuId: undefined,
+        parentId: 0,
+        menuName: undefined,
+        permsArray:[],
+        icon: undefined,
+        menuType: "F",
+        orderNum: undefined,
+        isFrame: "1",
+        isCache: "0",
+        visible: "0",
+        status: "0",
+        menuUrl: []
+      };
+      this.resetForm("urlform");
+    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.getList();
@@ -395,7 +503,73 @@ export default {
           this.getList();
           this.msgSuccess("删除成功");
         })
+    },
+    guanlianUrl(row){
+      this.urlReset();
+      this.getTreeselect();
+      getMenu(row.menuId).then(response => {
+        this.urlform = response.data;
+        this.urlopen = true;
+        this.title = "菜单关联URL按钮功能";
+        findMenuPermissionByMenuId({"parentId":row.menuId}).then(res=>{
+          console.log("parentId:",row.menuId,"=",res.data)
+          let arr=[]
+          for (const key in res.data) {
+            arr.push(res.data[key].perms)
+          }
+          console.log("arr:",arr)
+          this.menuValue=arr
+          this.urlform.permsArray=arr
+          this.findAllPreAuthorizeMethods();
+        });
+      });
+    },
+    findAllPreAuthorizeMethods(){
+      console.log("findAllPreAuthorizeMethods")
+      listAllPreAuthorizeMethods().then(res=>{
+        this.menuData=res.data
+        this.rightData=this.menuValue
+      })
+    },
+    handleChange(value, direction, movedKeys) {
+      this.urlform.permsArray=value
+      console.log("value:",value);
+      console.log("direction:",direction);
+      console.log("movedKeys:",movedKeys);
+    },
+    submitUrlForm(){
+      console.log("urlform:",this.urlform)
+      menuAddPermission(this.urlform).then(res=>{
+        console.log("menuAddPermission:",res)
+      });
+    },
+    cancelUrl(){
+      this.urlopen = false;
+      this.urlReset();
+    },
+    refreshBtn(){
+      refreshCache().then(res=>{
+        this.msgSuccess("缓存刷新成功")
+      });
     }
+
   }
 };
 </script>
+
+<style>
+  .transfer-footer {
+    margin-left: 20px;
+    padding: 6px 5px;
+  }
+  /*穿梭框内部展示列表的高宽度*/
+  .el-transfer-panel__list.is-filterable{
+    /*width:800px;*/
+    height:400px;
+  }
+  /*穿梭框外框高宽度*/
+   .el-transfer-panel{
+     width: 600px;
+     height: 550px;
+   }
+</style>
