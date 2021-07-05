@@ -530,7 +530,6 @@ export default {
       this.urlform.permsArray=value
     },
     submitUrlForm(){
-      console.log("urlform:",this.urlform)
       menuAddPermission(this.urlform).then(res=>{
         this.urlopen = false;
         this.msgSuccess(res.msg);
