@@ -75,7 +75,6 @@
             v-if="scope.row.menuType == 'C'"
            icon="el-icon-edit"
            @click="guanlianUrl(scope.row)"
-           v-hasPermi=""
           >关联按钮功能</el-button>
           <el-button size="mini"
             type="text"
@@ -254,7 +253,7 @@
                 v-model="menuValue"
                 filterable
                 :left-default-checked="[]"
-                :right-default-checked="rightData"
+                :right-default-checked="[]"
                 :titles="['未添加的权限标识', '已添加的权限标识']"
                 :button-texts="['移除', '添加']"
                 :format="{
@@ -277,7 +276,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitUrlForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="submitUrlForm">确 定</el-button>
         <el-button @click="cancelUrl">取 消</el-button>
       </div>
     </el-dialog>
@@ -512,12 +511,10 @@ export default {
         this.urlopen = true;
         this.title = "菜单关联URL按钮功能";
         findMenuPermissionByMenuId({"parentId":row.menuId}).then(res=>{
-          console.log("parentId:",row.menuId,"=",res.data)
           let arr=[]
           for (const key in res.data) {
             arr.push(res.data[key].perms)
           }
-          console.log("arr:",arr)
           this.menuValue=arr
           this.urlform.permsArray=arr
           this.findAllPreAuthorizeMethods();
@@ -525,22 +522,18 @@ export default {
       });
     },
     findAllPreAuthorizeMethods(){
-      console.log("findAllPreAuthorizeMethods")
       listAllPreAuthorizeMethods().then(res=>{
         this.menuData=res.data
-        this.rightData=this.menuValue
       })
     },
     handleChange(value, direction, movedKeys) {
       this.urlform.permsArray=value
-      console.log("value:",value);
-      console.log("direction:",direction);
-      console.log("movedKeys:",movedKeys);
     },
     submitUrlForm(){
       console.log("urlform:",this.urlform)
       menuAddPermission(this.urlform).then(res=>{
-        console.log("menuAddPermission:",res)
+        this.urlopen = false;
+        this.msgSuccess(res.msg);
       });
     },
     cancelUrl(){
