@@ -583,8 +583,12 @@ export default {
             if (response.code == 200) {
               this.msgSuccess("编辑成功");
               this.open = false;
-              this.$router.push({
-                path: "/jcsjb/lsgl/certificates"
+              // 获取页面中参数配置的路由
+              this.getConfigKey("certificates").then(resp => {
+                this.router = resp.msg;
+                this.$router.push({
+                  path: this.router
+                });
               });
               this.reload();
             }

@@ -76,8 +76,12 @@ export default {
     // 编辑老师基本信息
     handleEdit(index, row) {
       //console.log("id=",row.id)
-      this.$router.push({
-        path: "/jcsjb/lsgl/certificatesForm/" + row.id
+      // 获取页面中参数配置的路由
+      this.getConfigKey("certificatesForm").then(resp => {
+        this.router = resp.msg;
+        this.$router.push({
+          path: this.router + row.id
+        });
       });
     },
     // 状态字典翻译 状态
