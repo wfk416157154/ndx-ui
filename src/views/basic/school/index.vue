@@ -99,7 +99,12 @@
       <el-table-column label="日语学生总人数" align="center" prop="ryxszrs" />
       <el-table-column label="校区负责人" align="center" prop="xqfzr" />
       <el-table-column label="负责人电话" align="center" prop="fzrdh" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="校区状态" align="center" prop="kzzd1" >
+        <template slot-scope="scope">
+          <dict-tag :options="schoolStatusOptions" :value="scope.row.kzzd1"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" align="center" v-if="false" prop="status" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -147,7 +152,16 @@
         <el-form-item label-width="120px" label="负责人电话" prop="fzrdh">
           <el-input maxlength="11" v-model="form.fzrdh" placeholder="请输入负责人电话" />
         </el-form-item>
-        <el-form-item label-width="120px" label="状态">
+        <el-form-item label-width="120px" label="校区状态">
+          <el-radio-group v-model="form.kzzd1">
+            <el-radio
+              v-for="dict in schoolStatusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictValue"
+            >{{dict.dictLabel}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <!--<el-form-item label-width="120px" label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
               disabled
@@ -156,7 +170,7 @@
               :label="dict.dictValue"
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label-width="120px" label="备注" prop="remark">
           <el-input maxlength="200" v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -290,7 +304,9 @@ export default {
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/basic/school/importData"
-      }
+      },
+      statusOptions:[],
+      schoolStatusOptions:[]
     };
   },
   created() {
@@ -298,6 +314,10 @@ export default {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
+    this.getDicts("schoolStatus").then(response => {
+      this.schoolStatusOptions = response.data;
+    });
+
   },
   methods: {
     /** 查询校区基础信息列表 */

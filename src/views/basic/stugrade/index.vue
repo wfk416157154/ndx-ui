@@ -158,7 +158,11 @@
         >
           <template slot-scope="scope">
             <span
-              v-if="item.prop == 'xsxm' || item.prop == 'rybj' || item.prop == 'wl' || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+              v-if="item.prop == 'xsxm' || item.prop == 'rybj'  || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+            <span
+              v-else-if="item.prop == 'wl'">
+                <dict-tag :options="wlOption" :value="scope.row[item.prop]"/>
+            </span>
             <div v-else>
               <div
                 v-if="scope.row[item.colour] == 1"
@@ -372,7 +376,8 @@
         rybjDisabled: true,
         xsbhDisabled: true,
         //  考试类型
-        getExaminationType: []
+        getExaminationType: [],
+        wlOption:[]
       };
     },
     created() {
@@ -381,6 +386,9 @@
       });
       this.getDicts("examination_type").then(response => {
         this.getExaminationType = response.data;
+      });
+      this.getDicts("xkType").then(response => {
+        this.wlOption = response.data;
       });
     },
     components: {

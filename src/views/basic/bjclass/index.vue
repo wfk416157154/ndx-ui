@@ -118,10 +118,17 @@
       <el-table-column v-if="false" label="开班照" align="center" prop="kbz" />
       <el-table-column v-if="false" label="集体照" align="center" prop="jtz" />
       <el-table-column label="校区名称" align="center" prop="xqmc" />
-      <el-table-column label="年级" align="center" prop="nj" />
+
       <el-table-column label="日语班级名称" align="center" prop="rybjmc" />
       <el-table-column label="班级人数" align="center" prop="bjrs" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
+      <el-table-column label="学期" align="center" prop="nj" >
+        <template slot-scope="scope">
+          <dict-tag :options="selectNj" :value="scope.row.nj"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" v-if="false" align="center" prop="status" />
+
       <el-table-column label="开班时间" align="center" prop="kbsj" />
       <el-table-column label="老师电话" align="center" prop="lsdh" />
       <el-table-column
@@ -173,21 +180,21 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="年级" prop="nj">
-          <el-select v-model="form.nj" placeholder="请输入年级">
-            <el-option
-              v-for="item in selectNj"
-              :key="item.dictValue"
-              :label="item.dictLabel"
-              :value="item.dictLabel"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label-width="110px" label="日语班级名称"  prop="rybjmc">
           <el-input v-model="form.rybjmc" maxlength="30" placeholder="请输入日语班级名称" />
         </el-form-item>
         <el-form-item label="班级人数" prop="bjrs">
           <el-input v-model="form.bjrs" maxlength="5" placeholder="请输入班级人数" />
+        </el-form-item>
+        <el-form-item label="学期内容" prop="nj">
+          <el-select v-model="form.nj" placeholder="请选择学期">
+            <el-option
+              v-for="item in selectNj"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="开班时间" prop="kbsj">
           <el-date-picker
@@ -480,7 +487,6 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      console.log("row:",row.id)
       this.reset();
       const id = row.id || this.ids;
       /*this.$router.push({

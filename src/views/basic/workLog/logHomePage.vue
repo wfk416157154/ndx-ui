@@ -31,7 +31,7 @@
       <el-form-item label="日志日期">
         <el-date-picker
           v-model="queryParams.sj"
-          type="datetimerange"
+          type="daterange"
           format="yyyy-MM-dd"
           range-separator="至"
           start-placeholder="开始日期"
