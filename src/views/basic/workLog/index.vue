@@ -733,7 +733,6 @@
         getExaminationPaper(value).then((res) => {
           this.ruleForm.kzzd2 = res.data.kzzd2
           this.ruleForm.kzzd3 = res.data.kslx
-          this.selectDictLabel(this.xbOptions,res.data.kslx);
         });
       },
       // 图片预览 大图

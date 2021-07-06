@@ -514,6 +514,7 @@
       handleQuery() {
         if(this.queryParams.kzzd1==null||this.queryParams.xqmc==null){
           this.msgError("请选择校区和班级后再查询");
+          return;
         }
         this.queryParams.pageNum = 1;
         this.getList();
