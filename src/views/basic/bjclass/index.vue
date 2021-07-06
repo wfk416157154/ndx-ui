@@ -8,13 +8,14 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-input
-          v-model="queryParams.xqmc"
-          placeholder="可模糊查询校区名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.xxmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="年级" prop="nj">
         <el-select v-model="queryParams.nj" placeholder="请选择年级">
@@ -94,7 +95,7 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+        <el-button type="info" icon="el-icon-upload2" size="mini" v-has-permi="['basic:bjclass:importData']" @click="handleImport">导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -122,7 +123,7 @@
       <el-table-column label="日语班级名称" align="center" prop="rybjmc" />
       <el-table-column label="班级人数" align="center" prop="bjrs" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
-      <el-table-column label="学期" align="center" prop="nj" >
+      <el-table-column label="开班学期" align="center" prop="nj" >
         <template slot-scope="scope">
           <dict-tag :options="selectNj" :value="scope.row.nj"/>
         </template>
@@ -186,7 +187,7 @@
         <el-form-item label="班级人数" prop="bjrs">
           <el-input v-model="form.bjrs" maxlength="5" placeholder="请输入班级人数" />
         </el-form-item>
-        <el-form-item label="学期内容" prop="nj">
+        <el-form-item label="开班学期" prop="nj">
           <el-select v-model="form.nj" placeholder="请选择学期">
             <el-option
               v-for="item in selectNj"

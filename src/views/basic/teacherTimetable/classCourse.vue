@@ -1,8 +1,19 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
-      <el-form-item label="年份" prop="nf">
-        <el-select v-model="queryParams.kzzd2" placeholder="请选择年份" clearable size="small">
+    <el-form :model="queryParams" ref="queryForm" :rules="queryParamsRules" :inline="true" label-width="68px">
+      <el-form-item label="校区名称" prop="xqid" v-has-permi="['basic:school:list']" label-width="100px" >
+        <el-select v-model="queryParams.xqid" @change="onChooseSchool" placeholder="请选择校区名称" >
+          <el-option
+            v-for="item in schoolList"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="年份" prop="kzzd2">
+        <el-select v-model="queryParams.kzzd2" placeholder="请选择年份"  clearable size="small">
           <el-option
             v-for="dict in yearList"
             :key="dict.dictValue"
@@ -11,7 +22,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="课表类型" prop="kbType">
+      <el-form-item label="课表类型" prop="kbType" label-width="100px" >
         <el-select v-model="queryParams.kbType" placeholder="请选择课表类型" clearable size="small">
           <el-option
             v-for="dict in kbTypeOptionsEL"
@@ -116,7 +127,7 @@
                 <vxe-table-column type="checkbox" width="60"></vxe-table-column>
                 <vxe-table-column title="id" align="center" field="id" :visible="false"/>
                 <vxe-table-column title="班级id" align="center" field="bjid" :visible="false"/>
-                <vxe-table-column title="课表类型" align="center" field="kbType"
+                <vxe-table-column title="课表类型" align="center" field="kbType" :visible="false"
                                   :edit-render="{name: '$select' , options: kbTypeOptions}"/>
                 <vxe-table-column title="课程类型" align="center" field="kcType"
                                   :edit-render="{name: '$select', options: kcType}"/>
@@ -154,6 +165,7 @@
     addClassCourse,
     updateClassCourse
   } from "@/api/basic/classCourse";
+  import { listSchool } from "@/api/basic/school";
   import {delClassCourse} from "@/api/basic/classCourse";
 
   export default {
@@ -169,6 +181,8 @@
         open: false,
         // 数据切换
         show: {},
+        //校区信息
+        schoolList: [],
         // 班级信息
         listBjclass: [],
         // 表单参数
@@ -197,6 +211,17 @@
           kzzd4: null,
           kzzd5: null
         },
+        queryParamsRules:{
+          xqid: [
+            { required: true, message: "请选择", trigger: "change" }
+          ],
+          kzzd2: [
+            { required: true, message: "请选择该课表对应的年份", trigger: "change" }
+          ],
+          kbType: [
+            { required: true, message: "请选择该课表对应的课表类型", trigger: "change" }
+          ],
+        },
         // 班级课程表格数据
         classCourseList: [],
         // 标记编辑的第几行
@@ -211,7 +236,8 @@
           pageSize: 10,
           kbType: null,
           kzzd2: null,
-          bjid: null
+          bjid: null,
+          xqid:null
         },
         // 年份字典
         yearList: [],
@@ -240,17 +266,27 @@
       this.getDicts("kc_type").then(response => {
         this.kcType = this.renderDict(response.data);
       });
+      listSchool(this.queryParams).then(response => {
+        this.schoolList = response.rows;
+      });
     },
     mounted() {
-      this.getList();
+      //this.getList();
     },
     methods: {
       // 班级列表基础信息
-      getList() {
-        listBjclass({kzzd2: this.$store.state.user.glrid}).then(res => {
+      getList(flag) {
+        let obj={// 根据关联校区id进行查询
+          kzzd1:this.queryParams.xqid
+        }
+        listBjclass(obj).then(res => {
           this.listBjclass = res.rows;
-          this.activeTab = this.listBjclass[0].id;
-          this.switchingClasses(this.activeTab);
+          if(res.rows.length>0){
+            this.activeTab = this.listBjclass[0].id;
+            if(flag){
+              this.switchingClasses(this.activeTab);
+            }
+          }
         });
       },
       getCourse() {
@@ -264,7 +300,17 @@
       },
       //查询课表
       handleQuery() {
-        this.getCourse();
+        this.$refs.queryForm.validate(res=>{
+          if(res){
+            this.getList(true);
+          }else{
+            this.msgError("请选择查询条件！")
+          }
+        });
+
+      },
+      onChooseSchool(xqid){
+        this.getList(false);
       },
       onselectionchange(row) {
         if (row.records.length > 0) {
@@ -275,12 +321,19 @@
       },
       //新增课表
       insertTimetable(row) {
+        this.$refs.queryForm.validate(res=>{
+        });
         if (null == this.queryParams.kzzd2) {
           this.msgError("请选择该新增课表的所属年份！")
           return;
         }
+        if (null == this.queryParams.kbType) {
+          this.msgError("请选择该新增课表的课表类型！")
+          return;
+        }
         const $table = this.$refs.xTable
         const record = {
+          kbType:this.queryParams.kbType,
           monday: 0,
           tuesday: 0,
           wednesday: 0,
@@ -344,7 +397,7 @@
             return delClassCourse(arr);
           }
         }).then(() => {
-          this.getList();
+          this.getList(true);
           this.msgSuccess("数据删除成功");
         }).catch((e) => {
           console.log(e);
