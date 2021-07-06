@@ -103,7 +103,8 @@ function filterChildren(childrenMap, lastRouter = false) {
   return children
 }
 
-export const loadView = (view) => { // 路由懒加载
+export const loadView = (view) => { 
+  // 路由懒加载
   return (resolve) => require([`@/views/${view}`], resolve)
 }
 

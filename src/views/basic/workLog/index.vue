@@ -716,11 +716,8 @@ export default {
       getExaminationPaper(value).then((res) => {
       this.ruleForm.kzzd2=res.data.kzzd2,
       this.ruleForm.kzzd3=res.data.kslx
-      
     });
     },
-
-
     // 图片上传 大图
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;

@@ -41,7 +41,7 @@
     </el-row>
 
     <el-table
-     border
+      border
       v-loading="loading"
       :data="menuList"
       row-key="menuId"
@@ -49,9 +49,9 @@
     >
       <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="250px">
         <template slot-scope="scope">
-          <span  v-if="scope.row.menuType=='M'" style="color:#f8ac59 "  >{{scope.row.menuName}}</span >
-          <span  v-else-if="scope.row.menuType=='C'" style="color: #13ce66" >{{scope.row.menuName}}</span >
-          <span  v-else-if="scope.row.menuType=='F'" style="color: red" >{{scope.row.menuName}}</span >
+          <span v-if="scope.row.menuType=='M'" style="color:#f8ac59 ">{{scope.row.menuName}}</span>
+          <span v-else-if="scope.row.menuType=='C'" style="color: #13ce66">{{scope.row.menuName}}</span>
+          <span v-else-if="scope.row.menuType=='F'" style="color: red">{{scope.row.menuName}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="100">
@@ -70,13 +70,15 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini"
-           type="text"
+          <el-button
+            size="mini"
+            type="text"
             v-if="scope.row.menuType == 'C'"
-           icon="el-icon-edit"
-           @click="guanlianUrl(scope.row)"
+            icon="el-icon-edit"
+            @click="guanlianUrl(scope.row)"
           >关联按钮功能</el-button>
-          <el-button size="mini"
+          <el-button
+            size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
@@ -246,12 +248,13 @@
               <el-input v-model="urlform.menuName" placeholder="请输入菜单名称" />
             </el-form-item>
           </el-col>
-          <el-col :span="24" >
+          <el-col :span="24">
             <div style="text-align: center">
               <el-transfer
                 style="text-align: left; display: inline-block;width: 1500px"
                 v-model="menuValue"
                 filterable
+                :filter-method="filterMethod"
                 :left-default-checked="[]"
                 :right-default-checked="[]"
                 :titles="['未添加的权限标识', '已添加的权限标识']"
@@ -261,15 +264,25 @@
                     hasChecked: '${checked}/${total}'
                   }"
                 @change="handleChange"
-                :data="menuData">
+                :data="menuData"
+              >
                 <span slot-scope="{ option }">
-                <el-tooltip class="item" effect="dark" :content="option.key +'-'+option.label" placement="top">
-                  <span >
-                    {{ option.key }} - {{ option.label }}
-                  </span>
-                </el-tooltip>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="option.key +'-'+option.label"
+                    placement="top"
+                  >
+                    <span>{{ option.key }} - {{ option.label }}</span>
+                  </el-tooltip>
                 </span>
-                <el-button class="transfer-footer" slot="left-footer" type="danger" @click="refreshBtn" size="small">刷新缓存</el-button>
+                <el-button
+                  class="transfer-footer"
+                  slot="left-footer"
+                  type="danger"
+                  @click="refreshBtn"
+                  size="small"
+                >刷新缓存</el-button>
               </el-transfer>
             </div>
           </el-col>
@@ -280,12 +293,21 @@
         <el-button @click="cancelUrl">取 消</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { listMenu, getMenu, delMenu, addMenu, updateMenu ,listAllPreAuthorizeMethods,menuAddPermission,findMenuPermissionByMenuId,refreshCache} from "@/api/system/menu";
+import {
+  listMenu,
+  getMenu,
+  delMenu,
+  addMenu,
+  updateMenu,
+  listAllPreAuthorizeMethods,
+  menuAddPermission,
+  findMenuPermissionByMenuId,
+  refreshCache
+} from "@/api/system/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import IconSelect from "@/components/IconSelect";
@@ -295,9 +317,9 @@ export default {
   components: { Treeselect, IconSelect },
   data() {
     return {
-      menuValue:[],
+      menuValue: [],
       menuData: [],
-      rightData:[],
+      rightData: [],
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -331,17 +353,15 @@ export default {
         orderNum: [
           { required: true, message: "菜单顺序不能为空", trigger: "blur" }
         ],
-        path: [
-          { required: true, message: "路由地址不能为空", trigger: "blur" }
-        ]
+        path: [{ required: true, message: "路由地址不能为空", trigger: "blur" }]
       },
-      urlrules:{
+      urlrules: {
         menuName: [
           { required: true, message: "菜单名称不能为空", trigger: "blur" }
         ],
         orderNum: [
           { required: true, message: "菜单顺序不能为空", trigger: "blur" }
-        ],
+        ]
       }
     };
   },
@@ -382,7 +402,7 @@ export default {
     getTreeselect() {
       listMenu().then(response => {
         this.menuOptions = [];
-        const menu = { menuId: 0, menuName: '主类目', children: [] };
+        const menu = { menuId: 0, menuName: "主类目", children: [] };
         menu.children = this.handleTree(response.data, "menuId");
         this.menuOptions.push(menu);
       });
@@ -427,7 +447,7 @@ export default {
         menuId: undefined,
         parentId: 0,
         menuName: undefined,
-        permsArray:[],
+        permsArray: [],
         icon: undefined,
         menuType: "F",
         orderNum: undefined,
@@ -492,76 +512,85 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$confirm('是否确认删除名称为"' + row.menuName + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除名称为"' + row.menuName + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delMenu(row.menuId);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        });
     },
-    guanlianUrl(row){
+    // Transfer
+    filterMethod(query, item) {
+      return (item.key + item.label).indexOf(query) > -1;
+    },
+    guanlianUrl(row) {
       this.urlReset();
       this.getTreeselect();
       getMenu(row.menuId).then(response => {
         this.urlform = response.data;
         this.urlopen = true;
         this.title = "菜单关联URL按钮功能";
-        findMenuPermissionByMenuId({"parentId":row.menuId}).then(res=>{
-          let arr=[]
+        findMenuPermissionByMenuId({ parentId: row.menuId }).then(res => {
+          let arr = [];
           for (const key in res.data) {
-            arr.push(res.data[key].perms)
+            arr.push(res.data[key].perms);
           }
-          this.menuValue=arr
-          this.urlform.permsArray=arr
+          this.menuValue = arr;
+          this.urlform.permsArray = arr;
           this.findAllPreAuthorizeMethods();
         });
       });
     },
-    findAllPreAuthorizeMethods(){
-      listAllPreAuthorizeMethods().then(res=>{
-        this.menuData=res.data
-      })
+    findAllPreAuthorizeMethods() {
+      listAllPreAuthorizeMethods().then(res => {
+        this.menuData = res.data;
+      });
     },
     handleChange(value, direction, movedKeys) {
-      this.urlform.permsArray=value
+      this.urlform.permsArray = value;
     },
-    submitUrlForm(){
-      menuAddPermission(this.urlform).then(res=>{
+    submitUrlForm() {
+      menuAddPermission(this.urlform).then(res => {
         this.urlopen = false;
         this.msgSuccess(res.msg);
       });
     },
-    cancelUrl(){
+    cancelUrl() {
       this.urlopen = false;
       this.urlReset();
     },
-    refreshBtn(){
-      refreshCache().then(res=>{
-        this.msgSuccess("缓存刷新成功")
+    refreshBtn() {
+      refreshCache().then(res => {
+        this.msgSuccess("缓存刷新成功");
       });
     }
-
   }
 };
 </script>
 
 <style>
-  .transfer-footer {
-    margin-left: 20px;
-    padding: 6px 5px;
-  }
-  /*穿梭框内部展示列表的高宽度*/
-  .el-transfer-panel__list.is-filterable{
-    /*width:800px;*/
-    height:400px;
-  }
-  /*穿梭框外框高宽度*/
-   .el-transfer-panel{
-     width: 600px;
-     height: 550px;
-   }
+.transfer-footer {
+  margin-left: 20px;
+  padding: 6px 5px;
+}
+/*穿梭框内部展示列表的高宽度*/
+.el-transfer-panel__list.is-filterable {
+  /*width:800px;*/
+  height: 400px;
+}
+/*穿梭框外框高宽度*/
+.el-transfer-panel {
+  width: 600px;
+  height: 550px;
+}
 </style>

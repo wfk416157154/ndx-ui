@@ -444,6 +444,7 @@
 </template>
 
 <script>
+import request from "../utils/request"
 export default {
   name: "index",
   data() {
@@ -451,6 +452,9 @@ export default {
       // 版本号
       version: "2.5.0",
     };
+  },
+  created(){
+      console.log(request)
   },
   methods: {
     goTarget(href) {
