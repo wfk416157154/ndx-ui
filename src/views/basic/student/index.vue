@@ -216,7 +216,7 @@
       <el-table-column label="家长电话" width="120px" align="center" prop="jzdh" />
       <el-table-column label="班主任姓名" align="center" prop="bzrxm" />
       <el-table-column label="班主任电话" width="120px" align="center" prop="bzrdh" />
-      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
+      <!-- <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" /> -->
       <el-table-column label="备注" width="120px" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">

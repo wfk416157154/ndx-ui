@@ -99,7 +99,6 @@
       <el-table-column label="日语学生总人数" align="center" prop="ryxszrs" />
       <el-table-column label="校区负责人" align="center" prop="xqfzr" />
       <el-table-column label="负责人电话" align="center" prop="fzrdh" />
-      <el-table-column label="状态" align="center" prop="status" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -146,16 +145,6 @@
         </el-form-item>
         <el-form-item label-width="120px" label="负责人电话" prop="fzrdh">
           <el-input maxlength="11" v-model="form.fzrdh" placeholder="请输入负责人电话" />
-        </el-form-item>
-        <el-form-item label-width="120px" label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              disabled
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
         </el-form-item>
         <el-form-item label-width="120px" label="备注" prop="remark">
           <el-input maxlength="200" v-model="form.remark" type="textarea" placeholder="请输入内容" />

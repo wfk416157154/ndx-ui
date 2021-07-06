@@ -50,7 +50,7 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">查询</el-button>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getWhole">全部</el-button>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleExport">导出成绩</el-button>
+        <!-- <el-button type="primary" icon="el-icon-search" size="mini" @click="handleExport">导出成绩</el-button> -->
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
