@@ -1,8 +1,8 @@
 <template>
   <div class="work-log">
     <el-form ref="forms" :inline="true" label-width="80px">
-      <el-form-item label="选择班级">
-        <el-select v-model="bjNameId">
+      <el-form-item label="请选择班级" label-width="100px" v-if="!ifRoleHasPerms" >
+        <el-select v-model="bjNameId" @change="chooseClass" >
           <el-option
             v-for="(item, index) in getListBjclass"
             :key="index"
@@ -11,7 +11,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="选择日期">
+      <el-form-item>
+        <el-checkbox  v-model="sfbrz" @change="chooseBrz" v-if="!ifRoleHasPerms" >补日志</el-checkbox>
+      </el-form-item>
+      <el-form-item label="选择日期" v-if="showxzrq">
         <el-date-picker
           v-model="logTiem"
           format="yyyy-MM-dd"
@@ -19,14 +22,14 @@
           placeholder="选择日期时间"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item>
+     <!-- <el-form-item>
         <el-button
           type="primary"
           @click="getWorkLogListQuery(bjNameId, logTiem)"
         >日志查询
         </el-button
         >
-      </el-form-item>
+      </el-form-item>-->
     </el-form>
     <el-form
       :model="ruleForm"
@@ -36,7 +39,7 @@
       class="demo-ruleForm"
       v-if="ifForm"
     >
-      <div class="clearfix" style="margin-bottom: 10px">
+     <!-- <div class="clearfix" style="margin-bottom: 10px">
         <el-button
           style="float: right"
           type="primary"
@@ -45,7 +48,7 @@
         >查看工作日志
         </el-button
         >
-      </div>
+      </div>-->
       <!-- 课程 -->
       <div class="wrap-log">
         <div class="curriculum-title">
@@ -302,7 +305,7 @@
           <div class="send-out">
             <h4>发送到人</h4>
             <el-select
-              v-model="ruleForm.kzzd5"
+              v-model="ruleForm.sendUserArr"
               filterable
               multiple
               placeholder="请选择"
@@ -349,7 +352,7 @@
           </el-link
           >
         </div>
-        <div class="el-upload__tip" style="color: red" slot="tip">
+        <div class="el-upload__tip"  slot="tip">
           提示：仅允许导入“xls”或“xlsx”格式文件！
         </div>
       </el-upload>
@@ -405,6 +408,8 @@
   export default {
     data() {
       return {
+        sfbrz:null,// 是否补日志
+        showxzrq:false,// 显示【选择日期】
         ifRoleHasPerms: false,
         ksmcdisable: false,
         enableBos: false,
@@ -463,7 +468,7 @@
         // 老师所带班级
         bjNameId: "",
         // 日志填写时间
-        logTiem: "",
+        logTiem: null,
         // 班级名称
         bjName: "",
         // 班级信息数据
@@ -501,6 +506,19 @@
       this.getList();
     },
     methods: {
+      chooseClass(id){// 当选择日语班级后显示日志填写框
+        this.ifForm = true;
+      },
+      chooseBrz(flag){// 当选择补日志时：true
+        if(flag){
+          this.showxzrq=true
+          this.ruleForm.status=0 // 表示后续补的日志
+        }else{
+          this.showxzrq=false
+          this.ruleForm.status=1 // 表示正常填写的日志
+        }
+        this.sfbrz=flag
+      },
       // 获取课中课表信息
       getList() {
         // 获取班级信息
@@ -808,13 +826,17 @@
       },
       // 发送
       sendOut(value) {
+        if(true==this.sfbrz){
+          if(null==this.logTiem){
+            this.msgError("请选择补哪一天的日志！")
+            return
+          }
+        }
         this.$refs["ruleForm"].validate((valid) => {
           if (valid) {
-            // 暂时不发送到人 null
-            this.ruleForm.kzzd5 = null;
             addSave(this.ruleForm).then(async (res) => {
               if (res.code == 200) {
-                this.getWorkLogListQuery(this.bjNameId, this.logTiem);
+                //this.getWorkLogListQuery(this.bjNameId, this.logTiem);
                 this.getList();
                 if (this.ruleForm.kzzd4) {
                   let jsonObj = {
@@ -888,8 +910,8 @@
         text-align: center;
         border-right: 2px #ccc solid;
         float: left;
-        background-color: #84af9b;
-        color: #fff;
+        //background-color: #84af9b;
+        //color: #fff;
 
         span {
           line-height: 150px;
@@ -902,9 +924,9 @@
         float: right;
         width: 80%;
         height: 100%;
-        padding-left: 20px;
+        padding-left: 10px;
         box-sizing: border-box;
-        background-color: #aedd81;
+        //background-color: #aedd81;
       }
     }
 
@@ -921,8 +943,8 @@
         text-align: center;
         border-right: 2px #ccc solid;
         float: left;
-        background-color: #84af9b;
-        color: #fff;
+        //background-color: #84af9b;
+        //color: #fff;
 
         span {
           line-height: 300px;
@@ -935,7 +957,7 @@
         height: 100%;
         padding: 10px;
         box-sizing: border-box;
-        background-color: #aedd81;
+        //background-color: #aedd81;
 
         .wrap-history {
           width: 100%;
@@ -966,8 +988,8 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        background-color: #84af9b;
-        color: #fff;
+        //background-color: #84af9b;
+        //color: #fff;
 
         span {
           position: absolute;
@@ -985,7 +1007,7 @@
         height: 100%;
         padding: 10px;
         box-sizing: border-box;
-        background-color: #aedd81;
+        //background-color: #aedd81;
 
         .in-class-content {
           width: 100%;
@@ -1029,8 +1051,8 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        background-color: #84af9b;
-        color: #fff;
+        //background-color: #84af9b;
+        //color: #fff;
 
         span {
           position: absolute;
@@ -1044,7 +1066,7 @@
         width: 80%;
         height: 100%;
         float: right;
-        background-color: #aedd81;
+        //background-color: #aedd81;
 
         .wrap-examination {
           width: 100%;
@@ -1059,9 +1081,9 @@
           .examination-upload {
             padding: 20px;
             box-sizing: border-box;
-            background-color: greenyellow;
+            //background-color: greenyellow;
             // background-image: linear-gradient( to right, greenyellow , green);
-            background: linear-gradient(to right, #bb313e25);
+            //background: linear-gradient(to right, #bb313e25);
 
             .button {
               margin-left: 100px;
