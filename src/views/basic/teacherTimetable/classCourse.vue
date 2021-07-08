@@ -290,6 +290,16 @@
         });
       },
       getCourse() {
+        this.$refs.queryForm.validate(res=>{
+        });
+        if (null == this.queryParams.kzzd2) {
+          this.msgError("请选择该新增课表的所属年份！")
+          return;
+        }
+        if (null == this.queryParams.kbType) {
+          this.msgError("请选择该新增课表的课表类型！")
+          return;
+        }
         /** 查询班级课程列表 */
         this.loading = true
         listClassCourse(this.queryParams).then(response => {
