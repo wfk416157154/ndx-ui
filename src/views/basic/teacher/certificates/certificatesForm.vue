@@ -72,7 +72,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="入职工龄" prop="rzgl">
-          <el-input v-model="form.rzgl" placeholder="请输入入职工龄" />
+          <el-input v-model="form.rzgl" placeholder="入职工龄系统自动计算" readonly />
         </el-form-item>
       </el-col>
       <el-col :span="12">

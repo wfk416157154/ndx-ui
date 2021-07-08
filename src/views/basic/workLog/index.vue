@@ -22,7 +22,7 @@
           placeholder="选择日期时间"
         ></el-date-picker>
       </el-form-item>
-     <!-- <el-form-item>
+     <!--<el-form-item>
         <el-button
           type="primary"
           @click="getWorkLogListQuery(bjNameId, logTiem)"
@@ -853,6 +853,7 @@
                     message: "日志发送成功",
                     type: "success",
                   });
+                  this.skipLogHome()
                 } else {
                   if (!this.ruleForm.kczj) {
                     return;
@@ -871,6 +872,15 @@
             });
             return false;
           }
+        });
+      },
+      skipLogHome(){
+        // 获取页面中参数配置的路由
+        this.getConfigKey("logHomePage").then(resp => {
+          this.router = resp.msg;
+          this.$router.push({
+            path: this.router
+          });
         });
       },
       // 考试分析总结

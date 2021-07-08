@@ -38,8 +38,10 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-button type="primary" class="el-btn" plain @click="getList">查询</el-button>
-      <el-button type="primary" class="el-btn" plain disabled @click="handleExport">导出日志</el-button>
+      <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
+      <el-button type="primary" icon="el-icon-download" disabled @click="handleExport">导出日志</el-button>
+      <el-button type="success" icon="el-icon-plus" v-has-role="['teacher']" @click="toDetails(new Date().getMilliseconds())">填写日志</el-button>
+
     </el-form>
     <div class="wrap-log-list" >
       <ul>
@@ -206,10 +208,14 @@ export default {
         `basic_teacher.xlsx`
       );
     },
-    // 跳转详情页面
-    toDetails(id) {
-      this.$router.push({
-        path: "/lsgl/log/workLogs/" + id
+    // 跳转到日志详情页面
+    toDetails(id){
+      // 获取页面中参数配置的路由
+      this.getConfigKey("worklogDetail").then(resp => {
+        this.router = resp.msg;
+        this.$router.push({
+          path: this.router + id
+        });
       });
     }
   }
