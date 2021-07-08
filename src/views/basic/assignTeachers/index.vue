@@ -7,21 +7,33 @@
             v-for="(item,index) in listSchool"
             :key="index"
             :label="item.xxmc"
-            :value="item"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="日语班级">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+      <el-form-item label="日语班" prop="ryb">
+        <el-select v-model="formInline.bjid" @change="onRybChange" :disabled="queryRybDisabled" placeholder="请选择日语班级">
+          <el-option
+            v-for="item in bjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="老师姓名">
-        <el-input v-model="formInline.user" placeholder="审批人"></el-input>
-      </el-form-item>-->
+        <el-select
+          style="width : 200px; height : 20px;margin-right : 40px"
+          v-model="formInline.lsid"
+          filterable placeholder="请选择老师"
+          :disabled="queryLsxmDisabled"
+          @change=""
+        >
+          <el-option v-for="item in teacherListOption" :key="item.id" :label="item.lsxm" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="onAddTeacher">添加</el-button>
       </el-form-item>
     </el-form>
     <div class="wrap-class clearfix">
@@ -29,7 +41,7 @@
       <ul>
         <li v-for="(classItem,index) in optionalClasses" :key="index">
           <span>学校名称 :</span>
-          <span>{{classItem.xqmc}}</span>
+          <span>{{classItem.xxmc}}</span>
           <br />
           <span>班级名称 :</span>
           <span>{{classItem.rybjmc}}</span>
@@ -46,7 +58,7 @@
             filterable placeholder="请选择老师"
             @change="getIeacherName(teacherNames[index],index,classItem)"
           >
-            <el-option v-for="item in teacherList" :key="item.id" :label="item.lsxm" :value="item"></el-option>
+            <el-option v-for="item in teacherListOption" :key="item.id" :label="item.lsxm" :value="item"></el-option>
           </el-select>
           <el-button type="primary" @click="assignTeachers">确定</el-button>
         </li>
@@ -65,7 +77,7 @@
       <ul>
         <li v-for="(item,index) in optionalClasses1" :key="index">
           <span>学校名称 :</span>
-          <span>{{item.xqmc}}</span>
+          <span>{{item.xxmc}}</span>
           <br />
           <span>班级名称 :</span>
           <span>{{item.rybjmc}}</span>
@@ -94,7 +106,7 @@
 <script>
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
-import { teacherList, editBjclass } from "@/api/basic/assignTeachers";
+import { teacherList, editBjclass,classAllotTeacher,classAllotList } from "@/api/basic/assignTeachers";
 export default {
   data() {
     return {
@@ -132,7 +144,8 @@ export default {
         rybjmc: null,
         lsxm: null,
         status: null,
-        kzzd1: ""
+        kzzd1: null,
+        xqid:null
       },
       // 老师姓名
       teacherNames: {},
@@ -142,10 +155,16 @@ export default {
       optionalClasses: [],
       //已分配班级
       optionalClasses1: [],
-      //获取老师列表
-      teacherItem: [],
       // 分配老师班级
-      json: {}
+      json: {},
+      // 班级选择
+      bjclassList: [],
+      // 查询日语班选项 是否禁用
+      queryRybDisabled:true,
+      // 查询老师选项 是否禁用
+      queryLsxmDisabled:true,
+      // 获取老师列表
+      teacherListOption:[],
     };
   },
   created() {
@@ -153,6 +172,13 @@ export default {
     this.getTeacherList();
   },
   methods: {
+    onRybChange(id){
+      if(id){
+        this.queryLsxmDisabled=false
+      }else{
+        this.queryLsxmDisabled=true
+      }
+    },
     /** 校区列表 */
     getList() {
       this.loading = true;
@@ -164,23 +190,31 @@ export default {
     // 获取老师列表
     getTeacherList() {
       teacherList().then(response => {
-        this.teacherList = response.rows;
+        this.teacherListOption = response.rows;
       });
     },
     // 选中老师
     getIeacherName(ls, num, bjclass) {
       this.json = {
-        id: bjclass.id,
-        lsxm: ls.lsxm,
-        lsdh: ls.dhhm,
-        kzzd2 : ls.id
+        bjid: bjclass.bjid,
+        /*lsxm: ls.lsxm,
+        lsdh: ls.dhhm,*/
+        lsid : ls.id
       };
       this.teacherNames[num] = ls.lsxm;
     },
     // 获取校区id
-    listSchoolId(value) {
-      this.queryParams.kzzd1 = value.id;
-      this.formInline.xxmc = value.xxmc;
+    listSchoolId(id) {
+      this.queryParams.kzzd1 = id;
+      if(id){
+        listBjclass({kzzd1:id}).then(response => {
+          this.bjclassList = response.rows
+        });
+        this.queryRybDisabled=false
+      }else{
+        this.queryRybDisabled=true
+      }
+      this.onSubmit();
     },
     // 查询班级
     onSubmit() {
@@ -191,24 +225,48 @@ export default {
         });
         return;
       }
+      this.queryParams.xqid=this.queryParams.kzzd1
       // 未分配老师的班级
-      this.queryParams.sffp = 0;
-      listBjclass(this.queryParams).then(res => {
+      this.queryParams.isAllot = 0;
+      let param={
+        xqid:this.queryParams.kzzd1,
+        isAllot:this.queryParams.isAllot
+      }
+      classAllotList(param).then(res => {
         this.optionalClasses = res.rows;
         if(res.code==200){
           //已分配老师的班级
-          this.queryParams.sffp = 1;
-          listBjclass(this.queryParams).then(res => {
+          param.isAllot = 1;
+          classAllotList(param).then(res => {
             this.optionalClasses1 = res.rows;
           });
         }
       });
     },
+    onAddTeacher(){
+      this.fenpei(this.formInline)
+    },
     // 分配老师
     assignTeachers() {
-      if(undefined!=this.json.id){
-        editBjclass(this.json).then(res => {
-          this.onSubmit();
+      this.fenpei(this.json)
+    },
+    fenpei(obj){
+      if(undefined!=obj.lsid){
+        classAllotTeacher(obj).then(res => {
+          if(res.code!=200){
+            this.$notify.error({
+              title: "分配失败",
+              message: res.msg
+            });
+          }else{
+            this.$notify.success({
+              title: "已分配",
+              message: "分配完成"
+            });
+            this.onSubmit();
+          }
+        }).catch(e=>{
+          console.log(e)
         });
       }else{
         this.$notify.error({
@@ -216,7 +274,7 @@ export default {
           message: "请选择老师"
         });
       }
-    },
+    }
   }
 };
 </script>
