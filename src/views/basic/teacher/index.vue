@@ -241,7 +241,7 @@
               </div>
               <div class="content-list">
                 <h4>性别 :</h4>
-                <span v-if="item.xb == '1'">女</span>
+                <span v-if="item.xb == '0'">女</span>
                 <span v-else>男</span>
               </div>
               <div class="content-list">
