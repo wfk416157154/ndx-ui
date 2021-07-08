@@ -88,9 +88,9 @@ export function renderDict(datas) {
   let actions = [];
   let obj;
   Object.keys(datas).some((key) => {
-    obj={};
-    obj["label"]=datas[key].dictLabel;
-    obj["value"]=datas[key].dictValue;
+    obj = {};
+    obj["label"] = datas[key].dictLabel;
+    obj["value"] = datas[key].dictValue;
     actions.push(obj);
   })
   return actions;
