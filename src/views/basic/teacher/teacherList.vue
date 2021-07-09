@@ -145,6 +145,7 @@
       <el-table-column label="紧急联系人" align="center" prop="jjlxr" v-if="false" />
       <el-table-column label="紧急联系人电话" align="center" prop="jjlxrdh" v-if="false" />
       <el-table-column label="毕业学校" align="center" prop="byxx" />
+      <el-table-column label="日语等级证书" align="center" prop="kzzd3" />
       <el-table-column label="毕业专业" align="center" prop="byzy" v-if="false" />
       <el-table-column label="在职状态" align="center" prop="kzzd4" >
         <template slot-scope="scope">

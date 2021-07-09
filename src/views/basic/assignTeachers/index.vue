@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="校区">
-        <el-select v-model="formInline.xxmc" @change="listSchoolId" placeholder="请选择校区">
+        <el-select v-model="formInline.xxmc" @change="listSchoolId" filterable placeholder="请选择校区">
           <el-option
             v-for="(item,index) in listSchool"
             :key="index"
@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
-        <el-select v-model="formInline.bjid" @change="onRybChange" :disabled="queryRybDisabled" placeholder="请选择日语班级">
+        <el-select v-model="formInline.bjid" @change="onRybChange" filterable :disabled="queryRybDisabled" placeholder="请选择日语班级">
           <el-option
             v-for="item in bjclassList "
             :key="item.id"
