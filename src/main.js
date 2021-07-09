@@ -11,29 +11,19 @@ import App from './App'
 import store from './store'
 import router from './router'
 import permission from './directive/permission'
-import {download} from '@/utils/request'
+import { download } from '@/utils/request'
 
 import install from '@/utils/preventReClick'
 import './assets/icons' // icon
 import './permission' // permission control
-import {getDicts} from "@/api/system/dict/data";
-import {getConfigKey} from "@/api/system/config";
-import {
-  parseTime,
-  resetForm,
-  addDateRange,
-  selectDictLabel,
-  selectDictLabels,
-  renderDict,
-  handleTree
-} from "@/utils/ruoyi";
+import { getDicts } from "@/api/system/dict/data";
+import { getConfigKey } from "@/api/system/config";
+import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels,renderDict, handleTree } from "@/utils/ruoyi";
 import Pagination from "@/components/Pagination";
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar"
 // 字典标签组件（使用频繁可在全局挂载）
 import DictTag from '@/components/DictTag'
-// jquery
-import $ from 'jquery'
 
 import 'xe-utils'
 import VXETable from 'vxe-table'
@@ -50,14 +40,13 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.renderDict = renderDict
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
-Vue.prototype.$ = $;
 
 Vue.prototype.msgSuccess = function (msg) {
-  this.$message({showClose: true, message: msg, type: "success"});
+  this.$message({ showClose: true, message: msg, type: "success" });
 }
 
 Vue.prototype.msgError = function (msg) {
-  this.$message({showClose: true, message: msg, type: "error"});
+  this.$message({ showClose: true, message: msg, type: "error" });
 }
 
 Vue.prototype.msgInfo = function (msg) {
@@ -90,18 +79,11 @@ import "echarts/lib/component/legend";
 
 Vue.config.productionTip = false;
 import echarts from 'echarts'
-
 Vue.prototype.$echarts = echarts
 
 new Vue({
-    el: '#app',
-    router,
-    store,
-    render: h => h(App),
-    data() {
-      return {
-        tableHeight: window.screen.height * 0.55
-      }
-    }
-  }
-)
+  el: '#app',
+  router,
+  store,
+  render: h => h(App)
+})
