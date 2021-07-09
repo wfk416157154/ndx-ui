@@ -85,5 +85,10 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  data() {
+    return {
+      tableHeight: window.screen.height * 0.55
+    }
+  }
 })
