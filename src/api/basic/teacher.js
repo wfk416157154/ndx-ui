@@ -9,6 +9,15 @@ export function listTeacher(query) {
   })
 }
 
+// 查询老师信息主页面列表
+export function listHomepage(query) {
+  return request({
+    url: '/basic/teacher/listHomepage',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师信息详细
 export function getTeacher(id) {
   return request({

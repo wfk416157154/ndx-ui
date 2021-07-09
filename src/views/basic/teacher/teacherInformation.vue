@@ -18,7 +18,7 @@
               <li class="list-group-item">
                 性别
                 <div class="pull-right">
-                  <span v-if="userInfo.xb == '1'">女</span>
+                  <span v-if="userInfo.xb == '0'">女</span>
                   <span v-else>男</span>
                 </div>
               </li>
@@ -33,6 +33,10 @@
               <li class="list-group-item">
                 毕业专业
                 <div class="pull-right">{{ userInfo.byzy }}</div>
+              </li>
+              <li class="list-group-item">
+                日语等级
+                <div class="pull-right">{{ userInfo.kzzd3 }}</div>
               </li>
             </ul>
           </div>
@@ -159,6 +163,7 @@
 <script>
 import { getTeacher } from "@/api/basic/teacher";
 import { selectFileList } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 export default {
   name: "teacherInformation",
 
@@ -193,7 +198,6 @@ export default {
   methods: {
     /** 修改按钮操作 */
     getUser(id) {
-      console.log(id);
       getTeacher(id).then(response => {
         this.form = response.data;
         this.open = true;
