@@ -51,13 +51,13 @@ module.exports = {
         '@': resolve('src')
       }
     },
-    plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jquery',
-        jQuery: 'jquery',
-        'windows.jQuery': 'jquery'
-      })
-    ]
+    // plugins: [
+    //   new webpack.ProvidePlugin({
+    //     $: 'jquery',
+    //     jQuery: 'jquery',
+    //     'windows.jQuery': 'jquery'
+    //   })
+    // ]
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test

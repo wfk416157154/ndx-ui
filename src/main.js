@@ -24,8 +24,6 @@ import Pagination from "@/components/Pagination";
 import RightToolbar from "@/components/RightToolbar"
 // 字典标签组件（使用频繁可在全局挂载）
 import DictTag from '@/components/DictTag'
-// jquery
-import $ from 'jquery'
 
 import 'xe-utils'
 import VXETable from 'vxe-table'
@@ -42,7 +40,6 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.renderDict = renderDict
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
-Vue.prototype.$ =$;
 
 Vue.prototype.msgSuccess = function (msg) {
   this.$message({ showClose: true, message: msg, type: "success" });
