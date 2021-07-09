@@ -88,6 +88,7 @@
 
     <el-table
       border
+      :height="$root.tableHeight"
       v-loading="loading"
       :data="schoolList"
       @selection-change="handleSelectionChange"
@@ -136,7 +137,7 @@
 
     <!-- 添加或修改校区基础信息对话框 -->
     <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="open" append-to-body>
-      <el-form class="wrap-el-form" ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label-width="120px" label="学校名称" prop="xxmc">
           <el-input maxlength="15" v-model="form.xxmc" placeholder="请输入学校名称" />
         </el-form-item>
@@ -144,7 +145,7 @@
           <el-input maxlength="50" v-model="form.xxdz" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label-width="120px" label="日语学生总人数" prop="ryxszrs">
-          <el-input maxlength="5" v-model="form.ryxszrs" placeholder="请输入日语学生总人数" />
+          <el-input maxlength="5" v-model="form.ryxszrs" placeholder="日语学生总人数系统自动计算" readonly />
         </el-form-item>
         <el-form-item label-width="120px" label="校区负责人" prop="xqfzr">
           <el-input maxlength="4" v-model="form.xqfzr" placeholder="请输入校区负责人" />
@@ -223,6 +224,7 @@ import {
   updateSchool
 } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
+import {mapState} from "vuex";
 export default {
   name: "School",
   components: {},
@@ -317,7 +319,6 @@ export default {
     this.getDicts("schoolStatus").then(response => {
       this.schoolStatusOptions = response.data;
     });
-
   },
   methods: {
     /** 查询校区基础信息列表 */
@@ -483,9 +484,3 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.wrap-el-form {
-  padding-right: 30px;
-  box-sizing: border-box;
-}
-</style>

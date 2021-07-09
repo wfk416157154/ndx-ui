@@ -113,7 +113,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table border v-loading="loading" :data="bjclassList" @selection-change="handleSelectionChange">
+    <el-table border v-loading="loading" :height="$root.tableHeight" :data="bjclassList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column v-if="false" label="状态" align="center" prop="id" />
       <el-table-column v-if="false" label="开班照" align="center" prop="kbz" />
@@ -172,7 +172,7 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="校区名称" prop="xqmc">
-          <el-select v-model="form.xqmc" placeholder="请选择校区名称" @change="setXqmcId">
+          <el-select v-model="form.xqmc" filterable placeholder="请选择校区名称" @change="setXqmcId">
             <el-option
               v-for="item in selectXqmc"
               :key="item.id"
@@ -185,7 +185,7 @@
           <el-input v-model="form.rybjmc" maxlength="30" placeholder="请输入日语班级名称" />
         </el-form-item>
         <el-form-item label="班级人数" prop="bjrs">
-          <el-input v-model="form.bjrs" maxlength="5" placeholder="请输入班级人数" />
+          <el-input v-model="form.bjrs" maxlength="5" placeholder="班级人数系统自动计算" readonly />
         </el-form-item>
         <el-form-item label="开班学期" prop="nj">
           <el-select v-model="form.nj" placeholder="请选择学期">
