@@ -136,8 +136,8 @@
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
       <el-table-column label="分配的日语班级" align="center" prop="fpbj" />
-      <el-table-column label="入职时间" align="center" prop="rzsj" width="180" v-if="false" />
-      <el-table-column label="入职工龄(月)" align="center" prop="rzgl" />
+      <el-table-column label="入职时间" align="center" prop="rzsj" width="180"  />
+      <el-table-column label="工龄(月)" align="center" prop="rzgl" />
       <el-table-column label="身份证号" align="center" prop="sfzh" v-if="false" />
       <el-table-column label="电话号码" align="center" prop="dhhm" />
       <el-table-column label="家庭地址" align="center" prop="jtzz" v-if="false" />
@@ -153,7 +153,6 @@
         </template>
       </el-table-column>
       <el-table-column label="离职时间" align="center" prop="kzzd5" v-if="lzShow"/>
-      <el-table-column label="离职工龄" align="center" prop="lzgl" v-if="lzShow"/>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
