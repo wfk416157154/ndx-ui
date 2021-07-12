@@ -152,6 +152,8 @@
           <dict-tag :options="zaizhiStatusOptions" :value="scope.row.kzzd4"/>
         </template>
       </el-table-column>
+      <el-table-column label="离职时间" align="center" prop="kzzd5" v-if="lzShow"/>
+      <el-table-column label="离职工龄" align="center" prop="lzgl" v-if="lzShow"/>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -207,6 +209,7 @@ export default {
   components: {},
   data() {
     return {
+      lzShow:false,//离职信息是否展示
       // 遮罩层
       loading: true,
       // 选中数组
@@ -395,6 +398,11 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
+      if (this.queryParams.kzzd4==="2"){
+        this.lzShow = true
+      }else {
+        this.lzShow = false
+      }
     },
     /** 重置按钮操作 */
     resetQuery() {
