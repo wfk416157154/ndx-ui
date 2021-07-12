@@ -128,7 +128,14 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" border :height="$root.tableHeight" :data="teacherList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      border
+      :height="$root.tableHeight"
+      :data="teacherList"
+      @selection-change="handleSelectionChange"
+      style="width: 100%"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false" />
       <el-table-column label="老师头像" align="center" prop="lstx" />
@@ -147,9 +154,35 @@
       <el-table-column label="毕业学校" align="center" prop="byxx" />
       <el-table-column label="日语等级证书" align="center" prop="kzzd3" />
       <el-table-column label="毕业专业" align="center" prop="byzy" v-if="false" />
-      <el-table-column label="在职状态" align="center" prop="kzzd4" >
+      <el-table-column
+        label="教师资格证"
+        align="center"
+        prop="jszgzArr"
+        :width="flexColumnWidth('jszgzArr',teacherList)"
+      >
         <template slot-scope="scope">
-          <dict-tag :options="zaizhiStatusOptions" :value="scope.row.kzzd4"/>
+          <div class="block" style="display : flex; width : 100% ; height : 100%">
+            <el-image
+              style="width: 60px; height: 60px; margin : 0px 5px"
+              v-for="(item,index) in scope.row.jszgzArr"
+              :key="index"
+              :src="item"
+              :preview-src-list="scope.row.jszgzArr"
+            >
+              <div
+                slot="error"
+                style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc"
+                class="image-slot"
+              >
+                <span>加载失败</span>
+              </div>
+            </el-image>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="在职状态" align="center" prop="kzzd4">
+        <template slot-scope="scope">
+          <dict-tag :options="zaizhiStatusOptions" :value="scope.row.kzzd4" />
         </template>
       </el-table-column>
       <el-table-column label="离职时间" align="center" prop="kzzd5" v-if="lzShow"/>
@@ -188,7 +221,6 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
   </div>
 </template>
 
@@ -243,10 +275,10 @@ export default {
         xb: null,
         sfyjszgz: null,
         status: null,
-        kzzd4:"1" //默认在职
+        kzzd4: "1" //默认在职
       },
       // 表单参数
-       form : {
+      form: {
         id: null,
         lstx: null,
         xqmc: null,
@@ -299,7 +331,7 @@ export default {
       selectXqmc: [],
       // 班级选择
       bjclassList: [],
-      zaizhiStatusOptions:[]
+      zaizhiStatusOptions: []
     };
   },
   created() {
@@ -420,12 +452,12 @@ export default {
       this.open = true;
       this.title = "添加老师信息";
       // 获取页面中参数配置的路由
-      this.getConfigKey("addTeacher").then(resp=>{
-        this.router=resp.msg;
+      this.getConfigKey("addTeacher").then(resp => {
+        this.router = resp.msg;
         this.$router.push({
           path: this.router
         });
-      })
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(id) {
@@ -476,7 +508,20 @@ export default {
         `basic_teacher.xlsx`
       );
     },
-
+    // 宽度适配
+    flexColumnWidth(str, tableData) {
+      let arr = [];
+      for (let i = 0; i < tableData.length; i++) {
+        if (tableData[i] && tableData[i][str] && tableData[i][str].length > 0) {
+          tableData.forEach(obj => {
+            if (obj[str] && obj[str].length) arr.push(obj[str].length);
+          });
+        } else {
+          continue;
+        }
+      }
+      return Math.max.call(null, ...arr) * 75;
+    }
   }
 };
 </script>
