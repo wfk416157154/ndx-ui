@@ -10,18 +10,25 @@ import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'
 import store from './store'
 import router from './router'
-import permission from './directive/permission'
+
 import { download } from '@/utils/request'
 
 import install from '@/utils/preventReClick'
 import './assets/icons' // icon
-import './permission' // permission control
+import directive from './directive' //directive
+
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels,renderDict, handleTree } from "@/utils/ruoyi";
 import Pagination from "@/components/Pagination";
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar"
+// 富文本组件
+import Editor from "@/components/Editor"
+// 文件上传组件
+import FileUpload from "@/components/FileUpload"
+// 图片上传组件
+import ImageUpload from "@/components/ImageUpload"
 // 字典标签组件（使用频繁可在全局挂载）
 import DictTag from '@/components/DictTag'
 
@@ -57,8 +64,11 @@ Vue.prototype.msgInfo = function (msg) {
 Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
 Vue.component('DictTag', DictTag)
+Vue.component('Editor', Editor)
+Vue.component('FileUpload', FileUpload)
+Vue.component('ImageUpload', ImageUpload)
 
-Vue.use(permission)
+Vue.use(directive)
 Vue.use(install)
 Vue.use(VXETable)
 

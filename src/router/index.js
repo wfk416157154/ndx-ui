@@ -6,6 +6,7 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 import ParentView from '@/components/ParentView';
+import InnerLink from '@/layout/components/InnerLink'
 import teacherForm from '../views/basic/teacher/teacherForm.vue';
 import bjclassForm from '../views/basic/bjclass/bjclassForm.vue';
 /**
