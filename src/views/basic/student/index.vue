@@ -8,12 +8,12 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称" @change="xqmcOnChange">
           <el-option
             v-for="item in schoolList"
             :key="item.id"
             :label="item.xxmc"
-            :value="item.xxmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -27,12 +27,12 @@
         />
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
-        <el-select v-model="queryParams.rybj" placeholder="请选择日语班级">
+        <el-select v-model="queryParams.rybj" filterable placeholder="请选择日语班级">
           <el-option
             v-for="item in bjclassList "
             :key="item.id"
             :label="item.rybjmc"
-            :value="item.rybjmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -264,12 +264,12 @@
         </el-form-item>
         <el-col :span="12">
           <el-form-item label-width="100px" label="校区名称" prop="xqmc">
-            <el-select v-model="form.xqmc" placeholder="请选择校区名称">
+            <el-select v-model="form.xqmc" filterable placeholder="请选择校区名称">
               <el-option
                 v-for="item in schoolList"
                 :key="item.id"
                 :label="item.xxmc"
-                :value="item.xxmc"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -282,12 +282,12 @@
         <el-col :span="12">
           <el-form-item label-width="100px" label="日语班" prop="ryb">
             <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
-            <el-select v-model="form.ryb" placeholder="请选择日语班" @change="selectBjclass">
+            <el-select v-model="form.ryb" filterable placeholder="请选择日语班" >
               <el-option
                 v-for="item in bjclassList"
                 :key="item.id"
                 :label="item.rybjmc"
-                :value="item"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -551,6 +551,10 @@
         :on-success="handleFileSuccess"
         :auto-upload="false"
         drag
+        v-loading="fullscreenLoading"
+        element-loading-text="正在进行数据导入·······"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
@@ -560,11 +564,12 @@
         <div class="el-upload__tip" slot="tip">
           <!--<el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据-->
           <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+          <el-link type="info" style="margin-left:50px ;font-size:12px;color: red" v-if="checkFailExcel" @click="downloadFailExcel">查看错误信息</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitFileForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button>
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -756,7 +761,11 @@ export default {
       //校区信息
       schoolList: [],
       // 班级选择
-      bjclassList: []
+      bjclassList: [],
+      fullFilePath:null,
+      checkFailExcel:false,
+      importBtn:false,
+      fullscreenLoading:false
     };
   },
   created() {
@@ -773,24 +782,20 @@ export default {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
-    listBjclass(this.queryParams).then(response => {
-      this.bjclassList = response.rows
-      // this.xqQueryParams.id = response.rows[0].kzzd1
-      // listSchool(this.xqQueryParams).then(response => {
-      //   this.schoolList = response.rows;
-      // });
-    });
     listSchool(this.queryParams).then(response => {
       this.schoolList = response.rows;
     });
-
-
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   mounted() {
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   methods: {
+    xqmcOnChange(id){
+      listBjclass({kzzd1:id}).then(response => {
+        this.bjclassList = response.rows
+      });
+    },
     showStudentDetailsPage(row) {
       // 获取页面中参数配置的路由
       this.getConfigKey("showStudentDetails").then(resp => {
@@ -823,10 +828,10 @@ export default {
       });
     },
 
-    selectBjclass(obj) {
+    /*selectBjclass(obj) {
       this.form.ryb = obj.rybjmc;
       this.form.kzzd1 = obj.id;
-    },
+    },*/
     // 性别字典翻译
     xbFormat(row, column) {
       return this.selectDictLabel(this.xbOptions, row.xb);
@@ -1041,8 +1046,15 @@ export default {
 
     /** 导入按钮操作 */
     handleImport() {
+      this.importBtn=false
       this.upload.title = "学生信息导入";
       this.upload.open = true;
+      this.checkFailExcel=false
+      this.upload.isUploading = false;
+      this.$nextTick(() => {
+        // 页面元素加载完成后执行该方法
+        this.$refs.upload.clearFiles();
+      });
     },
     /** 下载模板操作 */
     importTemplate() {
@@ -1054,6 +1066,18 @@ export default {
         `学生信息导入模板_${new Date().getTime()}.xlsx`
       );
     },
+
+    /** 下载导入失败的excel */
+    downloadFailExcel() {
+      this.download(
+        "basic/basicCommonController/download",
+        {
+          fullFilePath:this.fullFilePath
+        },
+        `学生信息导入-校验未通过数据详情_${new Date().getTime()}.xlsx`
+      );
+    },
+
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;
@@ -1061,15 +1085,33 @@ export default {
     },
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
-      this.upload.open = false;
-      this.upload.isUploading = false;
+      this.fullscreenLoading = false;
+      if(undefined!=response.data){
+        this.fullFilePath=response.data
+        this.checkFailExcel=true
+        this.notify(true,"warning","导入数据警告，校验不通过，请查看错误信息",response.msg)
+      }else if(undefined!=response.code&&response.code==500){
+        this.notify(false,"error","导入失败，请联系技术管理员",response.msg)
+      }else{
+        this.notify(false,"success","导入成功",response.msg)
+        this.getList();
+      }
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.importBtn=true
+      this.fullscreenLoading = true;
+      this.$refs.upload.submit();
+    },
+    notify(flag,type,title,msg){
+      this.upload.open = flag;
+      this.upload.isUploading = flag;
       this.$refs.upload.clearFiles();
       this.$notify({
-        title: "上传成功",
-        message: response.msg,
-        type: "success"
+        title: title,
+        message: msg,
+        type: type
       });
-      this.getList();
     },
     // 学生谈话文件上传成功处理
     handleXsthFileSuccess(response, file, fileList) {
@@ -1088,10 +1130,6 @@ export default {
         this.formStu.kzzd1 = obj.name;
         this.submitStuFormButton = false;
       });
-    },
-    // 提交上传文件
-    submitFileForm() {
-      this.$refs.upload.submit();
     },
     //添加谈话内容
     addStuTalk() {

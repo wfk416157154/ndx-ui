@@ -8,7 +8,7 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称">
           <el-option
             v-for="item in selectXqmc"
             :key="item.id"
@@ -17,8 +17,8 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="年级" prop="nj">
-        <el-select v-model="queryParams.nj" placeholder="请选择年级">
+      <el-form-item label="开班学期" prop="nj">
+        <el-select v-model="queryParams.nj" placeholder="请选择开班学期">
           <el-option
             v-for="item in selectNj"
             :key="item.dictValue"

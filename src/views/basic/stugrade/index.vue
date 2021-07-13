@@ -249,6 +249,10 @@
         :on-success="handleFileSuccess"
         :auto-upload="false"
         drag
+        v-loading="fullscreenLoading"
+        element-loading-text="正在进行数据导入·······"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
@@ -263,7 +267,7 @@
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button>
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -377,7 +381,9 @@
         xsbhDisabled: true,
         //  考试类型
         getExaminationType: [],
-        wlOption:[]
+        wlOption:[],
+        importBtn:false,
+        fullscreenLoading:false
       };
     },
     created() {
@@ -600,8 +606,13 @@
       },
       /** 导入按钮操作 */
       handleImport() {
+        this.importBtn=false
         this.upload.title = "学生成绩基础表数据导入";
         this.upload.open = true;
+        this.$nextTick(() => {
+          // 页面元素加载完成后执行该方法
+          this.$refs.upload.clearFiles();
+        });
       },
       /** 下载模板操作 */
       importTemplate() {
@@ -618,15 +629,25 @@
         this.upload.isUploading = true;
       },
       // 文件上传成功处理
-      handleFileSuccess(response, file, fileList) {
+      handleFileSuccess(res, file, fileList) {
+        if(undefined!=res.code&&res.code==200){
+          this.notify()
+          this.getList();
+        }else{
+          this.notify()
+        }
+      },
+      notify(){
+        this.fullscreenLoading = false;
         this.upload.open = false;
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
-        this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
-        this.getList();
+        this.$alert(res.msg, "导入结果", {dangerouslyUseHTMLString: true});
       },
       // 提交上传文件
       submitFileForm() {
+        this.importBtn=true
+        this.fullscreenLoading = true;
         this.$refs.upload.submit();
       },
       // 全部按钮
