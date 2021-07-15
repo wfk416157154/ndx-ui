@@ -611,9 +611,7 @@ export default {
               if (response.code == 200) {
                 this.msgSuccess("修改成功");
                 this.open = false;
-                this.$router.push({
-                  path: "/jcsjb/lsgl/teacher"
-                });
+                this.$router.go(-1);
                 this.reload();
               }
             });
@@ -622,9 +620,7 @@ export default {
               if (response.code == 200) {
                 this.msgSuccess("新增成功");
                 this.open = false;
-                this.$router.push({
-                  path: "/jcsjb/lsgl/teacher"
-                });
+                this.$router.go(-1);
                 this.reload();
               }
             });
