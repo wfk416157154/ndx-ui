@@ -111,7 +111,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table  border v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="字典编号" align="center" prop="dictId" />
       <el-table-column label="字典名称" align="center" prop="dictName" :show-overflow-tooltip="true" />
@@ -193,14 +193,9 @@
 
 <script>
   import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/system/dict/type";
-  // 字典标签组件（使用频繁可在全局挂载）
-  import DictTag from '@/components/DictTag'
 
   export default {
     name: "Dict",
-    components: {
-      DictTag
-    },
     data() {
       return {
         // 遮罩层

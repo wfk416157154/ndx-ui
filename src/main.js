@@ -10,13 +10,12 @@ import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'
 import store from './store'
 import router from './router'
-
+import directive from './directive' //directive
 import { download } from '@/utils/request'
 
 import install from '@/utils/preventReClick'
 import './assets/icons' // icon
-import directive from './directive' //directive
-
+import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels,renderDict, handleTree } from "@/utils/ruoyi";
@@ -31,6 +30,7 @@ import FileUpload from "@/components/FileUpload"
 import ImageUpload from "@/components/ImageUpload"
 // 字典标签组件（使用频繁可在全局挂载）
 import DictTag from '@/components/DictTag'
+import Moment from 'moment'
 
 import 'xe-utils'
 import VXETable from 'vxe-table'
