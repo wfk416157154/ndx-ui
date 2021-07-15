@@ -323,49 +323,53 @@
               <div>
                 <span>3. 宣讲和问答</span>
                 <div>
-                  <textarea
+                  <!-- <textarea
                     name="description"
                     id="description"
                     v-model="trainIndexList.threeThree"
                     cols="60"
                     rows="5"
-                  ></textarea>
+                  ></textarea>-->
+                  <editor v-model="trainIndexList.threeThree" :min-height="192" />
                 </div>
               </div>
               <div>
                 <span>4. 试听课第一节</span>
                 <div>
-                  <textarea
+                  <!-- <textarea
                     name="description"
                     id="description"
                     v-model="trainIndexList.threeFour"
                     cols="60"
                     rows="5"
-                  ></textarea>
+                  ></textarea>-->
+                  <editor v-model="trainIndexList.threeFour" :min-height="192" />
                 </div>
               </div>
               <div>
                 <span>5. 试听课第二节</span>
                 <div>
-                  <textarea
+                  <!-- <textarea
                     name="description"
                     id="description"
                     v-model="trainIndexList.threeFive"
                     cols="60"
                     rows="5"
-                  ></textarea>
+                  ></textarea>-->
+                  <editor v-model="trainIndexList.threeFive" :min-height="192" />
                 </div>
               </div>
               <div>
                 <span>6. 某篇课文的教案</span>
                 <div>
-                  <textarea
+                  <!-- <textarea
                     name="description"
                     id="description"
                     v-model="trainIndexList.threeSix"
                     cols="60"
                     rows="5"
-                  ></textarea>
+                  ></textarea>-->
+                  <editor v-model="trainIndexList.threeSix" :min-height="192" />
                 </div>
               </div>
             </td>
@@ -465,7 +469,6 @@
               </div>
               <div>
                 <span>扩音器</span>
-                <br />
                 <el-checkbox
                   style="float : right;margin-right : 10px"
                   v-model="trainIndexList.fiveTwo"
@@ -474,10 +477,8 @@
                   :false-label="0"
                 ></el-checkbox>
               </div>
-              <div style="padding : 20px">
+              <div>
                 <span>试听手册</span>
-                <br />
-                <br />
                 <el-checkbox
                   style="float : right;margin-right : 10px"
                   v-model="trainIndexList.fiveThree"
@@ -485,11 +486,6 @@
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
-                <!-- <Tinymce v-model="trainIndexList.fiveThree" />
-                <div v-if="content" class="editor-content">
-                  <h3>预览：</h3>
-                  <div v-html="trainIndexList.fiveThree" />
-                </div> -->
               </div>
               <div>
                 <span>相关文件</span>
@@ -549,7 +545,6 @@
 </template>
 
 <script>
-import Tinymce from "@/components/Tinymce";
 import { listTeacherTrain, updateTeacherTrain } from "@/api/basic/teacherTrain";
 import {
   listStaticform,
@@ -659,9 +654,6 @@ export default {
     this.getDicts("tea_per_type").then(res => {
       this.whetherList = res.data;
     });
-  },
-  components: {
-    Tinymce
   },
   mounted() {
     this.getList();
@@ -829,11 +821,5 @@ export default {
   height: 100%;
   padding: 30px;
   box-sizing: border-box;
-  .editor-content {
-    margin-left: 30px;
-    flex-grow: 1;
-    border: 2px dashed #f1f1f1;
-    padding: 0 20px;
-  }
 }
 </style>
