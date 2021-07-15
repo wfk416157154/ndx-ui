@@ -45,8 +45,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!--<el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
+      <el-form-item label="毕业状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择毕业状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
             :key="dict.dictValue"
@@ -54,7 +54,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>-->
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -128,18 +128,15 @@
           <dict-tag :options="selectNj" :value="scope.row.nj"/>
         </template>
       </el-table-column>
-      <el-table-column label="状态" v-if="false" align="center" prop="status" />
-
       <el-table-column label="开班时间" align="center" prop="kbsj" />
       <el-table-column label="老师电话" align="center" prop="lsdh" />
-      <el-table-column
-        v-if="false"
-        label="状态"
-        align="center"
-        prop="status"
-        :formatter="statusFormat"
-      />
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="毕业状态" align="center" prop="status" >
+        <template slot-scope="scope">
+          <dict-tag :options="statusOptions" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="毕业时间" align="center" prop="addOrUpdateTime" :formatter="dateFormat" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -209,6 +206,29 @@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input maxlength="300" v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+
+        <el-form-item label="毕业状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择毕业状态" clearable @change="controlBysj" size="small">
+            <el-option
+              v-for="dict in statusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="毕业时间" prop="addOrUpdateTime">
+          <el-date-picker
+            :disabled="disableBysj"
+            clearable
+            size="mini"
+            v-model="form.addOrUpdateTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请输入毕业时间"
+          ></el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -308,6 +328,7 @@ import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
+import moment from "moment";
 
 export default {
   name: "Bjclass",
@@ -347,7 +368,7 @@ export default {
         nj: null,
         rybjmc: null,
         lsxm: null,
-        status: null
+        status: "1" //默认查询 未毕业的日语班级
       },
       // 表单参数
       form: {},
@@ -394,11 +415,12 @@ export default {
       photoNum2: 0,
       // 最大上传次数
       maxPhotoNum: 3,
+      disableBysj:true
     };
   },
   created() {
     this.getList();
-    this.getDicts("basic_status").then(response => {
+    this.getDicts("graduateStatus").then(response => {
       this.statusOptions = response.data;
     });
     this.getDicts("nianji").then(response => {
@@ -426,6 +448,18 @@ export default {
     // 状态字典翻译
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, row.status);
+    },
+    //控制毕业时间时间选择框是否禁用
+    controlBysj(id){
+      if(id==2){// 已毕业
+        this.disableBysj=false
+      }else{
+        this.disableBysj=true
+        this.form.addOrUpdateTime=null
+      }
+    },
+    dateFormat:function(date){
+      return moment(date).format("YYYY-MM-DD")
     },
     // 取消按钮
     cancel() {

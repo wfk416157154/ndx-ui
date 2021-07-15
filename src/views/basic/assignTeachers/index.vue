@@ -105,14 +105,14 @@
           <span>开班时间 :</span>
           <span>{{item.kbsj}}</span>
           <br />
-          <!-- <span>老师姓名 :</span>
-          <span>{{item.lsxm}}</span>-->
+          <span>已分配的老师姓名 :</span>
+          <span>
           <el-select
-            style="margin-bottom : 10px"
             v-model="item.lsxmArr"
             filterable
             multiple
             placeholder="当前老师"
+            disabled="false"
           >
             <el-option
               v-for="item in teacherListOption"
@@ -121,6 +121,7 @@
               :value="item.id"
             ></el-option>
           </el-select>
+            </span>
           <br />
           <el-select
             style="margin-bottom : 10px"
