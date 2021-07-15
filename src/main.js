@@ -10,12 +10,12 @@ import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'
 import store from './store'
 import router from './router'
-
+import directive from './directive' //directive
 import { download } from '@/utils/request'
 
 import install from '@/utils/preventReClick'
 import './assets/icons' // icon
-import directive from './directive' //directive
+import './permission' // permission control
 
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";

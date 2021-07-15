@@ -20,7 +20,7 @@
     </el-form>
 
     <!-- 培训主页table -->
-    <el-table  border :data="teacherList">
+    <el-table border :data="teacherList">
       <el-table-column label="参训人" align="center" prop="cxr" />
       <el-table-column label="培训时间" align="center" prop="pxsj" />
       <el-table-column label="实习班级" align="center" prop="sxbj" />
@@ -474,8 +474,9 @@
                   :false-label="0"
                 ></el-checkbox>
               </div>
-              <div>
+              <div style="padding : 20px">
                 <span>试听手册</span>
+                <br />
                 <br />
                 <el-checkbox
                   style="float : right;margin-right : 10px"
@@ -484,6 +485,11 @@
                   :true-label="1"
                   :false-label="0"
                 ></el-checkbox>
+                <!-- <Tinymce v-model="trainIndexList.fiveThree" />
+                <div v-if="content" class="editor-content">
+                  <h3>预览：</h3>
+                  <div v-html="trainIndexList.fiveThree" />
+                </div> -->
               </div>
               <div>
                 <span>相关文件</span>
@@ -543,6 +549,7 @@
 </template>
 
 <script>
+import Tinymce from "@/components/Tinymce";
 import { listTeacherTrain, updateTeacherTrain } from "@/api/basic/teacherTrain";
 import {
   listStaticform,
@@ -652,6 +659,9 @@ export default {
     this.getDicts("tea_per_type").then(res => {
       this.whetherList = res.data;
     });
+  },
+  components: {
+    Tinymce
   },
   mounted() {
     this.getList();
@@ -819,5 +829,11 @@ export default {
   height: 100%;
   padding: 30px;
   box-sizing: border-box;
+  .editor-content {
+    margin-left: 30px;
+    flex-grow: 1;
+    border: 2px dashed #f1f1f1;
+    padding: 0 20px;
+  }
 }
 </style>

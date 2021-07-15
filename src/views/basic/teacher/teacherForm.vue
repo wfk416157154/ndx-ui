@@ -19,19 +19,27 @@
       <!-- </el-col> -->
       <el-col :span="12">
         <el-form-item label-width="180px" label="校区名称" prop="xqmc">
-          <el-select v-model="form.xqmc" placeholder="请选择校区名称">
+          <el-select
+            :remote-method="getListSchool"
+            v-model="form.xqmc"
+            filterable
+            remote
+            reserve-keyword
+            @change="getClassList"
+            placeholder="请选择校区名称"
+          >
             <el-option
               v-for="item in selectXqmc"
               :key="item.id"
               :label="item.xxmc"
-              :value="item.xxmc"
+              :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="日语班级" prop="rybj">
-          <el-select v-model="form.rybj" placeholder="请选择日语班级">
+          <el-select v-model="form.rybj" :disabled="iFclassList" placeholder="请选择日语班级">
             <el-option
               v-for="item in bjclassList "
               :key="item.id"
@@ -72,7 +80,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="入职工龄" prop="rzgl">
-          <el-input v-model="form.rzgl" placeholder="请输入入职工龄" />
+          <el-input v-model="form.rzgl" disabled placeholder="请输入入职工龄" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -425,7 +433,9 @@ export default {
       // 校区字典
       selectXqmc: [],
       // 日语班级
-      bjclassList: []
+      bjclassList: [],
+      // 开启班级选项
+      iFclassList: true
     };
   },
   created() {
@@ -446,14 +456,32 @@ export default {
     } else {
       this.reset();
     }
-    listSchool(this.queryParams).then(response => {
-      this.selectXqmc = response.rows;
-    });
-    listBjclass(this.queryParams).then(response => {
-      this.bjclassList = response.rows;
-    });
+    this.getListSchool();
   },
+  watch: {},
   methods: {
+    // 学校查询
+    getListSchool(schoolName) {
+      if (schoolName) {
+        this.queryParams = {};
+        this.queryParams.xxmc = schoolName;
+      }
+      listSchool(this.queryParams).then(response => {
+        this.selectXqmc = response.rows;
+      });
+    },
+    // 获取班级
+    getClassList() {
+      if (this.form.xqmc) {
+        this.$nextTick(() => {
+          this.form.rybj = null;
+          this.iFclassList = false;
+          listBjclass({ kzzd1: this.form.xqmc }).then(response => {
+            this.bjclassList = response.rows;
+          });
+        });
+      }
+    },
     // 性别字典翻译
     xbFormat(row, column) {
       return this.selectDictLabel(this.xbOptions, row.xb);
