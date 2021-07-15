@@ -66,8 +66,8 @@
           />
         </el-select>
       </el-form-item>-->
-      <!--<el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
+        <el-form-item label="毕业状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择毕业状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
             :key="dict.dictValue"
@@ -75,7 +75,7 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>-->
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -274,7 +274,7 @@ export default {
         lsxm: null,
         xb: null,
         sfyjszgz: null,
-        status: null,
+        status: "1",// 默认未毕业
         kzzd4: "1" //默认在职
       },
       // 表单参数
@@ -342,7 +342,7 @@ export default {
     this.getDicts("sys_yes_no").then(response => {
       this.sfyjszgzOptions = response.data;
     });
-    this.getDicts("basic_status").then(response => {
+    this.getDicts("graduateStatus").then(response => {
       this.statusOptions = response.data;
     });
     this.getDicts("zaizhiStatus").then(response => {

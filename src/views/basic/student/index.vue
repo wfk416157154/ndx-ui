@@ -27,7 +27,7 @@
         />
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
-        <el-select v-model="queryParams.rybj" filterable placeholder="请选择日语班级">
+        <el-select v-model="queryParams.ryb" filterable placeholder="请选择日语班级">
           <el-option
             v-for="item in bjclassList "
             :key="item.id"
@@ -61,7 +61,7 @@
             v-for="dict in xkOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
-            :value="dict.dictValue"
+            :value="dict.dictLabel"
           />
         </el-select>
       </el-form-item>
