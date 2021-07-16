@@ -157,6 +157,11 @@ export default {
     async getSchool() {
       let listSchoolResult = await listSchool();
       this.getListSchool = listSchoolResult.rows;
+      if (listSchoolResult.code==200 && listSchoolResult.rows.length==1){
+        this.queryParams.xqid=listSchoolResult.rows[0].id;
+      this.getSchoolId(this.queryParams.xqid);
+      }
+
     },
     // 查询日志
     getList() {
@@ -196,6 +201,9 @@ export default {
     getSchoolId(schoolId) {
       listBjclass({ kzzd1: schoolId }).then(res => {
         this.getBjClass = res.rows;
+        if ( res.rows.length==1){
+          this.queryParams.rybid=res.rows[0].id;
+        }
       });
     },
     // 导出按钮操作

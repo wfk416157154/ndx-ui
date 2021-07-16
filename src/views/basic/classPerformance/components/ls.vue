@@ -202,8 +202,12 @@ export default {
   methods: {
     // 获取班级
     getSchoolId() {
-      listBjclass({ kzzd2: this.$store.state.user.glrid }).then(res => {
+      listBjclass().then(res => {
         this.getBjClass = res.rows;
+        if ( res.rows.length==1){
+          this.form.bjid=res.rows[0].id
+        }
+
       });
     },
     // 获取考试范围
