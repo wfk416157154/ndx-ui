@@ -17,6 +17,14 @@ export function getClassCourse(id) {
   })
 }
 
+// 同日语班的原班级信息查询
+export function ybjQuery(bjid) {
+  return request({
+    url: '/basic/bjclass/ybjQuery/' + bjid,
+    method: 'get'
+  })
+}
+
 // 新增班级课程
 export function addClassCourse(data) {
   return request({

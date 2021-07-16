@@ -8,7 +8,7 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" placeholder="请选择校区名称">
+        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称">
           <el-option
             v-for="item in selectXqmc"
             :key="item.id"
@@ -18,7 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="rybj">
-        <el-select v-model="queryParams.rybj" placeholder="请选择日语班级">
+        <el-select v-model="queryParams.rybj" filterable placeholder="请选择日语班级">
           <el-option
             v-for="item in bjclassList "
             :key="item.id"
@@ -476,10 +476,10 @@ export default {
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
-    listSchool(this.queryParams).then(response => {
+    listSchool().then(response => {
       this.selectXqmc = response.rows;
     });
-    listBjclass(this.queryParams).then(response => {
+    listBjclass().then(response => {
       this.bjclassList = response.rows;
     });
   },

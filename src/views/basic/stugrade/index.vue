@@ -13,6 +13,7 @@
           :disabled="xqmcDisabled"
           placeholder="请选择校区名称"
           @change="xqmcOnChange"
+          filterable
         >
           <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
@@ -23,6 +24,7 @@
           :disabled="rybjDisabled"
           placeholder="请选择日语班"
           @change="rybjOnChange"
+          filterable
         >
           <el-option
             v-for="item in bjclassList"
@@ -415,7 +417,7 @@
     },
       // 获取校区
       getListSchool() {
-        listSchool(this.queryParams).then(response => {
+        listSchool().then(response => {
           this.selectXqmc = response.rows;
         });
       },

@@ -199,13 +199,8 @@
           <span>{{ parseTime(scope.row.rbsj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="退班时间" align="center" prop="tbsj" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.tbsj, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
-      <el-table-column label="选科" align="center" prop="xk" :formatter="xkFormat" />
+      <el-table-column label="选科" align="center" prop="xk"  />
       <el-table-column label="英语分数" align="center" prop="yyfs" />
       <el-table-column label="综合分数" align="center" prop="zhfs" />
       <el-table-column label="QQ号" width="120px" align="center" prop="qqh" />
@@ -218,6 +213,11 @@
       <el-table-column label="班主任电话" width="120px" align="center" prop="bzrdh" />
       <!-- <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" /> -->
       <el-table-column label="备注" width="120px" align="center" prop="remark" />
+      <el-table-column label="退班时间" align="center" prop="tbsj" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.tbsj, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -776,13 +776,13 @@ export default {
     this.getDicts("xkType").then(response => {
       this.xkOptions = response.data;
     });
-    this.getDicts("sys_yes_no").then(response => {
+    this.getDicts("isOrNot").then(response => {
       this.sftcsOptions = response.data;
     });
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
-    listSchool(this.queryParams).then(response => {
+    listSchool().then(response => {
       this.schoolList = response.rows;
     });
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
