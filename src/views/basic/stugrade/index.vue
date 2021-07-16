@@ -348,7 +348,7 @@
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "basic/stugrade/importData"
+          url: process.env.VUE_APP_BASE_API + "/basic/stugrade/importData"
         },
         rules: {
           yyfs: [
@@ -635,16 +635,20 @@
         if(undefined!=res.code&&res.code==200){
           this.notify()
           this.getList();
+          this.msgSuccess(res.msg)
         }else{
           this.notify()
+          this.msgError(res.msg)
         }
       },
       notify(){
         this.fullscreenLoading = false;
         this.upload.open = false;
         this.upload.isUploading = false;
-        this.$refs.upload.clearFiles();
-        this.$alert(res.msg, "导入结果", {dangerouslyUseHTMLString: true});
+        this.$nextTick(() => {
+          // 页面元素加载完成后执行该方法
+          this.$refs.upload.clearFiles();
+        });
       },
       // 提交上传文件
       submitFileForm() {

@@ -114,7 +114,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -292,7 +292,7 @@ export default {
           // 设置上传的请求头部
           headers: { Authorization: "Bearer " + getToken() },
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "basic/classCourse/importData"
+          url: process.env.VUE_APP_BASE_API + "/basic/classCourse/importData"
       },
     };
   },
