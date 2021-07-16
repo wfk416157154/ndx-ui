@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :rules="queryParamsRules" :inline="true" label-width="68px">
       <el-form-item label="校区名称" prop="xqid" v-has-permi="['basic:school:list']" label-width="100px" >
-        <el-select v-model="queryParams.xqid" @change="onChooseSchool" placeholder="请选择校区名称" >
+        <el-select v-model="queryParams.xqid" filterable @change="onChooseSchool" placeholder="请选择校区名称" >
           <el-option
             v-for="item in schoolList"
             :key="item.id"
@@ -77,6 +77,27 @@
             </el-tab-pane>
           </el-tabs>
         </el-card>
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span style="color: #00afff">所有课表</span>
+          </div>
+          <div v-for="(item,index) in classCourseBasicList" :key="index" class="list-group-item">
+              <el-switch
+                v-model="item.sfqy"
+                active-color="#13ce66"
+                inactive-color="#ff4949">
+              </el-switch>
+                <div v-if="item.sfqy==1" style="color: #13ce66;float: right"  >
+                  {{item.nd}} 年度-
+                  {{selectDictLabel(kbTypeOptionsEL,item.kbType)}}
+                </div>
+                <div v-else style="float: right">
+                  {{item.nd}} 年度-
+                  {{selectDictLabel(kbTypeOptionsEL,item.kbType)}}
+                </div>
+          </div>
+        </el-card>
+
       </el-col>
       <el-col :span="18" :xs="24">
         <el-card>
@@ -132,7 +153,7 @@
                 <vxe-table-column title="课程类型" align="center" field="kcType"
                                   :edit-render="{name: '$select', options: kcType}"/>
                 <vxe-table-column title="周一" align="center" field="monday"
-                                  :edit-render="{name: '$select', options: isCourse}"/>
+                                  :edit-render="{name: '$select', options: isCourse, events: {change: mondayChangeEvent}}"/>
                 <vxe-table-column title="周二" align="center" field="tuesday"
                                   :edit-render="{name: '$select', options: isCourse}"/>
                 <vxe-table-column title="周三" align="center" field="wednesday"
@@ -154,6 +175,20 @@
       </el-col>
     </el-row>
 
+
+    <!-- 添加或修改课程对话框 -->
+    <el-dialog :title="courseTitle" :visible.sync="courseOpen" width="500px" append-to-body>
+      <el-table :data="ybjQueryList" @selection-change="courseHandleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column property="ybj" label="原班级"></el-table-column>
+        <el-table-column property="rs" label="班级人数"></el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="courseSubmitForm">确 定</el-button>
+        <el-button @click="courseCancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -163,14 +198,18 @@
     listClassCourse,
     saveList,
     addClassCourse,
-    updateClassCourse
+    updateClassCourse,
+    ybjQuery
   } from "@/api/basic/classCourse";
   import { listSchool } from "@/api/basic/school";
   import {delClassCourse} from "@/api/basic/classCourse";
+  import { listClassCourseBasic, getClassCourseBasic, delClassCourseBasic, addClassCourseBasic, updateClassCourseBasic } from "@/api/basic/classCourseBasic";
 
   export default {
     data() {
       return {
+        courseTitle:"",
+        courseOpen:false,
         startTime: "",
         btnDisabled: true,
         // 班级id
@@ -249,7 +288,10 @@
         // 课程类型
         kcType: [],
         // 课表名字
-        kbName: ""
+        kbName: "",
+        classCourseBasicList:[],
+        switchControl:true,
+        ybjQueryList:[]
       };
     },
     created() {
@@ -266,7 +308,7 @@
       this.getDicts("kc_type").then(response => {
         this.kcType = this.renderDict(response.data);
       });
-      listSchool(this.queryParams).then(response => {
+      listSchool().then(response => {
         this.schoolList = response.rows;
       });
     },
@@ -360,6 +402,7 @@
         const result = $table.getRecordset()
         let flag = false;
         await $table.fullValidate(result.insertRecords, res => {
+          console.log("res=",res)
           if (undefined != res) {
             flag = true;
           }
@@ -418,6 +461,7 @@
       switchingClasses(bjid) {
         this.queryParams.bjid = bjid;
         this.getCourse();
+        this.getClassCourseBasicList(bjid);
       },
       renderColor({row, rowIndex, column}) {
         if ("monday" == column.property) {
@@ -446,8 +490,65 @@
         if ("1" == value) {
           return {backgroundColor: '#187', color: '#ffffff'};
         }
+      },
+      /* 拿到该班级的所有课表 */
+      getClassCourseBasicList(rybjid){
+        let obj={
+          bjid:rybjid
+        }
+        listClassCourseBasic(obj).then(response => {
+          this.classCourseBasicList = response.rows;
+        });
+        ybjQuery(rybjid).then(res=>{
+          this.ybjQueryList=res.rows
+        });
+      },
+       async mondayChangeEvent({row,column}){// 星期一选项
+         console.log("==",row.monday)
+         if(row.monday=="1"){// 表示有课
+           let flag= await this.ifKclxFlag()
+           console.log("=flag=",flag)
+          if(!flag){// 当校验通过
+            this.courseTitle="请选择上该节课所属的原班级"
+            this.courseOpen=true
+          }
+        }
+      },
+      /* 校验新增的数据 */
+       ifKclxFlag(){
+        const $table = this.$refs.xTable
+        const result = $table.getRecordset()
+        let flag = false;
+        $table.fullValidate(result.insertRecords, res => {
+          console.log("res:",res)
+          if (undefined != res) {
+           return  flag = true;
+          }else {
+            return flag;
+          }
+        })
+         if (flag) {
+           this.msgError("请先选择课程类型！")
+         }
+
+      },
+      courseSubmitForm(){
+        this.courseOpen=false
+      },
+      courseCancel(){
+        this.courseOpen=false
+      },
+      courseHandleSelectionChange(selection){
+        selection.map(item => {
+          console.log("item:",item)
+        });
+        console.log("selection:",selection)
       }
     }
+
   };
 </script>
+
+<style>
+</style>
 

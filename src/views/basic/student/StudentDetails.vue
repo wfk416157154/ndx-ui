@@ -118,15 +118,8 @@ import {
 } from "@/api/basic/student";
 import {
   listTeacherTalk,
-  getTeacherTalk,
-  delTeacherTalk,
-  addTeacherTalk,
-  updateTeacherTalk
 } from "@/api/basic/teacherTalk";
-import { listBjclass, getBjclass } from "@/api/basic/bjclass";
-import { listSchool } from "@/api/basic/school";
-import { addImg } from "@/api/tool/common";
-import { getToken } from "@/utils/auth";
+import {  getBjclass } from "@/api/basic/bjclass";
 
 export default {
   name: "StudentDetails",
