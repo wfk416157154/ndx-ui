@@ -318,8 +318,12 @@ export default {
     // 获取老师所带班级
     getListBjclass() {
       this.glrid = this.$store.state.user.glrid;
-      listBjclass({ kzzd2: this.glrid }).then(res => {
+      listBjclass().then(res => {
         this.classList = res.rows;
+        if ( res.rows.length==1){
+          this.queryParams.bjid=res.rows[0].id;
+          this.form.bjid=res.rows[0].id;
+        }
       });
     },
     // 考试类型字典翻译

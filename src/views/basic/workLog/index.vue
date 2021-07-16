@@ -2,7 +2,7 @@
   <div class="work-log">
     <el-form ref="forms" :inline="true" label-width="80px">
       <el-form-item label="请选择班级" label-width="100px" v-if="!ifRoleHasPerms" >
-        <el-select v-model="bjNameId" @change="chooseClass" >
+        <el-select v-model="bjNameId">
           <el-option
             v-for="(item, index) in getListBjclass"
             :key="index"
@@ -506,9 +506,9 @@
       this.getList();
     },
     methods: {
-      chooseClass(id){// 当选择日语班级后显示日志填写框
-        this.ifForm = true;
-      },
+      // chooseClass(id){// 当选择日语班级后显示日志填写框
+      //   this.ifForm = true;
+      // },
       chooseBrz(flag){// 当选择补日志时：true
         if(flag){
           this.showxzrq=true
@@ -522,10 +522,16 @@
       // 获取课中课表信息
       getList() {
         // 获取班级信息
-        listBjclass({kzzd2: this.$store.state.user.glrid}).then((res) => {
+        listBjclass().then((res) => {
           this.getListBjclass = res.rows;
           // 获取个人日志 考试范围
           //只查已发送,并且未上传的考卷
+          if ( res.rows.length==1){
+            this.bjNameId = res.rows[0].id;
+          }
+          if(this.bjNameId!==null||this.bjNameId===""){
+            this.ifForm = true;
+          }
           let json = {
             jwsjzt: "1",
             kzzd2: "9", //未上传的考卷

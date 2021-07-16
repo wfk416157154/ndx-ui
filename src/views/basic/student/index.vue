@@ -784,6 +784,9 @@ export default {
     });
     listSchool().then(response => {
       this.schoolList = response.rows;
+      if (this.schoolList.length==1){
+        this.queryParams.xqmc = response.rows[0].id;
+      }
     });
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
@@ -816,6 +819,9 @@ export default {
       // 日语班级选项
       listBjclass(this.queryParams).then(response => {
         this.bjclassList = response.rows;
+        if ( response.rows.length>0){
+          this.queryParams.ryb=response.rows[0].id
+        }
       });
     },
 
