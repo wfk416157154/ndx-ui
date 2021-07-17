@@ -819,9 +819,9 @@ export default {
       // 日语班级选项
       listBjclass(this.queryParams).then(response => {
         this.bjclassList = response.rows;
-        if ( response.rows.length>0){
+        /*if ( response.rows.length>0){
           this.queryParams.ryb=response.rows[0].id
-        }
+        }*/
       });
     },
 
