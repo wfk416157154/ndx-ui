@@ -8,6 +8,7 @@
             height="“10px"
             @change="getClassId"
             v-model="form.bjid"
+            filterable
             placeholder="请选择班级"
           >
             <el-option
@@ -25,7 +26,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px">
-          <el-select width="100px" height="“10px" v-model="form.ksfw" placeholder="请选择知识点范围">
+          <el-select width="100px" height="“10px" v-model="form.ksfw" filterable placeholder="请选择知识点范围">
             <el-option
               v-for="(item,index) in getExaminationPaper"
               :label="item.ksfw"

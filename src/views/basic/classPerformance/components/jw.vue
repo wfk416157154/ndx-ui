@@ -7,6 +7,7 @@
             width="100px"
             height="“10px"
             v-model="form.xqid"
+            filterable
             @change="getSchoolId"
             placeholder="请选择校区"
           >
@@ -20,6 +21,7 @@
         </el-form-item>
         <el-form-item label="日语班级">
           <el-select
+            filterable
             width="100px"
             height="“10px"
             @change="getClassId"
@@ -230,7 +232,8 @@ export default {
   },
   mounted() {
     this.getList();
-    this.getListClassGrade();
+    /* 默认进入页面不查询成绩
+    this.getListClassGrade();*/
   },
   methods: {
     // 获取校区
@@ -323,7 +326,7 @@ export default {
     },
     // 查询按钮
     getAchievement() {
-      this.form.lsid = this.$store.state.user.glrid;
+      //this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
     },
@@ -340,11 +343,11 @@ export default {
     // 成绩分析
     toPerformanceAnalysis(bjid) {
       // 动态获取路由地址
-      // this.getConfigKey("classPerformanceDetails").then(res => {
-      //   this.$router.push({
-      //     path: res.msg + bjid
-      //   });
-      // });
+      this.getConfigKey("classPerformanceDetails").then(res => {
+        this.$router.push({
+          path: res.msg + bjid
+        });
+      });
     }
   }
 };

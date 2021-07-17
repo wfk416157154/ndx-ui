@@ -20,10 +20,10 @@
       <el-form-item label="学期" prop="xq">
         <el-select v-model="queryParams.xq" placeholder="请选择学期">
           <el-option
-            v-for="item in bjclassList"
-            :key="item.id"
-            :label="item.rybjmc"
-            :value="item.rybjmc"
+            v-for="(item,index) in xueqiList"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -199,6 +199,8 @@ export default {
       selectXqmc: [],
       // 日语班级字典
       bjclassList: [],
+      // 学期字典
+      xueqiList: [],
       // 班级id
       bjid: "",
       // 所有数据详细数据切换
@@ -217,6 +219,9 @@ export default {
     this.getDicts("examination_type").then(response => {
       this.getExaminationType = response.data;
     });
+    this.getDicts("nianji").then(response => {
+      this.xueqiList = response.data;
+    });
   },
   components: {
     scoreChart
@@ -233,8 +238,9 @@ export default {
       listSchool(this.queryParams).then(response => {
         this.selectXqmc = response.rows;
       });
+      this.queryParams.rybj=this.bjid // 给查询日语班级赋值
       // 班级
-      listBjclass({ kzzd2: this.$store.state.user.glrid }).then(response => {
+      listBjclass({ id: this.bjid }).then(response => {
         this.bjclassList = response.rows;
       });
       // 学生成绩表数据
