@@ -232,7 +232,7 @@ export default {
         jcmc: null,
         jwsjzt: null,
         lssjzt: null,
-        status: null,
+        status: "1",// 默认查询正常的数据
         dataOrder: null,
         addOrUpdateTime: null,
         kzzd1: null,
@@ -355,7 +355,7 @@ export default {
         fssj: null,
         fsrid: null,
         fsrmc: null,
-        status: "0",
+        status: "1",
         remark: null,
         dataOrder: null,
         addOrUpdateTime: null,
