@@ -74,9 +74,12 @@
         >
           <template slot-scope="scope">
             <span
-              v-if="item.prop == 'xsxm' || item.prop == 'rybj' || item.prop == 'wl' || item.prop == 'zhcj'"
+              v-if="item.prop == 'xsxm' || item.prop == 'rybj' ||  item.prop == 'zhcj'"
             >{{scope.row[item.prop]}}</span>
 
+            <span
+              v-if="item.prop == 'wl'"
+            >{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
             <div v-else>
               <div
                 v-if="scope.row[item.colour] == 1"
@@ -209,7 +212,8 @@ export default {
       // 获取考试范围
       getListExaminationPaper: [],
       //  考试类型
-      getExaminationType: []
+      getExaminationType: [],
+      wlOption:[]
     };
   },
   created() {
@@ -226,6 +230,10 @@ export default {
     this.getDicts("nianji").then(response => {
       this.xueqiList = response.data;
     });
+    this.getDicts("xkType").then(response => {
+      this.wlOption = response.data;
+    });
+
   },
   components: {
     scoreChart
