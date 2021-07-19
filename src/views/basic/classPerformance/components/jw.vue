@@ -92,11 +92,11 @@
             <h4>老师姓名 :</h4>&nbsp;
             <span>{{item.lsxm}}</span>
           </div>
-          <div class="student-information">
+          <!--<div class="student-information">
             <h4>老师性别 :</h4>&nbsp;
             <span v-if="item.lsxb == '1'">男</span>
             <span v-if="item.lsxb == '0'">女</span>
-          </div>
+          </div>-->
           <div class="student-information">
             <h4>所属校区 :</h4>&nbsp;
             <span>{{item.xqmc}}</span>
@@ -232,8 +232,8 @@ export default {
   },
   mounted() {
     this.getList();
-    /* 默认进入页面不查询成绩
-    this.getListClassGrade();*/
+    /* 默认进入页面查询成绩*/
+    this.getListClassGrade();
   },
   methods: {
     // 获取校区
