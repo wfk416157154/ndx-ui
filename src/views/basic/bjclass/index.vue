@@ -80,7 +80,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['basic:bjclass:edit']"
+          v-has-role="['admin','academicAdministrator','acdemicDean','generalAdministrator']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -116,8 +116,48 @@
     <el-table border v-loading="loading" :height="$root.tableHeight" :data="bjclassList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column v-if="false" label="状态" align="center" prop="id" />
-      <el-table-column v-if="false" label="开班照" align="center" prop="kbz" />
-      <el-table-column v-if="false" label="集体照" align="center" prop="jtz" />
+      <el-table-column label="开班照" align="center" prop="kbzArr" :width="flexColumnWidth('kbzArr',bjclassList)" >
+        <template slot-scope="scope">
+          <div class="block" style="display : flex; width : 100% ; height : 100%">
+            <el-image
+              style="width: 60px; height: 60px; margin : 0px 5px"
+              v-for="(item,index) in scope.row.kbzArr"
+              :key="index"
+              :src="item"
+              :preview-src-list="scope.row.kbzArr"
+            >
+              <div
+                slot="error"
+                style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc"
+                class="image-slot"
+              >
+                <span>加载失败</span>
+              </div>
+            </el-image>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column  label="集体照" align="center" prop="jtzArr" :width="flexColumnWidth('jtzArr',bjclassList)" >
+        <template slot-scope="scope">
+          <div class="block" style="display : flex; width : 100% ; height : 100%">
+            <el-image
+              style="width: 60px; height: 60px; margin : 0px 5px"
+              v-for="(item,index) in scope.row.jtzArr"
+              :key="index"
+              :src="item"
+              :preview-src-list="scope.row.jtzArr"
+            >
+              <div
+                slot="error"
+                style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc"
+                class="image-slot"
+              >
+                <span>加载失败</span>
+              </div>
+            </el-image>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="校区名称" align="center" prop="xqmc" />
 
       <el-table-column label="日语班级名称" align="center" prop="rybjmc" />
@@ -142,9 +182,15 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-upload"
+            @click="onUploadPhoto(scope.row)"
+          >上传照片</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:bjclass:edit']"
+            v-has-role="['admin','academicAdministrator','acdemicDean','generalAdministrator']"
           >修改</el-button>
           <el-button
             size="mini"
@@ -153,6 +199,8 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['basic:bjclass:remove']"
           >删除</el-button>
+
+
         </template>
       </el-table-column>
     </el-table>
@@ -414,7 +462,7 @@ export default {
       photoNum1: 0,
       photoNum2: 0,
       // 最大上传次数
-      maxPhotoNum: 3,
+      maxPhotoNum: 5,
       disableBysj:true
     };
   },
@@ -552,7 +600,7 @@ export default {
         ); // 集体照
       });
     },
-    // 查询证件照
+    // 查询照片
     selectPhotoList(glid, file) {
       let kzzdJson = {
         kzzd1: glid
@@ -605,7 +653,7 @@ export default {
     ifPhotoLimit(num) {
       if (num >= this.maxPhotoNum) {
         this.$message({
-          message: "最多上传 3 张图片",
+          message: "最多上传 "+this.maxPhotoNum+" 张图片",
           type: "warning"
         });
       } else {
@@ -642,6 +690,7 @@ export default {
             updateBjclass(this.form).then(response => {
               this.msgSuccess("保存成功");
               this.imageOpen = false;
+              this.getList()
             });
           }
         }
@@ -714,6 +763,20 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
+    },
+    // 宽度适配
+    flexColumnWidth(str, tableData) {
+      let arr = [];
+      for (let i = 0; i < tableData.length; i++) {
+        if (tableData[i] && tableData[i][str] && tableData[i][str].length > 0) {
+          tableData.forEach(obj => {
+            if (obj[str] && obj[str].length) arr.push(obj[str].length);
+          });
+        } else {
+          continue;
+        }
+      }
+      return Math.max.call(null, ...arr) * 75;
     }
 
   }
