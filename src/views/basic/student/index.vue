@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="校区名称" prop="xqmc">
+      <el-form-item label="校区名称" prop="xqmc" v-if="xqIsShow">
         <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称" @change="xqmcOnChange">
           <el-option
             v-for="item in schoolList"
@@ -602,6 +602,7 @@ export default {
   components: {},
   data() {
     return {
+      xqIsShow: true,
       // 遮罩层
       loading: true,
       submitStuFormButton: false,
@@ -769,6 +770,12 @@ export default {
     };
   },
   created() {
+    // 日语班级选项
+    listBjclass().then(response => {
+      if ( response.rows.length==1){
+        this.queryParams.ryb=response.rows[0].id
+      }
+    })
     this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
@@ -785,7 +792,7 @@ export default {
     listSchool().then(response => {
       this.schoolList = response.rows;
       if (this.schoolList.length==1){
-        this.queryParams.xqmc = response.rows[0].id;
+        this.xqIsShow =false;
       }
     });
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
