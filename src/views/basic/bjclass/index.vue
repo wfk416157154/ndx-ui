@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="校区名称" prop="xqmc">
+      <el-form-item label="校区名称" prop="xqmc" v-if="xqIsShow">
         <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称">
           <el-option
             v-for="item in selectXqmc"
@@ -383,6 +383,7 @@ export default {
   components: {},
   data() {
     return {
+      xqIsShow: true,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -477,6 +478,9 @@ export default {
     // 获取校区
     listSchool().then(response => {
       this.selectXqmc = response.rows;
+      if (response.rows.length==1){
+       this.xqIsShow=false;
+      }
     });
   },
   methods: {

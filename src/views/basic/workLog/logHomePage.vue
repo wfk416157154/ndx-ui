@@ -1,7 +1,7 @@
 <template>
   <div class="Log-home-page">
     <el-form ref="queryParams" :inline="true" :model="queryParams" >
-      <el-form-item label="校区">
+      <el-form-item label="校区" v-if="xqIsShow">
         <el-select
           v-model="queryParams.xqid"
           @change="getSchoolId"
@@ -132,6 +132,8 @@ import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
 export default {
   data() {
     return {
+      //是否显示校区
+      xqIsShow: true,
       // 查询条件
       queryParams: {
         pageNum: 1,
@@ -160,6 +162,8 @@ export default {
       if (listSchoolResult.code==200 && listSchoolResult.rows.length==1){
         this.queryParams.xqid=listSchoolResult.rows[0].id;
       this.getSchoolId(this.queryParams.xqid);
+      this.xqIsShow =false;
+
       }
 
     },

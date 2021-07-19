@@ -7,8 +7,8 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="日语班级" prop="rybj">
-        <el-select v-model="queryParams.rybj" placeholder="请选择日语班">
+      <el-form-item label="日语班级" prop="kzzd1">
+        <el-select v-model="queryParams.kzzd1" disabled placeholder="请选择日语班">
           <el-option
             v-for="item in bjclassList"
             :key="item.id"
@@ -76,6 +76,7 @@
             <span
               v-if="item.prop == 'xsxm' || item.prop == 'rybj' || item.prop == 'wl' || item.prop == 'zhcj'"
             >{{scope.row[item.prop]}}</span>
+
             <div v-else>
               <div
                 v-if="scope.row[item.colour] == 1"
@@ -149,7 +150,7 @@ export default {
       queryParams: {
         // pageNum: 1,
         // pageSize: 10,
-        rybj: null,
+        kzzd1: null,
         xq: null,
         ksfw: null,
         kslx: null
@@ -213,6 +214,9 @@ export default {
   },
   created() {
     this.getList();
+    listBjclass().then(response => {
+      this.bjclassList = response.rows;
+    });
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
     });
@@ -233,16 +237,14 @@ export default {
       this.loading = true;
       // 获取传过来的班级id
       this.bjid = this.$route.params.id;
-      this.queryParams.kzzd1 = this.bjid;
-      // 校区
-      listSchool(this.queryParams).then(response => {
-        this.selectXqmc = response.rows;
-      });
-      this.queryParams.rybj=this.bjid // 给查询日语班级赋值
+      this.queryParams.kzzd1 = this.bjid;// 给查询日语班级赋值
+      // // 校区
+      // listSchool(this.queryParams).then(response => {
+      //   this.selectXqmc = response.rows;
+      // });
+      // this.queryParams.rybj=this.bjid // 给查询日语班级赋值
       // 班级
-      listBjclass({ id: this.bjid }).then(response => {
-        this.bjclassList = response.rows;
-      });
+
       // 学生成绩表数据
       listAll(this.queryParams).then(res => {
         this.listAll = res.rows;
@@ -283,7 +285,7 @@ export default {
         id: null,
         xsbh: null,
         xsxm: null,
-        rybj: null,
+        kzzd1: null,
         wl: null,
         yyfs: null,
         zhcj: null,
