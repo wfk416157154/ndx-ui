@@ -168,29 +168,8 @@
                   title="周一"
                   align="center"
                   field="monday"
-                  :edit-render="{autofocus: '.custom-input'}"
-                >
-                  <template #edit="{ row }">
-                    <vxe-pulldown ref="xPulldown1" transfer>
-                      <template #default>
-                        <vxe-input v-model="row.name" placeholder="下拉容器" @click="clickDownEvent"></vxe-input>
-                      </template>
-                      <template #dropdown>
-                        <ul class="my-downpanel1">
-                          <li
-                            v-for="item in downList"
-                            :key="item.value"
-                            @click="changeNameEvent(item, row)"
-                          >
-                            <i class="fa fa-user-o"></i>
-                            <span>{{ item.label }}</span>
-                          </li>
-                        </ul>
-                      </template>
-                    </vxe-pulldown>
-                  </template>
-                </vxe-table-column>
-
+                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
+                />
                 <vxe-table-column
                   title="周二"
                   align="center"
@@ -227,7 +206,7 @@
                   field="sunday"
                   :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
                 />
-                <vxe-table-column title="备注" align="center" field="remark" />
+                <!-- <vxe-table-column title="备注" align="center" field="remark" /> -->
               </vxe-table>
             </el-tab-pane>
           </el-tabs>
@@ -403,7 +382,6 @@ export default {
       });
     },
     getCourse() {
-      this.$refs.queryForm.validate(res => {});
       if (null == this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
         return;
@@ -454,13 +432,13 @@ export default {
       const $table = this.$refs.xTable;
       const record = {
         kbType: this.queryParams.kbType,
-        monday: 0,
-        tuesday: 0,
-        wednesday: 0,
-        thursday: 0,
-        friday: 0,
-        saturday: 0,
-        sunday: 0
+        monday: null,
+        tuesday: null,
+        wednesday: null,
+        thursday: null,
+        friday: null,
+        saturday: null,
+        sunday: null
       };
       const { row: newRow } = $table.insertAt(record, row);
     },
@@ -526,6 +504,7 @@ export default {
     },
     // 切换班级课表
     switchingClasses(bjid) {
+      console.log(bjid)
       this.queryParams.bjid = bjid;
       this.getCourse();
       this.getClassCourseBasicList(bjid);
