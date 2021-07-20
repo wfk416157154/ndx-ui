@@ -85,7 +85,14 @@
         </el-card>
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span style="color: #00afff">所有课表</span>
+            <span style="color: #00afff">课表</span>
+            <el-tooltip class="item" effect="dark" content="更多课表" placement="top-end">
+              <span
+                @click="switchingClasses(activeTab)"
+                style="float :right ;color: #00afff;cursor: pointer;"
+                class="el-icon-d-arrow-right"
+              ></span>
+            </el-tooltip>
           </div>
           <div v-for="(item,index) in classCourseBasicList" :key="index" class="list-group-item">
             <el-switch
@@ -113,7 +120,6 @@
                   type="primary"
                   icon="el-icon-plus"
                   size="mini"
-                  :disabled="btnDisabled"
                   @click="insertTimetable"
                 >新增课表</el-button>
                 <el-button
@@ -490,7 +496,7 @@ export default {
       this.queryParams.bjid = bjid;
       this.getClassCourseBasicList(bjid, nd);
     },
-    /* 拿到该班级的所有课表 */
+    // 拿到该班级的所有课表
     getClassCourseBasicList(rybjid, nd) {
       let obj = {
         bjid: rybjid,
@@ -498,15 +504,26 @@ export default {
       };
       listClassCourseBasic(obj).then(response => {
         this.classCourseBasicList = response.rows;
+        if (this.classCourseBasicList.length == 0) {
+          this.classCourseList = [];
+          this.alertHtml =
+            "<div style='text-align : center;color : red'>暂无课表</div>";
+          return;
+        }
+        let arr = [];
         this.classCourseBasicList.forEach(value => {
-          if (+value.sfqy) {
-            this.getCourse();
-          } else {
-            this.alertHtml =
-              "<div style='text-align : center;color : red'>请手动开启课表</div>";
-          }
           value.sfqy = Boolean(value.sfqy);
+          arr.push(value.sfqy);
+          if (value.sfqy) {
+            this.getCourse();
+          }
         });
+        if (arr.indexOf(true) == -1) {
+          this.alertHtml =
+            "<div style='text-align : center;color : red'>请手动开启课表</div>";
+        } else {
+          this.alertHtml = "";
+        }
       });
       ybjQuery(rybjid).then(res => {
         this.ybjQueryList = res.rows;
@@ -542,6 +559,10 @@ export default {
       }
       if (!this.queryParams.kbType) {
         this.msgError("请选择该新增课表的课表类型！");
+        return;
+      }
+      if (this.classCourseBasicList.length == 0) {
+        this.msgError("请点击搜索选择对应班级！");
         return;
       }
       this.classCourseList.push(this.record());
@@ -673,7 +694,11 @@ export default {
     },
     // 选中保存数据
     handleSelectionChange(val) {
-      if (val.length > 0) this.btnDisabled = false;
+      if (val.length > 0) {
+        this.btnDisabled = false;
+      } else {
+        this.btnDisabled = true;
+      }
       this.multipleSelection = val;
     },
     // 保存课表
@@ -705,12 +730,14 @@ export default {
                 updateClassCourse(this.multipleSelection[i]).then(res => {
                   if (res.code == 200) {
                     this.getCourse();
+                    this.btnDisabled = true;
                   }
                 });
               } else {
                 addClassCourse(this.multipleSelection[i]).then(res => {
                   if (res.code == 200) {
                     this.getCourse();
+                    this.btnDisabled = true;
                   }
                 });
               }
