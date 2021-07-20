@@ -17,6 +17,16 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="日语班" prop="ryb">
+        <el-select v-model="queryParams.ryb" filterable placeholder="请先选择校区,再选日语班级">
+          <el-option
+            v-for="item in bjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="原班级" prop="ybj">
         <el-input
           v-model="queryParams.ybj"
@@ -25,16 +35,6 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="日语班" prop="ryb">
-        <el-select v-model="queryParams.ryb" filterable placeholder="请选择日语班级">
-          <el-option
-            v-for="item in bjclassList "
-            :key="item.id"
-            :label="item.rybjmc"
-            :value="item.id"
-          ></el-option>
-        </el-select>
       </el-form-item>
       <el-form-item label="学生姓名" prop="xsxm">
         <el-input
@@ -772,7 +772,7 @@ export default {
   created() {
     // 日语班级选项
     listBjclass().then(response => {
-      if ( response.rows.length==1){
+      if (response.rows.length==1){
         this.queryParams.ryb=response.rows[0].id
       }
     })
@@ -823,13 +823,7 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-      // 日语班级选项
-      listBjclass(this.queryParams).then(response => {
-        this.bjclassList = response.rows;
-        /*if ( response.rows.length>0){
-          this.queryParams.ryb=response.rows[0].id
-        }*/
-      });
+
     },
 
     /** 查询老师学生谈话列表 */
