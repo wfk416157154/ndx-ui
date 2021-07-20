@@ -93,6 +93,9 @@
                 v-if="scope.row[item.colour] == 3"
                 style="background : red; display : inline-block ; width :100%;color : #fff"
               >{{scope.row[item.prop]}}</span>
+              <span
+                v-if="scope.row[item.colour] == 4"
+              >{{scope.row[item.prop]}}</span>
             </div>
           </template>
         </el-table-column>

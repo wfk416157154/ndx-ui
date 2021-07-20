@@ -207,7 +207,7 @@ export default {
   },
   props: ["query", "getExaminationType"],
   mounted() {
-    this.getChart();
+    // this.getChart();
   },
   created() {
     this.getDicts("xkType").then(response => {
@@ -222,7 +222,6 @@ export default {
         kjid: this.query.ksfw,
         ksmc: this.query.ksmc
       };
-      console.log(json);
       // 学生成绩表title列
       getColumnNameList(json).then(res => {
         this.columnNameList = res.data;
