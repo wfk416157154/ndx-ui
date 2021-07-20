@@ -154,7 +154,7 @@
     </el-row>
     <div>
       <el-table
-        :height="$root.tableHeight"
+        :height="tableHeight"
         :data="listAll"
         border
         :summary-method="getSummaries"
@@ -172,7 +172,11 @@
         >
           <template slot-scope="scope">
             <span
-              v-if="item.prop == 'xsxm' || item.prop == 'rybj'  || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+              v-if="item.prop == 'rybj'  || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+            <span
+              v-else-if="item.prop == 'xsxm'"  >
+                <el-link type="primary"  @click.stop="chooseStudent(scope.row[item.prop])" >{{scope.row[item.prop]}}</el-link>
+            </span>
             <span
               v-else-if="item.prop == 'wl'">
                 <dict-tag :options="wlOption" :value="scope.row[item.prop]"/>
@@ -313,6 +317,7 @@
     components: {},
     data() {
       return {
+        tableHeight:this.$root.tableHeight,
         // 所有数据详细数据切换
         allData: false,
         // 遮罩层
@@ -423,12 +428,28 @@
       this.getListSchool();
     },
     methods: {
+      // 当选择一个学生进行点击时，查看该学生的成绩分析
+      chooseStudent(xsxm){
+        this.queryParams.xsxm = xsxm;
+        let json = {
+          kzzd1: this.queryParams.kzzd1,
+          xsxm: this.queryParams.xsxm
+        };
+        // 学生基础数据表
+        listStudent(json).then(res => {
+          if(res.rows.length>0){
+            this.tableHeight=this.tableHeight-350 // 设置表格的高度
+            this.queryParams.xsbh=res.rows[0].xsbh
+            this.getList()
+          }
+        });
+      },
       arrToStr(array) {
-      let str = "";
-      for (let i = 0; i < array.length; i++) {
-        str += array[i] + ",";
-      }
-      str=str.substr(0, str.length - 1);
+        let str = "";
+        for (let i = 0; i < array.length; i++) {
+          str += array[i] + ",";
+        }
+        str=str.substr(0, str.length - 1);
       return str;
     },
       // 获取校区
@@ -441,9 +462,9 @@
       async getList() {
         this.loading = true;
         let one=this.queryParams.kslx;
-        if (undefined != one && one.length > 0) {
-        one = this.arrToStr(one);
-       }
+          if (undefined != one && one.length > 0) {
+          one = this.arrToStr(one);
+         }
         let listAllJson = {
           xsbh: this.queryParams.xsbh,
           kzzd1: this.queryParams.kzzd1,
@@ -451,7 +472,6 @@
            xsxm: this.queryParams.xsxm,
            kslx: one,
         };
-
         // 学生成绩表数据
         let res = await listAll(listAllJson);
         if (res.rows && res.rows.length > 0) {
@@ -548,7 +568,6 @@
         this.rybjDisabled = true;
         this.xsbhDisabled = true;
         this.resetForm("queryForm");
-
       },
       // 多选框选中数据
       handleSelectionChange(selection) {
