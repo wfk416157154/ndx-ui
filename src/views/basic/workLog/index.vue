@@ -401,7 +401,7 @@
     getExaminationPaper,
   } from "@/api/basic/examinationPaper";
   import {listBjclass} from "@/api/basic/bjclass";
-  import {listUser} from "@/api/system/user";
+  import {listUser,selectInRoleUser} from "@/api/system/user";
   import {listClassCourse} from "@/api/basic/classCourse";
   import {addExamSummary} from "@/api/basic/examSummary";
 
@@ -534,16 +534,21 @@
           }
           let json = {
             jwsjzt: "1",
-            kzzd2: "9", //未上传的考卷
+            kzzd2: "1", //未上传的考卷
+            status:"1" // 只查询正常添加的试卷状态
           };
           listExaminationPaper(json).then((res) => {
             this.getListExaminationPaper = res.rows;
           });
         });
         // 获取用户列表
-        listUser().then((res) => {
+        /*listUser().then((res) => {
           this.getListUser = res.rows;
-        });
+        });*/
+        /* 默认查询角色是教务员的用户 */
+        selectInRoleUser({roleId:"4"}).then(res=>{
+          this.getListUser = res.rows;
+        })
         // 日志主页进来的详情页
         let logId = this.$route.params.id;
         workLogListQuery({id: logId}).then((res) => {

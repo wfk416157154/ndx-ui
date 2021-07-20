@@ -22,7 +22,7 @@
         <el-select
           v-model="queryParams.kzzd1"
           :disabled="rybjDisabled"
-          placeholder="请先选择校区,再选日语班级"
+          placeholder="请选择日语班级"
           @change="rybjOnChange"
           filterable
         >
@@ -137,6 +137,17 @@
           @click="handleExport"
           v-hasPermi="['basic:stugrade:export']"
         >导出
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-right"
+          size="mini"
+          @click="tongbuData"
+          v-hasPermi="['basic:stugrade:syncKsmcToExaminationPaper']"
+        >同步考试名称至考卷表
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -288,7 +299,8 @@
     addStugrade,
     updateStugrade,
     listAll,
-    getColumnNameList
+    getColumnNameList,
+    syncKsmcToExaminationPaper
   } from "@/api/basic/stugrade";
   import {listBjclass} from "@/api/basic/bjclass";
   import {listSchool} from "@/api/basic/school";
@@ -719,6 +731,16 @@
         // 学生基础数据表
         listStudent(json).then(res => {
           this.studentsList = res.rows;
+        });
+      },
+      // 同步学生每次考试的名称至考卷表
+      tongbuData(){
+        syncKsmcToExaminationPaper().then(res=>{
+          if(undefined!=res.code&&res.code==500){
+            this.msgError(res.msg)
+          }else{
+            this.msgSuccess(res.msg)
+          }
         });
       }
     }
