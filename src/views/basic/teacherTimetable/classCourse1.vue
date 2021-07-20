@@ -7,17 +7,11 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item
-        label="校区名称"
-        prop="xqid"
-        v-has-permi="['basic:school:list']"
-        label-width="100px"
-      >
+      <el-form-item label="校区名称" prop="xqid" v-hasPermi="['basic:school:list']" label-width="100px">
         <el-select v-model="queryParams.xqid" filterable placeholder="请选择校区名称">
           <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-
       <el-form-item label="年份" prop="kzzd2">
         <el-select v-model="queryParams.kzzd2" placeholder="请选择年份" clearable size="small">
           <el-option
@@ -445,6 +439,11 @@ export default {
     });
     listSchool().then(response => {
       this.schoolList = response.rows;
+      if (this.$store.state.user.dataRoleWeightId == 50) {
+        this.schoolList.length == 1
+          ? (this.queryParams.xqid = this.schoolList[0].id)
+          : null;
+      }
     });
   },
   mounted() {},
