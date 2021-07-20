@@ -93,6 +93,9 @@
                 v-if="scope.row[item.colour] == 3"
                 style="background : red; display : inline-block ; width :100%;color : #fff"
               >{{scope.row[item.prop]}}</span>
+              <span
+                v-if="scope.row[item.colour] == 4"
+              >{{scope.row[item.prop]}}</span>
             </div>
           </template>
         </el-table-column>
@@ -266,7 +269,10 @@ export default {
         }
       });
       // 考试范围
-      listExaminationPaper().then(res => {
+      listExaminationPaper({
+        bjid: this.bjid,
+        lsid: this.$store.state.user.glrid
+      }).then(res => {
         this.getListExaminationPaper = res.rows;
       });
     },
