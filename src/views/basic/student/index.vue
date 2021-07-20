@@ -18,7 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
-        <el-select v-model="queryParams.ryb" filterable placeholder="请先选择校区,再选日语班级">
+        <el-select v-model="queryParams.ryb" filterable placeholder="请选择日语班级">
           <el-option
             v-for="item in bjclassList "
             :key="item.id"
@@ -770,12 +770,15 @@ export default {
     };
   },
   created() {
-    // 日语班级选项
-    listBjclass().then(response => {
-      if (response.rows.length==1){
-        this.queryParams.ryb=response.rows[0].id
-      }
-    })
+    // 日语班级选项 -当老师角色登录
+    if(this.$store.state.user.dataRoleWeightId==50){
+      listBjclass().then(response => {
+        this.bjclassList = response.rows
+        if (response.rows.length==1){
+          this.queryParams.ryb=response.rows[0].id
+        }
+      });
+    }
     this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
