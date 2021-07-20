@@ -34,6 +34,15 @@ export function addClassCourse(data) {
   })
 }
 
+// 新增班级课程
+export function classCourseBasicSave(data) {
+  return request({
+    url: '/basic/classCourseBasic/save',
+    method: 'post',
+    data: data
+  })
+}
+
 // 保存课表集合
 export function saveList(data) {
   return request({
