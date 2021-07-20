@@ -22,7 +22,7 @@
         <el-select
           v-model="queryParams.kzzd1"
           :disabled="rybjDisabled"
-          placeholder="请选择日语班"
+          placeholder="请先选择校区,再选日语班级"
           @change="rybjOnChange"
           filterable
         >
@@ -143,6 +143,7 @@
     </el-row>
     <div>
       <el-table
+        :height="$root.tableHeight"
         :data="listAll"
         border
         :summary-method="getSummaries"

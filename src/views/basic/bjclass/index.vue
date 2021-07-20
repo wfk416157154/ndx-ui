@@ -7,13 +7,23 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="校区名称" prop="xqmc" v-if="xqIsShow">
-        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称">
+      <el-form-item label="校区名称" prop="kzzd1" v-if="xqIsShow">
+        <el-select v-model="queryParams.kzzd1" filterable placeholder="请选择校区名称" @change="xqmcOnChange" >
           <el-option
             v-for="item in selectXqmc"
             :key="item.id"
             :label="item.xxmc"
-            :value="item.xxmc"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="日语班" prop="id">
+        <el-select v-model="queryParams.id" filterable placeholder="请先选择校区,再选日语班级">
+          <el-option
+            v-for="item in queryBjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -26,15 +36,6 @@
             :value="item.dictLabel"
           ></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label-width="120px" label="日语班级名称" prop="rybjmc">
-        <el-input
-          v-model="queryParams.rybjmc"
-          placeholder="可模糊查询日语班级名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item label="老师姓名" prop="lsxm">
         <el-input
@@ -398,6 +399,7 @@ export default {
       total: 0,
       // 班级基础信息表格数据
       bjclassList: [],
+      queryBjclassList:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -491,6 +493,12 @@ export default {
         this.bjclassList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    xqmcOnChange(id){
+      listBjclass({kzzd1:id}).then(response => {
+        this.bjclassList = response.rows
+        this.queryBjclassList = response.rows
       });
     },
     setXqmcId(obj){
