@@ -20,8 +20,11 @@
           >
             <template slot-scope="scope">
               <span
-                v-if="item.prop == 'xsxm' || item.prop == 'rybj' || item.prop == 'wl' || item.prop == 'zhcj'"
+                v-if="item.prop == 'xsxm' || item.prop == 'rybj'  || item.prop == 'zhcj'"
               >{{scope.row[item.prop]}}</span>
+              <span
+                v-if="item.prop == 'wl'"
+              >{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
               <div v-else>
                 <div
                   v-if="scope.row[item.colour] == 1"
@@ -198,12 +201,19 @@ export default {
       // 饼状图数据统计
       chartList: {},
       // 考试分析总结
-      getKsfxzj: ""
+      getKsfxzj: "",
+      wlOption:[],
     };
   },
   props: ["query", "getExaminationType"],
   mounted() {
     this.getChart();
+  },
+  created() {
+    this.getDicts("xkType").then(response => {
+      this.wlOption = response.data;
+    });
+
   },
   methods: {
     getChart() {
@@ -212,6 +222,7 @@ export default {
         kjid: this.query.ksfw,
         ksmc: this.query.ksmc
       };
+      console.log(json);
       // 学生成绩表title列
       getColumnNameList(json).then(res => {
         this.columnNameList = res.data;
