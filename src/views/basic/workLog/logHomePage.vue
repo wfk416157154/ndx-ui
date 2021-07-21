@@ -84,10 +84,10 @@
               <span>课程内容 :</span>
               <span>{{item.kczj}}</span>
             </div>
-            <div>
+            <!-- <div>
               <span>备课内容 :</span>
               <span>{{item.bkBcrz}}</span>
-            </div>
+            </div> -->
             <div>
               <span>课中内容 :</span>
               <span v-for="(list,j) in item.teacherWorkLogLessonList" :key="j">{{list.content}}</span>
@@ -246,6 +246,9 @@ export default {
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  display: block;
+  overflow-wrap: break-word;
+  line-height: 20px;
   .wrap-log-list {
     width: 100%;
     height: 100%;

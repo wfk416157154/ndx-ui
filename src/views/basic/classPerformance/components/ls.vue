@@ -19,14 +19,18 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="学期">
-          <el-select width="100px" height="“10px" v-model="form.xq" placeholder="请选择校区">
-            <el-option label="上学期" value="0"></el-option>
-            <el-option label="下学期" value="1"></el-option>
+        <el-form-item label="开班学期">
+          <el-select v-model="form.xq" placeholder="请选择开班学期">
+            <el-option
+              v-for="item in selectNj"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictLabel"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="考试范围" label-width="120px">
-          <el-select width="100px" height="“10px" v-model="form.ksfw" filterable placeholder="请选择知识点范围">
+        <el-form-item label="考试范围" v-if="false" label-width="120px" >
+          <el-select width="100px" height="“10px" v-model="form.ksfw" filterable placeholder="请选择考试范围">
             <el-option
               v-for="(item,index) in getExaminationPaper"
               :label="item.ksfw"
@@ -124,6 +128,8 @@ export default {
   name: "statisticalChartTtem",
   data() {
     return {
+      //开班学期字典
+      selectNj: [],
       form: {},
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -195,6 +201,9 @@ export default {
     this.getDicts("year-list").then(response => {
       this.getYear = response.data;
     });
+    this.getDicts("nianji").then(response => {
+      this.selectNj = response.data;
+    });
   },
   mounted() {
     this.getSchoolId();
@@ -208,7 +217,6 @@ export default {
         if ( res.rows.length==1){
           this.form.bjid=res.rows[0].id
         }
-
       });
     },
     // 获取考试范围

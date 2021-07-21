@@ -18,7 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班" prop="id">
-        <el-select v-model="queryParams.id" filterable placeholder="请先选择校区,再选日语班级">
+        <el-select v-model="queryParams.id" filterable placeholder="请选择日语班级">
           <el-option
             v-for="item in queryBjclassList "
             :key="item.id"
@@ -470,6 +470,11 @@ export default {
     };
   },
   created() {
+    if(this.$store.state.user.dataRoleWeightId==50){
+      listBjclass().then(response => {
+        this.queryBjclassList = response.rows
+      });
+    }
     this.getList();
     this.getDicts("graduateStatus").then(response => {
       this.statusOptions = response.data;

@@ -81,13 +81,45 @@
               </el-form-item>
             </div>
             <div class="history-log-content">
+              <el-form-item label="备课内容" label-width="120px">
+                <editor v-model="ruleForm.kzzd5" :item="items" :min-height="130" />
+              </el-form-item>
+            </div>
+            <div class="history-log-content">
               <el-form-item label="补充日志" label-width="120px">
-                <el-input
-                  resize="none"
-                  type="textarea"
-                  :autosize="{ minRows: 5, maxRows: 5 }"
-                  v-model="ruleForm.bkBcrz"
-                ></el-input>
+                <editor v-model="ruleForm.bkBcrz" :item="items" :min-height="130" />
+              </el-form-item>
+            </div>
+            <div class="history-log-content">
+              <el-form-item label="文件上传" label-width="120px">
+                <div style="width : 200px">
+                  <el-upload
+                    ref="upload"
+                    :limit="1"
+                    accept="*"
+                    :headers="upload.headers"
+                    :action="upload.imgUrl"
+                    :disabled="upload.isUploading"
+                    :on-progress="addFileUploadProgress"
+                    :on-success="addFileSuccess"
+                    :auto-upload="false"
+                    drag
+                  >
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">
+                      将文件拖到此处，或
+                      <em>点击上传</em>
+                    </div>
+                    <div class="el-upload__tip" slot="tip">
+                      <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
+                    </div>
+                    <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入".zip"格式文件！</div>
+                  </el-upload>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                    <el-button @click="upload.open = false">取 消</el-button>
+                  </div>
+                </div>
               </el-form-item>
             </div>
           </div>
@@ -118,7 +150,7 @@
         </div>
       </div>
       <!-- 课后 -->
-      <div class="wrap-preparation clearfix">
+      <div class="kh-wrap-preparation clearfix">
         <div class="preparation-title">
           <span>课后</span>
         </div>
@@ -349,7 +381,7 @@ import {
   workLogTemplateQuery
 } from "@/api/basic/basicTeacherWorkLog";
 import { getToken } from "@/utils/auth";
-import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
 import {
   updateExaminationPaper,
@@ -393,6 +425,7 @@ export default {
         // 上传图片地址
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
+      items: "height : 150px",
       // 教室图片
       dialogImageUrl: "",
       dialogVisible: false,
@@ -503,6 +536,32 @@ export default {
         this.getListUser = res.rows;
       });
       if (this.$route.params.id && this.$route.params.id != ":id") {
+        workLogListQuery({ id: this.$route.params.id }).then(res => {
+          if (res.data.length != 0) {
+            this.ifForm = true;
+            this.ruleForm = res.data[0];
+            this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+              for (let i = 0; i < this.kcType.length; i++) {
+                if (this.kcType[i].dictValue == value.courseType) {
+                  value.courseTypeName = this.kcType[i].dictLabel;
+                  this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+                }
+              }
+            });
+            this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+            // 教室卫生照片回显
+            this.selectPhotoList(
+              (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+              "files1"
+            );
+            // 学生表现照片回显
+            this.selectPhotoList(
+              (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+              "files2"
+            );
+          }
+        });
+      } else {
         this.getWorkLogTemplateQuery();
       }
     },
@@ -868,6 +927,30 @@ export default {
           type: "success"
         });
       });
+    },
+    // 文件上传中处理压缩包
+    addFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理压缩包
+    addFileSuccess(response, file, fileList) {
+      let data = response.data;
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$notify({
+        title: "成功",
+        message: "上传文件成功",
+        type: "success"
+      });
+      data.kzzd1 = this.rzid;
+      // 保存文件上传地址
+      addFile(data).then(res => {});
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     }
   }
 };
@@ -912,20 +995,66 @@ export default {
 
   .wrap-preparation {
     width: 100%;
-    height: 300px;
+    height: 900px;
     position: relative;
     border: 2px #ccc solid;
     border-top: none;
-
     .preparation-title {
       width: 20%;
       height: 100%;
       text-align: center;
-      border-right: 2px #ccc solid;
       float: left;
       //background-color: #84af9b;
       //color: #fff;
+      position: relative;
+      bottom: 0;
+      top: 0;
+      border-right: 2px #ccc solid;
+      span {
+        line-height: 900px;
+      }
+    }
 
+    .preparation-list {
+      float: right;
+      width: 80%;
+      height: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      //background-color: #aedd81;
+
+      .wrap-history {
+        width: 100%;
+
+        .history-log-content {
+          float: right;
+          width: 100%;
+          height: 100%;
+          .el-upload-dragger {
+            width: 100%;
+            height: 100px;
+          }
+        }
+      }
+    }
+  }
+  .kh-wrap-preparation {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    border: 2px #ccc solid;
+    border-top: none;
+    .preparation-title {
+      width: 20%;
+      height: 100%;
+      text-align: center;
+      float: left;
+      //background-color: #84af9b;
+      //color: #fff;
+      position: relative;
+      bottom: 0;
+      top: 0;
+      border-right: 2px #ccc solid;
       span {
         line-height: 300px;
       }

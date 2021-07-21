@@ -269,7 +269,10 @@ export default {
         }
       });
       // 考试范围
-      listExaminationPaper().then(res => {
+      listExaminationPaper({
+        bjid: this.bjid,
+        lsid: this.$store.state.user.glrid
+      }).then(res => {
         this.getListExaminationPaper = res.rows;
       });
     },

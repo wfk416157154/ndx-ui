@@ -8,7 +8,7 @@ export function listStugrade(query) {
     params: query
   })
 }
-// 查询学生成绩基础表列
+// 查询学生成绩基础表列数据
 export function listAll(query) {
   return request({
     url: '/basic/stugrade/listAll',
@@ -17,7 +17,16 @@ export function listAll(query) {
   })
 }
 
-// 查询学生成绩基础表列
+// 同步学生每次考试的名称至考卷表中
+export function syncKsmcToExaminationPaper(query) {
+  return request({
+    url: '/basic/stugrade/syncKsmcToExaminationPaper',
+    method: 'post',
+    params: query
+  })
+}
+
+// 查询学生成绩基础表列名
 export function getColumnNameList(query) {
   return request({
     url: '/basic/stugrade/getColumnNameList',
