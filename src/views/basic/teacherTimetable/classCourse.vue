@@ -7,22 +7,11 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item
-        label="校区名称"
-        prop="xqid"
-        v-has-permi="['basic:school:list']"
-        label-width="100px"
-      >
-        <el-select
-          v-model="queryParams.xqid"
-          filterable
-          @change="onChooseSchool"
-          placeholder="请选择校区名称"
-        >
+      <el-form-item label="校区名称" prop="xqid" v-hasPermi="['basic:school:list']" label-width="100px">
+        <el-select v-model="queryParams.xqid" filterable placeholder="请选择校区名称">
           <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-
       <el-form-item label="年份" prop="kzzd2">
         <el-select v-model="queryParams.kzzd2" placeholder="请选择年份" clearable size="small">
           <el-option
@@ -90,15 +79,23 @@
         </el-card>
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span style="color: #00afff">所有课表</span>
+            <span style="color: #00afff">课表</span>
+            <el-tooltip class="item" effect="dark" content="更多课表" placement="top-end">
+              <span
+                @click="switchingClasses(activeTab)"
+                style="float :right ;color: #00afff;cursor: pointer;"
+                class="el-icon-d-arrow-right"
+              ></span>
+            </el-tooltip>
           </div>
           <div v-for="(item,index) in classCourseBasicList" :key="index" class="list-group-item">
-            <el-switch v-model="item.sfqy" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-            <div v-if="item.sfqy==1" style="color: #13ce66;float: right">
-              {{item.nd}} 年度-
-              {{selectDictLabel(kbTypeOptionsEL,item.kbType)}}
-            </div>
-            <div v-else style="float: right">
+            <el-switch
+              v-model="item.sfqy"
+              @change="setSfqy(item)"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            ></el-switch>
+            <div style="float: right">
               {{item.nd}} 年度-
               {{selectDictLabel(kbTypeOptionsEL,item.kbType)}}
             </div>
@@ -117,13 +114,14 @@
                   type="primary"
                   icon="el-icon-plus"
                   size="mini"
-                  @click="insertTimetable(-1)"
+                  @click="insertTimetable"
                 >新增课表</el-button>
                 <el-button
                   type="success"
                   icon="el-icon-check"
                   size="mini"
-                  @click="submitTimetable()"
+                  :disabled="btnDisabled"
+                  @click="submitTimetable"
                 >保存课表</el-button>
 
                 <el-button
@@ -135,79 +133,152 @@
                 >删除选中行</el-button>
               </div>
 
-              <vxe-table
-                border
-                show-overflow
-                keep-source
-                ref="xTable"
-                max-height="700"
-                @checkbox-change="onselectionchange"
-                :cell-style="renderColor"
+              <el-table
+                v-if="classCourseList.length > 0"
+                ref="multipleTable"
                 :data="classCourseList"
-                :edit-config="{trigger: 'click', mode: 'cell', icon: 'fa fa-pencil', showStatus: true}"
-                :edit-rules="{kbType:[{required:true,trigger:'change'}],kcType:[{required:true,trigger:'change'}]}"
-                :valid-config="{autoPos:true,showMessage:true}"
+                tooltip-effect="dark"
+                style="width: 100%"
+                border
+                @selection-change="handleSelectionChange"
+                :cell-style="tableStyle"
+                :header-cell-style="tableStyle"
+                @cell-click="cellRow"
               >
-                <vxe-table-column type="checkbox" width="60"></vxe-table-column>
-                <vxe-table-column title="id" align="center" field="id" :visible="false" />
-                <vxe-table-column title="班级id" align="center" field="bjid" :visible="false" />
-                <vxe-table-column
-                  title="课表类型"
-                  align="center"
-                  field="kbType"
-                  :visible="false"
-                  :edit-render="{name: '$select' , options: kbTypeOptions}"
-                />
-                <vxe-table-column
-                  title="课程类型"
-                  align="center"
-                  field="kcType"
-                  :edit-render="{name: '$select', options: kcType}"
-                />
-                <vxe-table-column
-                  title="周一"
-                  align="center"
-                  field="monday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <vxe-table-column
-                  title="周二"
-                  align="center"
-                  field="tuesday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <vxe-table-column
-                  title="周三"
-                  align="center"
-                  field="wednesday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <vxe-table-column
-                  title="周四"
-                  align="center"
-                  field="thursday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <vxe-table-column
-                  title="周五"
-                  align="center"
-                  field="friday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <vxe-table-column
-                  title="周六"
-                  align="center"
-                  field="saturday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <vxe-table-column
-                  title="周日"
-                  align="center"
-                  field="sunday"
-                  :edit-render="{name: '$select', options: isCourse,events: {change: mondayChangeEvent}}"
-                />
-                <!-- <vxe-table-column title="备注" align="center" field="remark" /> -->
-              </vxe-table>
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column label="开始时间" width="140">
+                  <template slot-scope="scope">
+                    <el-time-select
+                      style="width : 100%"
+                      placeholder="开始时间"
+                      v-model="scope.row.kssj"
+                      :picker-options="{
+                      start: '06:00',
+                      step: '00:05',
+                      end: '23:00'
+                    }"
+                    ></el-time-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="结束时间" width="140">
+                  <template slot-scope="scope">
+                    <el-time-select
+                      style="width : 100%"
+                      placeholder="结束时间"
+                      v-model="scope.row.jssj"
+                      :picker-options="{
+                      start: '06:00',
+                      step: '00:05',
+                      end: '23:00'
+                    }"
+                    ></el-time-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="课程类型" width="120">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.kcType" placeholder="请选择">
+                      <el-option
+                        v-for="item in kcType"
+                        :key="item.dictValue"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
+                      ></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column ref="demo" label="周一" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.mondayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.mondayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column label="周二" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.tuesdayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.tuesdayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column label="周三" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.wednesdayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.wednesdayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column label="周四" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.thursdayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.thursdayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column label="周五" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.fridayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.fridayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column label="周六" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.saturdayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.saturdayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column label="周日" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.sundayDetails.length > 0">
+                      <el-link
+                        type="success"
+                        @click="addCourse"
+                        v-for="(item,index) in scope.row.sundayDetails"
+                        :key="index"
+                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                    </div>
+                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div v-else v-html="alertHtml"></div>
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -239,7 +310,7 @@ import {
   ybjQuery
 } from "@/api/basic/classCourse";
 import { listSchool } from "@/api/basic/school";
-import { delClassCourse } from "@/api/basic/classCourse";
+import { delClassCourse, classCourseBasicSave } from "@/api/basic/classCourse";
 import {
   listClassCourseBasic,
   getClassCourseBasic,
@@ -340,7 +411,16 @@ export default {
       kbName: "",
       classCourseBasicList: [],
       switchControl: true,
-      ybjQueryList: []
+      ybjQueryList: [],
+      // 锁定点击的单元格
+      jsonCell: null,
+      // 课程选择框数据
+      courseHandleSelectionJson: null,
+      // 选中保存的课表
+      multipleSelection: null,
+      // 选中的课表id
+      selectedTimetableId: null,
+      alertHtml: ""
     };
   },
   created() {
@@ -352,21 +432,24 @@ export default {
       this.kbTypeOptionsEL = response.data;
     });
     this.getDicts("is_course").then(response => {
-      this.isCourse = this.renderDict(response.data);
+      this.isCourse = response.data;
     });
     this.getDicts("kc_type").then(response => {
-      this.kcType = this.renderDict(response.data);
+      this.kcType = response.data;
     });
     listSchool().then(response => {
       this.schoolList = response.rows;
+      if (this.$store.state.user.dataRoleWeightId == 50) {
+        this.schoolList.length == 1
+          ? (this.queryParams.xqid = this.schoolList[0].id)
+          : null;
+      }
     });
   },
-  mounted() {
-    //this.getList();
-  },
+  mounted() {},
   methods: {
     // 班级列表基础信息
-    getList(flag) {
+    getList() {
       let obj = {
         // 根据关联校区id进行查询
         kzzd1: this.queryParams.xqid
@@ -375,18 +458,17 @@ export default {
         this.listBjclass = res.rows;
         if (res.rows.length > 0) {
           this.activeTab = this.listBjclass[0].id;
-          if (flag) {
-            this.switchingClasses(this.activeTab);
-          }
+          this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
         }
       });
     },
+    // 获取课表详细数据
     getCourse() {
-      if (null == this.queryParams.kzzd2) {
+      if (!this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
         return;
       }
-      if (null == this.queryParams.kbType) {
+      if (!this.queryParams.kbType) {
         this.msgError("请选择该新增课表的课表类型！");
         return;
       }
@@ -402,75 +484,87 @@ export default {
     handleQuery() {
       this.$refs.queryForm.validate(res => {
         if (res) {
-          this.getList(true);
+          this.getList();
         } else {
           this.msgError("请选择查询条件！");
         }
       });
     },
-    onChooseSchool(xqid) {
-      this.getList(false);
+    // 切换班级课表
+    switchingClasses(bjid, nd) {
+      this.queryParams.bjid = bjid;
+      this.getClassCourseBasicList(bjid, nd);
     },
-    onselectionchange(row) {
-      if (row.records.length > 0) {
-        this.btnDisabled = false;
-      } else {
-        this.btnDisabled = true;
-      }
+    // 拿到该班级的所有课表
+    getClassCourseBasicList(rybjid, nd) {
+      let obj = {
+        bjid: rybjid,
+        nd: nd
+      };
+      listClassCourseBasic(obj).then(response => {
+        this.classCourseBasicList = response.rows;
+        if (this.classCourseBasicList.length == 0) {
+          this.classCourseList = [];
+          this.alertHtml =
+            "<div style='text-align : center;color : red'>暂无课表</div>";
+          return;
+        }
+        let arr = [];
+        this.classCourseBasicList.forEach(value => {
+          value.sfqy = Boolean(value.sfqy);
+          arr.push(value.sfqy);
+          if (value.sfqy) {
+            this.getCourse();
+          }
+        });
+        if (arr.indexOf(true) == -1) {
+          this.alertHtml =
+            "<div style='text-align : center;color : red'>请手动开启课表</div>";
+        } else {
+          this.alertHtml = "";
+        }
+      });
+      ybjQuery(rybjid).then(res => {
+        this.ybjQueryList = res.rows;
+      });
     },
-    //新增课表
-    insertTimetable(row) {
-      this.$refs.queryForm.validate(res => {});
-      if (null == this.queryParams.kzzd2) {
+    // 是否启用
+    setSfqy(value) {
+      if (!this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
         return;
       }
-      if (null == this.queryParams.kbType) {
+      if (!this.queryParams.kbType) {
         this.msgError("请选择该新增课表的课表类型！");
         return;
       }
-      const $table = this.$refs.xTable;
-      const record = {
-        kbType: this.queryParams.kbType,
-        monday: null,
-        tuesday: null,
-        wednesday: null,
-        thursday: null,
-        friday: null,
-        saturday: null,
-        sunday: null
-      };
-      const { row: newRow } = $table.insertAt(record, row);
+      if (value) {
+        this.queryParams.kzzd2 = value.nd;
+        this.submitTimetable(value);
+      }
+      if (value.sfqy) {
+        this.getCourse();
+        this.msgSuccess("启动成功");
+      } else {
+        this.classCourseList = [];
+        this.msgSuccess("关闭成功");
+      }
     },
-    // 保存课表
-    async submitTimetable() {
-      const $table = this.$refs.xTable;
-      const result = $table.getRecordset();
-      let flag = false;
-      await $table.fullValidate(result.insertRecords, res => {
-        if (undefined != res) {
-          flag = true;
-        }
-      });
-      if (flag) {
-        this.msgError("请选择课表类型和课程类型！");
+    //新增课表
+    insertTimetable() {
+      if (!this.queryParams.kzzd2) {
+        this.msgError("请选择该新增课表的所属年份！");
         return;
       }
-      if (result.insertRecords.length > 0) {
-        for (let i = 0; i < result.insertRecords.length; i++) {
-          result.insertRecords[i].bjid = this.queryParams.bjid;
-          result.insertRecords[i].kzzd2 = this.queryParams.kzzd2;
-          await addClassCourse(result.insertRecords[i]).then(response => {});
-        }
-        this.msgSuccess("新增成功");
+      if (!this.queryParams.kbType) {
+        this.msgError("请选择该新增课表的课表类型！");
+        return;
       }
-      if (result.updateRecords.length > 0) {
-        for (let i = 0; i < result.updateRecords.length; i++) {
-          await updateClassCourse(result.updateRecords[i]).then(response => {});
-        }
-        this.msgSuccess("修改成功");
+      if (this.classCourseBasicList.length == 0) {
+        this.msgError("请点击搜索选择对应班级！");
+        return;
       }
-      this.getCourse();
+      this.classCourseList.push(this.record());
     },
     // 删除选中行
     deleteData() {
@@ -502,100 +596,189 @@ export default {
           console.log(e);
         });
     },
-    // 切换班级课表
-    switchingClasses(bjid) {
-      console.log(bjid)
-      this.queryParams.bjid = bjid;
-      this.getCourse();
-      this.getClassCourseBasicList(bjid);
-    },
-    renderColor({ row, rowIndex, column }) {
-      if ("monday" == column.property) {
-        return this.rtnCellType(row.monday);
-      }
-      if ("tuesday" == column.property) {
-        return this.rtnCellType(row.tuesday);
-      }
-      if ("wednesday" == column.property) {
-        return this.rtnCellType(row.wednesday);
-      }
-      if ("thursday" == column.property) {
-        return this.rtnCellType(row.thursday);
-      }
-      if ("friday" == column.property) {
-        return this.rtnCellType(row.friday);
-      }
-      if ("saturday" == column.property) {
-        return this.rtnCellType(row.saturday);
-      }
-      if ("sunday" == column.property) {
-        return this.rtnCellType(row.sunday);
-      }
-    },
-    rtnCellType(value) {
-      if ("1" == value) {
-        return { backgroundColor: "#187", color: "#ffffff" };
-      }
-    },
-    /* 拿到该班级的所有课表 */
-    getClassCourseBasicList(rybjid) {
-      let obj = {
-        bjid: rybjid
+    // 新增加一行表格
+    record() {
+      return {
+        bjid: this.queryParams.bjid,
+        kzzd2: this.queryParams.kzzd2,
+        kbType: this.queryParams.kbType,
+        kssj: null,
+        jssj: null,
+        monday: null,
+        tuesday: null,
+        wednesday: null,
+        thursday: null,
+        friday: null,
+        saturday: null,
+        sunday: null,
+        mondayDetails: [],
+        fridayDetails: [],
+        saturdayDetails: [],
+        sundayDetails: [],
+        thursdayDetails: [],
+        tuesdayDetails: [],
+        wednesdayDetails: []
       };
-      listClassCourseBasic(obj).then(response => {
-        this.classCourseBasicList = response.rows;
-      });
-      ybjQuery(rybjid).then(res => {
-        this.ybjQueryList = res.rows;
-      });
     },
-    mondayChangeEvent({ row, column }) {
-      console.log(row);
-      console.log(column);
-      // 星期一选项
-      if (row.monday == "1") {
-        // 表示有课
-        this.ifKclxFlag(flag => {
-          if (!flag) {
-            // 当校验通过
-            this.courseTitle = "请选择上该节课所属的原班级";
-            this.courseOpen = true;
-            console.log(this.ybjQueryList);
-          }
-        });
+    // 弹出添加课程表格
+    addCourse() {
+      this.courseOpen = true;
+    },
+    // 获取点击的数据
+    cellRow(row, column, cell, event) {
+      this.jsonCell = {
+        bjid: row.bjid,
+        id: row.id,
+        kzzd2: this.queryParams.kzzd2,
+        kbType: this.queryParams.kbType,
+        title: column.label
+      };
+    },
+    // 选中课程对话框数据
+    courseHandleSelectionChange(selection) {
+      this.courseHandleSelectionJson = {
+        ybj: "",
+        yjskrs: 0
+      };
+      for (let i = 0; i < selection.length; i++) {
+        this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
+        this.courseHandleSelectionJson.yjskrs += selection[i].rs;
       }
+      this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
+        0,
+        this.courseHandleSelectionJson.ybj.length - 1
+      );
     },
-    /* 校验新增的数据 */
-    ifKclxFlag(fun) {
-      const $table = this.$refs.xTable;
-      const result = $table.getRecordset();
-      let flag = false;
-      $table.fullValidate(result.insertRecords, res => {
-        if (res) {
-          flag = true;
-        }
-        if (flag) {
-          this.msgError("请先选择课程类型！");
-        }
-        fun(flag);
-      });
-    },
+    // 提交课程对话框
     courseSubmitForm() {
       this.courseOpen = false;
+      this.classCourseList.map((value, index) => {
+        if (value.id == this.jsonCell.id) {
+          switch (this.jsonCell.title) {
+            case "周一":
+              value.mondayDetails = [];
+              value.mondayDetails.push(this.courseHandleSelectionJson);
+              break;
+            case "周二":
+              value.tuesdayDetails = [];
+              value.tuesdayDetails.push(this.courseHandleSelectionJson);
+              break;
+            case "周三":
+              value.wednesdayDetails = [];
+              value.wednesdayDetails.push(this.courseHandleSelectionJson);
+              break;
+            case "周四":
+              value.thursdayDetails = [];
+              value.thursdayDetails.push(this.courseHandleSelectionJson);
+              break;
+            case "周五":
+              value.fridayDetails = [];
+              value.fridayDetails.push(this.courseHandleSelectionJson);
+              break;
+            case "周六":
+              value.saturdayDetails = [];
+              value.saturdayDetails.push(this.courseHandleSelectionJson);
+              break;
+            case "周日":
+              value.sundayDetails = [];
+              value.sundayDetails.push(this.courseHandleSelectionJson);
+              break;
+          }
+        }
+      });
     },
+    // 取消课程对话框
     courseCancel() {
       this.courseOpen = false;
     },
-    courseHandleSelectionChange(selection) {
-      selection.map(item => {
-        console.log(item);
+    // 选中保存数据
+    handleSelectionChange(val) {
+      if (val.length > 0) {
+        this.btnDisabled = false;
+      } else {
+        this.btnDisabled = true;
+      }
+      this.multipleSelection = val;
+    },
+    // 保存课表
+    submitTimetable(value) {
+      if (value) {
+        if (!this.queryParams.kbType || !this.queryParams.kzzd2) {
+          return this.msgError("请选择课表类型！");
+        }
+      }
+      classCourseBasicSave({
+        bjid: this.queryParams.bjid,
+        nd: this.queryParams.kzzd2,
+        kbType: this.queryParams.kbType,
+        sfqy: Number(value.sfqy),
+        id: value.id
+      }).then(res => {
+        if (res.code == 200) {
+          this.getClassCourseBasicList(this.activeTab, this.queryParams.kzzd2);
+          if (this.multipleSelection && this.multipleSelection.length > 0) {
+            let num = 0;
+            for (let i = 0; i < this.multipleSelection.length; i++) {
+              num = i;
+              if (!this.multipleSelection[i].kcType) {
+                this.msgError("请选择课程类型！");
+                return;
+              }
+              this.multipleSelection[i].kzzd1 = res.data.id;
+              if (this.multipleSelection[i].id) {
+                updateClassCourse(this.multipleSelection[i]).then(res => {
+                  if (res.code == 200) {
+                    this.getCourse();
+                    this.btnDisabled = true;
+                  }
+                });
+              } else {
+                addClassCourse(this.multipleSelection[i]).then(res => {
+                  if (res.code == 200) {
+                    this.getCourse();
+                    this.btnDisabled = true;
+                  }
+                });
+              }
+            }
+            if (this.multipleSelection.length - 1 === num) {
+              this.msgSuccess("保存成功");
+            }
+          }
+        }
       });
     },
-    clickDownEvent() {
-      const $pulldown = this.$refs.xPulldown1;
-      if ($pulldown) {
-        $pulldown.showPanel();
-      }
+    // 删除选中行
+    deleteData() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let num = 0;
+          this.multipleSelection.forEach((value, index) => {
+            delClassCourse(value.id);
+            num = index;
+          });
+          if (num === this.multipleSelection.length - 1) {
+            this.handleQuery();
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    // 表格数据居中
+    tableStyle() {
+      return "text-align : center";
     }
   }
 };
