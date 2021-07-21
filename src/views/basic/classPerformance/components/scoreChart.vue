@@ -210,7 +210,7 @@ export default {
   },
   props: ["query", "getExaminationType"],
   mounted() {
-    // this.getChart();
+    this.getChart();
   },
   created() {
     this.getDicts("xkType").then(response => {
