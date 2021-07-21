@@ -110,9 +110,9 @@
                       将文件拖到此处，或
                       <em>点击上传</em>
                     </div>
-                    <div class="el-upload__tip" slot="tip">
+                    <!--<div class="el-upload__tip" slot="tip">
                       <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
-                    </div>
+                    </div>-->
                     <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入".zip"格式文件！</div>
                   </el-upload>
                   <div slot="footer" class="dialog-footer">
