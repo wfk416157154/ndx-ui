@@ -389,7 +389,7 @@ import {
   getExaminationPaper
 } from "@/api/basic/examinationPaper";
 import { listBjclass } from "@/api/basic/bjclass";
-import { listUser } from "@/api/system/user";
+import { listUser,selectInRoleUser} from "@/api/system/user";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { addExamSummary } from "@/api/basic/examSummary";
 
@@ -532,9 +532,13 @@ export default {
         });
       });
       // 获取用户列表
-      listUser().then(res => {
+      /*listUser().then((res) => {
         this.getListUser = res.rows;
-      });
+      });*/
+      /* 默认查询角色是教务员的用户 */
+      selectInRoleUser({roleId:"4"}).then(res=>{
+        this.getListUser = res.rows;
+      })
       if (this.$route.params.id && this.$route.params.id != ":id") {
         workLogListQuery({ id: this.$route.params.id }).then(res => {
           if (res.data.length != 0) {
