@@ -37,7 +37,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="老师姓名">
-          <el-input v-model="form.lsid" placeholder="请输入老师姓名"></el-input>
+          <el-input v-model="form.lsxm" placeholder="请输入老师姓名"></el-input>
         </el-form-item>
         <el-form-item label="考试范围" v-if="false" label-width="120px">
           <el-select width="100px" height="“10px" v-model="form.ksfw" placeholder="请选择考试范围">
@@ -58,10 +58,10 @@
         <el-form-item label="年份">
           <el-select width="100px" height="“10px" v-model="form.year" placeholder="请选择年份">
             <el-option
-              v-for="(item,index) in getYear"
+              v-for="(item,index) in 10"
               :key="index"
-              :label="item.dictLabel"
-              :value="item.dictValue"
+              :label="year + index"
+              :value="year + index"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -76,12 +76,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="开班学期">
-          <el-select v-model="form.xq" placeholder="请选择开班学期">
+          <el-select v-model="form.nj" placeholder="请选择开班学期">
             <el-option
               v-for="item in selectNj"
               :key="item.dictValue"
               :label="item.dictLabel"
-              :value="item.dictLabel"
+              :value="item.dictValue"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -163,6 +163,7 @@ export default {
   name: "statisticalChartTtem",
   data() {
     return {
+      year: new Date().getFullYear(),
       //开班学期字典
       selectNj: [],
       //查询条件
@@ -301,6 +302,7 @@ export default {
     // 可视化统计图
     getChart(item) {
       this.$nextTick(() => {
+        console.log("a",item.length)
         for (let i = 0; i < item.length; i++) {
           let obj = {};
           obj[i] = this.option;
@@ -322,8 +324,8 @@ export default {
                 obj[i].series[0].name = `(${item[i].rybj})班平均分`;
               }
             }
-            obj[i] && obj[i + "a"].setOption(obj[i]);
           }
+          obj[i] && obj[i + "a"].setOption(obj[i]);
         }
       });
     },
