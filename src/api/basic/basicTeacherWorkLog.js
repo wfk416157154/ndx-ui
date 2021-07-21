@@ -18,6 +18,15 @@ export function listBasicTeacherWorkLog(query) {
   })
 }
 
+// 目前启用查询日志
+export function workLogTemplateQuery(query) {
+  return request({
+    url: 'basic/basicTeacherWorkLog/workLogTemplateQuery',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查看老师日志主页面
 export function homePageQuery(query) {
   return request({

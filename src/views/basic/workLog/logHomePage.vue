@@ -1,12 +1,8 @@
 <template>
   <div class="Log-home-page">
-    <el-form ref="queryParams" :inline="true" :model="queryParams" >
+    <el-form ref="queryParams" :inline="true" :model="queryParams">
       <el-form-item label="校区" v-if="xqIsShow">
-        <el-select
-          v-model="queryParams.xqid"
-          @change="getSchoolId"
-          placeholder="请选择校区"
-        >
+        <el-select v-model="queryParams.xqid" @change="getSchoolId" placeholder="请选择校区">
           <el-option
             v-for="(item,index) in getListSchool"
             :label="item.xxmc"
@@ -16,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级">
-        <el-select  v-model="queryParams.rybid" placeholder="请选择班级">
+        <el-select v-model="queryParams.rybid" placeholder="请选择班级">
           <el-option
             v-for="(item,index) in getBjClass"
             :label="item.rybjmc"
@@ -40,10 +36,14 @@
       </el-form-item>
       <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
       <el-button type="primary" icon="el-icon-download" disabled @click="handleExport">导出日志</el-button>
-      <el-button type="success" icon="el-icon-plus" v-has-role="['teacher']" @click="toDetails(new Date().getMilliseconds())">填写日志</el-button>
-
+      <el-button
+        type="success"
+        icon="el-icon-plus"
+        v-has-role="['teacher']"
+        @click="toDetails(new Date().getMilliseconds())"
+      >填写日志</el-button>
     </el-form>
-    <div class="wrap-log-list" >
+    <div class="wrap-log-list">
       <ul>
         <li v-for="(item,index) in allLogs" :key="index">
           <div class="personal-information __float">
@@ -81,9 +81,13 @@
               <span>工作日志</span>
             </div>
             <div>
+              <span>课程内容 :</span>
+              <span>{{item.kczj}}</span>
+            </div>
+            <!-- <div>
               <span>备课内容 :</span>
               <span>{{item.bkBcrz}}</span>
-            </div>
+            </div> -->
             <div>
               <span>课中内容 :</span>
               <span v-for="(list,j) in item.teacherWorkLogLessonList" :key="j">{{list.content}}</span>
@@ -128,7 +132,10 @@
 <script>
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
-import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
+import {
+  homePageQuery,
+  updateBasicTeacherWorkLog
+} from "@/api/basic/basicTeacherWorkLog";
 export default {
   data() {
     return {
@@ -137,7 +144,7 @@ export default {
       // 查询条件
       queryParams: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 50
       },
       // 总条数
       total: 0,
@@ -159,13 +166,11 @@ export default {
     async getSchool() {
       let listSchoolResult = await listSchool();
       this.getListSchool = listSchoolResult.rows;
-      if (listSchoolResult.code==200 && listSchoolResult.rows.length==1){
-        this.queryParams.xqid=listSchoolResult.rows[0].id;
-      this.getSchoolId(this.queryParams.xqid);
-      this.xqIsShow =false;
-
+      if (listSchoolResult.code == 200 && listSchoolResult.rows.length == 1) {
+        this.queryParams.xqid = listSchoolResult.rows[0].id;
+        this.getSchoolId(this.queryParams.xqid);
+        this.xqIsShow = false;
       }
-
     },
     // 查询日志
     getList() {
@@ -205,8 +210,8 @@ export default {
     getSchoolId(schoolId) {
       listBjclass({ kzzd1: schoolId }).then(res => {
         this.getBjClass = res.rows;
-        if ( res.rows.length==1){
-          this.queryParams.rybid=res.rows[0].id;
+        if (res.rows.length == 1) {
+          this.queryParams.rybid = res.rows[0].id;
         }
       });
     },
@@ -221,7 +226,8 @@ export default {
       );
     },
     // 跳转到日志详情页面
-    toDetails(id){
+    toDetails(id) {
+      updateBasicTeacherWorkLog({ id: id, isRead: 1 });
       // 获取页面中参数配置的路由
       this.getConfigKey("worklogDetail").then(resp => {
         this.router = resp.msg;
@@ -240,6 +246,9 @@ export default {
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  display: block;
+  overflow-wrap: break-word;
+  line-height: 20px;
   .wrap-log-list {
     width: 100%;
     height: 100%;
@@ -250,9 +259,11 @@ export default {
         list-style: none;
         width: 100%;
         height: 200px;
-        color: #fff;
+        // color: #fff;
+        color: #000;
         margin-bottom: 20px;
-        background-image: linear-gradient(to right, #ff9569 0%, #e92758 100%);
+        border: 1px #000 solid;
+        // background-image: linear-gradient(to right, #ff9569 0%, #e92758 100%);
         .__float {
           float: left;
         }
