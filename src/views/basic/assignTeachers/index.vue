@@ -154,6 +154,7 @@
       <el-table-column prop="rybjmc" label="班级名称" width="180"></el-table-column>
       <el-table-column prop="bjrs" label="班级人数"></el-table-column>
       <el-table-column prop="kbsj" label="开班时间"></el-table-column>
+      <el-table-column prop="updateTime" label="分配时间"></el-table-column>
       <el-table-column prop="kbsj" label="已分配的老师姓名">
         <template slot-scope="scope">
           <span

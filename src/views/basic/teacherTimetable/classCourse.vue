@@ -146,7 +146,7 @@
                 @cell-click="cellRow"
               >
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column label="开始时间" width="140">
+                <el-table-column label="开始时间" width="120">
                   <template slot-scope="scope">
                     <el-time-select
                       style="width : 100%"
@@ -160,7 +160,7 @@
                     ></el-time-select>
                   </template>
                 </el-table-column>
-                <el-table-column label="结束时间" width="140">
+                <el-table-column label="结束时间" width="120">
                   <template slot-scope="scope">
                     <el-time-select
                       style="width : 100%"
