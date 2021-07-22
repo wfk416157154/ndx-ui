@@ -1,8 +1,8 @@
 <template>
   <div id="statisticalChartTtem">
     <div class="wrap-statisticalChartTtem">
-      <el-form ref="form" :inline="true" :model="form" label-width="100px">
-        <el-form-item label="校区">
+      <el-form ref="queryForm" :inline="true" :model="form" label-width="100px">
+        <el-form-item label="校区" prop="xqid">
           <el-select
             width="100px"
             height="“10px"
@@ -19,7 +19,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="日语班级">
+        <el-form-item label="日语班级" prop="bjid">
           <el-select
             filterable
             width="100px"
@@ -36,10 +36,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="老师姓名">
+        <el-form-item label="老师姓名" prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名"></el-input>
         </el-form-item>
-        <el-form-item label="考试范围" v-if="false" label-width="120px">
+        <el-form-item label="考试范围" v-if="false" label-width="120px" prop="ksfw">
           <el-select width="100px" height="“10px" v-model="form.ksfw" placeholder="请选择考试范围">
             <el-option
               v-for="(item,index) in getExaminationPaper"
@@ -49,13 +49,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="最高分">
+        <el-form-item label="最高分" prop="maxfs">
           <el-input v-model="form.maxfs" placeholder="请输入最高分"></el-input>
         </el-form-item>
-        <el-form-item label="最低分">
+        <el-form-item label="最低分" prop="minfs">
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
-        <el-form-item label="年份">
+        <el-form-item label="年份" prop="year">
           <el-select width="100px" height="“10px" v-model="form.year" placeholder="请选择年份">
             <el-option
               v-for="(item,index) in 10"
@@ -65,7 +65,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="月份">
+        <el-form-item label="月份" prop="month">
           <el-select width="100px" height="“10px" v-model="form.month" placeholder="请选择月份">
             <el-option
               v-for="(item,index) in 12"
@@ -75,7 +75,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="开班学期">
+        <el-form-item label="开班学期" prop="nj">
           <el-select v-model="form.nj" placeholder="请选择开班学期">
             <el-option
               v-for="item in selectNj"
@@ -87,6 +87,7 @@
         </el-form-item>
         <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -167,7 +168,10 @@ export default {
       //开班学期字典
       selectNj: [],
       //查询条件
-      form: {},
+      form: {
+        pageNum: 1,
+        pageSize: 10
+      },
       itemList: [1, 2, 3],
       // 统计图数据模板
       option: {
@@ -302,7 +306,7 @@ export default {
     // 可视化统计图
     getChart(item) {
       this.$nextTick(() => {
-        console.log("a",item.length)
+        console.log("a", item.length);
         for (let i = 0; i < item.length; i++) {
           let obj = {};
           obj[i] = this.option;
@@ -359,6 +363,11 @@ export default {
           path: res.msg + bjid
         });
       });
+    },
+    // 置空
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.getListClassGrade();
     }
   }
 };
