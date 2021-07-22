@@ -107,21 +107,21 @@
           <br />
           <span>已分配的老师姓名 :</span>
           <span>
-          <el-select
-            v-model="item.lsxmArr"
-            filterable
-            multiple
-            placeholder="当前老师"
-            disabled="false"
-          >
-            <el-option
-              v-for="item in teacherListOption"
-              :key="item.id"
-              :label="item.lsxm"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-            </span>
+            <el-select
+              v-model="item.lsxmArr"
+              filterable
+              multiple
+              placeholder="当前老师"
+              :disabled="false"
+            >
+              <el-option
+                v-for="item in teacherListOption"
+                :key="item.id"
+                :label="item.lsxm"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </span>
           <br />
           <el-select
             style="margin-bottom : 10px"
@@ -149,6 +149,17 @@
         @pagination="getList"
       />
     </div>
+    <el-table :data="optionalClasses1" border style="width: 100%">
+      <el-table-column prop="xxmc" label="学校名称" width="180"></el-table-column>
+      <el-table-column prop="rybjmc" label="班级名称" width="180"></el-table-column>
+      <el-table-column prop="bjrs" label="班级人数"></el-table-column>
+      <el-table-column prop="kbsj" label="开班时间"></el-table-column>
+      <el-table-column prop="kbsj" label="已分配的老师姓名">
+        <template slot-scope="scope">
+          <span v-for="(item,index) in scope.row.lsxmArr" :key="index" style="margin-right : 10px">{{item}}</span>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 <script>
