@@ -1,8 +1,8 @@
 <template>
   <div id="statisticalChartTtem">
     <div class="wrap-statisticalChartTtem">
-      <el-form ref="form" :inline="true" :model="form" label-width="100px">
-        <el-form-item label="日语班级">
+      <el-form ref="queryForm" :inline="true" :model="form" label-width="100px">
+        <el-form-item label="日语班级" prop="bjid">
           <el-select
             width="100px"
             height="“10px"
@@ -19,18 +19,24 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="开班学期">
+        <el-form-item label="开班学期" prop="xq">
           <el-select v-model="form.xq" placeholder="请选择开班学期">
             <el-option
               v-for="item in selectNj"
               :key="item.dictValue"
               :label="item.dictLabel"
-              :value="item.dictLabel"
+              :value="item.dictValue"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="考试范围" v-if="false" label-width="120px" >
-          <el-select width="100px" height="“10px" v-model="form.ksfw" filterable placeholder="请选择考试范围">
+        <el-form-item label="考试范围" prop="ksfw" v-if="false" label-width="120px">
+          <el-select
+            width="100px"
+            height="“10px"
+            v-model="form.ksfw"
+            filterable
+            placeholder="请选择考试范围"
+          >
             <el-option
               v-for="(item,index) in getExaminationPaper"
               :label="item.ksfw"
@@ -39,14 +45,17 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="最高分">
+        <el-form-item label="最高分" prop="maxfs">
           <el-input v-model="form.maxfs" placeholder="请输入最高分"></el-input>
         </el-form-item>
-        <el-form-item label="最低分">
+        <el-form-item label="最低分" prop="minfs">
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
-        <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
-        <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
+        <el-form-item>
+          <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
+          <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
+        </el-form-item>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -130,7 +139,15 @@ export default {
     return {
       //开班学期字典
       selectNj: [],
-      form: {},
+      form: {
+        pageNum: 1,
+        pageSize: 10,
+        bjid: null,
+        xq: null,
+        ksfw: null,
+        maxfs: null,
+        minfs: null
+      },
       itemList: [1, 2, 3],
       // 统计图数据模板
       option: {
@@ -214,8 +231,8 @@ export default {
     getSchoolId() {
       listBjclass().then(res => {
         this.getBjClass = res.rows;
-        if ( res.rows.length==1){
-          this.form.bjid=res.rows[0].id
+        if (res.rows.length == 1) {
+          this.form.bjid = res.rows[0].id;
         }
       });
     },
@@ -322,6 +339,11 @@ export default {
           path: res.msg + bjid
         });
       });
+    },
+    // 置空
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.getListClassGrade();
     }
   }
 };

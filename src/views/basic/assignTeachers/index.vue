@@ -112,7 +112,7 @@
               filterable
               multiple
               placeholder="当前老师"
-              :disabled="false"
+              disabled
             >
               <el-option
                 v-for="item in teacherListOption"
@@ -156,7 +156,11 @@
       <el-table-column prop="kbsj" label="开班时间"></el-table-column>
       <el-table-column prop="kbsj" label="已分配的老师姓名">
         <template slot-scope="scope">
-          <span v-for="(item,index) in scope.row.lsxmArr" :key="index" style="margin-right : 10px">{{item}}</span>
+          <span
+            v-for="(item,index) in scope.row.lsxmArr"
+            :key="index"
+            style="margin-right : 10px"
+          >{{item}}</span>
         </template>
       </el-table-column>
     </el-table>
