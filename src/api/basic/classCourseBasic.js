@@ -17,6 +17,40 @@ export function getClassCourseBasic(id) {
   })
 }
 
+// 查询老师课表
+export function teaEnableCourseQuery(id) {
+  return request({
+    url: '/basic/classCourseBasic/teaEnableCourseQuery/' + id,
+    method: 'get'
+  })
+}
+// 学生签到数据查询
+export function stuQiandaoHomePageQuery(query) {
+  return request({
+    url: '/basic/stuQiandao/stuQiandaoHomePageQuery',
+    method: 'get',
+    params: query
+  })
+}
+
+// 签到
+export function batchCheckIn(data) {
+  return request({
+    url: '/basic/stuQiandao/batchCheckIn',
+    method: 'post',
+    data: data
+  })
+}
+
+// 签到异常
+export function batchYiChang(data) {
+  return request({
+    url: '/basic/stuQiandao/batchYiChang',
+    method: 'post',
+    data: data
+  })
+}
+
 // 新增班级课程基本
 export function addClassCourseBasic(data) {
   return request({

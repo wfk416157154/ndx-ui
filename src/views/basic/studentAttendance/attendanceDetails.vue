@@ -1,21 +1,13 @@
 <template>
   <div class="attendanceDetails">
     <div class="wrap-title">
-      <span>{{courseInformation.date}}</span>
-      <span>{{courseInformation.kcType}}</span>
+      <span>{{courseInformation.kssj +" - "+ courseInformation.jssj}}</span>
+      <span>{{courseInformation.kcTypeName}}</span>
     </div>
 
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="日语班级">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="一班" value="shanghai"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="显示头像">
+      <el-form-item label="是否显示头像">
         <el-switch v-model="seeImg"></el-switch>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
     </el-form>
 
@@ -41,11 +33,11 @@
             <el-image
               v-if="seeImg"
               style="width : 80px; height : 100px; margin-bottom: 10px;"
-              :src="item.img"
+              :src="item.xstx"
               :preview-src-list="[item.img]"
             ></el-image>
-            <span>{{item.name}}</span>
-            <span>{{item.nj}}</span>
+            <span>{{item.xsxm}}</span>
+            <span>{{item.ybj}}</span>
             <el-checkbox v-model="item.checkbox"></el-checkbox>
           </li>
         </ul>
@@ -66,21 +58,21 @@
               <el-image
                 v-if="seeImg"
                 style="width : 80px; height : 100px; margin-bottom: 10px;"
-                :src="item.img"
-                :preview-src-list="[item.img]"
+                :src="item.xstx"
+                :preview-src-list="[item.xstx]"
               ></el-image>
-              <span>{{item.name}}</span>
-              <span>{{item.nj}}</span>
-              <span>上课时间6:30</span>
-              <span>签到时间7:21</span>
+              <span>{{item.xsxm}}</span>
+              <span>{{item.ybj}}</span>
+              <span>上课时间 : {{courseInformation.kssj}}</span>
+              <span>签到时间 : {{item.qdsj}}</span>
             </div>
             <div class="right-data">
               <div class="kq-type">
                 <span>考勤类型 :</span>
-                <span>迟到</span>
+                <span>{{item.qdyclxName}}</span>
               </div>
               <div>
-                <el-input disabled type="textarea" :rows='7' v-model="item.abnormalForm.yy"></el-input>
+                <el-input disabled type="textarea" :rows="7" v-model="item.ycyy"></el-input>
               </div>
             </div>
           </li>
@@ -101,11 +93,11 @@
             <el-image
               v-if="seeImg"
               style="width : 80px; height : 100px; margin-bottom: 10px;"
-              :src="item.img"
+              :src="item.xstx"
               :preview-src-list="[item.img]"
             ></el-image>
-            <span>{{item.name}}</span>
-            <span>{{item.nj}}</span>
+            <span>{{item.xsxm}}</span>
+            <span>{{item.ybj}}</span>
           </li>
         </ul>
       </div>
@@ -114,13 +106,18 @@
 
     <el-dialog title="标记信息" :visible.sync="dialogVisible" width="30%">
       <el-form ref="form" :model="abnormalForm" label-width="80px">
-        <el-form-item label="考勤类型">
-          <el-select v-model="abnormalForm.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
+        <el-form-item label="异常类型">
+          <el-select v-model="abnormalForm.qdyclx" placeholder="请选择活动区域">
+            <el-option
+              v-for="item in stuCheckIN"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="原因">
-          <el-input type="textarea" v-model="abnormalForm.yy"></el-input>
+          <el-input type="textarea" v-model="abnormalForm.ycyy"></el-input>
         </el-form-item>
         <el-form-item label="备注">
           <el-input type="textarea" v-model="abnormalForm.remark"></el-input>
@@ -135,6 +132,11 @@
 </template>
 
 <script>
+import {
+  stuQiandaoHomePageQuery,
+  batchCheckIn,
+  batchYiChang
+} from "@/api/basic/classCourseBasic";
 export default {
   data() {
     return {
@@ -143,100 +145,119 @@ export default {
       // 表单
       formInline: {},
       // 异常
-      abnormalForm: {},
+      abnormalForm: {
+        qdyclx: null,
+        ycyy: null,
+        remark: null
+      },
       dialogVisible: false,
       // 查看头像
       seeImg: true,
       // 未签到数据
-      noSignItem: [
-        {
-          img:
-            "https://img0.baidu.com/it/u=3564045895,2010464973&fm=26&fmt=auto&gp=0.jpg",
-          name: "老王",
-          nj: "高三(1)",
-          checkbox: false,
-          signStatus: 1
-        },
-        {
-          img:
-            "https://img0.baidu.com/it/u=3564045895,2010464973&fm=26&fmt=auto&gp=0.jpg",
-          name: "老张",
-          nj: "高三(2)",
-          checkbox: false,
-          signStatus: 1
-        },
-        {
-          img:
-            "https://img0.baidu.com/it/u=3564045895,2010464973&fm=26&fmt=auto&gp=0.jpg",
-          name: "老张",
-          nj: "高三(2)",
-          checkbox: false,
-          signStatus: 1
-        },
-        {
-          img:
-            "https://img0.baidu.com/it/u=3564045895,2010464973&fm=26&fmt=auto&gp=0.jpg",
-          name: "老张",
-          nj: "高三(2)",
-          checkbox: false,
-          signStatus: 1
-        },
-        {
-          img:
-            "https://img0.baidu.com/it/u=3564045895,2010464973&fm=26&fmt=auto&gp=0.jpg",
-          name: "老刘",
-          nj: "高三(3)",
-          checkbox: false,
-          signStatus: 1
-        }
-      ],
+      noSignItem: [],
       // 已经签到数据
       alreadySignedItem: [],
       // 签到异常
       abnormalSignItem: [],
       // 全选复制
-      selectAllData: false
+      selectAllData: false,
+      // 签到异常类型
+      stuCheckIN: [],
+      // 签到id 集合
+      stuQdIds: []
     };
   },
   created() {
     this.courseInformation = JSON.parse(this.$route.query.query);
+    this.getDicts("stuYcChenIn").then(response => {
+      this.stuCheckIN = response.data;
+    });
   },
   mounted() {
-    this.selectAll();
+    this.getList();
   },
   methods: {
     // 查学生
-    getList() {},
+    getList() {
+      let json = JSON.parse(this.$route.query.query);
+      stuQiandaoHomePageQuery({
+        bjid: json.bjid,
+        kbxqid: json[json.xq],
+        kcType: json.kcType,
+        xq: json.xq
+      }).then(res => {
+        this.noSignItem = res.data.wqdList;
+        this.abnormalSignItem = res.data.ycList;
+        this.alreadySignedItem = res.data.yqdList;
+        this.abnormalSignItem.map(value => {
+          value.qdsj = value.qdsj.slice(0, 5);
+          this.stuCheckIN.forEach(content => {
+            if (value.qdyclx == content.dictValue) {
+              value.qdyclxName = content.dictLabel;
+            }
+          });
+        });
+        this.selectAll();
+      });
+    },
     // 全选
     selectAll() {
       this.selectAllData = !this.selectAllData;
       this.noSignItem.map(value => {
         value.checkbox = this.selectAllData;
       });
-    },
-    // 查询
-    onSubmit() {},
-    //签到
-    signIn() {
-      this.noSignItem.forEach((value, index) => {
-        if (value.checkbox) {
-          value.signStatus = 3;
-          this.alreadySignedItem.push(this.noSignItem.splice(index, 1)[0]);
-        }
+      this.abnormalSignItem.map(value => {
+        value.checkbox = this.selectAllData;
+      });
+      this.alreadySignedItem.map(value => {
+        value.checkbox = this.selectAllData;
       });
     },
+    //签到
+    signIn() {
+      this.getStuQdIds();
+      if (this.stuQdIds.length > 0) {
+        batchCheckIn({ stuQdIds: this.stuQdIds }).then(res => {
+          if (res.code == 200) {
+            this.getList();
+            this.msgSuccess("签到成功");
+          } else {
+            this.msgError("签到失败");
+          }
+        });
+      } else {
+        this.msgError("请选择签到学生");
+      }
+    },
+    // 弹出标记框
     showAbnormal() {
+      this.getStuQdIds();
+      if (this.stuQdIds.length == 0) {
+        this.msgError("请选择学生");
+        return;
+      }
       this.dialogVisible = true;
-      this.abnormalForm = {}
+      this.abnormalForm = {};
     },
     // 异常添加
     addAbnormal() {
       this.dialogVisible = false;
+      this.getStuQdIds();
+      batchYiChang(
+        Object.assign({ stuQdIds: this.stuQdIds }, this.abnormalForm)
+      ).then(res => {
+        if (res.code == 200) {
+          this.getList();
+          this.msgSuccess("异常签到标记成功");
+        }
+      });
+    },
+    // 获取选中学生id
+    getStuQdIds() {
+      this.stuQdIds = []
       this.noSignItem.forEach((value, index) => {
         if (value.checkbox) {
-          let arr = this.noSignItem.splice(index, 1)[0];
-          this.abnormalSignItem.push(arr);
-          arr.abnormalForm = this.abnormalForm
+          this.stuQdIds.push(value.stuQdId);
         }
       });
     }
@@ -283,6 +304,7 @@ export default {
       margin-top: 20px;
       border-radius: 30px;
       border: 2px #dcdfe6 solid;
+      font-size: 14px;
       ul {
         width: 100%;
         height: 100%;
@@ -377,6 +399,7 @@ export default {
             flex-direction: column;
             align-items: center;
             margin: 0 10px 10px 0;
+            font-size: 14px;
             span {
               line-height: 20px;
             }
@@ -422,6 +445,7 @@ export default {
       margin-top: 20px;
       border-radius: 30px;
       border: 2px #dcdfe6 solid;
+      font-size: 14px;
       ul {
         width: 100%;
         height: 100%;
