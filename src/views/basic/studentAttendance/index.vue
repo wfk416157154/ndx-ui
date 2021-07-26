@@ -11,18 +11,7 @@
     >
       <el-table-column prop="kssj" label="开始时间" width="180"></el-table-column>
       <el-table-column prop="jssj" label="结束时间" width="180"></el-table-column>
-      <el-table-column prop="kcType" label="课程类型" width="180">
-        <template slot-scope="scope">
-          <el-select disabled v-model="scope.row.kcType" placeholder="请选择">
-            <el-option
-              v-for="item in kcType"
-              :key="item.dictValue"
-              :label="item.dictLabel"
-              :value="item.dictValue"
-            ></el-option>
-          </el-select>
-        </template>
-      </el-table-column>
+      <el-table-column prop="kcTypeName" label="课程类型" width="180"></el-table-column>
       <el-table-column prop="monday" title="周一" label="周一" width="180">
         <template slot-scope="scope">
           <el-link
@@ -30,7 +19,7 @@
             v-if="scope.row.monday"
             style="color : #67C23A"
           >{{scope.row.mondayDetails.ybj + ": 共" + scope.row.mondayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="tuesday" label="周二" width="180">
@@ -40,7 +29,7 @@
             v-if="scope.row.tuesday"
             style="color : #67C23A"
           >{{scope.row.tuesdayDetails.ybj + ": 共" + scope.row.tuesdayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="wednesday" label="周三" width="180">
@@ -50,7 +39,7 @@
             v-if="scope.row.wednesday"
             style="color : #67C23A"
           >{{scope.row.wednesdayDetails.ybj + ": 共" + scope.row.wednesdayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="thursday" label="周四" width="180">
@@ -60,7 +49,7 @@
             v-if="scope.row.thursday"
             style="color : #67C23A"
           >{{scope.row.thursdayDetails.ybj + ": 共" + scope.row.thursdayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="friday" label="周五" width="180">
@@ -70,7 +59,7 @@
             v-if="scope.row.friday"
             style="color : #67C23A"
           >{{scope.row.fridayDetails.ybj + ": 共" + scope.row.fridayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="saturday" label="周六" width="180">
@@ -80,7 +69,7 @@
             v-if="scope.row.saturday"
             style="color : #67C23A"
           >{{scope.row.saturdayDetails.ybj + ": 共" + scope.row.saturdayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="sunday" label="周日" width="180">
@@ -90,7 +79,7 @@
             v-if="scope.row.sunday"
             style="color : #67C23A"
           >{{scope.row.sundayDetails.ybj + ": 共" + scope.row.sundayDetails.yjskrs + "人"}}</el-link>
-          <span v-else type="warning">暂无安排</span>
+          <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
     </el-table>
@@ -127,6 +116,11 @@ export default {
           value.fridayDetails = value.fridayDetails[0];
           value.saturdayDetails = value.saturdayDetails[0];
           value.sundayDetails = value.sundayDetails[0];
+          for (let i = 0; i < this.kcType.length; i++) {
+            if (value.kcType == this.kcType[i].dictValue) {
+              value.kcTypeName = this.kcType[i].dictLabel;
+            }
+          }
         });
         this.tableData = res.rows;
       });
@@ -136,7 +130,7 @@ export default {
         !row[column.property] ||
         column.property === "kssj" ||
         column.property === "jssj" ||
-        column.property === "kcType"
+        column.property === "kcTypeName"
       )
         return;
       let params = {

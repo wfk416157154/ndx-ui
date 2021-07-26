@@ -42,7 +42,7 @@
           </li>
         </ul>
       </div>
-      <div v-else style="text-align : center; color : #e6a23c;margin-top : 20px">暂时还没有未签到的学生</div>
+      <div v-else style="text-align : center; color : #e6a23c;margin-top : 20px">暂无未签到的学生</div>
     </div>
 
     <div class="wrap-abnormal-sign">
@@ -78,7 +78,7 @@
           </li>
         </ul>
       </div>
-      <div v-else style="text-align : center; color : #f56c6c">暂时还没有签到异常的学生</div>
+      <div v-else style="text-align : center; color : #f56c6c">暂无签到异常的学生</div>
     </div>
 
     <div class="wrap-already-Signed">
@@ -101,7 +101,7 @@
           </li>
         </ul>
       </div>
-      <div v-else style="text-align : center; color : #67c23a">暂时还没有签到的学生</div>
+      <div v-else style="text-align : center; color : #67c23a">暂无签到的学生</div>
     </div>
 
     <el-dialog title="标记信息" :visible.sync="dialogVisible" width="30%">
