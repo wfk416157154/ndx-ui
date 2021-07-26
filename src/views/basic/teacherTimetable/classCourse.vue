@@ -97,7 +97,7 @@
             ></el-switch>
             <div style="float: right">
               {{item.nd}} 年度-
-              {{selectDictLabel(kbTypeOptionsEL,item.kbType)}}
+              {{item.kbTypeName}}
             </div>
           </div>
         </el-card>
@@ -401,7 +401,6 @@ export default {
       // 年份字典
       yearList: [],
       // 课表类型
-      kbTypeOptions: [],
       kbTypeOptionsEL: [],
       // 是否有课
       isCourse: [],
@@ -428,7 +427,6 @@ export default {
       this.yearList = response.data;
     });
     this.getDicts("kb_type").then(response => {
-      this.kbTypeOptions = this.renderDict(response.data);
       this.kbTypeOptionsEL = response.data;
     });
     this.getDicts("is_course").then(response => {
@@ -446,7 +444,6 @@ export default {
       }
     });
   },
-  mounted() {},
   methods: {
     // 班级列表基础信息
     getList() {
@@ -497,10 +494,14 @@ export default {
     },
     // 拿到该班级的所有课表
     getClassCourseBasicList(rybjid, nd) {
+      this.classCourseList = [];
       let obj = {
-        bjid: rybjid,
-        nd: nd
+        bjid: rybjid
       };
+      if (nd) {
+        obj.nd = nd;
+        obj.kbType = this.queryParams.kbType;
+      }
       listClassCourseBasic(obj).then(response => {
         this.classCourseBasicList = response.rows;
         if (this.classCourseBasicList.length == 0) {
@@ -515,6 +516,11 @@ export default {
           arr.push(value.sfqy);
           if (value.sfqy) {
             this.getCourse();
+          }
+          for (let i = 0; i < this.kbTypeOptionsEL.length; i++) {
+            if (value.kbType == this.kbTypeOptionsEL[i].dictValue) {
+              value.kbTypeName = this.kbTypeOptionsEL[i].dictLabel;
+            }
           }
         });
         if (arr.indexOf(true) == -1) {
@@ -540,6 +546,7 @@ export default {
       }
       if (value) {
         this.queryParams.kzzd2 = value.nd;
+        this.queryParams.kbType = value.kbType;
         this.submitTimetable(value);
       }
       if (value.sfqy) {
@@ -560,41 +567,11 @@ export default {
         this.msgError("请选择该新增课表的课表类型！");
         return;
       }
-      if (this.classCourseBasicList.length == 0) {
+      if (!this.activeTab) {
         this.msgError("请点击搜索选择对应班级！");
         return;
       }
       this.classCourseList.push(this.record());
-    },
-    // 删除选中行
-    deleteData() {
-      const $table = this.$refs.xTable;
-      const removeRecords = $table.getCheckboxRecords();
-      this.$confirm("是否确认删除?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(function() {
-          $table.removeCheckboxRow();
-          let arr = [];
-          for (let i = 0; i < removeRecords.length; i++) {
-            if (undefined == removeRecords[i].id) {
-              continue;
-            }
-            arr.push(removeRecords[i].id);
-          }
-          if (arr.length > 0) {
-            return delClassCourse(arr);
-          }
-        })
-        .then(() => {
-          this.getList(true);
-          this.msgSuccess("数据删除成功");
-        })
-        .catch(e => {
-          console.log(e);
-        });
     },
     // 新增加一行表格
     record() {
@@ -722,6 +699,14 @@ export default {
               num = i;
               if (!this.multipleSelection[i].kcType) {
                 this.msgError("请选择课程类型！");
+                return;
+              }
+              if (!this.multipleSelection[i].kssj) {
+                this.msgError("请选择开始时间！");
+                return;
+              }
+              if (!this.multipleSelection[i].jssj) {
+                this.msgError("请选择结束时间！");
                 return;
               }
               this.multipleSelection[i].kzzd1 = res.data.id;
