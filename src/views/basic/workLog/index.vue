@@ -389,7 +389,7 @@ import {
   getExaminationPaper
 } from "@/api/basic/examinationPaper";
 import { listBjclass } from "@/api/basic/bjclass";
-import { listUser,selectInRoleUser} from "@/api/system/user";
+import { listUser, selectInRoleUser } from "@/api/system/user";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { addExamSummary } from "@/api/basic/examSummary";
 
@@ -517,7 +517,7 @@ export default {
         this.getListBjclass = res.rows;
         // 获取个人日志 考试范围
         //只查已发送,并且未上传的考卷
-        if (res.rows.length == 1) {
+        if (res.rows.length > 0) {
           this.bjNameId = res.rows[0].id;
         }
         if (this.bjNameId !== null || this.bjNameId === "") {
@@ -536,11 +536,37 @@ export default {
         this.getListUser = res.rows;
       });*/
       /* 默认查询角色是教务员的用户 */
-      selectInRoleUser({roleId:"4"}).then(res=>{
+      selectInRoleUser({ roleId: "4" }).then(res => {
         this.getListUser = res.rows;
-      })
+      });
       if (this.$route.params.id && this.$route.params.id != ":id") {
         workLogListQuery({ id: this.$route.params.id }).then(res => {
+          if (res.data.length != 0) {
+            this.ifForm = true;
+            this.ruleForm = res.data[0];
+            this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+              for (let i = 0; i < this.kcType.length; i++) {
+                if (this.kcType[i].dictValue == value.courseType) {
+                  value.courseTypeName = this.kcType[i].dictLabel;
+                  this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+                }
+              }
+            });
+            this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+            // 教室卫生照片回显
+            this.selectPhotoList(
+              (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+              "files1"
+            );
+            // 学生表现照片回显
+            this.selectPhotoList(
+              (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+              "files2"
+            );
+          }
+        });
+      } else if (this.rzid) {
+        workLogListQuery({ id: this.rzid }).then(res => {
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data[0];
@@ -570,8 +596,13 @@ export default {
       }
     },
     getWorkLogTemplateQuery() {
+      if (!this.bjNameId) {
+        this.msgError("请选择班级");
+        return;
+      }
       // 日志主页进来的详情页
       workLogTemplateQuery({ bjid: this.bjNameId }).then(res => {
+        console.log(res);
         if (res.data.length != 0) {
           this.ifForm = true;
           this.ruleForm = res.data;
@@ -869,6 +900,7 @@ export default {
           this.ruleForm.lsid = this.$store.state.user.glrid;
           addSave(this.ruleForm).then(async res => {
             if (res.code == 200) {
+              this.rzid = res.data.id;
               //this.getWorkLogListQuery(this.bjNameId, this.logTiem);
               this.getList();
               if (this.ruleForm.kzzd4) {
@@ -876,7 +908,6 @@ export default {
                   id: this.ruleForm.kzzd4,
                   kzzd3: res.data.id
                 };
-                this.rzid = res.data.id;
                 // 保存日志id到对应试卷
                 await updateExaminationPaper(jsonObj);
               }

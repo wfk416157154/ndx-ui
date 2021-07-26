@@ -8,8 +8,23 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqid" v-hasPermi="['basic:school:list']" label-width="100px">
-        <el-select v-model="queryParams.xqid" filterable placeholder="请选择校区名称">
+        <el-select
+          v-model="queryParams.xqid"
+          @change="getSchoolListId"
+          filterable
+          placeholder="请选择校区名称"
+        >
           <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="日语班" prop="xqid"  label-width="100px">
+        <el-select v-model="queryParams.bjid" filterable placeholder="请选择班级名称">
+          <el-option
+            v-for="item in listBjclass"
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="年份" prop="kzzd2">
@@ -40,37 +55,32 @@
       <el-col :span="6" :xs="24">
         <el-card>
           <el-tabs v-model="activeTab" @tab-click="switchingClasses(activeTab)">
-            <el-tab-pane
-              v-for="(item,index) in listBjclass"
-              :key="index"
-              :label="item.rybjmc"
-              :name="item.id"
-            >
-              <div class="wrap-info">
+            <el-tab-pane :label="classData.rybjmc" :name="classData.id">
+              <div class="wrap-info" v-if="classData != {}">
                 <ul class="list-group list-group-striped">
                   <li style="padding-bottom : 10px; font-size : 14px">
                     日语班级
-                    <div class="pull-right">{{item.rybjmc}}</div>
+                    <div class="pull-right">{{classData.rybjmc}}</div>
                   </li>
                   <li class="list-group-item">
                     姓名
-                    <div class="pull-right">{{item.lsxm}}</div>
+                    <div class="pull-right">{{classData.lsxm}}</div>
                   </li>
                   <li class="list-group-item">
                     校区
-                    <div class="pull-right">{{item.xqmc}}</div>
+                    <div class="pull-right">{{classData.xqmc}}</div>
                   </li>
                   <li class="list-group-item">
                     开班时间
-                    <div class="pull-right">{{item.kbsj}}</div>
+                    <div class="pull-right">{{classData.kbsj}}</div>
                   </li>
                   <li class="list-group-item">
                     班级人数
-                    <div class="pull-right">{{item.bjrs}}</div>
+                    <div class="pull-right">{{classData.bjrs}}</div>
                   </li>
                   <li class="list-group-item">
                     录入时间
-                    <div class="pull-right">{{item.kzzd3}}</div>
+                    <div class="pull-right">{{classData.kzzd3}}</div>
                   </li>
                 </ul>
               </div>
@@ -110,6 +120,34 @@
           <el-tabs v-model="tabsActiveTab">
             <el-tab-pane label="班级课表" name="kb">
               <div style="margin-bottom: 10px">
+                <el-select
+                  style="margin-right : 10px"
+                  v-model="queryParams.kzzd2"
+                  placeholder="请选择年份"
+                  clearable
+                  size="small"
+                >
+                  <el-option
+                    v-for="dict in yearList"
+                    :key="dict.dictValue"
+                    :label="dict.dictLabel"
+                    :value="dict.dictLabel"
+                  />
+                </el-select>
+                <el-select
+                  style="margin-right : 10px"
+                  v-model="queryParams.kbType"
+                  placeholder="请选择课表类型"
+                  clearable
+                  size="small"
+                >
+                  <el-option
+                    v-for="dict in kbTypeOptionsEL"
+                    :key="dict.dictValue"
+                    :label="dict.dictLabel"
+                    :value="dict.dictValue"
+                  />
+                </el-select>
                 <el-button
                   type="primary"
                   icon="el-icon-plus"
@@ -419,7 +457,9 @@ export default {
       multipleSelection: null,
       // 选中的课表id
       selectedTimetableId: null,
-      alertHtml: ""
+      alertHtml: "",
+      //选中班级的数据
+      classData: {}
     };
   },
   created() {
@@ -441,23 +481,45 @@ export default {
         this.schoolList.length == 1
           ? (this.queryParams.xqid = this.schoolList[0].id)
           : null;
+        this.getSchoolListId();
       }
     });
   },
   methods: {
     // 班级列表基础信息
     getList() {
-      let obj = {
-        // 根据关联校区id进行查询
-        kzzd1: this.queryParams.xqid
-      };
-      listBjclass(obj).then(res => {
+      // let obj = {
+      //   // 根据关联校区id进行查询
+      //   kzzd1: this.queryParams.xqid
+      // };
+      // listBjclass(obj).then(res => {
+      //   this.listBjclass = res.rows;
+      //   if (res.rows.length > 0) {
+      this.activeTab = this.queryParams.bjid;
+      this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
+      this.getClassId(this.activeTab);
+      // }
+      // });
+    },
+    // 获取班级
+    getSchoolListId(xqid) {
+      xqid = xqid || this.queryParams.xqid;
+      listBjclass({ kzzd1: xqid }).then(res => {
         this.listBjclass = res.rows;
-        if (res.rows.length > 0) {
-          this.activeTab = this.listBjclass[0].id;
-          this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
+        this.listBjclass.length == 1
+          ? (this.queryParams.xqid = this.schoolList[0].id)
+          : null;
+      });
+    },
+    // 获取选中班级数据
+    getClassId(bjid) {
+      this.listBjclass.forEach(value => {
+        if (value.id == bjid) {
+          this.classData = value;
+          console.log(this.classData);
         }
       });
+      console.log(this.bjid);
     },
     // 获取课表详细数据
     getCourse() {
@@ -493,8 +555,10 @@ export default {
       this.getClassCourseBasicList(bjid, nd);
     },
     // 拿到该班级的所有课表
-    getClassCourseBasicList(rybjid, nd) {
-      this.classCourseList = [];
+    getClassCourseBasicList(rybjid, nd, $sfqy) {
+      if (!$sfqy) {
+        this.classCourseList = [];
+      }
       let obj = {
         bjid: rybjid
       };
@@ -515,7 +579,11 @@ export default {
           value.sfqy = Boolean(value.sfqy);
           arr.push(value.sfqy);
           if (value.sfqy) {
-            this.getCourse();
+            this.queryParams.kzzd2 = value.nd;
+            this.queryParams.kbType = value.kbType;
+            if (!$sfqy) {
+              this.getCourse();
+            }
           }
           for (let i = 0; i < this.kbTypeOptionsEL.length; i++) {
             if (value.kbType == this.kbTypeOptionsEL[i].dictValue) {
@@ -536,14 +604,6 @@ export default {
     },
     // 是否启用
     setSfqy(value) {
-      if (!this.queryParams.kzzd2) {
-        this.msgError("请选择该新增课表的所属年份！");
-        return;
-      }
-      if (!this.queryParams.kbType) {
-        this.msgError("请选择该新增课表的课表类型！");
-        return;
-      }
       if (value) {
         this.queryParams.kzzd2 = value.nd;
         this.queryParams.kbType = value.kbType;
@@ -565,6 +625,10 @@ export default {
       }
       if (!this.queryParams.kbType) {
         this.msgError("请选择该新增课表的课表类型！");
+        return;
+      }
+      if (!this.queryParams.bjid) {
+        this.msgError("请选择该新增课表的班级！");
         return;
       }
       if (!this.activeTab) {
@@ -678,60 +742,72 @@ export default {
       this.multipleSelection = val;
     },
     // 保存课表
-    submitTimetable(value) {
+    async submitTimetable(value) {
       if (value) {
         if (!this.queryParams.kbType || !this.queryParams.kzzd2) {
           return this.msgError("请选择课表类型！");
         }
       }
-      classCourseBasicSave({
+      let result = await classCourseBasicSave({
         bjid: this.queryParams.bjid,
         nd: this.queryParams.kzzd2,
         kbType: this.queryParams.kbType,
         sfqy: Number(value.sfqy),
         id: value.id
-      }).then(res => {
-        if (res.code == 200) {
-          this.getClassCourseBasicList(this.activeTab, this.queryParams.kzzd2);
-          if (this.multipleSelection && this.multipleSelection.length > 0) {
-            let num = 0;
-            for (let i = 0; i < this.multipleSelection.length; i++) {
-              num = i;
-              if (!this.multipleSelection[i].kcType) {
-                this.msgError("请选择课程类型！");
-                return;
-              }
-              if (!this.multipleSelection[i].kssj) {
-                this.msgError("请选择开始时间！");
-                return;
-              }
-              if (!this.multipleSelection[i].jssj) {
-                this.msgError("请选择结束时间！");
-                return;
-              }
-              this.multipleSelection[i].kzzd1 = res.data.id;
-              if (this.multipleSelection[i].id) {
-                updateClassCourse(this.multipleSelection[i]).then(res => {
-                  if (res.code == 200) {
-                    this.getCourse();
-                    this.btnDisabled = true;
-                  }
-                });
-              } else {
-                addClassCourse(this.multipleSelection[i]).then(res => {
-                  if (res.code == 200) {
-                    this.getCourse();
-                    this.btnDisabled = true;
-                  }
-                });
-              }
+      });
+      if (result.code == 200) {
+        this.getClassCourseBasicList(
+          this.activeTab,
+          this.queryParams.kzzd2,
+          true
+        );
+        if (this.multipleSelection && this.multipleSelection.length > 0) {
+          let num = 0;
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            if (!this.multipleSelection[i].kcType) {
+              this.msgError("请选择课程类型！");
+              continue;
             }
-            if (this.multipleSelection.length - 1 === num) {
-              this.msgSuccess("保存成功");
+            if (!this.multipleSelection[i].kssj) {
+              this.msgError("请选择开始时间！");
+              continue;
+            }
+            if (!this.multipleSelection[i].jssj) {
+              this.msgError("请选择结束时间！");
+              continue;
+            }
+            this.multipleSelection[i].kzzd1 = result.data.id;
+            if (this.multipleSelection[i].id) {
+              updateClassCourse(this.multipleSelection[i]).then(res => {
+                if (res.code == 200) {
+                  this.multipleSelection = [];
+                  this.getClassCourseBasicList(
+                    this.activeTab,
+                    this.queryParams.kzzd2
+                  );
+                  this.btnDisabled = true;
+                  num++;
+                }
+              });
+            } else {
+              addClassCourse(this.multipleSelection[i]).then(res => {
+                if (res.code == 200) {
+                  this.multipleSelection = [];
+                  this.getClassCourseBasicList(
+                    this.activeTab,
+                    this.queryParams.kzzd2
+                  );
+                  this.btnDisabled = true;
+                  num++;
+                }
+              });
             }
           }
+          if (this.multipleSelection.length === num) {
+            this.msgSuccess("保存成功");
+          }
         }
-      });
+      }
     },
     // 删除选中行
     deleteData() {
@@ -741,8 +817,12 @@ export default {
         type: "warning"
       })
         .then(() => {
+          this.btnDisabled = true;
           let num = 0;
           this.multipleSelection.forEach((value, index) => {
+            if (!value.id) {
+              return;
+            }
             delClassCourse(value.id);
             num = index;
           });
