@@ -4,9 +4,8 @@
       <div class="left-table __float">
         <el-table
           :data="listAll"
-          border
-          :cell-style="addClass"
           :summary-method="getSummaries"
+          border
           show-summary
           style="width: 100%"
         >
@@ -22,9 +21,7 @@
               <span
                 v-if="item.prop == 'xsxm' || item.prop == 'rybj'  || item.prop == 'zhcj'"
               >{{scope.row[item.prop]}}</span>
-              <span
-                v-if="item.prop == 'wl'"
-              >{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
+              <span v-if="item.prop == 'wl'">{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
               <div v-else>
                 <div
                   v-if="scope.row[item.colour] == 1"
@@ -38,9 +35,7 @@
                   v-if="scope.row[item.colour] == 3"
                   style="background : red; display : inline-block ; width :100%;color : #fff"
                 >{{scope.row[item.prop]}}</span>
-                <span
-                  v-if="scope.row[item.colour] == 4"
-                >{{scope.row[item.prop]}}</span>
+                <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
               </div>
             </template>
           </el-table-column>
@@ -67,17 +62,17 @@
         </div>
         <div>
           <i></i>
-          <span>60分以下人数 :</span>
+          <span>{{fzTitle3}} :</span>
           <span>{{chartList.bhers}}</span>
         </div>
         <div>
           <i></i>
-          <span>60-80分的人数 :</span>
+          <span>{{fzTitle2}} :</span>
           <span>{{chartList.hers}}</span>
         </div>
         <div>
           <i></i>
-          <span>80-100分的人数 :</span>
+          <span>{{fzTitle1}} :</span>
           <span>{{chartList.yxrs}}</span>
         </div>
         <div>
@@ -205,7 +200,11 @@ export default {
       chartList: {},
       // 考试分析总结
       getKsfxzj: "",
-      wlOption:[],
+      wlOption: [],
+      // 动态分
+      fzTitle1: "",
+      fzTitle2: "",
+      fzTitle3: ""
     };
   },
   props: ["query", "getExaminationType"],
@@ -216,7 +215,6 @@ export default {
     this.getDicts("xkType").then(response => {
       this.wlOption = response.data;
     });
-
   },
   methods: {
     getChart() {
@@ -242,18 +240,61 @@ export default {
           }
         });
         this.chartList = this.listAll[this.listAll.length - 1];
+        let fz60 = Math.round(this.chartList.mf * 0.6);
+        let fz80 = Math.round(this.chartList.mf * 0.8);
         // 考试分制
         this.option1.graphic.style.text = this.chartList.mf + "分制";
         this.option1.series[0].data[0].value = this.chartList.yxbfb;
         this.option1.series[0].data[1].value = this.chartList.hgbfb;
         this.option1.series[0].data[2].value = this.chartList.bhgbfb;
+        this.option1.series[0].data[0].name = fz60 + "分以下";
+        this.option1.legend.data[0] = this.fzTitle1 = fz60 + "分以下";
+        this.option1.series[0].data[1].name = fz60 + "分至" + fz80 + "分";
+        this.option1.legend.data[1] = this.fzTitle2 =
+          fz60 + "分至" + fz80 + "分";
+        this.option1.series[0].data[2].name =
+          fz80 + "分至" + this.chartList.mf + "分";
+        this.option1.legend.data[2] = this.fzTitle3 =
+          fz80 + "分至" + this.chartList.mf + "分";
         let myChart1 = this.$echarts.init(document.getElementById("pie1"));
         myChart1.setOption(this.option1);
       });
       // 考试分析总结
       listExamSummary({ examPaperId: this.query.ksfw }).then(res => {
-        this.getKsfxzj = res.rows[0].ksfxzj;
+        this.getKsfxzj = res.rows[0] && res.rows[0].ksfxzj;
       });
+    },
+    // 平均数
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "平均分";
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] += "分";
+        } else {
+          sums[index] = "N/A";
+        }
+      });
+      for (let i = 1; i < 3; i++) {
+        sums[i] = "";
+      }
+      for (let i = 3; i < sums.length; i++) {
+        sums[i] = (parseInt(sums[i]) / this.listAll.length).toFixed(2) + "分";
+      }
+      return sums;
     }
   }
 };

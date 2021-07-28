@@ -308,7 +308,13 @@
           <!-- 发送到人 -->
           <div class="send-out">
             <h4>发送到人</h4>
-            <el-select v-model="ruleForm.sendUserArr" filterable multiple placeholder="请选择">
+            <el-select
+              v-model="ruleForm.sendUserArr"
+              filterable
+              multiple
+              placeholder="请选择"
+              @change="validSentBtn"
+            >
               <el-option
                 v-for="item in getListUser"
                 :key="item.userId"
@@ -317,8 +323,9 @@
               ></el-option>
             </el-select>
             <el-button
+              :disabled="sendBtn"
               type="primary"
-              @click="sendOut(true)"
+              @click="sendOut()"
               v-has-permi="['basic:basicTeacherWorkLog:save']"
             >发送</el-button>
           </div>
@@ -378,7 +385,8 @@ import {
   workLogListQuery,
   addSave,
   updateBasicTeacherWorkLog,
-  workLogTemplateQuery
+  workLogTemplateQuery,
+  workLogStatusQuery
 } from "@/api/basic/basicTeacherWorkLog";
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
@@ -402,7 +410,9 @@ export default {
       ksmcdisable: false,
       enableBos: false,
       //日志集合
-      ruleForm: {},
+      ruleForm: {
+        sendUserArr: []
+      },
       rules: {
         kczj: [{ required: true, message: "请填写课程日志", trigger: "blur" }]
       },
@@ -455,7 +465,7 @@ export default {
       // 获取考试名称
       getListExaminationPaper: [],
       // 老师所带班级
-      bjNameId: "",
+      bjNameId: null,
       // 日志填写时间
       logTiem: null,
       // 班级名称
@@ -473,7 +483,8 @@ export default {
       // 考试分析总结
       getKscjzj: "",
       // 日志id
-      rzid: ""
+      rzid: null,
+      sendBtn: true // 发送按钮：默认禁用，当选择发送人和填写课程日志时才启用
     };
   },
   created() {
@@ -493,12 +504,37 @@ export default {
     });
   },
   mounted() {
+    this.initBjClassList();
     this.getList();
+    this.validSentBtn();
+    this.initGetListExaminationPaper();
   },
   methods: {
     // chooseClass(id){// 当选择日语班级后显示日志填写框
     //   this.ifForm = true;
     // },
+    initBjClassList() {
+      // 获取班级信息
+      listBjclass().then(res => {
+        this.getListBjclass = res.rows;
+        if (res.rows.length >= 1) {
+          this.bjNameId = res.rows[0].id;
+        }
+        if (this.bjNameId != null) {
+          this.ifForm = true;
+        }
+      });
+    },
+    // 查询当前未上传的考试试卷
+    initGetListExaminationPaper() {
+      let json = {
+        jwsjzt: "1", //教务试卷状态(0未发送1已发送)
+        kzzd2: "9" //未上传的考卷
+      };
+      listExaminationPaper(json).then(res => {
+        this.getListExaminationPaper = res.rows;
+      });
+    },
     chooseBrz(flag) {
       // 当选择补日志时：true
       if (flag) {
@@ -511,26 +547,7 @@ export default {
       this.sfbrz = flag;
     },
     // 获取课中课表信息
-    async getList() {
-      // 获取班级信息
-      await listBjclass().then(res => {
-        this.getListBjclass = res.rows;
-        // 获取个人日志 考试范围
-        //只查已发送,并且未上传的考卷
-        if (res.rows.length > 0) {
-          this.bjNameId = res.rows[0].id;
-        }
-        if (this.bjNameId !== null || this.bjNameId === "") {
-          this.ifForm = true;
-        }
-        let json = {
-          jwsjzt: "1",
-          kzzd2: "9" //未上传的考卷
-        };
-        listExaminationPaper(json).then(res => {
-          this.getListExaminationPaper = res.rows;
-        });
-      });
+    getList() {
       // 获取用户列表
       /*listUser().then((res) => {
         this.getListUser = res.rows;
@@ -539,34 +556,11 @@ export default {
       selectInRoleUser({ roleId: "4" }).then(res => {
         this.getListUser = res.rows;
       });
+      // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        workLogListQuery({ id: this.$route.params.id }).then(res => {
-          if (res.data.length != 0) {
-            this.ifForm = true;
-            this.ruleForm = res.data[0];
-            this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
-              for (let i = 0; i < this.kcType.length; i++) {
-                if (this.kcType[i].dictValue == value.courseType) {
-                  value.courseTypeName = this.kcType[i].dictLabel;
-                  this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
-                }
-              }
-            });
-            this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
-            // 教室卫生照片回显
-            this.selectPhotoList(
-              (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-              "files1"
-            );
-            // 学生表现照片回显
-            this.selectPhotoList(
-              (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-              "files2"
-            );
-          }
-        });
-      } else if (this.rzid) {
+        this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
+          // console.log(res)
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data[0];
@@ -592,15 +586,17 @@ export default {
           }
         });
       } else {
-        this.getWorkLogTemplateQuery();
+        listBjclass().then(res => {
+          if (res.rows.length > 0) {
+            this.bjNameId = res.rows[0].id;
+            this.getWorkLogTemplateQuery();
+          }
+        });
       }
     },
+    // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery() {
-      if (!this.bjNameId) {
-        this.msgError("请选择班级");
-        return;
-      }
-      // 日志主页进来的详情页
+      this.getWorkLogStatusQuery();
       workLogTemplateQuery({ bjid: this.bjNameId }).then(res => {
         if (res.data.length != 0) {
           this.ifForm = true;
@@ -614,22 +610,74 @@ export default {
             }
           });
           this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
-          // 教室卫生照片回显
-          this.selectPhotoList(
-            (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-            "files1"
-          );
-          // 学生表现照片回显
-          this.selectPhotoList(
-            (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-            "files2"
-          );
         }
         if (
           this.ruleForm.basicTeacherWorkLogLessonList &&
           this.ruleForm.basicTeacherWorkLogLessonList.length == 0
         ) {
           this.ruleForm.basicTeacherWorkLogLessonList = [];
+        }
+      });
+    },
+    // 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
+    getWorkLogStatusQuery(bjid) {
+      let json = {
+        bjid: this.bjNameId
+      };
+      for (let i = 0; i < this.getListBjclass.length; i++) {
+        if (this.getListBjclass[i].id === this.bjNameId) {
+          var rybjName = this.getListBjclass[i].rybjmc;
+        }
+      }
+      if (this.logTiem) {
+        json.rq = this.logTiem;
+      }
+      workLogStatusQuery(json).then(res => {
+        switch (res.data) {
+          case 2:
+            this.$confirm(
+              `${rybjName}当天日志已经填写,但未发送, 是否要去日志主页查看?`,
+              "提示",
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                this.$router.push({
+                  path: "/lsgl/log/logHomePage"
+                });
+              })
+              .catch(() => {
+                this.$message({
+                  type: "info",
+                  message: "已取消"
+                });
+              });
+            break;
+          case 3:
+            this.$confirm(
+              `${rybjName}当天日志已经填写,并已发送, 是否要去日志主页查看?`,
+              "提示",
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                this.$router.push({
+                  path: "/lsgl/log/logHomePage"
+                });
+              })
+              .catch(() => {
+                this.$message({
+                  type: "info",
+                  message: "已取消"
+                });
+              });
+            break;
         }
       });
     },
@@ -886,7 +934,7 @@ export default {
       });
     },
     // 发送
-    sendOut(value) {
+    sendOut() {
       if (true == this.sfbrz) {
         if (null == this.logTiem) {
           this.msgError("请选择补哪一天的日志！");
@@ -895,45 +943,78 @@ export default {
       }
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          this.ruleForm.kzzd1 = this.bjNameId;
-          this.ruleForm.lsid = this.$store.state.user.glrid;
-          addSave(this.ruleForm).then(async res => {
-            if (res.code == 200) {
-              this.rzid = res.data.id;
-              //this.getWorkLogListQuery(this.bjNameId, this.logTiem);
-              this.getList();
-              if (this.ruleForm.kzzd4) {
-                let jsonObj = {
-                  id: this.ruleForm.kzzd4,
-                  kzzd3: res.data.id
-                };
-                // 保存日志id到对应试卷
-                await updateExaminationPaper(jsonObj);
-              }
-              // 点击发送按钮弹出
-              if (value == true) {
-                this.$notify({
-                  message: "日志发送成功",
-                  type: "success"
-                });
-                this.skipLogHome();
-              } else {
-                if (!this.ruleForm.kczj) {
-                  return;
-                }
-                this.$notify({
-                  message: "日志保存成功",
-                  type: "success"
-                });
-              }
-            }
-          });
+          if (null == this.rzid) {
+            this.addWorkLog();
+          } else {
+            this.validSentBtn();
+            this.updateWorkLog();
+          }
         } else {
           this.$notify({
             message: "请先填写日志内容",
             type: "error"
           });
           return false;
+        }
+      });
+    },
+    validSentBtn() {
+      if (this.ruleForm.sendUserArr.length < 1) {
+        this.sendBtn = true;
+      } else {
+        this.sendBtn = false;
+      }
+    },
+    // 第一次添加日志时， this.rzid为空
+    addWorkLog() {
+      this.ruleForm.kzzd1 = this.bjNameId;
+      this.ruleForm.lsid = this.$store.state.user.glrid;
+      addSave(this.ruleForm).then(async res => {
+        if (res.code == 200) {
+          this.getWorkLogListQuery(this.bjNameId, new Date());
+          this.getList();
+          if (this.ruleForm.kzzd4) {
+            // 选择考试范围
+            let jsonObj = {
+              id: this.ruleForm.kzzd4,
+              kzzd3: res.data.id
+            };
+            this.rzid = res.data.id;
+            // 保存日志id到对应试卷
+            await updateExaminationPaper(jsonObj);
+          }
+          if (!this.ruleForm.kczj) {
+            // 课程日志
+            return;
+          }
+          this.$notify({
+            message: "日志保存成功",
+            type: "success"
+          });
+        }
+      });
+    },
+    // 更新日志， this.rzid为已经不为空
+    updateWorkLog() {
+      updateBasicTeacherWorkLog(this.ruleForm).then(async res => {
+        if (res.code == 200) {
+          this.getWorkLogListQuery(this.bjNameId, new Date());
+          this.getList();
+          if (this.ruleForm.kzzd4) {
+            // 选择考试范围
+            let jsonObj = {
+              id: this.ruleForm.kzzd4,
+              kzzd3: res.data.id
+            };
+            this.rzid = res.data.id;
+            // 保存日志id到对应试卷
+            await updateExaminationPaper(jsonObj);
+          }
+          this.$notify({
+            message: "日志发送成功",
+            type: "success"
+          });
+          this.skipLogHome();
         }
       });
     },

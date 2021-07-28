@@ -1,7 +1,7 @@
 <template>
   <div id="statisticalChartTtem">
     <div class="wrap-statisticalChartTtem">
-      <el-form ref="queryForm" :inline="true" :model="form" label-width="100px">
+      <el-form ref="form"  :inline="true" :model="form"  label-width="100px">
         <el-form-item label="校区" prop="xqid">
           <el-select
             width="100px"
@@ -36,10 +36,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="老师姓名" prop="lsxm">
+        <el-form-item label="老师姓名"  prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名"></el-input>
         </el-form-item>
-        <el-form-item label="考试范围" v-if="false" label-width="120px" prop="ksfw">
+        <el-form-item label="考试范围" v-if="false" label-width="120px"  prop="ksfw">
           <el-select width="100px" height="“10px" v-model="form.ksfw" placeholder="请选择考试范围">
             <el-option
               v-for="(item,index) in getExaminationPaper"
@@ -50,12 +50,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="最高分" prop="maxfs">
-          <el-input v-model="form.maxfs" placeholder="请输入最高分"></el-input>
+          <el-input v-model="form.maxfs" placeholder="请输入最高分" ></el-input>
         </el-form-item>
-        <el-form-item label="最低分" prop="minfs">
+        <el-form-item label="最低分"  prop="minfs">
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
-        <el-form-item label="年份" prop="year">
+        <el-form-item label="年份"  prop="year">
           <el-select width="100px" height="“10px" v-model="form.year" placeholder="请选择年份">
             <el-option
               v-for="(item,index) in 10"
@@ -87,7 +87,7 @@
         </el-form-item>
         <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
+        <el-button icon="el-icon-refresh"   @click="resetQuery">重置</el-button>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -169,6 +169,14 @@ export default {
       selectNj: [],
       //查询条件
       form: {
+        xqid: null,
+        lsxm: null,
+        ksfw: null,
+        maxfs: null,
+        minfs: null,
+        year: null,
+        month: null,
+        nj: null,
         pageNum: 1,
         pageSize: 10
       },
@@ -306,7 +314,6 @@ export default {
     // 可视化统计图
     getChart(item) {
       this.$nextTick(() => {
-        console.log("a", item.length);
         for (let i = 0; i < item.length; i++) {
           let obj = {};
           obj[i] = this.option;
@@ -337,7 +344,9 @@ export default {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.queryList = Object.assign(this.form, this.queryList);
+      this.queryList.pageNum =val
+      this.getListClassGrade();
     },
     // 查询按钮
     getAchievement() {
@@ -355,6 +364,11 @@ export default {
         `班级成绩表.xlsx`
       );
     },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("form");
+      // this.getAchievement();
+    },
     // 成绩分析
     toPerformanceAnalysis(bjid) {
       // 动态获取路由地址
@@ -363,11 +377,6 @@ export default {
           path: res.msg + bjid
         });
       });
-    },
-    // 置空
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.getListClassGrade();
     }
   }
 };

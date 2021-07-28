@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="考试类型" prop="kslx">
-        <el-select v-model="queryParams.kslx" placeholder="请选择考试类型">
+        <el-select v-model="queryParams.kslx" :disabled="isKslx" placeholder="请选择考试类型">
           <el-option
             v-for="(item,index) in getExaminationType"
             :key="index"
@@ -77,9 +77,7 @@
               v-if="item.prop == 'xsxm' || item.prop == 'rybj' ||  item.prop == 'zhcj'"
             >{{scope.row[item.prop]}}</span>
 
-            <span
-              v-if="item.prop == 'wl'"
-            >{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
+            <span v-if="item.prop == 'wl'">{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
             <div v-else>
               <div
                 v-if="scope.row[item.colour] == 1"
@@ -93,9 +91,7 @@
                 v-if="scope.row[item.colour] == 3"
                 style="background : red; display : inline-block ; width :100%;color : #fff"
               >{{scope.row[item.prop]}}</span>
-              <span
-                v-if="scope.row[item.colour] == 4"
-              >{{scope.row[item.prop]}}</span>
+              <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
             </div>
           </template>
         </el-table-column>
@@ -216,7 +212,9 @@ export default {
       getListExaminationPaper: [],
       //  考试类型
       getExaminationType: [],
-      wlOption:[]
+      wlOption: [],
+      // 控制考试类型
+      isKslx: false
     };
   },
   created() {
@@ -236,7 +234,6 @@ export default {
     this.getDicts("xkType").then(response => {
       this.wlOption = response.data;
     });
-
   },
   components: {
     scoreChart
@@ -248,7 +245,7 @@ export default {
       this.loading = true;
       // 获取传过来的班级id
       this.bjid = this.$route.params.id;
-      this.queryParams.kzzd1 = this.bjid;// 给查询日语班级赋值
+      this.queryParams.kzzd1 = this.bjid; // 给查询日语班级赋值
       // // 校区
       // listSchool(this.queryParams).then(response => {
       //   this.selectXqmc = response.rows;
@@ -278,6 +275,9 @@ export default {
     },
     // 获取考试名称
     getKsmc(ksfwId) {
+      if (this.queryParams.ksfw) {
+        this.isKslx = true;
+      }
       this.getListExaminationPaper.forEach(value => {
         if (value.id == ksfwId) {
           return (this.queryParams.ksmc = value.ksfw);
@@ -337,6 +337,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.isKslx = false;
       this.resetForm("queryForm");
       this.handleQuery();
     },

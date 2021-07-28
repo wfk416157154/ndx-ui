@@ -18,6 +18,15 @@ export function listBasicTeacherWorkLog(query) {
   })
 }
 
+// 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
+export function workLogStatusQuery(query) {
+  return request({
+    url: '/basic/basicTeacherWorkLog/workLogStatusQuery',
+    method: 'get',
+    params: query
+  })
+}
+
 // 目前启用查询日志
 export function workLogTemplateQuery(query) {
   return request({
