@@ -511,9 +511,9 @@ export default {
       this.sfbrz = flag;
     },
     // 获取课中课表信息
-    getList() {
+    async getList() {
       // 获取班级信息
-      listBjclass().then(res => {
+      await listBjclass().then(res => {
         this.getListBjclass = res.rows;
         // 获取个人日志 考试范围
         //只查已发送,并且未上传的考卷
@@ -602,7 +602,6 @@ export default {
       }
       // 日志主页进来的详情页
       workLogTemplateQuery({ bjid: this.bjNameId }).then(res => {
-        console.log(res);
         if (res.data.length != 0) {
           this.ifForm = true;
           this.ruleForm = res.data;

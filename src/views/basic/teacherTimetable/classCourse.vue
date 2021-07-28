@@ -516,10 +516,8 @@ export default {
       this.listBjclass.forEach(value => {
         if (value.id == bjid) {
           this.classData = value;
-          console.log(this.classData);
         }
       });
-      console.log(this.bjid);
     },
     // 获取课表详细数据
     getCourse() {
