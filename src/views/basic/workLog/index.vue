@@ -499,11 +499,35 @@ export default {
   mounted() {
     this.getList();
     this.validSentBtn()
+    this.initGetListExaminationPaper()
+    this.initBjClassList()
   },
   methods: {
     // chooseClass(id){// 当选择日语班级后显示日志填写框
     //   this.ifForm = true;
     // },
+    initBjClassList(){
+      // 获取班级信息
+      listBjclass().then(res => {
+        this.getListBjclass = res.rows;
+        if (res.rows.length >= 1) {
+          this.bjNameId = res.rows[0].id;
+        }
+        if (this.bjNameId != null) {
+          this.ifForm = true;
+        }
+      });
+    },
+    // 查询当前未上传的考试试卷
+    initGetListExaminationPaper(){
+      let json = {
+        jwsjzt: "1",//教务试卷状态(0未发送1已发送)
+        kzzd2: "9" //未上传的考卷
+      };
+      listExaminationPaper(json).then(res => {
+        this.getListExaminationPaper = res.rows;
+      });
+    },
     chooseBrz(flag) {
       // 当选择补日志时：true
       if (flag) {
@@ -517,25 +541,6 @@ export default {
     },
     // 获取课中课表信息
     getList() {
-      // 获取班级信息
-      listBjclass().then(res => {
-        this.getListBjclass = res.rows;
-        // 获取个人日志 考试范围
-        //只查已发送,并且未上传的考卷
-        if (res.rows.length >= 1) {
-          this.bjNameId = res.rows[0].id;
-        }
-        if (this.bjNameId !== null || this.bjNameId === "") {
-          this.ifForm = true;
-        }
-        let json = {
-          jwsjzt: "1",
-          kzzd2: "9" //未上传的考卷
-        };
-        listExaminationPaper(json).then(res => {
-          this.getListExaminationPaper = res.rows;
-        });
-      });
       // 获取用户列表
       /*listUser().then((res) => {
         this.getListUser = res.rows;
@@ -544,8 +549,10 @@ export default {
       selectInRoleUser({roleId:"4"}).then(res=>{
         this.getListUser = res.rows;
       })
+      // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        workLogListQuery({ id: this.$route.params.id }).then(res => {
+        this.rzid=this.$route.params.id
+        workLogListQuery({ id: this.rzid }).then(res => {
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data[0];
@@ -571,11 +578,17 @@ export default {
           }
         });
       } else {
-        this.getWorkLogTemplateQuery();
+        listBjclass().then(res => {
+          if (res.rows.length > 0) {
+            this.bjNameId = res.rows[0].id;
+            this.getWorkLogTemplateQuery();
+          }
+        });
       }
+
     },
+    // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery() {
-      // 日志主页进来的详情页
       workLogTemplateQuery({ bjid: this.bjNameId }).then(res => {
         if (res.data.length != 0) {
           this.ifForm = true;
@@ -589,16 +602,6 @@ export default {
             }
           });
           this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
-          // 教室卫生照片回显
-          this.selectPhotoList(
-            (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-            "files1"
-          );
-          // 学生表现照片回显
-          this.selectPhotoList(
-            (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-            "files2"
-          );
         }
         if (
           this.ruleForm.basicTeacherWorkLogLessonList &&
@@ -868,12 +871,12 @@ export default {
           return;
         }
       }
-      this.validSentBtn()
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
             if(null==this.rzid){
               this.addWorkLog()
             }else{
+              this.validSentBtn()
               this.updateWorkLog()
             }
         } else {
@@ -886,7 +889,6 @@ export default {
       });
     },
     validSentBtn(){
-      console.log("this.ruleForm.sendUserArr:",this.ruleForm.sendUserArr)
       if(this.ruleForm.sendUserArr.length<1){
         this.sendBtn=true
       }else{
