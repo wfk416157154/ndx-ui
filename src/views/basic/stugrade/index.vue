@@ -456,6 +456,11 @@
       getListSchool() {
         listSchool().then(response => {
           this.selectXqmc = response.rows;
+          if(response.rows.length==1){// 当只查询到一条数据，则直接给这个选择框赋值
+            this.queryParams.xqmc=response.rows[0].id
+            this.xqmcOnChange(this.queryParams.xqmc)// 给日语班级赋值
+          }
+
         });
       },
       /** 查询学生成绩基础表列表 */
@@ -515,9 +520,13 @@
       xqmcOnChange(id) {
         listBjclass({kzzd1: id}).then(response => {
           this.bjclassList = response.rows;
+          if(response.rows.length==1){// 当该老师只有一个日语班时，系统自动赋值
+            this.queryParams.kzzd1 =response.rows[0].id
+          }else{
+            this.queryParams.kzzd1 = null;
+          }
         });
-        this.queryParams.kzzd1 = null;
-        this.rybjDisabled = false;
+        this.rybjDisabled = false;// 启用日语班级选项
       },
       rybjOnChange(id) {
         this.xsbhDisabled = false;
