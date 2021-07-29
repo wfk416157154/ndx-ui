@@ -646,10 +646,6 @@ export default {
               .catch(() => {
                 this.findTemplateQuery(); // 查询课表的课中模板
                 this.getWorkLogListQuery(this.bjNameId, json.rq); // 查询已填写未发送的日志
-                this.$message({
-                  type: "info",
-                  message: "已取消"
-                });
               });
             break;
           case 3:
@@ -661,7 +657,6 @@ export default {
                 confirmButtonText: "确定",
                 type: "warning"
               }
-
             )
               .then(() => {
                 this.skipToLogHomePage();
@@ -980,7 +975,7 @@ export default {
         this.ruleForm.id = this.rzid;
         this.validSentBtn();
         if (!this.logTiem) {
-          this.logTiem = new Date()
+          this.logTiem = new Date();
         }
         this.getWorkLogListQuery(this.bjNameId, this.logTiem);
         if (res.code == 200) {
