@@ -1,5 +1,5 @@
 <template>
-  <div class="work-log">
+  <div class="work-log" ref="prent">
     <el-form ref="forms" :inline="true" label-width="80px">
       <el-form-item label="请选择班级" label-width="100px" v-if="!ifRoleHasPerms">
         <el-select v-model="bjNameId" @change="getWorkLogTemplateQuery">
@@ -558,6 +558,15 @@ export default {
       });
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
+        let _this = this;
+        document.getElementsByClassName("work-log")[0].addEventListener(
+          "click",
+          function(e) {
+            _this.msgError("当前日志只能预览,不可编辑");
+            this.style.pointerEvents = "none";
+          },
+          false
+        );
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
           // console.log(res)
@@ -643,18 +652,11 @@ export default {
                 cancelButtonText: "取消",
                 type: "warning"
               }
-            )
-              .then(() => {
-                this.$router.push({
-                  path: "/lsgl/log/logHomePage"
-                });
-              })
-              .catch(() => {
-                this.$message({
-                  type: "info",
-                  message: "已取消"
-                });
+            ).then(() => {
+              this.$router.push({
+                path: "/lsgl/log/logHomePage"
               });
+            });
             break;
           case 3:
             this.$confirm(
@@ -1068,7 +1070,7 @@ export default {
 .work-log {
   padding: 20px;
   box-sizing: border-box;
-
+  // cursor: not-allowed;
   .wrap-log {
     width: 100%;
     height: 150px;
