@@ -636,7 +636,7 @@ export default {
         switch (res.data) {
           case 2:
             this.$confirm(
-              `${rybjName}当天日志已经填写,但未发送, 是否要去日志主页查看?`,
+              `" ${rybjName} " 当天日志已经填写,但未发送, 是否要去日志主页查看?`,
               "提示",
               {
                 confirmButtonText: "确定",
@@ -658,25 +658,18 @@ export default {
             break;
           case 3:
             this.$confirm(
-              `${rybjName}当天日志已经填写,并已发送, 是否要去日志主页查看?`,
+              `" ${rybjName} " 当天日志已经填写,并已发送, 是否要去日志主页查看?`,
               "提示",
               {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning"
               }
-            )
-              .then(() => {
-                this.$router.push({
-                  path: "/lsgl/log/logHomePage"
-                });
-              })
-              .catch(() => {
-                this.$message({
-                  type: "info",
-                  message: "已取消"
-                });
+            ).then(() => {
+              this.$router.push({
+                path: "/lsgl/log/logHomePage"
               });
+            });
             break;
         }
       });
