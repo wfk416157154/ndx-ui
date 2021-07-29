@@ -15,7 +15,15 @@
         <el-checkbox v-model="sfbrz" @change="chooseBrz" v-if="!ifRoleHasPerms">补日志</el-checkbox>
       </el-form-item>
       <el-form-item label="选择日期" v-if="showxzrq">
-        <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="date" placeholder="选择日期时间"></el-date-picker>
+        <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="date" placeholder="选择日期时间" @change="onLogTime" ></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="sendOut"
+        >保存日志
+        </el-button
+        >
       </el-form-item>
       <!--<el-form-item>
         <el-button
@@ -325,7 +333,7 @@
             <el-button
               :disabled="sendBtn"
               type="primary"
-              @click="sendOut()"
+              @click="updateWorkLog()"
               v-has-permi="['basic:basicTeacherWorkLog:save']"
             >发送</el-button>
           </div>
@@ -520,9 +528,9 @@ export default {
         if (res.rows.length >= 1) {
           this.bjNameId = res.rows[0].id;
         }
-        if (this.bjNameId != null) {
+        /*if (this.bjNameId != null) {
           this.ifForm = true;
-        }
+        }*/
       });
     },
     // 查询当前未上传的考试试卷
@@ -546,6 +554,9 @@ export default {
       }
       this.sfbrz = flag;
     },
+    onLogTime(val){
+      this.getWorkLogTemplateQuery()
+    },
     // 获取课中课表信息
     getList() {
       // 获取用户列表
@@ -560,7 +571,6 @@ export default {
       if (this.$route.params.id && this.$route.params.id != ":id") {
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
-          // console.log(res)
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data[0];
@@ -597,6 +607,71 @@ export default {
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery() {
       this.getWorkLogStatusQuery();
+    },
+    // 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
+    getWorkLogStatusQuery() {
+      let json = {
+        bjid: this.bjNameId
+      };
+      for (let i = 0; i < this.getListBjclass.length; i++) {
+        if (this.getListBjclass[i].id === this.bjNameId) {
+          var rybjName = this.getListBjclass[i].rybjmc;
+        }
+      }
+      if (this.logTiem) {
+        json.rq = this.logTiem;
+      }else{
+        json.rq=new Date()
+      }
+      workLogStatusQuery(json).then(res => {
+        switch (res.data) {
+          case 2:
+            this.$confirm(
+              `${rybjName}-当天日志已经填写,但未发送, 是否要去日志主页查看?`,
+              "提示",
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                this.skipToLogHomePage()
+              })
+              .catch(() => {
+                this.findTemplateQuery() // 查询课表的课中模板
+                this.getWorkLogListQuery(this.bjNameId, json.rq);// 查询已填写未发送的日志
+                this.$message({
+                  type: "info",
+                  message: "已取消"
+                });
+              });
+            break;
+          case 3:
+            this.ifForm=false
+            this.$alert(
+              `${rybjName}当天日志已经填写,并已发送, 请到日志主页查看!`,
+              "提示",
+              {
+                confirmButtonText: "确定",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                this.skipToLogHomePage()
+              })
+              .catch(() => {
+                this.skipToLogHomePage()
+              });
+            break;
+          default:
+              this.findTemplateQuery()// 查询课表的课中模板
+              break;
+        }
+      });
+    },
+    // 查询课中的课表模板
+    findTemplateQuery(){
       workLogTemplateQuery({ bjid: this.bjNameId }).then(res => {
         if (res.data.length != 0) {
           this.ifForm = true;
@@ -619,66 +694,12 @@ export default {
         }
       });
     },
-    // 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
-    getWorkLogStatusQuery(bjid) {
-      let json = {
-        bjid: this.bjNameId
-      };
-      for (let i = 0; i < this.getListBjclass.length; i++) {
-        if (this.getListBjclass[i].id === this.bjNameId) {
-          var rybjName = this.getListBjclass[i].rybjmc;
-        }
-      }
-      if (this.logTiem) {
-        json.rq = this.logTiem;
-      }
-      workLogStatusQuery(json).then(res => {
-        switch (res.data) {
-          case 2:
-            this.$confirm(
-              `${rybjName}当天日志已经填写,但未发送, 是否要去日志主页查看?`,
-              "提示",
-              {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                type: "warning"
-              }
-            )
-              .then(() => {
-                this.$router.push({
-                  path: "/lsgl/log/logHomePage"
-                });
-              })
-              .catch(() => {
-                this.$message({
-                  type: "info",
-                  message: "已取消"
-                });
-              });
-            break;
-          case 3:
-            this.$confirm(
-              `${rybjName}当天日志已经填写,并已发送, 是否要去日志主页查看?`,
-              "提示",
-              {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                type: "warning"
-              }
-            )
-              .then(() => {
-                this.$router.push({
-                  path: "/lsgl/log/logHomePage"
-                });
-              })
-              .catch(() => {
-                this.$message({
-                  type: "info",
-                  message: "已取消"
-                });
-              });
-            break;
-        }
+    skipToLogHomePage(){
+      // 获取页面中参数配置的路由
+      this.getConfigKey("logHomePage").then(resp => {
+        this.$router.push({
+          path: resp.msg
+        });
       });
     },
     // 查询某一班级日志
@@ -728,6 +749,8 @@ export default {
       // 获取日志信息
       workLogListQuery(json).then(res => {
         if (res.data.length != 0) {
+          this.rzid = res.data[0].id;
+          this.ruleForm.id=this.rzid
           //如果已保存考试信息并且上传则禁用下拉框
           if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
             this.ksmcdisable = true;
@@ -943,12 +966,7 @@ export default {
       }
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          if (null == this.rzid) {
-            this.addWorkLog();
-          } else {
-            this.validSentBtn();
-            this.updateWorkLog();
-          }
+          this.addWorkLog();
         } else {
           this.$notify({
             message: "请先填写日志内容",
@@ -958,8 +976,9 @@ export default {
         }
       });
     },
+    // 校验发送按钮
     validSentBtn() {
-      if (this.ruleForm.sendUserArr.length < 1) {
+      if (null==this.ruleForm.sendUserArr||this.ruleForm.sendUserArr.length < 1) {
         this.sendBtn = true;
       } else {
         this.sendBtn = false;
@@ -970,16 +989,15 @@ export default {
       this.ruleForm.kzzd1 = this.bjNameId;
       this.ruleForm.lsid = this.$store.state.user.glrid;
       addSave(this.ruleForm).then(async res => {
+        this.rzid = res.data.id;
+        this.ruleForm.id=this.rzid
+        this.validSentBtn();
         if (res.code == 200) {
-          this.getWorkLogListQuery(this.bjNameId, new Date());
-          this.getList();
-          if (this.ruleForm.kzzd4) {
-            // 选择考试范围
+          if (this.ruleForm.kzzd4) {// 选择考试范围
             let jsonObj = {
               id: this.ruleForm.kzzd4,
               kzzd3: res.data.id
             };
-            this.rzid = res.data.id;
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
           }
@@ -994,12 +1012,10 @@ export default {
         }
       });
     },
-    // 更新日志， this.rzid为已经不为空
+    // 更新发送日志， this.rzid为已经不为空
     updateWorkLog() {
       updateBasicTeacherWorkLog(this.ruleForm).then(async res => {
         if (res.code == 200) {
-          this.getWorkLogListQuery(this.bjNameId, new Date());
-          this.getList();
           if (this.ruleForm.kzzd4) {
             // 选择考试范围
             let jsonObj = {
