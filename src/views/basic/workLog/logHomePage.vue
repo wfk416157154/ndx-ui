@@ -36,12 +36,12 @@
       </el-form-item>
       <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
       <el-button type="primary" icon="el-icon-download" disabled @click="handleExport">导出日志</el-button>
-      <el-button
+      <!--<el-button
         type="success"
         icon="el-icon-plus"
         v-has-role="['teacher']"
-        @click="toDetails(new Date().getMilliseconds())"
-      >填写日志</el-button>
+        @click="toDetails(':id')"
+      >填写日志</el-button>-->
     </el-form>
     <div class="wrap-log-list">
       <ul>

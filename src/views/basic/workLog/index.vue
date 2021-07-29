@@ -334,6 +334,7 @@
             <el-button
               :disabled="sendBtn"
               type="primary"
+              v-prevent-re-click
               @click="updateWorkLog()"
               v-has-permi="['basic:basicTeacherWorkLog:save']"
             >发送</el-button>
@@ -519,9 +520,6 @@ export default {
     this.initGetListExaminationPaper();
   },
   methods: {
-    // chooseClass(id){// 当选择日语班级后显示日志填写框
-    //   this.ifForm = true;
-    // },
     initBjClassList() {
       // 获取班级信息
       listBjclass().then(res => {
@@ -529,9 +527,6 @@ export default {
         if (res.rows.length >= 1) {
           this.bjNameId = res.rows[0].id;
         }
-        /*if (this.bjNameId != null) {
-          this.ifForm = true;
-        }*/
       });
     },
     // 查询当前未上传的考试试卷
@@ -666,6 +661,7 @@ export default {
                 confirmButtonText: "确定",
                 type: "warning"
               }
+
             )
               .then(() => {
                 this.skipToLogHomePage();
@@ -725,28 +721,6 @@ export default {
         date &&
         date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
       this.ifForm = true;
-      for (let i = 0; i < this.getListBjclass.length; i++) {
-        if (this.getListBjclass[i].id == bjid) {
-          this.bjName = this.getListBjclass[i].rybjmc;
-        }
-      }
-      // 课表获取
-      let listClassCourseResult = await listClassCourse({ bjid: bjid });
-      this.listClassCourse = listClassCourseResult.rows;
-      // 课中数据
-      let dataInClass = [];
-      this.listClassCourse.forEach(value => {
-        for (let i = 0; i < this.kcType.length; i++) {
-          if (value.kcType == this.kcType[i].dictValue) {
-            dataInClass.push({
-              courseTypeName: this.kcType[i].dictLabel,
-              courseType: this.kcType[i].dictValue,
-              content: ""
-            });
-          }
-        }
-      });
-
       let json = {
         // 老师id
         lsid: this.$store.state.user.glrid,
@@ -792,7 +766,7 @@ export default {
           this.ruleForm.basicTeacherWorkLogLessonList &&
           this.ruleForm.basicTeacherWorkLogLessonList.length == 0
         ) {
-          this.ruleForm.basicTeacherWorkLogLessonList = dataInClass;
+          this.ruleForm.basicTeacherWorkLogLessonList = [];
         }
       });
     },
@@ -966,7 +940,7 @@ export default {
         this[file] = res.rows;
       });
     },
-    // 发送
+    // 保存
     sendOut() {
       if (true == this.sfbrz) {
         if (null == this.logTiem) {
@@ -1005,6 +979,10 @@ export default {
         this.rzid = res.data.id;
         this.ruleForm.id = this.rzid;
         this.validSentBtn();
+        if (!this.logTiem) {
+          this.logTiem = new Date()
+        }
+        this.getWorkLogListQuery(this.bjNameId, this.logTiem);
         if (res.code == 200) {
           if (this.ruleForm.kzzd4) {
             // 选择考试范围
@@ -1015,10 +993,6 @@ export default {
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
           }
-          if (!this.ruleForm.kczj) {
-            // 课程日志
-            return;
-          }
           this.$notify({
             message: "日志保存成功",
             type: "success"
@@ -1028,15 +1002,15 @@ export default {
     },
     // 更新发送日志， this.rzid为已经不为空
     updateWorkLog() {
-      updateBasicTeacherWorkLog(this.ruleForm).then(async res => {
+      addSave(this.ruleForm).then(async res => {
         if (res.code == 200) {
+          this.rzid = res.data.id;
           if (this.ruleForm.kzzd4) {
             // 选择考试范围
             let jsonObj = {
               id: this.ruleForm.kzzd4,
               kzzd3: res.data.id
             };
-            this.rzid = res.data.id;
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
           }
