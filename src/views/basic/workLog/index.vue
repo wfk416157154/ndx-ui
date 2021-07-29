@@ -1,5 +1,5 @@
 <template>
-  <div class="work-log">
+  <div class="work-log" ref="prent">
     <el-form ref="forms" :inline="true" label-width="80px">
       <el-form-item label="请选择班级" label-width="100px" v-if="!ifRoleHasPerms">
         <el-select v-model="bjNameId" @change="getWorkLogTemplateQuery">
@@ -15,15 +15,16 @@
         <el-checkbox v-model="sfbrz" @change="chooseBrz" v-if="!ifRoleHasPerms">补日志</el-checkbox>
       </el-form-item>
       <el-form-item label="选择日期" v-if="showxzrq">
-        <el-date-picker v-model="logTiem" format="yyyy-MM-dd" type="date" placeholder="选择日期时间" @change="onLogTime" ></el-date-picker>
+        <el-date-picker
+          v-model="logTiem"
+          format="yyyy-MM-dd"
+          type="date"
+          placeholder="选择日期时间"
+          @change="onLogTime"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          @click="sendOut"
-        >保存日志
-        </el-button
-        >
+        <el-button type="primary" @click="sendOut">保存日志</el-button>
       </el-form-item>
       <!--<el-form-item>
         <el-button
@@ -570,6 +571,15 @@ export default {
       });
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
+        let _this = this;
+        document.getElementsByClassName("work-log")[0].addEventListener(
+          "click",
+          function(e) {
+            _this.msgError("当前日志只能预览,不可编辑");
+            this.style.pointerEvents = "none";
+          },
+          false
+        );
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
           if (res.data.length != 0) {
@@ -1091,7 +1101,7 @@ export default {
 .work-log {
   padding: 20px;
   box-sizing: border-box;
-
+  // cursor: not-allowed;
   .wrap-log {
     width: 100%;
     height: 150px;
