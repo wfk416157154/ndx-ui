@@ -555,8 +555,8 @@ export default {
       }
       this.sfbrz = flag;
     },
-    onLogTime(val){
-      this.getWorkLogTemplateQuery()
+    onLogTime(val) {
+      this.getWorkLogTemplateQuery();
     },
     // 获取课中课表信息
     getList() {
@@ -630,8 +630,8 @@ export default {
       }
       if (this.logTiem) {
         json.rq = this.logTiem;
-      }else{
-        json.rq=new Date()
+      } else {
+        json.rq = new Date();
       }
       workLogStatusQuery(json).then(res => {
         switch (res.data) {
@@ -646,11 +646,11 @@ export default {
               }
             )
               .then(() => {
-                this.skipToLogHomePage()
+                this.skipToLogHomePage();
               })
               .catch(() => {
-                this.findTemplateQuery() // 查询课表的课中模板
-                this.getWorkLogListQuery(this.bjNameId, json.rq);// 查询已填写未发送的日志
+                this.findTemplateQuery(); // 查询课表的课中模板
+                this.getWorkLogListQuery(this.bjNameId, json.rq); // 查询已填写未发送的日志
                 this.$message({
                   type: "info",
                   message: "已取消"
@@ -658,7 +658,7 @@ export default {
               });
             break;
           case 3:
-            this.ifForm=false
+            this.ifForm = false;
             this.$alert(
               `${rybjName}当天日志已经填写,并已发送, 请到日志主页查看!`,
               "提示",
@@ -668,20 +668,20 @@ export default {
               }
             )
               .then(() => {
-                this.skipToLogHomePage()
+                this.skipToLogHomePage();
               })
               .catch(() => {
-                this.skipToLogHomePage()
+                this.skipToLogHomePage();
               });
             break;
           default:
-              this.findTemplateQuery()// 查询课表的课中模板
-              break;
+            this.findTemplateQuery(); // 查询课表的课中模板
+            break;
         }
       });
     },
     // 查询课中的课表模板
-    findTemplateQuery(){
+    findTemplateQuery() {
       workLogTemplateQuery({ bjid: this.bjNameId }).then(res => {
         if (res.data.length != 0) {
           this.ifForm = true;
@@ -704,7 +704,7 @@ export default {
         }
       });
     },
-    skipToLogHomePage(){
+    skipToLogHomePage() {
       // 获取页面中参数配置的路由
       this.getConfigKey("logHomePage").then(resp => {
         this.$router.push({
@@ -760,7 +760,7 @@ export default {
       workLogListQuery(json).then(res => {
         if (res.data.length != 0) {
           this.rzid = res.data[0].id;
-          this.ruleForm.id=this.rzid
+          this.ruleForm.id = this.rzid;
           //如果已保存考试信息并且上传则禁用下拉框
           if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
             this.ksmcdisable = true;
@@ -988,7 +988,10 @@ export default {
     },
     // 校验发送按钮
     validSentBtn() {
-      if (null==this.ruleForm.sendUserArr||this.ruleForm.sendUserArr.length < 1) {
+      if (
+        null == this.ruleForm.sendUserArr ||
+        this.ruleForm.sendUserArr.length < 1
+      ) {
         this.sendBtn = true;
       } else {
         this.sendBtn = false;
@@ -1000,10 +1003,11 @@ export default {
       this.ruleForm.lsid = this.$store.state.user.glrid;
       addSave(this.ruleForm).then(async res => {
         this.rzid = res.data.id;
-        this.ruleForm.id=this.rzid
+        this.ruleForm.id = this.rzid;
         this.validSentBtn();
         if (res.code == 200) {
-          if (this.ruleForm.kzzd4) {// 选择考试范围
+          if (this.ruleForm.kzzd4) {
+            // 选择考试范围
             let jsonObj = {
               id: this.ruleForm.kzzd4,
               kzzd3: res.data.id
@@ -1327,14 +1331,12 @@ export default {
           // float: left;
           // width: 20%;
         }
-
         .examination-upload {
           padding: 20px;
           box-sizing: border-box;
           //background-color: greenyellow;
           // background-image: linear-gradient( to right, greenyellow , green);
           //background: linear-gradient(to right, #bb313e25);
-
           .button {
             margin-left: 100px;
           }
