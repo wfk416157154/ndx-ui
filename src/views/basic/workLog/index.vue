@@ -333,6 +333,7 @@
             <el-button
               :disabled="sendBtn"
               type="primary"
+              v-prevent-re-click
               @click="updateWorkLog()"
               v-has-permi="['basic:basicTeacherWorkLog:save']"
             >发送</el-button>
@@ -639,7 +640,6 @@ export default {
                 this.skipToLogHomePage()
               })
               .catch(() => {
-                this.findTemplateQuery() // 查询课表的课中模板
                 this.getWorkLogListQuery(this.bjNameId, json.rq);// 查询已填写未发送的日志
                 this.$message({
                   type: "info",
@@ -1014,15 +1014,15 @@ export default {
     },
     // 更新发送日志， this.rzid为已经不为空
     updateWorkLog() {
-      updateBasicTeacherWorkLog(this.ruleForm).then(async res => {
+      addSave(this.ruleForm).then(async res => {
         if (res.code == 200) {
+          this.rzid = res.data.id;
           if (this.ruleForm.kzzd4) {
             // 选择考试范围
             let jsonObj = {
               id: this.ruleForm.kzzd4,
               kzzd3: res.data.id
             };
-            this.rzid = res.data.id;
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
           }
