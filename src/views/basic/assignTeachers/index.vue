@@ -80,14 +80,6 @@
           <el-button type="primary" @click="fenpei(classItem.bjid,classItem.lsidArr)">确定</el-button>
         </li>
       </ul>
-      <pagination
-        style="display : inline"
-        v-show="total>0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
     </div>
     <div class="wrap-class clearfix">
       <h3>已分配老师的班级</h3>
@@ -140,16 +132,9 @@
           <el-button type="primary" @click="fenpei(item.bjid,item.lsidArr)">替换</el-button>
         </li>
       </ul>
-      <pagination
-        style="display : inline"
-        v-show="total>0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
     </div>
-    <el-table :data="optionalClasses1" border style="width: 100%">
+
+    <el-table :data="optionalClassesAll" border style="width: 100%">
       <el-table-column prop="xxmc" label="学校名称" width="180"></el-table-column>
       <el-table-column prop="rybjmc" label="班级名称" width="180"></el-table-column>
       <el-table-column prop="bjrs" label="班级人数"></el-table-column>
@@ -165,6 +150,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="allQueryParams.pageNum"
+      :limit.sync="allQueryParams.pageSize"
+      @pagination="selectAllAllotTeacherList"
+    />
   </div>
 </template>
 <script>
@@ -216,6 +208,12 @@ export default {
         kzzd1: null,
         xqid: null
       },
+      // 查询所有已分配的老师
+      allQueryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        isAllot: 1
+      },
       // 老师姓名
       teacherNames: {},
       // 校区
@@ -224,6 +222,8 @@ export default {
       optionalClasses: [],
       //已分配班级
       optionalClasses1: [],
+      // 所有学校所有日语班级分配的老师
+      optionalClassesAll:[],
       // 分配老师班级
       json: {},
       // 班级选择
@@ -239,6 +239,7 @@ export default {
   created() {
     this.getList();
     this.getTeacherList();
+    this.selectAllAllotTeacherList()
   },
   methods: {
     onRybChange(id) {
@@ -302,13 +303,16 @@ export default {
         }
       });
     },
+    // 查询所有学校已分配的老师信息
+    selectAllAllotTeacherList(){
+      classAllotList(this.allQueryParams).then(res => {
+        this.optionalClassesAll = res.rows;
+      });
+    },
     onAddTeacher() {
       this.fenpei(this.formInline);
     },
     // 分配老师
-    assignTeachers() {
-      this.fenpei(this.json);
-    },
     fenpei(bjid, lsidArr) {
       if (!lsidArr || lsidArr.length == 0) {
         this.$notify({
