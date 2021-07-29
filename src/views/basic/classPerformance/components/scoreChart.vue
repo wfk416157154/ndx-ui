@@ -41,10 +41,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="right-chart __float">
-        <div id="pie1" style="width: 100%;height:100%;"></div>
-      </div>
-      <div class="title-content __float">
+      <div class="title-content __right-float">
         <div>
           <i></i>
           <span>考试范围 :</span>
@@ -100,6 +97,9 @@
           <span>缺考人数 :</span>
           <span>{{chartList.qkrs}}</span>
         </div>
+      </div>
+      <div class="right-chart __right-float">
+        <div id="pie1" style="width: 100%;height:100%;"></div>
       </div>
     </div>
     <div class="analysis-and-summary">
@@ -309,6 +309,9 @@ export default {
   .__float {
     float: left;
   }
+  .__right-float {
+    float: right;
+  }
   .wrap-score-chart {
     width: 100%;
     height: 100%;
@@ -343,7 +346,7 @@ export default {
   }
   .analysis-and-summary {
     display: inline-block;
-    width: 50%;
+    width: 48%;
     // height: 300px;
     background: #f2f6fc;
     padding: 20px;
