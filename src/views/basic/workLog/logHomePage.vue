@@ -87,7 +87,7 @@
             <!-- <div>
               <span>备课内容 :</span>
               <span>{{item.bkBcrz}}</span>
-            </div> -->
+            </div>-->
             <div>
               <span>课中内容 :</span>
               <span v-for="(list,j) in item.teacherWorkLogLessonList" :key="j">{{list.content}}</span>
@@ -239,16 +239,16 @@ export default {
         });
       });
     },
-    downloadZipFile(id){
-      let param={
-        kzzd1:id
-      }
-      selectFileList(param).then(res=>{
-        if(200==res.code){
-          if(res.rows.length>0){
-            this.download('file/filetable/download',param, res.rows[0].name)
-          }else{
-            this.msgError("未上传压缩文件！")
+    downloadZipFile(id) {
+      let param = {
+        kzzd1: id
+      };
+      selectFileList(param).then(res => {
+        if (200 == res.code) {
+          if (res.rows.length > 0) {
+            this.download("file/filetable/download", param, res.rows[0].name);
+          } else {
+            this.msgError("未上传压缩文件！");
           }
         }
       });
