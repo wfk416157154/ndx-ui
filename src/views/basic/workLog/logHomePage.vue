@@ -99,6 +99,7 @@
             </div>
             <div class="button">
               <el-button type="warning" plain @click="toDetails(item.teacherWorkLogId)">查看详情</el-button>
+              <el-button type="success" plain @click="downloadZipFile(item.teacherWorkLogId)">下载压缩包</el-button>
             </div>
           </div>
           <div class="img-list __float">
@@ -132,6 +133,8 @@
 <script>
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
+import { selectFileList } from "@/api/tool/common";
+
 import {
   homePageQuery,
   updateBasicTeacherWorkLog
@@ -235,6 +238,21 @@ export default {
           path: this.router + id
         });
       });
+    },
+    downloadZipFile(id){
+      let param={
+        kzzd1:id
+      }
+      selectFileList(param).then(res=>{
+        if(200==res.code){
+          if(res.rows.length>0){
+            this.download('file/filetable/download',param, res.rows[0].name)
+          }else{
+            this.msgError("未上传压缩文件！")
+          }
+        }
+      });
+      //
     }
   }
 };
