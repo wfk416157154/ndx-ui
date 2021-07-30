@@ -243,6 +243,7 @@ export default {
       let param={
         kzzd1:id
       }
+      // 查询文件表的文件名称
       selectFileList(param).then(res=>{
         if(200==res.code){
           if(res.rows.length>0){
