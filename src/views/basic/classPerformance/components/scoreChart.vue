@@ -62,7 +62,7 @@
         </div>
         <div>
           <i></i>
-          <span>{{fzTitle3}} :</span>
+          <span>{{fzTitle1}} :</span>
           <span>{{chartList.bhers}}</span>
         </div>
         <div>
@@ -72,7 +72,7 @@
         </div>
         <div>
           <i></i>
-          <span>{{fzTitle1}} :</span>
+          <span>{{fzTitle3}} :</span>
           <span>{{chartList.yxrs}}</span>
         </div>
         <div>
@@ -247,14 +247,14 @@ export default {
         this.option1.series[0].data[0].value = this.chartList.yxbfb;
         this.option1.series[0].data[1].value = this.chartList.hgbfb;
         this.option1.series[0].data[2].value = this.chartList.bhgbfb;
-        this.option1.series[0].data[0].name = fz60 + "分以下";
-        this.option1.legend.data[0] = this.fzTitle1 = fz60 + "分以下";
+        this.option1.series[0].data[2].name = fz60 + "分以下";
+        this.option1.legend.data[2] = this.fzTitle1 = fz60 + "分以下";
         this.option1.series[0].data[1].name = fz60 + "分至" + fz80 + "分";
         this.option1.legend.data[1] = this.fzTitle2 =
           fz60 + "分至" + fz80 + "分";
-        this.option1.series[0].data[2].name =
+        this.option1.series[0].data[0].name =
           fz80 + "分至" + this.chartList.mf + "分";
-        this.option1.legend.data[2] = this.fzTitle3 =
+        this.option1.legend.data[0] = this.fzTitle3 =
           fz80 + "分至" + this.chartList.mf + "分";
         let myChart1 = this.$echarts.init(document.getElementById("pie1"));
         myChart1.setOption(this.option1);

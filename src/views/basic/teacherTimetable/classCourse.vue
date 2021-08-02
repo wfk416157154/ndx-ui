@@ -495,7 +495,8 @@ export default {
       alertHtml: "",
       //选中班级的数据
       classData: {},
-      $index: null
+      $index: null,
+      ybjSelection: null
     };
   },
   created() {
@@ -715,6 +716,7 @@ export default {
     },
     // 选中课程对话框数据
     courseHandleSelectionChange(selection) {
+      this.ybjSelection = selection;
       if (selection && selection.length > 0) {
         this.courseHandleSelectionJson = {
           ybj: "",
@@ -740,7 +742,7 @@ export default {
     // 提交课程对话框
     courseSubmitForm() {
       this.courseOpen = false;
-      if (!this.courseHandleSelectionJson) {
+      if (!this.ybjSelection || this.ybjSelection.length == 0) {
         switch (this.jsonCell.title) {
           case "周一":
             this.classCourseList[this.$index].mondayDetails = [];
@@ -765,41 +767,43 @@ export default {
             break;
         }
         return;
-      }
-      this.classCourseList.map((value, index) => {
-        if (value.id == this.jsonCell.id && index == this.$index) {
-          switch (this.jsonCell.title) {
-            case "周一":
-              value.mondayDetails = [];
-              value.mondayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周二":
-              value.tuesdayDetails = [];
-              value.tuesdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周三":
-              value.wednesdayDetails = [];
-              value.wednesdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周四":
-              value.thursdayDetails = [];
-              value.thursdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周五":
-              value.fridayDetails = [];
-              value.fridayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周六":
-              value.saturdayDetails = [];
-              value.saturdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周日":
-              value.sundayDetails = [];
-              value.sundayDetails.push(this.courseHandleSelectionJson);
-              break;
+      } else {
+        this.classCourseList.map((value, index) => {
+          if (value.id == this.jsonCell.id && index == this.$index) {
+            switch (this.jsonCell.title) {
+              case "周一":
+                value.mondayDetails = [];
+                value.mondayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周二":
+                value.tuesdayDetails = [];
+                value.tuesdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周三":
+                value.wednesdayDetails = [];
+                value.wednesdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周四":
+                value.thursdayDetails = [];
+                value.thursdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周五":
+                value.fridayDetails = [];
+                value.fridayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周六":
+                value.saturdayDetails = [];
+                value.saturdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周日":
+                value.sundayDetails = [];
+                value.sundayDetails.push(this.courseHandleSelectionJson);
+                break;
+            }
+            this.ybjSelection = null;
           }
-        }
-      });
+        });
+      }
     },
     // 取消课程对话框
     courseCancel() {

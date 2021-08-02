@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="考试类型" prop="kslx">
-        <el-select v-model="queryParams.kslx" :disabled="isKslx" placeholder="请选择考试类型"  multiple>
+        <el-select v-model="queryParams.kslx" :disabled="isKslx" placeholder="请选择考试类型" multiple>
           <el-option
             v-for="(item,index) in getExaminationType"
             :key="index"
@@ -252,7 +252,7 @@ export default {
       // });
       // this.queryParams.rybj=this.bjid // 给查询日语班级赋值
       // 班级
-      let one=this.queryParams.kslx;
+      let one = this.queryParams.kslx;
       if (undefined != one && one.length > 0) {
         one = this.arrToStr(one);
       }
@@ -260,7 +260,7 @@ export default {
         kzzd1: this.queryParams.kzzd1,
         xq: this.queryParams.xq,
         ksfw: this.queryParams.ksfw,
-        kslx: one,
+        kslx: one
       };
       // 学生成绩表数据
       listAll(listAllJson).then(res => {
@@ -287,15 +287,14 @@ export default {
       for (let i = 0; i < array.length; i++) {
         str += array[i] + ",";
       }
-      str=str.substr(0, str.length - 1);
+      str = str.substr(0, str.length - 1);
       return str;
     },
     // 获取考试名称
     getKsmc(ksfwId) {
       if (this.queryParams.ksfw) {
-        this.queryParams.kslx =[];
+        this.queryParams.kslx = [];
         this.isKslx = true;
-
       }
       this.getListExaminationPaper.forEach(value => {
         if (value.id == ksfwId) {
@@ -342,23 +341,22 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       if (this.queryParams.ksmc && this.queryParams.ksfw) {
-        // this.allData = false;
-        // if (this.$refs.getChart) {
-        //   this.$refs.getChart.getChart();
-        // }
         this.allData = false;
         this.$nextTick(() => {
           this.$refs.getChart.getChart();
         });
+      } else {
+        this.allData = true;
+        this.$nextTick(() => {
+          this.queryParams.pageNum = 1;
+          this.getList();
+        });
       }
-      this.queryParams.pageNum = 1;
-      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.isKslx = false;
       this.resetForm("queryForm");
-      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
