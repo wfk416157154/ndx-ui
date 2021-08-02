@@ -191,7 +191,7 @@
                       placeholder="开始时间"
                       v-model="scope.row.kssj"
                       :picker-options="{
-                      start: '06:00',
+                      start: '05:40',
                       step: '00:05',
                       end: '23:00'
                     }"
@@ -205,7 +205,7 @@
                       placeholder="结束时间"
                       v-model="scope.row.jssj"
                       :picker-options="{
-                      start: '06:00',
+                      start: '05:40',
                       step: '00:05',
                       end: '23:00'
                     }"
@@ -360,7 +360,7 @@
 
     <!-- 添加或修改课程对话框 -->
     <el-dialog :title="courseTitle" :visible.sync="courseOpen" width="500px" append-to-body>
-      <el-table :data="ybjQueryList" @selection-change="courseHandleSelectionChange">
+      <el-table :data="ybjQueryList" ref="ybjquery" @selection-change="courseHandleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column property="ybj" label="原班级"></el-table-column>
         <el-table-column property="rs" label="班级人数"></el-table-column>
@@ -699,6 +699,9 @@ export default {
     addCourse(index) {
       this.$index = index;
       this.courseOpen = true;
+      this.$nextTick(() => {
+        this.$refs.ybjquery.clearSelection();
+      });
     },
     // 获取点击的数据
     cellRow(row, column, cell, event) {
@@ -712,29 +715,57 @@ export default {
     },
     // 选中课程对话框数据
     courseHandleSelectionChange(selection) {
-      this.courseHandleSelectionJson = {
-        ybj: "",
-        yjskrs: 0
-      };
-      if (this.ybjQueryList.length == selection.length) {
-        for (let i = 0; i < selection.length; i++) {
-          this.courseHandleSelectionJson.kzzd1 = 1;
+      if (selection && selection.length > 0) {
+        this.courseHandleSelectionJson = {
+          ybj: "",
+          yjskrs: 0
+        };
+        if (this.ybjQueryList.length == selection.length) {
+          for (let i = 0; i < selection.length; i++) {
+            this.courseHandleSelectionJson.kzzd1 = 1;
+          }
+        } else {
+          for (let i = 0; i < selection.length; i++) {
+            this.courseHandleSelectionJson.kzzd1 = 0;
+            this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
+            this.courseHandleSelectionJson.yjskrs += selection[i].rs;
+          }
+          this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
+            0,
+            this.courseHandleSelectionJson.ybj.length - 1
+          );
         }
-      } else {
-        for (let i = 0; i < selection.length; i++) {
-          this.courseHandleSelectionJson.kzzd1 = 0;
-          this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
-          this.courseHandleSelectionJson.yjskrs += selection[i].rs;
-        }
-        this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
-          0,
-          this.courseHandleSelectionJson.ybj.length - 1
-        );
       }
     },
     // 提交课程对话框
     courseSubmitForm() {
       this.courseOpen = false;
+      if (!this.courseHandleSelectionJson) {
+        switch (this.jsonCell.title) {
+          case "周一":
+            this.classCourseList[this.$index].mondayDetails = [];
+            break;
+          case "周二":
+            this.classCourseList[this.$index].tuesdayDetails = [];
+            break;
+          case "周三":
+            this.classCourseList[this.$index].wednesdayDetails = [];
+            break;
+          case "周四":
+            this.classCourseList[this.$index].thursdayDetails = [];
+            break;
+          case "周五":
+            this.classCourseList[this.$index].fridayDetails = [];
+            break;
+          case "周六":
+            this.classCourseList[this.$index].saturdayDetails = [];
+            break;
+          case "周日":
+            this.classCourseList[this.$index].sundayDetails = [];
+            break;
+        }
+        return;
+      }
       this.classCourseList.map((value, index) => {
         if (value.id == this.jsonCell.id && index == this.$index) {
           switch (this.jsonCell.title) {
