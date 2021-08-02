@@ -59,7 +59,6 @@
       <el-table
         :data="listAll"
         border
-        :cell-style="addClass"
         :summary-method="getSummaries"
         show-summary
         style="width: 100%"
@@ -384,11 +383,6 @@ export default {
     getWhole() {
       this.allData = true;
       this.reload();
-    },
-    // 数据单元格背景颜色
-    addClass({ row, column, rowIndex, columnIndex }) {
-      // console.log(column.property);
-      //  for(let i = 0; i < )
     },
     // 平均数
     getSummaries(param) {
