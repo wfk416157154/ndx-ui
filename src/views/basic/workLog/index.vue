@@ -101,15 +101,16 @@
             </div>
             <div class="history-log-content">
               <el-form-item label="文件上传" label-width="120px">
-                <div style="width : 200px">
+                <div style="width : 280px">
                   <el-upload
                     ref="upload"
                     :limit="1"
-                    accept="*"
+                    :accept="upload.type"
                     :headers="upload.headers"
                     :action="upload.imgUrl"
                     :disabled="upload.isUploading"
                     :on-progress="addFileUploadProgress"
+                    :before-upload="beforeAvatarUploadZIP"
                     :on-success="addFileSuccess"
                     :auto-upload="false"
                     drag
@@ -122,12 +123,17 @@
                     <!--<div class="el-upload__tip" slot="tip">
                       <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
                     </div>-->
-                    <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入".zip"格式文件！</div>
+                    <div
+                      class="el-upload__tip"
+                      style="color:red"
+                      slot="tip"
+                    >提示：仅允许导入"{{upload.type}}"格式文件！</div>
                   </el-upload>
-                  <div slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                  <div slot="footer" class="dialog-footer" v-if="getselectFileList.length == 0">
+                    <el-button type="primary" @click="submitFileForm" :disabled="rzid == null">确 定</el-button>
                     <el-button @click="upload.open = false">取 消</el-button>
                   </div>
+                  <div v-else style="text-align : center">文件已上传</div>
                 </div>
               </el-form-item>
             </div>
@@ -494,7 +500,9 @@ export default {
       getKscjzj: "",
       // 日志id
       rzid: null,
-      sendBtn: true // 发送按钮：默认禁用，当选择发送人和填写课程日志时才启用
+      sendBtn: true, // 发送按钮：默认禁用，当选择发送人和填写课程日志时才启用
+      //是否上传文件
+      getselectFileList: []
     };
   },
   created() {
@@ -511,6 +519,9 @@ export default {
     });
     this.getDicts("examination_type").then(response => {
       this.getExaminationType = response.data;
+    });
+    this.getConfigKey("zipFile").then(res => {
+      this.upload.type = res.msg;
     });
   },
   mounted() {
@@ -555,25 +566,14 @@ export default {
     },
     // 获取课中课表信息
     getList() {
-      // 获取用户列表
-      /*listUser().then((res) => {
-        this.getListUser = res.rows;
-      });*/
       /* 默认查询角色是教务员的用户 */
       selectInRoleUser({ roleId: "4" }).then(res => {
         this.getListUser = res.rows;
       });
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        let _this = this;
-        document.getElementsByClassName("work-log")[0].addEventListener(
-          "click",
-          function(e) {
-            _this.msgError("当前日志只能预览,不可编辑");
-            this.style.pointerEvents = "none";
-          },
-          false
-        );
+        this.msgError("当前日志只能预览,不可编辑");
+        this.$refs.prent.style.pointerEvents = "none";
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
           if (res.data.length != 0) {
@@ -615,6 +615,7 @@ export default {
     },
     // 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
     getWorkLogStatusQuery() {
+      this.getselectFileList = [];
       let json = {
         bjid: this.bjNameId
       };
@@ -635,8 +636,8 @@ export default {
               `${rybjName}-当天日志已经填写,但未发送, 是否要去日志主页查看?`,
               "提示",
               {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
+                confirmButtonText: "去主页",
+                cancelButtonText: "去发送",
                 type: "warning"
               }
             )
@@ -650,11 +651,12 @@ export default {
             break;
           case 3:
             this.ifForm = false;
-            this.$alert(
+            this.$confirm(
               `${rybjName}当天日志已经填写,并已发送, 请到日志主页查看!`,
               "提示",
               {
                 confirmButtonText: "确定",
+                cancelButtonText: "取消",
                 type: "warning"
               }
             )
@@ -662,7 +664,7 @@ export default {
                 this.skipToLogHomePage();
               })
               .catch(() => {
-                this.skipToLogHomePage();
+                // this.skipToLogHomePage();
               });
             break;
           default:
@@ -677,6 +679,7 @@ export default {
         if (res.data.length != 0) {
           this.ifForm = true;
           this.ruleForm = res.data;
+          this.rzid = this.ruleForm.id || null;
           this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
             for (let i = 0; i < this.kcType.length; i++) {
               if (this.kcType[i].dictValue == value.courseType) {
@@ -695,8 +698,8 @@ export default {
         }
       });
     },
+    // 获取页面中参数配置的路由
     skipToLogHomePage() {
-      // 获取页面中参数配置的路由
       this.getConfigKey("logHomePage").then(resp => {
         this.$router.push({
           path: resp.msg
@@ -730,6 +733,11 @@ export default {
         if (res.data.length != 0) {
           this.rzid = res.data[0].id;
           this.ruleForm.id = this.rzid;
+          selectFileList({ kzzd1: this.rzid }).then(res => {
+            if (200 == res.code) {
+              this.getselectFileList = res.rows;
+            }
+          });
           //如果已保存考试信息并且上传则禁用下拉框
           if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
             this.ksmcdisable = true;
@@ -1041,6 +1049,21 @@ export default {
           type: "success"
         });
       });
+    },
+    // 文件上传前验证
+    beforeAvatarUploadZIP(file) {
+      const isZIP =
+        this.upload.type.indexOf(
+          file.name.substring(file.name.lastIndexOf(".") + 1)
+        ) != -1;
+      const isLt40M = file.size / 1024 / 1024 < 40;
+      if (!isZIP) {
+        this.$message.error("上传文件格式不正确");
+      }
+      if (!isLt40M) {
+        this.$message.error("上传文件大小不能超过 40MB!");
+      }
+      return isZIP && isLt40M;
     },
     // 文件上传中处理压缩包
     addFileUploadProgress(event, file, fileList) {

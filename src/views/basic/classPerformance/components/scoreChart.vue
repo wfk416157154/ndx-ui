@@ -1,7 +1,7 @@
 <template>
   <div class="score-chart">
-    <div class="wrap-score-chart clearfix">
-      <div class="left-table __float">
+    <div id="wrap-score-chart">
+      <div class="left-table">
         <el-table
           :data="listAll"
           :summary-method="getSummaries"
@@ -41,7 +41,10 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="title-content __right-float">
+      <div class="right-chart">
+        <div id="pie1" style="width: 100%;height:100%;"></div>
+      </div>
+      <div class="title-content">
         <div>
           <i></i>
           <span>考试范围 :</span>
@@ -59,7 +62,7 @@
         </div>
         <div>
           <i></i>
-          <span>{{fzTitle3}} :</span>
+          <span>{{fzTitle1}} :</span>
           <span>{{chartList.bhers}}</span>
         </div>
         <div>
@@ -69,7 +72,7 @@
         </div>
         <div>
           <i></i>
-          <span>{{fzTitle1}} :</span>
+          <span>{{fzTitle3}} :</span>
           <span>{{chartList.yxrs}}</span>
         </div>
         <div>
@@ -97,9 +100,6 @@
           <span>缺考人数 :</span>
           <span>{{chartList.qkrs}}</span>
         </div>
-      </div>
-      <div class="right-chart __right-float">
-        <div id="pie1" style="width: 100%;height:100%;"></div>
       </div>
     </div>
     <div class="analysis-and-summary">
@@ -247,14 +247,14 @@ export default {
         this.option1.series[0].data[0].value = this.chartList.yxbfb;
         this.option1.series[0].data[1].value = this.chartList.hgbfb;
         this.option1.series[0].data[2].value = this.chartList.bhgbfb;
-        this.option1.series[0].data[0].name = fz60 + "分以下";
-        this.option1.legend.data[0] = this.fzTitle1 = fz60 + "分以下";
+        this.option1.series[0].data[2].name = fz60 + "分以下";
+        this.option1.legend.data[2] = this.fzTitle1 = fz60 + "分以下";
         this.option1.series[0].data[1].name = fz60 + "分至" + fz80 + "分";
         this.option1.legend.data[1] = this.fzTitle2 =
           fz60 + "分至" + fz80 + "分";
-        this.option1.series[0].data[2].name =
+        this.option1.series[0].data[0].name =
           fz80 + "分至" + this.chartList.mf + "分";
-        this.option1.legend.data[2] = this.fzTitle3 =
+        this.option1.legend.data[0] = this.fzTitle3 =
           fz80 + "分至" + this.chartList.mf + "分";
         let myChart1 = this.$echarts.init(document.getElementById("pie1"));
         myChart1.setOption(this.option1);
@@ -300,32 +300,33 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .score-chart {
   width: 100%;
   height: 100%;
   background: #909399;
-
-  .__float {
-    float: left;
-  }
-  .__right-float {
-    float: right;
-  }
-  .wrap-score-chart {
+  // .__float {
+  //   float: left;
+  // }
+  // .__right-float {
+  //   float: right;
+  // }
+  #wrap-score-chart {
     width: 100%;
     height: 100%;
     padding: 40px;
     box-sizing: border-box;
+    display: flex;
     .left-table {
       width: 50%;
     }
     .right-chart {
       width: 25%;
       height: 300px;
+      margin-left: 20px;
     }
     .title-content {
-      width: 20%;
+      width: 25%;
       height: 100%;
       font-size: 14px;
       padding: 10px;
@@ -346,7 +347,7 @@ export default {
   }
   .analysis-and-summary {
     display: inline-block;
-    width: 48%;
+    width: 50%;
     // height: 300px;
     background: #f2f6fc;
     padding: 20px;

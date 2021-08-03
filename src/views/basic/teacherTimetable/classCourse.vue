@@ -17,7 +17,7 @@
           <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="日语班" prop="xqid"  label-width="100px">
+      <el-form-item label="日语班" prop="xqid" label-width="100px">
         <el-select v-model="queryParams.bjid" filterable placeholder="请选择班级名称">
           <el-option
             v-for="item in listBjclass"
@@ -191,7 +191,7 @@
                       placeholder="开始时间"
                       v-model="scope.row.kssj"
                       :picker-options="{
-                      start: '06:00',
+                      start: '05:40',
                       step: '00:05',
                       end: '23:00'
                     }"
@@ -205,7 +205,7 @@
                       placeholder="结束时间"
                       v-model="scope.row.jssj"
                       :picker-options="{
-                      start: '06:00',
+                      start: '05:40',
                       step: '00:05',
                       end: '23:00'
                     }"
@@ -227,92 +227,127 @@
                 <el-table-column ref="demo" label="周一" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.mondayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.mondayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="周二" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.tuesdayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.tuesdayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="周三" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.wednesdayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.wednesdayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="周四" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.thursdayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.thursdayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="周五" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.fridayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.fridayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="周六" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.saturdayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.saturdayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="周日" width="120">
                   <template slot-scope="scope">
                     <div v-if="scope.row.sundayDetails.length > 0">
-                      <el-link
-                        type="success"
-                        @click="addCourse"
+                      <div
+                        @click="addCourse(scope.$index)"
                         v-for="(item,index) in scope.row.sundayDetails"
                         :key="index"
-                      >{{item.ybj}} : 共{{item.yjskrs}}人</el-link>
+                      >
+                        <el-link
+                          v-if="item.kzzd1 == 0"
+                          type="success"
+                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
+                        <el-link v-else type="success">全部</el-link>
+                      </div>
                     </div>
-                    <el-link type="primary" v-else @click="addCourse">未添加</el-link>
+                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
                   </template>
                 </el-table-column>
               </el-table>
@@ -325,7 +360,7 @@
 
     <!-- 添加或修改课程对话框 -->
     <el-dialog :title="courseTitle" :visible.sync="courseOpen" width="500px" append-to-body>
-      <el-table :data="ybjQueryList" @selection-change="courseHandleSelectionChange">
+      <el-table :data="ybjQueryList" ref="ybjquery" @selection-change="courseHandleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column property="ybj" label="原班级"></el-table-column>
         <el-table-column property="rs" label="班级人数"></el-table-column>
@@ -459,7 +494,9 @@ export default {
       selectedTimetableId: null,
       alertHtml: "",
       //选中班级的数据
-      classData: {}
+      classData: {},
+      $index: null,
+      ybjSelection: null
     };
   },
   created() {
@@ -660,8 +697,12 @@ export default {
       };
     },
     // 弹出添加课程表格
-    addCourse() {
+    addCourse(index) {
+      this.$index = index;
       this.courseOpen = true;
+      this.$nextTick(() => {
+        this.$refs.ybjquery.clearSelection();
+      });
     },
     // 获取点击的数据
     cellRow(row, column, cell, event) {
@@ -675,56 +716,94 @@ export default {
     },
     // 选中课程对话框数据
     courseHandleSelectionChange(selection) {
-      this.courseHandleSelectionJson = {
-        ybj: "",
-        yjskrs: 0
-      };
-      for (let i = 0; i < selection.length; i++) {
-        this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
-        this.courseHandleSelectionJson.yjskrs += selection[i].rs;
+      this.ybjSelection = selection;
+      if (selection && selection.length > 0) {
+        this.courseHandleSelectionJson = {
+          ybj: "",
+          yjskrs: 0
+        };
+        if (this.ybjQueryList.length == selection.length) {
+          for (let i = 0; i < selection.length; i++) {
+            this.courseHandleSelectionJson.kzzd1 = 1;
+          }
+        } else {
+          for (let i = 0; i < selection.length; i++) {
+            this.courseHandleSelectionJson.kzzd1 = 0;
+            this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
+            this.courseHandleSelectionJson.yjskrs += selection[i].rs;
+          }
+          this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
+            0,
+            this.courseHandleSelectionJson.ybj.length - 1
+          );
+        }
       }
-      this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
-        0,
-        this.courseHandleSelectionJson.ybj.length - 1
-      );
     },
     // 提交课程对话框
     courseSubmitForm() {
       this.courseOpen = false;
-      this.classCourseList.map((value, index) => {
-        if (value.id == this.jsonCell.id) {
-          switch (this.jsonCell.title) {
-            case "周一":
-              value.mondayDetails = [];
-              value.mondayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周二":
-              value.tuesdayDetails = [];
-              value.tuesdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周三":
-              value.wednesdayDetails = [];
-              value.wednesdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周四":
-              value.thursdayDetails = [];
-              value.thursdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周五":
-              value.fridayDetails = [];
-              value.fridayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周六":
-              value.saturdayDetails = [];
-              value.saturdayDetails.push(this.courseHandleSelectionJson);
-              break;
-            case "周日":
-              value.sundayDetails = [];
-              value.sundayDetails.push(this.courseHandleSelectionJson);
-              break;
-          }
+      if (!this.ybjSelection || this.ybjSelection.length == 0) {
+        switch (this.jsonCell.title) {
+          case "周一":
+            this.classCourseList[this.$index].mondayDetails = [];
+            break;
+          case "周二":
+            this.classCourseList[this.$index].tuesdayDetails = [];
+            break;
+          case "周三":
+            this.classCourseList[this.$index].wednesdayDetails = [];
+            break;
+          case "周四":
+            this.classCourseList[this.$index].thursdayDetails = [];
+            break;
+          case "周五":
+            this.classCourseList[this.$index].fridayDetails = [];
+            break;
+          case "周六":
+            this.classCourseList[this.$index].saturdayDetails = [];
+            break;
+          case "周日":
+            this.classCourseList[this.$index].sundayDetails = [];
+            break;
         }
-      });
+        return;
+      } else {
+        this.classCourseList.map((value, index) => {
+          if (value.id == this.jsonCell.id && index == this.$index) {
+            switch (this.jsonCell.title) {
+              case "周一":
+                value.mondayDetails = [];
+                value.mondayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周二":
+                value.tuesdayDetails = [];
+                value.tuesdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周三":
+                value.wednesdayDetails = [];
+                value.wednesdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周四":
+                value.thursdayDetails = [];
+                value.thursdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周五":
+                value.fridayDetails = [];
+                value.fridayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周六":
+                value.saturdayDetails = [];
+                value.saturdayDetails.push(this.courseHandleSelectionJson);
+                break;
+              case "周日":
+                value.sundayDetails = [];
+                value.sundayDetails.push(this.courseHandleSelectionJson);
+                break;
+            }
+            this.ybjSelection = null;
+          }
+        });
+      }
     },
     // 取消课程对话框
     courseCancel() {

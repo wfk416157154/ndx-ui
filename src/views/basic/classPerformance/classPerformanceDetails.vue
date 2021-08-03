@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="考试类型" prop="kslx">
-        <el-select v-model="queryParams.kslx" :disabled="isKslx" placeholder="请选择考试类型">
+        <el-select v-model="queryParams.kslx" :disabled="isKslx" placeholder="请选择考试类型" multiple>
           <el-option
             v-for="(item,index) in getExaminationType"
             :key="index"
@@ -59,7 +59,6 @@
       <el-table
         :data="listAll"
         border
-        :cell-style="addClass"
         :summary-method="getSummaries"
         show-summary
         style="width: 100%"
@@ -155,7 +154,7 @@ export default {
         kzzd1: null,
         xq: null,
         ksfw: null,
-        kslx: null
+        kslx: []
       },
       // 表单参数
       form: {},
@@ -252,14 +251,23 @@ export default {
       // });
       // this.queryParams.rybj=this.bjid // 给查询日语班级赋值
       // 班级
-
+      let one = this.queryParams.kslx;
+      if (undefined != one && one.length > 0) {
+        one = this.arrToStr(one);
+      }
+      let listAllJson = {
+        kzzd1: this.queryParams.kzzd1,
+        xq: this.queryParams.xq,
+        ksfw: this.queryParams.ksfw,
+        kslx: one
+      };
       // 学生成绩表数据
-      listAll(this.queryParams).then(res => {
+      listAll(listAllJson).then(res => {
         this.listAll = res.rows;
         this.total = res.total;
       });
       // 学生成绩表title列
-      getColumnNameList(this.queryParams).then(res => {
+      getColumnNameList(listAllJson).then(res => {
         this.columnNameList = res.data;
         for (let i = 0; i < 5; i++) {
           this.columnNameList[i].fixed = true;
@@ -273,9 +281,18 @@ export default {
         this.getListExaminationPaper = res.rows;
       });
     },
+    arrToStr(array) {
+      let str = "";
+      for (let i = 0; i < array.length; i++) {
+        str += array[i] + ",";
+      }
+      str = str.substr(0, str.length - 1);
+      return str;
+    },
     // 获取考试名称
     getKsmc(ksfwId) {
       if (this.queryParams.ksfw) {
+        this.queryParams.kslx = [];
         this.isKslx = true;
       }
       this.getListExaminationPaper.forEach(value => {
@@ -323,23 +340,22 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       if (this.queryParams.ksmc && this.queryParams.ksfw) {
-        // this.allData = false;
-        // if (this.$refs.getChart) {
-        //   this.$refs.getChart.getChart();
-        // }
         this.allData = false;
         this.$nextTick(() => {
           this.$refs.getChart.getChart();
         });
+      } else {
+        this.allData = true;
+        this.$nextTick(() => {
+          this.queryParams.pageNum = 1;
+          this.getList();
+        });
       }
-      this.queryParams.pageNum = 1;
-      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.isKslx = false;
       this.resetForm("queryForm");
-      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -367,11 +383,6 @@ export default {
     getWhole() {
       this.allData = true;
       this.reload();
-    },
-    // 数据单元格背景颜色
-    addClass({ row, column, rowIndex, columnIndex }) {
-      // console.log(column.property);
-      //  for(let i = 0; i < )
     },
     // 平均数
     getSummaries(param) {
