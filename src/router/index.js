@@ -5,10 +5,6 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import ParentView from '@/components/ParentView';
-import InnerLink from '@/layout/components/InnerLink'
-import teacherForm from '../views/basic/teacher/teacherForm.vue';
-import bjclassForm from '../views/basic/bjclass/bjclassForm.vue';
 /**
  * Note: 路由配置项
  *
@@ -65,21 +61,7 @@ export const constantRoutes = [
         component: (resolve) => require(['@/views/index'], resolve),
         name: '首页',
         meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
-      },
-      {
-        path: "teacherForm/:id",
-        name: "teacherForm",
-        component: teacherForm,
-        hidden: true,
-        meta: { title: '操作老师信息', icon: 'dashboard', noCache: true, affix: false, show: false, }
-      },
-      {
-        path: "bjclassForm/:id",
-        name: "bjclassForm",
-        component: bjclassForm,
-        hidden: true,
-        meta: { title: '班级信息', icon: 'dashboard', noCache: true, affix: false, show: false, }
-      },
+      }
     ]
   },
   {
@@ -96,6 +78,32 @@ export const constantRoutes = [
       }
     ]
   },
+  /*{
+    path: '/auth',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'role/:userId(\\d+)',
+        component: (resolve) => require(['@/views/system/user/authRole'], resolve),
+        name: 'AuthRole',
+        meta: { title: '分配角色'}
+      }
+    ]
+  },
+  {
+    path: '/auth',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'user/:roleId(\\d+)',
+        component: (resolve) => require(['@/views/system/role/authUser'], resolve),
+        name: 'AuthUser',
+        meta: { title: '分配用户'}
+      }
+    ]
+  },*/
   {
     path: '/dict',
     component: Layout,
