@@ -1,86 +1,39 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :rules="queryParamsRules"
-      :inline="true"
-      label-width="68px"
-    >
-      <el-form-item label="校区名称" prop="xqid" v-hasPermi="['basic:school:list']" v-if="false" label-width="100px">
-        <el-select
-          v-model="queryParams.xqid"
-          @change="getSchoolListId"
-          filterable
-          placeholder="请选择校区名称"
-        >
-          <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="日语班" prop="xqid" label-width="100px">
-        <el-select v-model="queryParams.bjid" filterable placeholder="请选择班级名称">
-          <el-option
-            v-for="item in listBjclass"
-            :key="item.id"
-            :label="item.rybjmc"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="年份" prop="kzzd2">
-        <el-select v-model="queryParams.kzzd2" placeholder="请选择年份" clearable size="small">
-          <el-option
-            v-for="dict in yearList"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictLabel"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="课表类型" prop="kbType" label-width="100px">
-        <el-select v-model="queryParams.kbType" placeholder="请选择课表类型" clearable size="small">
-          <el-option
-            v-for="dict in kbTypeOptionsEL"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-      </el-form-item>
-    </el-form>
     <el-row :gutter="20">
       <el-col :span="6" :xs="24">
         <el-card>
           <el-tabs type="card" v-model="activeTab" @tab-click="switchingClasses(activeTab)">
-            <el-tab-pane :label="classData.rybjmc" :name="classData.id">
-              <div class="wrap-info" v-if="classData != {}">
+            <el-tab-pane
+              v-for="item in listBjclass"
+              :key="item.id"
+              :label="item.rybjmc"
+              :name="item.id">
+              <div class="wrap-info" >
                 <ul class="list-group list-group-striped">
                   <li style="padding-bottom : 10px; font-size : 14px">
                     日语班级
-                    <div class="pull-right">{{classData.rybjmc}}</div>
+                    <div class="pull-right">{{item.rybjmc}}</div>
                   </li>
                   <li class="list-group-item">
                     姓名
-                    <div class="pull-right">{{classData.lsxm}}</div>
+                    <div class="pull-right">{{item.lsxm}}</div>
                   </li>
                   <li class="list-group-item">
                     校区
-                    <div class="pull-right">{{classData.xqmc}}</div>
+                    <div class="pull-right">{{item.xqmc}}</div>
                   </li>
                   <li class="list-group-item">
                     开班时间
-                    <div class="pull-right">{{classData.kbsj}}</div>
+                    <div class="pull-right">{{item.kbsj}}</div>
                   </li>
                   <li class="list-group-item">
                     班级人数
-                    <div class="pull-right">{{classData.bjrs}}</div>
+                    <div class="pull-right">{{item.bjrs}}</div>
                   </li>
                   <li class="list-group-item">
                     录入时间
-                    <div class="pull-right">{{classData.kzzd3}}</div>
+                    <div class="pull-right">{{item.kzzd3}}</div>
                   </li>
                 </ul>
               </div>
@@ -120,6 +73,14 @@
           <el-tabs v-model="tabsActiveTab">
             <el-tab-pane label="班级课表" name="kb">
               <div style="margin-bottom: 10px">
+                <el-form
+                  :model="queryParams"
+                  ref="queryForm"
+                  :rules="queryParamsRules"
+                  :inline="true"
+                  label-width="68px"
+                >
+
                 <el-select
                   style="margin-right : 10px"
                   v-model="queryParams.kzzd2"
@@ -128,10 +89,9 @@
                   size="small"
                 >
                   <el-option
-                    v-for="dict in yearList"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictLabel"
+                    v-for="(item, index) in 20"
+                    :label="2015+index"
+                    :value="2015+index"
                   />
                 </el-select>
                 <el-select
@@ -169,7 +129,9 @@
                   :disabled="btnDisabled"
                   @click="deleteData"
                 >删除选中行</el-button>
+                </el-form>
               </div>
+
 
               <el-table
                 v-if="classCourseList.length > 0"
@@ -512,31 +474,18 @@ export default {
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
     });
-    listSchool().then(response => {
-      this.schoolList = response.rows;
-      if (this.$store.state.user.dataRoleWeightId == 50) {
-        this.schoolList.length == 1
-          ? (this.queryParams.xqid = this.schoolList[0].id)
-          : null;
-        this.getSchoolListId();
-      }
-    });
+    this.getList()
   },
   methods: {
     // 班级列表基础信息
     getList() {
-      // let obj = {
-      //   // 根据关联校区id进行查询
-      //   kzzd1: this.queryParams.xqid
-      // };
-      // listBjclass(obj).then(res => {
-      //   this.listBjclass = res.rows;
-      //   if (res.rows.length > 0) {
-      this.activeTab = this.queryParams.bjid;
-      this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
-      this.getClassId(this.activeTab);
-      // }
-      // });
+      listBjclass().then(res => {
+         this.listBjclass = res.rows;
+         if(res.rows.length == 1){// 当该老师只有一个日语班
+           this.activeTab = res.rows[0].id;
+           this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
+         }
+      });
     },
     // 获取班级
     getSchoolListId(xqid) {
@@ -546,14 +495,6 @@ export default {
         this.listBjclass.length == 1
           ? (this.queryParams.xqid = this.schoolList[0].id)
           : null;
-      });
-    },
-    // 获取选中班级数据
-    getClassId(bjid) {
-      this.listBjclass.forEach(value => {
-        if (value.id == bjid) {
-          this.classData = value;
-        }
       });
     },
     // 获取课表详细数据
@@ -586,6 +527,7 @@ export default {
     },
     // 切换班级课表
     switchingClasses(bjid, nd) {
+      console.log("bjid:",bjid)
       this.queryParams.bjid = bjid;
       this.getClassCourseBasicList(bjid, nd);
     },
@@ -667,7 +609,7 @@ export default {
         return;
       }
       if (!this.activeTab) {
-        this.msgError("请点击搜索选择对应班级！");
+        this.msgError("请选择对应班级！");
         return;
       }
       this.classCourseList.push(this.record());
