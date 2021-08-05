@@ -348,7 +348,8 @@ import {
   listAllPreAuthorizeMethods,
   menuAddPermission,
   findMenuPermissionByMenuId,
-  refreshCache
+  refreshCache,
+  selectMenuRoleList
 } from "@/api/system/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -569,29 +570,36 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        });
+        }).catch(e=>{});
     },
     // Transfer
     filterMethod(query, item) {
       return (item.key + item.label).indexOf(query) > -1;
     },
     guanlianUrl(row) {
-      this.urlReset();
-      this.getTreeselect();
-      getMenu(row.menuId).then(response => {
-        this.urlform = response.data;
-        this.urlopen = true;
-        this.title = "菜单关联URL按钮功能";
-        findMenuPermissionByMenuId({ parentId: row.menuId }).then(res => {
-          let arr = [];
-          for (const key in res.data) {
-            arr.push(res.data[key].perms);
-          }
-          this.menuValue = arr;
-          this.urlform.permsArray = arr;
-          this.findAllPreAuthorizeMethods();
-        });
-      });
+      selectMenuRoleList({menuId:row.menuId}).then(res=>{
+        if(200==res.code){
+          this.urlReset();
+          this.getTreeselect();
+          getMenu(row.menuId).then(response => {
+            this.urlform = response.data;
+            this.urlopen = true;
+            this.title = "菜单关联URL按钮功能";
+            findMenuPermissionByMenuId({ parentId: row.menuId }).then(res => {
+              let arr = [];
+              for (const key in res.data) {
+                arr.push(res.data[key].perms);
+              }
+              this.menuValue = arr;
+              this.urlform.permsArray = arr;
+              this.findAllPreAuthorizeMethods();
+            });
+          });
+        }else{
+          this.msgError(res.msg)
+        }
+      }).catch(e=>{})
+
     },
     findAllPreAuthorizeMethods() {
       listAllPreAuthorizeMethods().then(res => {
@@ -605,6 +613,7 @@ export default {
       menuAddPermission(this.urlform).then(res => {
         this.urlopen = false;
         this.msgSuccess(res.msg);
+        this.getList()
       });
     },
     cancelUrl() {

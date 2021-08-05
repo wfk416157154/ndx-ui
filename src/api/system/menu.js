@@ -96,3 +96,13 @@ export function delMenu(menuId) {
     method: 'delete'
   })
 }
+
+// 查询菜单所对应的角色
+export function selectMenuRoleList(query) {
+  return request({
+    url: '/system/menu/selectMenuRoleList',
+    method: 'get',
+    params: query
+  })
+}
+
