@@ -586,9 +586,12 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(id) {
-      this.$router.push({
-        path: "/teacherForm/" + id
-      });
+      // 获取页面中参数配置的路由
+      this.getConfigKey("teacherForm").then(resp=>{
+        this.$router.push({
+          path: resp.msg+id
+        });
+      })
     },
     // 老师详细信息
     teacherDetails(id) {

@@ -29,7 +29,7 @@
       <el-table-column property="pqdq" label="派遣地区"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">添加资料</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,7 +75,6 @@ export default {
     },
     // 编辑老师基本信息
     handleEdit(index, row) {
-      //console.log("id=",row.id)
       // 获取页面中参数配置的路由
       this.getConfigKey("certificatesForm").then(resp => {
         this.router = resp.msg;

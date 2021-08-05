@@ -138,7 +138,15 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false" />
-      <el-table-column label="老师头像" align="center" prop="lstx" />
+      <el-table-column label="老师头像" align="center" prop="lstx" >
+        <template slot-scope="scope">
+          <div class="block" style="display : flex; width : 100% ; height : 100%">
+            <el-image v-if="scope.row.lstx!=null&&scope.row.lstx!=''"
+              :src="scope.row.lstx" :preview-src-list="previewPhoto(scope.row.lstx)">
+            </el-image>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="校区名称" align="center" prop="xqmc" v-if="false" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
@@ -189,6 +197,12 @@
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-upload"
+            @click="uploadTeacherFilePage(scope.row.id)"
+          >上传资料</el-button>
           <el-button
             size="mini"
             type="text"
@@ -475,6 +489,15 @@ export default {
         });
       });
     },
+    // 上传老师证件照资料的页面
+    uploadTeacherFilePage(id){
+      // 获取页面中参数配置的路由
+      this.getConfigKey("teacherForm").then(resp => {
+        this.$router.push({
+          path: resp.msg + id
+        });
+      });
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -521,6 +544,12 @@ export default {
         }
       }
       return Math.max.call(null, ...arr) * 75;
+    },
+    // 预览老师头像
+    previewPhoto(lstx){
+      let arr=[]
+      arr.push(lstx)
+      return arr
     }
   }
 };
