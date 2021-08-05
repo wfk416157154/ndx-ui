@@ -89,9 +89,9 @@
                   size="small"
                 >
                   <el-option
-                    v-for="(item, index) in 20"
-                    :label="2015+index"
-                    :value="2015+index"
+                    v-for="(item, index) in (new Date().getFullYear()-2010)"
+                    :label="(new Date().getFullYear()-5)+index"
+                    :value="(new Date().getFullYear()-5)+index"
                   />
                 </el-select>
                 <el-select
@@ -527,7 +527,6 @@ export default {
     },
     // 切换班级课表
     switchingClasses(bjid, nd) {
-      console.log("bjid:",bjid)
       this.queryParams.bjid = bjid;
       this.getClassCourseBasicList(bjid, nd);
     },

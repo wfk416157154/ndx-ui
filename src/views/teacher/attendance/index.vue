@@ -1,15 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="申请人" prop="sqr">
-        <el-input
-          v-model="queryParams.sqr"
-          placeholder="请输入申请人"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="请假类型" prop="qjlx">
         <el-select v-model="queryParams.qjlx" placeholder="请选择请假类型" clearable size="small">
           <el-option
@@ -20,15 +11,23 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
+      <el-form-item label="是否报备" prop="sfbb">
+        <el-input
+          v-model="queryParams.sfbb"
+          placeholder="请输入是否报备"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="审批状态(1:待审核;2:通过;3:撤销,4拒绝)" prop="spzt">
+        <el-input
+          v-model="queryParams.spzt"
+          placeholder="请输入审批状态(1:待审核;2:通过;3:撤销,4拒绝)"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -44,7 +43,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['basic:attendance:add']"
+          v-hasPermi="['teacher:attendance:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -55,7 +54,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['basic:attendance:edit']"
+          v-hasPermi="['teacher:attendance:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -66,7 +65,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['basic:attendance:remove']"
+          v-hasPermi="['teacher:attendance:remove']"
         >删除</el-button>
       </el-col>
     <el-col :span="1.5">
@@ -84,32 +83,64 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['basic:attendance:export']"
+          v-hasPermi="['teacher:attendance:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table  border v-loading="loading" :data="attendanceList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :height="$root.tableHeight" border :data="attendanceList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="申请人" align="center" prop="sqr" />
-      <el-table-column label="请假类型" align="center" prop="qjlx" :formatter="qjlxFormat" />
-      <el-table-column label="请假理由" align="center" prop="qjly" />
-      <el-table-column label="开始时间" align="center" prop="kssj" width="180">
+      <el-table-column label="校区id" align="center" prop="xqid" />
+      <el-table-column label="老师id" align="center" prop="lsid" />
+      <el-table-column label="老师电话" align="center" prop="lsdh" />
+      <el-table-column label="课程内容" align="center" prop="kcnr" />
+      <el-table-column label="请假类型" align="center" prop="qjlx" >
+          <template slot-scope="scope">
+              <dict-tag :options="qjlxOptions" :value="scope.row.qjlx"/>
+          </template>
+      </el-table-column>
+      <el-table-column label="开始时间" align="center" prop="qjkssj" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.kssj, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.qjkssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" align="center" prop="jssj" width="180">
+      <el-table-column label="结束时间" align="center" prop="qjjssj" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.jssj, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.qjjssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="请假天数" align="center" prop="qjts" />
-      <el-table-column label="批准人" align="center" prop="pzr" />
-      <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
+      <el-table-column label="总天数" align="center" prop="zts" />
+      <el-table-column label="总节数" align="center" prop="zjs" />
+      <el-table-column label="请假原因" align="center" prop="qjyy" />
+      <el-table-column label="是否报备" align="center" prop="sfbb" >
+          <template slot-scope="scope">
+              <dict-tag :options="sfbbOptions" :value="scope.row.sfbb"/>
+          </template>
+      </el-table-column>
+      <el-table-column label="学校审批的照片" align="center" prop="xxspdzp" />
+      <el-table-column label="学校事务安排" align="center" prop="xxswap" />
+      <el-table-column label="补课/调课时间" align="center" prop="bktksj" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.bktksj, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="补课内容" align="center" prop="bknr" />
+      <el-table-column label="审批状态(1:待审核;2:通过;3:撤销,4拒绝)" align="center" prop="spzt" >
+          <template slot-scope="scope">
+              <dict-tag :options="spztOptions" :value="scope.row.spzt"/>
+          </template>
+      </el-table-column>
+      <el-table-column label="审批时间" align="center" prop="spsj" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.spsj, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="审批理由" align="center" prop="sply" />
+      <el-table-column label="审批人" align="center" prop="spr" />
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="录入或修改人名称" align="center" prop="userName" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -117,19 +148,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:attendance:edit']"
+            v-hasPermi="['teacher:attendance:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['basic:attendance:remove']"
+            v-hasPermi="['teacher:attendance:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -138,11 +169,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改学生考勤对话框 -->
+    <!-- 添加或修改老师考勤对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="申请人" prop="sqr">
-          <el-input v-model="form.sqr" placeholder="请输入申请人" />
+        <el-form-item label="校区id" prop="xqid">
+          <el-input v-model="form.xqid" placeholder="请输入校区id" />
+        </el-form-item>
+        <el-form-item label="老师id" prop="lsid">
+          <el-input v-model="form.lsid" placeholder="请输入老师id" />
+        </el-form-item>
+        <el-form-item label="老师电话" prop="lsdh">
+          <el-input v-model="form.lsdh" placeholder="请输入老师电话" />
+        </el-form-item>
+        <el-form-item label="课程内容" prop="kcnr">
+          <el-input v-model="form.kcnr" placeholder="请输入课程内容" />
         </el-form-item>
         <el-form-item label="请假类型" prop="qjlx">
           <el-select v-model="form.qjlx" placeholder="请选择请假类型">
@@ -154,53 +194,80 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="请假理由" prop="qjly">
-          <el-input v-model="form.qjly" placeholder="请输入请假理由" />
-        </el-form-item>
-        <el-form-item label="开始时间" prop="kssj">
+        <el-form-item label="开始时间" prop="qjkssj">
           <el-date-picker clearable size="small"
-            v-model="form.kssj"
+            v-model="form.qjkssj"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择开始时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="结束时间" prop="jssj">
+        <el-form-item label="结束时间" prop="qjjssj">
           <el-date-picker clearable size="small"
-            v-model="form.jssj"
+            v-model="form.qjjssj"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择结束时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="请假天数" prop="qjts">
-          <el-input v-model="form.qjts" placeholder="请输入请假天数" />
+        <el-form-item label="总天数" prop="zts">
+          <el-input v-model="form.zts" placeholder="请输入总天数" />
         </el-form-item>
-        <el-form-item label="批准人" prop="pzr">
-          <el-input v-model="form.pzr" placeholder="请输入批准人" />
+        <el-form-item label="总节数" prop="zjs">
+          <el-input v-model="form.zjs" placeholder="请输入总节数" />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择状态">
-            <el-option
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
+        <el-form-item label="请假原因" prop="qjyy">
+          <el-input v-model="form.qjyy" placeholder="请输入请假原因" />
+        </el-form-item>
+        <el-form-item label="是否报备" prop="sfbb">
+          <el-input v-model="form.sfbb" placeholder="请输入是否报备" />
+        </el-form-item>
+        <el-form-item label="学校审批的照片" prop="xxspdzp">
+          <el-input v-model="form.xxspdzp" placeholder="请输入学校审批的照片" />
+        </el-form-item>
+        <el-form-item label="学校事务安排" prop="xxswap">
+          <el-input v-model="form.xxswap" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="补课/调课时间" prop="bktksj">
+          <el-date-picker clearable size="small"
+            v-model="form.bktksj"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择补课/调课时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="补课内容" prop="bknr">
+          <el-input v-model="form.bknr" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="审批状态(1:待审核;2:通过;3:撤销,4拒绝)" prop="spzt">
+          <el-input v-model="form.spzt" placeholder="请输入审批状态(1:待审核;2:通过;3:撤销,4拒绝)" />
+        </el-form-item>
+        <el-form-item label="审批时间" prop="spsj">
+          <el-date-picker clearable size="small"
+            v-model="form.spsj"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择审批时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="审批理由" prop="sply">
+          <el-input v-model="form.sply" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="审批人" prop="spr">
+          <el-input v-model="form.spr" placeholder="请输入审批人" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 
       <!-- 导入对话框 -->
-      <el-dialog :close-on-click-modal="false" :title="upload.title" :visible.sync="upload.open" width="400px">
+      <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
           <el-upload
                   ref="upload"
                   :limit="1"
@@ -212,6 +279,10 @@
                   :on-success="handleFileSuccess"
                   :auto-upload="false"
                   drag
+                  v-loading="fullscreenLoading"
+                  element-loading-text="正在进行数据导入·······"
+                  element-loading-spinner="el-icon-loading"
+                  element-loading-background="rgba(0, 0, 0, 0.8)"
           >
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
@@ -225,7 +296,7 @@
               <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
           </el-upload>
           <div slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="submitFileForm">确 定</el-button>
+              <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button>
               <el-button @click="upload.open = false">取 消</el-button>
           </div>
       </el-dialog>
@@ -236,7 +307,7 @@
 </template>
 
 <script>
-import { listAttendance, getAttendance, delAttendance, addAttendance, updateAttendance } from "@/api/basic/attendance";
+import { listAttendance, getAttendance, delAttendance, addAttendance, updateAttendance } from "@/api/teacher/attendance";
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -247,6 +318,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      importBtn:false,
+      fullscreenLoading:false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -257,7 +330,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 学生考勤表格数据
+      // 老师考勤表格数据
       attendanceList: [],
       // 弹出层标题
       title: "",
@@ -265,15 +338,17 @@ export default {
       open: false,
       // 请假类型字典
       qjlxOptions: [],
-      // 状态字典
-      statusOptions: [],
+      // 是否报备字典
+      sfbbOptions: [],
+      // 审批状态(1:待审核;2:通过;3:撤销,4拒绝)字典
+      spztOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        sqr: null,
         qjlx: null,
-        status: null,
+        sfbb: null,
+        spzt: null,
       },
       // 表单参数
       form: {},
@@ -285,7 +360,7 @@ export default {
           // 是否显示弹出层
           open: false,
           // 弹出层标题
-          title: "导入学生考勤数据",
+          title: "导入老师考勤数据",
           // 是否禁用上传
           isUploading: false,
           // 是否更新已经存在的数据
@@ -293,7 +368,7 @@ export default {
           // 设置上传的请求头部
           headers: { Authorization: "Bearer " + getToken() },
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "basic/attendance/importData"
+          url: process.env.VUE_APP_BASE_API + "/teacher/attendance/importData"
       },
     };
   },
@@ -302,12 +377,15 @@ export default {
     this.getDicts("leave_type").then(response => {
       this.qjlxOptions = response.data;
     });
-    this.getDicts("basic_status").then(response => {
-      this.statusOptions = response.data;
+    this.getDicts("isOrNot").then(response => {
+      this.sfbbOptions = response.data;
+    });
+    this.getDicts("lskq-spzt").then(response => {
+      this.spztOptions = response.data;
     });
   },
   methods: {
-    /** 查询学生考勤列表 */
+    /** 查询老师考勤列表 */
     getList() {
       this.loading = true;
       listAttendance(this.queryParams).then(response => {
@@ -315,14 +393,6 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-    },
-    // 请假类型字典翻译
-    qjlxFormat(row, column) {
-      return this.selectDictLabel(this.qjlxOptions, row.qjlx);
-    },
-    // 状态字典翻译
-    statusFormat(row, column) {
-      return this.selectDictLabel(this.statusOptions, row.status);
     },
     // 取消按钮
     cancel() {
@@ -333,15 +403,27 @@ export default {
     reset() {
       this.form = {
         id: null,
-        glid: null,
-        sqr: null,
+        xqid: null,
+        lsid: null,
+        lsdh: null,
+        kcnr: null,
         qjlx: null,
-        qjly: null,
-        kssj: null,
-        jssj: null,
-        qjts: null,
-        pzr: null,
-        status: null,
+        qjkssj: null,
+        qjjssj: null,
+        zts: null,
+        zjs: null,
+        qjyy: null,
+        sfbb: null,
+        xxspdzp: null,
+        xxswap: null,
+        bktksj: null,
+        kbid: null,
+        bkls: null,
+        bknr: null,
+        spzt: null,
+        spsj: null,
+        sply: null,
+        spr: null,
         remark: null,
         userId: null,
         userName: null,
@@ -352,7 +434,8 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
+        kzzd6: null
       };
       this.resetForm("form");
     },
@@ -376,7 +459,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加学生考勤";
+      this.title = "添加老师考勤";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -385,7 +468,7 @@ export default {
       getAttendance(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改学生考勤";
+        this.title = "修改老师考勤";
       });
     },
     /** 提交按钮 */
@@ -411,7 +494,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除学生考勤编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除选中的数据?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -420,25 +503,32 @@ export default {
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
+        }).catch((e)=>{
+          console.log(e);
+      })
+
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('basic/attendance/export', {
+      this.download('teacher/attendance/export', {
         ...this.queryParams
-      }, `学生考勤.xlsx`)
+      }, `老师考勤-${new Date().getTime()}.xlsx`)
     },
 
       /** 导入按钮操作 */
       handleImport() {
-          this.upload.title = "学生考勤数据导入";
+          this.importBtn=false
+          this.upload.title = "老师考勤数据导入";
           this.upload.open = true;
+          this.$nextTick(() => {// 页面元素加载完成后执行该方法
+              this.$refs.upload.clearFiles();
+          });
       },
       /** 下载模板操作 */
       importTemplate() {
-          this.download('basic/attendance/importTemplate', {
+          this.download('teacher/attendance/importTemplate', {
               ...this.queryParams
-          }, `学生考勤-导入模板.xlsx`)
+          }, `老师考勤-导入模板-${new Date().getTime()}.xlsx`)
       },
       // 文件上传中处理
       handleFileUploadProgress(event, file, fileList) {
@@ -446,6 +536,7 @@ export default {
       },
       // 文件上传成功处理
       handleFileSuccess(response, file, fileList) {
+          this.fullscreenLoading = false;
           this.upload.open = false;
           this.upload.isUploading = false;
           this.$refs.upload.clearFiles();
@@ -454,7 +545,9 @@ export default {
       },
       // 提交上传文件
       submitFileForm() {
-          this.$refs.upload.submit();
+        this.importBtn=true
+        this.fullscreenLoading = true;
+        this.$refs.upload.submit();
       }
 
 
