@@ -53,6 +53,18 @@
         <el-button
           type="success"
           plain
+          icon="el-icon-s-promotion"
+          size="mini"
+          :disabled="single"
+          @click="submitShenqing"
+          v-hasPermi="['basic:teacherAttendance:edit']"
+        >提交申请
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
@@ -165,7 +177,7 @@
         </template>
       </el-table-column>
       <el-table-column label="补课内容" align="center" prop="bknr"/>
-      <el-table-column label="审批状态" align="center" prop="spzt">
+      <el-table-column label="审批状态" align="center" prop="spzt" width="150px" >
         <template slot-scope="scope">
           <dict-tag :options="spztOptions" :value="scope.row.spzt"/>
         </template>
@@ -341,9 +353,9 @@
             <el-input v-model="form.bknr" type="textarea" placeholder="请输入内容"/>
           </el-form-item>
         </el-col>
-        <!--<el-col :span="12">
+        <el-col :span="12">
           <el-form-item label="审批状态" prop="spzt">
-            <el-select v-model="form.spzt" placeholder="请选择审批状态">
+            <el-select v-model="form.spzt" placeholder="请选择审批状态" disabled>
               <el-option
                 v-for="dict in spztOptions"
                 :key="dict.dictValue"
@@ -353,7 +365,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!--<el-col :span="12">
           <el-form-item label="审批时间" prop="spsj">
             <el-date-picker clearable size="small"
                             v-model="form.spsj"
@@ -381,7 +393,8 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
+        <el-button type="primary" icon="el-icon-top" v-prevent-re-click @click="submitFormJw">提交至教务</el-button>
+        <el-button type="success" icon="el-icon-check" v-prevent-re-click @click="submitFormLocal">保存至本地</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -416,6 +429,8 @@
         fullscreenLoading: false,
         // 选中数组
         ids: [],
+        // 选中的审批状态数组
+        spztArr:[],
         // 非单个禁用
         single: true,
         // 非多个禁用
@@ -567,6 +582,7 @@
       // 多选框选中数据
       handleSelectionChange(selection) {
         this.ids = selection.map(item => item.id)
+        this.spztArr=selection.map(item=>item.spzt)
         this.single = selection.length !== 1
         this.multiple = !selection.length
       },
@@ -577,8 +593,42 @@
         this.open = true;
         this.title = "填写请假申请";
       },
+      //提交申请
+      submitShenqing(){
+        this.handleShenpiTools(1,2,"提示：只有【待提交】状态的数据才可提交！") // 1=待提交； 2=已提交-待审核
+      },
+      //确认收假
+      handleShouJia(){
+        this.handleShenpiTools(3,5,"提示：只有【审核通过-待确认收假】状态的数据才可收假！") // 3=审核通过-待确认收假; 5=确认收假
+      },
+      // 处理审批的公共方法
+      handleShenpiTools(val,spzt,msg){
+        let $this=this
+        if(this.validSpzt(val)){
+          this.msgError(msg)
+          return;
+        }
+        this.form.id=this.ids[0]
+        this.form.spzt=spzt // 审批状态
+        this.$confirm('是否确认?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function () {
+          return updateTeacherAttendance($this.form)
+        }).then(() => {
+          this.getList();
+          this.msgSuccess("操作成功");
+        }).catch((e) => {
+          console.log("e:",e)
+        })
+      },
       /** 修改按钮操作 */
       handleUpdate(row) {
+        if(this.validSpzt(1)){ //  1=待提交
+          this.msgError("提示：只有【待提交】状态的数据才可修改！")
+          return;
+        }
         this.reset();
         const id = row.id || this.ids
         getTeacherAttendance(id).then(response => {
@@ -603,13 +653,23 @@
           this.title = "修改请假申请";
         });
       },
-      /** 提交按钮 */
+      /** 提交至教务 按钮 */
+      submitFormJw(){
+        this.form.spzt=2 // 2=已提交-待审核
+        this.submitForm()
+      },
+      /** 提交至本地 按钮 */
+      submitFormLocal(){
+        this.form.spzt=1 // 1=待提交
+        this.submitForm()
+      },
+      /** 保存数据按钮 */
       submitForm() {
         this.$refs["form"].validate(valid => {
           if (valid) {
             if (this.form.id != null) {
               updateTeacherAttendance(this.form).then(response => {
-                this.msgSuccess("修改成功");
+                this.msgSuccess("操作成功");
                 this.open = false;
                 this.getList();
               });
@@ -625,6 +685,10 @@
       },
       /** 删除按钮操作 */
       handleDelete(row) {
+        if(this.validSpzt(1)){ //  1=待提交
+          this.msgError("提示：只有【待提交】状态的数据才可删除！")
+          return;
+        }
         const ids = row.id || this.ids;
         this.$confirm('是否确认删除选中的数据?', "警告", {
           confirmButtonText: "确定",
@@ -638,6 +702,16 @@
         }).catch((e) => {
           console.log(e);
         })
+      },
+      // 验证审批状态：是否可编辑、可删除（待提交的状态，才可编辑或删除）
+      validSpzt(val){
+        let arr=this.spztArr
+        for (let i = 0; i < arr.length; i++) {
+          if(val!=arr[i]){// 审批状态
+            return true;
+          }
+        }
+        return false;
       },
       // 删除图片
       handleRemove(file, fileList) {
@@ -692,10 +766,6 @@
       },
       // 处理销假
       handleXiaoJia(){
-        this.msgSuccess("正在开发")
-      },
-      // 确认收假
-      handleShouJia(){
         this.msgSuccess("正在开发")
       },
       // 申请延长假
