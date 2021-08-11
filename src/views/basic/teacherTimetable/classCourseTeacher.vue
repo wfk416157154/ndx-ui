@@ -429,7 +429,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         kbType: null,
-        kzzd2: null,
+        kzzd2: new Date().getFullYear(),
         bjid: null,
         xqid: null
       },
