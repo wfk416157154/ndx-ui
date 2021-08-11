@@ -14,71 +14,92 @@
       <el-table-column prop="kcTypeName" label="课程类型" width="180"></el-table-column>
       <el-table-column prop="monday" title="周一" label="周一" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.monday"
-            style="color : #67C23A"
-          >{{scope.row.mondayDetails.ybj + ": 共" + scope.row.mondayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.monday">
+            <el-link
+              v-if="scope.row.mondayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.mondayDetails.ybj + ": 共" + scope.row.mondayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="tuesday" label="周二" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.tuesday"
-            style="color : #67C23A"
-          >{{scope.row.tuesdayDetails.ybj + ": 共" + scope.row.tuesdayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.tuesday">
+            <el-link
+              v-if="scope.row.tuesdayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.tuesdayDetails.ybj + ": 共" + scope.row.tuesdayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="wednesday" label="周三" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.wednesday"
-            style="color : #67C23A"
-          >{{scope.row.wednesdayDetails.ybj + ": 共" + scope.row.wednesdayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.wednesday">
+            <el-link
+              v-if="scope.row.wednesdayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.wednesdayDetails.ybj + ": 共" + scope.row.wednesdayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="thursday" label="周四" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.thursday"
-            style="color : #67C23A"
-          >{{scope.row.thursdayDetails.ybj + ": 共" + scope.row.thursdayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.thursday">
+            <el-link
+              v-if="scope.row.thursdayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.thursdayDetails.ybj + ": 共" + scope.row.thursdayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="friday" label="周五" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.friday"
-            style="color : #67C23A"
-          >{{scope.row.fridayDetails.ybj + ": 共" + scope.row.fridayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.friday">
+            <el-link
+              v-if="scope.row.fridayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.fridayDetails.ybj + ": 共" + scope.row.fridayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="saturday" label="周六" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.saturday"
-            style="color : #67C23A"
-          >{{scope.row.saturdayDetails.ybj + ": 共" + scope.row.saturdayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.saturday">
+            <el-link
+              v-if="scope.row.saturdayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.saturdayDetails.ybj + ": 共" + scope.row.saturdayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>
       <el-table-column prop="sunday" label="周日" width="180">
         <template slot-scope="scope">
-          <el-link
-            type="success"
-            v-if="scope.row.sunday"
-            style="color : #67C23A"
-          >{{scope.row.sundayDetails.ybj + ": 共" + scope.row.sundayDetails.yjskrs + "人"}}</el-link>
+          <div v-if="scope.row.sunday">
+            <el-link
+              v-if="scope.row.sundayDetails.kzzd1 == 0"
+              type="success"
+              style="color : #67C23A"
+            >{{scope.row.sundayDetails.ybj + ": 共" + scope.row.sundayDetails.yjskrs + "人"}}</el-link>
+            <el-link v-else type="success" style="color : #67C23A">全部</el-link>
+          </div>
           <span v-else type="warning">暂无</span>
         </template>
       </el-table-column>

@@ -725,7 +725,13 @@ export default {
         if (this.ybjQueryList.length == selection.length) {
           for (let i = 0; i < selection.length; i++) {
             this.courseHandleSelectionJson.kzzd1 = 1;
+            this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
+            this.courseHandleSelectionJson.yjskrs += selection[i].rs;
           }
+          this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
+            0,
+            this.courseHandleSelectionJson.ybj.length - 1
+          );
         } else {
           for (let i = 0; i < selection.length; i++) {
             this.courseHandleSelectionJson.kzzd1 = 0;
