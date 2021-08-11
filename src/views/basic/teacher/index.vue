@@ -8,12 +8,12 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc">
-        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称">
+        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称" @change="xqmcOnChange">
           <el-option
             v-for="item in selectXqmc"
             :key="item.id"
             :label="item.xxmc"
-            :value="item.xxmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -23,7 +23,7 @@
             v-for="item in bjclassList "
             :key="item.id"
             :label="item.rybjmc"
-            :value="item.rybjmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -479,11 +479,13 @@ export default {
     listSchool().then(response => {
       this.selectXqmc = response.rows;
     });
-    listBjclass().then(response => {
-      this.bjclassList = response.rows;
-    });
   },
   methods: {
+    xqmcOnChange(id){
+      listBjclass({kzzd1:id}).then(response => {
+        this.bjclassList = response.rows
+      });
+    },
     /** 查询老师信息列表 */
     getList() {
       this.loading = true;
@@ -584,9 +586,12 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(id) {
-      this.$router.push({
-        path: "/teacherForm/" + id
-      });
+      // 获取页面中参数配置的路由
+      this.getConfigKey("teacherForm").then(resp=>{
+        this.$router.push({
+          path: resp.msg+id
+        });
+      })
     },
     // 老师详细信息
     teacherDetails(id) {

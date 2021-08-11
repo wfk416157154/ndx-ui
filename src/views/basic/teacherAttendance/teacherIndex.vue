@@ -39,7 +39,7 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <!--<el-button
+        <el-button
           type="primary"
           plain
           icon="el-icon-plus"
@@ -47,7 +47,7 @@
           @click="handleAdd"
           v-hasPermi="['basic:teacherAttendance:add']"
         >填写申请
-        </el-button>-->
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -58,8 +58,36 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['basic:teacherAttendance:edit']"
-        >审批
+        >修改
         </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-circle-check"
+          size="mini"
+          :disabled="single"
+          @click="handleShouJia"
+        >确认收假
+        </el-button>
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-remove-outline"
+          size="mini"
+          :disabled="single"
+          @click="handleXiaoJia"
+        >申请销假
+        </el-button>
+        <el-button
+          type="info"
+          icon="el-icon-right"
+          size="mini"
+          :disabled="single"
+          @click="handleYanchangjia"
+        >申请延长假
+        </el-button>
+
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -159,7 +187,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['basic:teacherAttendance:edit']"
-          >审批
+          >修改
           </el-button>
           <el-button
             size="mini"
@@ -313,7 +341,7 @@
             <el-input v-model="form.bknr" type="textarea" placeholder="请输入内容"/>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!--<el-col :span="12">
           <el-form-item label="审批状态" prop="spzt">
             <el-select v-model="form.spzt" placeholder="请选择审批状态">
               <el-option
@@ -349,7 +377,7 @@
           <el-form-item label="备注" prop="remark">
             <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
           </el-form-item>
-        </el-col>
+        </el-col>-->
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -662,7 +690,18 @@
           this.fileDisable=true
         }
       },
-
+      // 处理销假
+      handleXiaoJia(){
+        this.msgSuccess("正在开发")
+      },
+      // 确认收假
+      handleShouJia(){
+        this.msgSuccess("正在开发")
+      },
+      // 申请延长假
+      handleYanchangjia(){
+        this.msgSuccess("正在开发")
+      },
       // 宽度适配
       flexColumnWidth(str, tableData) {
         let arr = [];

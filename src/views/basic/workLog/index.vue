@@ -669,6 +669,8 @@ export default {
             break;
           default:
             this.findTemplateQuery(); // 查询课表的课中模板
+            this.files1=[]
+            this.files2=[]
             break;
         }
       });
