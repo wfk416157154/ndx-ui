@@ -267,20 +267,20 @@
 
         <el-col :span="12">
           <el-form-item label="请假开始时间" prop="qjkssj" label-width="100px">
-            <el-date-picker clearable size="small"
+            <el-date-picker align="right"
                             v-model="form.qjkssj"
-                            type="date"
-                            value-format="yyyy-MM-dd"
+                            type="datetime"
+                            value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择开始时间">
             </el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="请假结束时间" prop="qjjssj" label-width="100px">
-            <el-date-picker clearable size="small"
+            <el-date-picker align="right"
                             v-model="form.qjjssj"
-                            type="date"
-                            value-format="yyyy-MM-dd"
+                            type="datetime"
+                            value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择结束时间">
             </el-date-picker>
           </el-form-item>
