@@ -37,6 +37,8 @@
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">申请试卷</el-button>
       </el-col>
+      <el-button type="primary"  size="mini" @click="statusQuery(9)">成绩未上传</el-button>
+      <el-button type="primary"  size="mini" @click="statusQuery(3)">成绩已上传</el-button>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <el-table
@@ -195,7 +197,6 @@ import {
 } from "@/api/basic/examinationPaper";
 import { getToken } from "@/utils/auth";
 import { listBjclass } from "@/api/basic/bjclass";
-import { listType } from "@/api/teaching/type";
 export default {
   name: "ExaminationPaper",
   components: {},
@@ -248,9 +249,9 @@ export default {
         bjid: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
-        jcid: [
-          { required: true, message: '必填', trigger: 'blur' }
-        ],
+        // jcid: [
+        //   { required: true, message: '必填', trigger: 'blur' }
+        // ],
         kslx: [
           { required: true, message: '必填', trigger: 'blur' }
         ],
@@ -296,7 +297,6 @@ export default {
   },
   mounted() {
     this.getList();
-    this.getListType();
     this.getListBjclass();
   },
   methods: {
@@ -309,12 +309,7 @@ export default {
         this.loading = false;
       });
     },
-    // 教材
-    getListType() {
-      listType().then(res => {
-        this.jsList = res.rows;
-      });
-    },
+
     // 获取老师所带班级
     getListBjclass() {
       this.glrid = this.$store.state.user.glrid;
@@ -391,6 +386,13 @@ export default {
       this.open = true;
       this.title = "添加考卷";
     },
+    /** 成绩是否上传按钮操作 */
+    statusQuery(uploadStaus) {
+      this.queryParams.pageNum = 1;
+      this.queryParams.kzzd2=uploadStaus;
+      this.getList();
+    },
+
     /** 提交按钮 */
     submitForm(status) {
       if (status === "3") {
