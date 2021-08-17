@@ -42,3 +42,39 @@ export function delTeacherAttendance(id) {
     method: 'delete'
   })
 }
+
+// 列名查询-单个老师考勤统计
+export function teacherAttendanceStatistics(query) {
+  return request({
+    url: '/basic/teacherAttendanceStatistics/columnNamelist',
+    method: 'get',
+    params: query
+  })
+}
+
+// 列名查询-单个老师考勤统计
+export function teacherAttendanceStatisticsList(query) {
+  return request({
+    url: '/basic/teacherAttendanceStatistics/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 列名查询-单个老师考勤统计
+export function jwColumnNamelist(query) {
+  return request({
+    url: '/basic/teacherAttendanceStatistics/jwColumnNamelist',
+    method: 'get',
+    params: query
+  })
+}
+
+// 列名查询-单个老师考勤统计
+export function jwTeaAttenDatalist(query) {
+  return request({
+    url: '/basic/teacherAttendanceStatistics/jwTeaAttenDatalist',
+    method: 'get',
+    params: query
+  })
+}
