@@ -1,19 +1,25 @@
 <template>
   <div class="teacherAttendanceStatistics">
-    <el-form ref="StatisticsForm" :model="StatisticsForm" :inline="true" label-width="100px">
-      <el-form-item label="开始日期">
+    <el-form
+      ref="StatisticsForm"
+      :model="StatisticsForm"
+      :rules="rules"
+      :inline="true"
+      label-width="100px"
+    >
+      <el-form-item label="开始日期" prop="startDate">
         <el-date-picker
           v-model="StatisticsForm.startDate"
           type="date"
-          value-format="yyyy-MM-dd"
+          format="yyyy-MM-dd"
           placeholder="开始日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="结束日期">
+      <el-form-item label="结束日期" prop="endDate">
         <el-date-picker
           v-model="StatisticsForm.endDate"
           type="date"
-          value-format="yyyy-MM-dd"
+          format="yyyy-MM-dd"
           placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
@@ -28,7 +34,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getTeacherAttendanceStatisticsList">查询</el-button>
+        <el-button type="primary" @click="queryResult">查询</el-button>
       </el-form-item>
     </el-form>
 
@@ -93,7 +99,29 @@ export default {
       detailItem: [],
       resultItem: [],
       statisticsProject: [],
-      statisticsResultType: []
+      statisticsResultType: [],
+      rules: {
+        xqid: [
+          { required: true, message: "请选择活动区域", trigger: "change" }
+        ],
+        startDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择日期",
+            trigger: "change"
+          }
+        ],
+        endDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择时间",
+            trigger: "change"
+          }
+        ],
+        bjid: [{ required: true, message: "请选择活动资源", trigger: "change" }]
+      }
     };
   },
   created() {

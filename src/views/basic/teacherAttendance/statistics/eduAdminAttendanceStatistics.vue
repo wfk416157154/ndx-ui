@@ -1,7 +1,13 @@
 <template>
   <div class="eduAdminAttendanceStatistics">
-    <el-form ref="StatisticsForm" :model="StatisticsForm" :inline="true" label-width="100px">
-      <el-form-item label="开始日期">
+    <el-form
+      ref="StatisticsForm"
+      :model="StatisticsForm"
+      :rules="rules"
+      :inline="true"
+      label-width="100px"
+    >
+      <el-form-item label="开始日期" prop="startDate">
         <el-date-picker
           v-model="StatisticsForm.startDate"
           type="date"
@@ -9,7 +15,7 @@
           placeholder="开始日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="结束日期">
+      <el-form-item label="结束日期" prop="endDate">
         <el-date-picker
           v-model="StatisticsForm.endDate"
           type="date"
@@ -100,7 +106,29 @@ export default {
       ],
       total: 0,
       jwColumnNameItem: [],
-      jwTeaAttenDataItem: []
+      jwTeaAttenDataItem: [],
+      rules: {
+        xqid: [
+          { required: true, message: "请选择活动区域", trigger: "change" }
+        ],
+        startDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择日期",
+            trigger: "change"
+          }
+        ],
+        endDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择时间",
+            trigger: "change"
+          }
+        ],
+        bjid: [{ required: true, message: "请选择活动资源", trigger: "change" }]
+      }
     };
   },
   created() {
@@ -115,35 +143,41 @@ export default {
       });
     },
     queryResult() {
-      let startDate = this.StatisticsForm.startDate;
-      let endDate = this.StatisticsForm.endDate;
-      let date1 = new Date(this.StatisticsForm.startDate);
-      let date2 = new Date(this.StatisticsForm.endDate);
-      let date3 = date2.getTime() / 1000 - date1.getTime() / 1000;
-      date3 = date3 / 60 / 60 / 24;
-      this.getConfigKey("Limit_days").then(res => {
-        if (res.code == 200) {
-          if (date3 > res.msg) {
-            this.msgError("查询考勤最大天数不得超过60天");
-            return;
-          } else {
-            this.StatisticsForm.startDate =
-              startDate.getFullYear() +
-              "-" +
-              startDate.getMonth() +
-              "-" +
-              startDate.getDate();
-            this.StatisticsForm.endDate =
-              endDate.getFullYear() +
-              "-" +
-              endDate.getMonth() +
-              "-" +
-              endDate.getDate();
-            jwTeaAttenDatalist(this.StatisticsForm).then(res => {
-              this.jwTeaAttenDataItem = res.data;
-              this.total = this.jwTeaAttenDataItem.length;
-            });
-          }
+      this.$refs["StatisticsForm"].validate(valid => {
+        if (valid) {
+          let startDate = this.StatisticsForm.startDate;
+          let endDate = this.StatisticsForm.endDate;
+          let date1 = new Date(this.StatisticsForm.startDate);
+          let date2 = new Date(this.StatisticsForm.endDate);
+          let date3 = date2.getTime() / 1000 - date1.getTime() / 1000;
+          date3 = date3 / 60 / 60 / 24;
+          this.getConfigKey("Limit_days").then(res => {
+            if (res.code == 200) {
+              if (date3 > res.msg) {
+                this.msgError("查询考勤最大天数不得超过60天");
+                return;
+              } else {
+                this.StatisticsForm.startDate =
+                  startDate.getFullYear() +
+                  "-" +
+                  startDate.getMonth() +
+                  "-" +
+                  startDate.getDate();
+                this.StatisticsForm.endDate =
+                  endDate.getFullYear() +
+                  "-" +
+                  endDate.getMonth() +
+                  "-" +
+                  endDate.getDate();
+                jwTeaAttenDatalist(this.StatisticsForm).then(res => {
+                  this.jwTeaAttenDataItem = res.data;
+                  this.total = this.jwTeaAttenDataItem.length;
+                });
+              }
+            }
+          });
+        } else {
+          return false;
         }
       });
     },
