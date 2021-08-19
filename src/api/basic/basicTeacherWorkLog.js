@@ -53,6 +53,14 @@ export function getBasicTeacherWorkLog(id) {
   })
 }
 
+// 教务端老师工作日志详情查看
+export function workLogQueryForEducational(id) {
+  return request({
+    url: '/basic/basicTeacherWorkLog/workLogQueryForEducational/' + id,
+    method: 'get'
+  })
+}
+
 // 保存老师工作日志
 export function addSave(data) {
   return request({
