@@ -3,7 +3,7 @@
     <table style="width : 100%" border="1" cellspacing="0">
       <thead>
         <tr>
-          <th>序号</th>
+          <th></th>
           <th
             style="padding : 20px;box-sizing : border-box"
           >{{logItem.lsxm}} - {{logItem.bjmc}} - {{logItem.date}} - {{logItem.status}}</th>

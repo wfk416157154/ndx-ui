@@ -8,8 +8,9 @@
               v-for="item in listBjclass"
               :key="item.id"
               :label="item.rybjmc"
-              :name="item.id">
-              <div class="wrap-info" >
+              :name="item.id"
+            >
+              <div class="wrap-info">
                 <ul class="list-group list-group-striped">
                   <li style="padding-bottom : 10px; font-size : 14px">
                     日语班级
@@ -80,58 +81,57 @@
                   :inline="true"
                   label-width="68px"
                 >
+                  <el-select
+                    style="margin-right : 10px"
+                    v-model="queryParams.kzzd2"
+                    placeholder="请选择年份"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="(item, index) in (new Date().getFullYear()-2010)"
+                      :label="(new Date().getFullYear()-5)+index"
+                      :value="(new Date().getFullYear()-5)+index"
+                      :key="index"
+                    />
+                  </el-select>
+                  <el-select
+                    style="margin-right : 10px"
+                    v-model="queryParams.kbType"
+                    placeholder="请选择课表类型"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="dict in kbTypeOptionsEL"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+                  <el-button
+                    type="primary"
+                    icon="el-icon-plus"
+                    size="mini"
+                    @click="insertTimetable"
+                  >新增课表</el-button>
+                  <el-button
+                    type="success"
+                    icon="el-icon-check"
+                    size="mini"
+                    :disabled="btnDisabled"
+                    @click="submitTimetable"
+                  >保存课表</el-button>
 
-                <el-select
-                  style="margin-right : 10px"
-                  v-model="queryParams.kzzd2"
-                  placeholder="请选择年份"
-                  clearable
-                  size="small"
-                >
-                  <el-option
-                    v-for="(item, index) in (new Date().getFullYear()-2010)"
-                    :label="(new Date().getFullYear()-5)+index"
-                    :value="(new Date().getFullYear()-5)+index"
-                  />
-                </el-select>
-                <el-select
-                  style="margin-right : 10px"
-                  v-model="queryParams.kbType"
-                  placeholder="请选择课表类型"
-                  clearable
-                  size="small"
-                >
-                  <el-option
-                    v-for="dict in kbTypeOptionsEL"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
-                <el-button
-                  type="primary"
-                  icon="el-icon-plus"
-                  size="mini"
-                  @click="insertTimetable"
-                >新增课表</el-button>
-                <el-button
-                  type="success"
-                  icon="el-icon-check"
-                  size="mini"
-                  :disabled="btnDisabled"
-                  @click="submitTimetable"
-                >保存课表</el-button>
-
-                <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  size="mini"
-                  :disabled="btnDisabled"
-                  @click="deleteData"
-                >删除选中行</el-button>
+                  <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    size="mini"
+                    :disabled="btnDisabled"
+                    @click="deleteData"
+                  >删除选中行</el-button>
                 </el-form>
               </div>
-
 
               <el-table
                 v-if="classCourseList.length > 0"
@@ -166,6 +166,7 @@
                       style="width : 100%"
                       placeholder="结束时间"
                       v-model="scope.row.jssj"
+                      @change="sjYZ(scope.row)"
                       :picker-options="{
                       start: '05:40',
                       step: '00:05',
@@ -474,17 +475,18 @@ export default {
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
     });
-    this.getList()
+    this.getList();
   },
   methods: {
     // 班级列表基础信息
     getList() {
       listBjclass().then(res => {
-         this.listBjclass = res.rows;
-         if(res.rows.length == 1){// 当该老师只有一个日语班
-           this.activeTab = res.rows[0].id;
-           this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
-         }
+        this.listBjclass = res.rows;
+        if (res.rows.length == 1) {
+          // 当该老师只有一个日语班
+          this.activeTab = res.rows[0].id;
+          this.switchingClasses(this.activeTab, this.queryParams.kzzd2);
+        }
       });
     },
     // 获取班级
@@ -857,7 +859,8 @@ export default {
             });
           }
         })
-        .catch(() => {this.courseHandleSelectionJson.kzzd1 = 1;
+        .catch(() => {
+          this.courseHandleSelectionJson.kzzd1 = 1;
           this.$message({
             type: "info",
             message: "已取消删除"
@@ -867,6 +870,17 @@ export default {
     // 表格数据居中
     tableStyle() {
       return "text-align : center";
+    },
+    sjYZ(rows) {
+      let date = new Date();
+      let date1 =
+        date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+      let date2 = date1;
+      date1 = new Date(date1 + " " + rows.kssj).getTime();
+      date2 = new Date(date2 + " " + rows.jssj).getTime();
+      if (date1 > date2) {
+        this.msgError("错误: 开始时间不能大于结束时间");
+      }
     }
   }
 };
