@@ -47,7 +47,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日语班级" align="center" prop="bjmc" />
-      <el-table-column label="日语老师" align="center" prop="fsrmc" />
+      <el-table-column label="日语老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
       <el-table-column label="考试范围" align="center" prop="ksfw" />
@@ -320,6 +320,8 @@ export default {
           this.form.jwsjzt = "1";
           this.form.lssjzt = "2";
           if (this.form.id != null) {
+            this.form.fsrid = this.$store.state.user.glrid
+            this.form.fsrmc = this.$store.state.user.nickName
             updateExaminationPaper(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;

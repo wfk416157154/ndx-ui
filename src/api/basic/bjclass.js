@@ -8,6 +8,15 @@ export function listBjclass(query) {
     params: query
   })
 }
+// 查询班级基础信息列表（页面查询调用）
+export function pageListBjclass(query) {
+  return request({
+    url: '/basic/bjclass/pageList',
+    method: 'get',
+    params: query
+  })
+}
+
 
 // 查询班级基础信息详细
 export function getBjclass(id) {

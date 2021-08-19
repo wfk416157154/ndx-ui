@@ -371,7 +371,8 @@ import {
   delBjclass,
   addBjclass,
   updateBjclass,
-  importTemplate
+  importTemplate,
+  pageListBjclass
 } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
@@ -494,14 +495,14 @@ export default {
     /** 查询班级基础信息列表 */
     getList() {
       this.loading = true;
-      listBjclass(this.queryParams).then(response => {
+      pageListBjclass(this.queryParams).then(response => {
         this.bjclassList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
     },
     xqmcOnChange(id){
-      listBjclass({kzzd1:id}).then(response => {
+      pageListBjclass({kzzd1:id}).then(response => {
         this.bjclassList = response.rows
         this.queryBjclassList = response.rows
       });
