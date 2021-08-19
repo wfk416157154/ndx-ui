@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="审批状态" prop="spzt">
-        <el-select v-model="queryParams.spzt" placeholder="请选择审批状态" clearable size="small">
+        <el-select v-model="queryParams.spzt" placeholder="请选择审批状态" multiple clearable size="small">
           <el-option
             v-for="dict in spztOptions"
             :key="dict.dictValue"
@@ -62,7 +62,7 @@
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
+        <!--<el-button
           type="danger"
           plain
           icon="el-icon-delete"
@@ -71,6 +71,46 @@
           @click="handleDelete"
           v-hasPermi="['basic:teacherAttendance:remove']"
         >删除
+        </el-button>-->
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          @click="queryStatusList('2')"
+        >未审核
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          @click="queryStatusList('3,4')"
+        >已审核
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          @click="queryStatusList('5')"
+        >已完成
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          @click="queryStatusList('6')"
+        >已销假
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -80,6 +120,38 @@
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="id" align="center" prop="id" v-if="false"/>
+      <el-table-column label="操作" align="center" width="80px" >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['basic:teacherAttendance:edit']"
+          >审批
+          </el-button>
+          <!--<el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['basic:teacherAttendance:remove']"
+          >删除
+          </el-button>-->
+        </template>
+      </el-table-column>
+      <el-table-column label="审批状态" align="center" prop="spzt" width="150px" >
+        <template slot-scope="scope">
+          <dict-tag :options="spztOptions" :value="scope.row.spzt"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="审批时间" align="center" prop="spsj" width="120">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.spsj, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="审批理由" align="center" prop="sply"/>
+      <el-table-column label="审批人" align="center" prop="spr"/>
       <el-table-column label="校区id" align="center" prop="xqid" v-if="false" />
       <el-table-column label="老师id" align="center" prop="lsid" v-if="false" />
       <el-table-column label="校区名称" align="center" prop="xqmc"/>
@@ -137,40 +209,8 @@
         </template>
       </el-table-column>
       <el-table-column label="补课内容" align="center" prop="bknr"/>
-      <el-table-column label="审批状态" align="center" prop="spzt">
-        <template slot-scope="scope">
-          <dict-tag :options="spztOptions" :value="scope.row.spzt"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批时间" align="center" prop="spsj" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.spsj, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批理由" align="center" prop="sply"/>
-      <el-table-column label="审批人" align="center" prop="spr"/>
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="录入或修改人名称" align="center" prop="userName"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:teacherAttendance:edit']"
-          >审批
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['basic:teacherAttendance:remove']"
-          >删除
-          </el-button>
-        </template>
-      </el-table-column>
     </el-table>
 
     <pagination
@@ -445,6 +485,7 @@
       };
     },
     created() {
+      this.queryParams.spzt="2";//已提交-待审核
       this.getList();
       this.getDicts("leave_type").then(response => {
         this.qjlxOptions = response.data;
@@ -466,6 +507,11 @@
             this.form.xqmc=response.rows[0].xxmc
           }
         });
+      },
+      /* 审批状态查询 */
+      queryStatusList(spzt){
+        this.queryParams.spzt=spzt;//根据不同的按钮点击，传入不同的状态
+        this.getList()
       },
       /** 查询老师考勤列表 */
       getList() {

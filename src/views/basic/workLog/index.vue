@@ -321,7 +321,7 @@
             </el-form-item>
           </div>
           <!-- 发送到人 -->
-          <div class="send-out">
+          <!--<div class="send-out">
             <h4>发送到人</h4>
             <el-select
               v-model="ruleForm.sendUserArr"
@@ -344,7 +344,7 @@
               @click="updateWorkLog()"
               v-has-permi="['basic:basicTeacherWorkLog:save']"
             >发送</el-button>
-          </div>
+          </div>-->
         </div>
       </div>
     </el-form>
@@ -384,7 +384,7 @@
     <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzj" width="60%">
       <el-form label-width="120px">
         <el-form-item label="考试总结">
-          <el-input type="textarea" :autosize="{ minRows: 8, maxRows: 10 }" v-model="getKscjzj"></el-input>
+          <editor v-model="getKscjzj" :item="items" :min-height="130" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -566,9 +566,9 @@ export default {
     // 获取课中课表信息
     getList() {
       /* 默认查询角色是教务员的用户 */
-      selectInRoleUser({ roleId: "4" }).then(res => {
+      /*selectInRoleUser({ roleId: "4" }).then(res => {
         this.getListUser = res.rows;
-      });
+      });*/
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
         this.msgError("当前日志只能预览,不可编辑");
@@ -621,6 +621,7 @@ export default {
       for (let i = 0; i < this.getListBjclass.length; i++) {
         if (this.getListBjclass[i].id === this.bjNameId) {
           var rybjName = this.getListBjclass[i].rybjmc;
+          this.bjName=rybjName;
         }
       }
       if (this.logTiem) {
@@ -632,11 +633,11 @@ export default {
         switch (res.data) {
           case 2:
             this.$confirm(
-              `${rybjName}-当天日志已经填写,但未发送, 是否要去日志主页查看?`,
+              `${rybjName}-当天日志已经填写,但未被查看, 是否要去日志主页查看?`,
               "提示",
               {
                 confirmButtonText: "去主页",
-                cancelButtonText: "去发送",
+                cancelButtonText: "当前页",
                 type: "warning"
               }
             )
@@ -651,7 +652,7 @@ export default {
           case 3:
             this.ifForm = false;
             this.$confirm(
-              `${rybjName}当天日志已经填写,并已发送, 请到日志主页查看!`,
+              `${rybjName}当天日志已经填写,并已被查看, 请到日志主页查看!`,
               "提示",
               {
                 confirmButtonText: "确定",
@@ -824,7 +825,7 @@ export default {
         {
           rybjmc: this.bjName
         },
-        `考试-导入模板.xlsx`
+        `考试成绩-导入模板.xlsx`
       );
     },
     // 文件上传中处理

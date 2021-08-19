@@ -38,7 +38,7 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">申请试卷</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini">添加其他试卷</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini"  @click="handleAddQt">添加其他试卷</el-button>
       </el-col>
       <el-button type="primary" icon="el-icon-search" size="mini" @click="statusQuery(9)">成绩未上传</el-button>
       <el-button type="primary" icon="el-icon-search" size="mini" @click="statusQuery(3)">成绩已上传</el-button>
@@ -66,7 +66,7 @@
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="试卷状态" align="center" :formatter="getKszt" prop="lssjzt"/>
+<!--      <el-table-column label="试卷状态" align="center" :formatter="getKszt" prop="lssjzt"/>-->
 
       <el-table-column label="成绩上传状态" align="center" :formatter="getCjsczt" prop="kzzd2">
         <template slot-scope="scope">
@@ -92,11 +92,12 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <span v-if="scope.row.lssjzt == '1'">暂无试卷</span>
+          <span v-if="scope.row.lssjzt == '4'">其他试卷</span>
           <el-button
             size="mini"
             type="text"
             @click="handleExport(scope.row)"
-            v-if="scope.row.lssjzt == '2' || scope.row.lssjzt == '3' || scope.row.lssjzt == '4'"
+            v-if="scope.row.lssjzt == '2' || scope.row.lssjzt == '3' "
           >下载
           </el-button>
         </template>
@@ -114,7 +115,7 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="formState" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
-          <el-input v-model="form.fsrmc" placeholder="请输入老师姓名" readonly/>
+          <el-input v-model="form.lsxm" placeholder="请输入老师姓名" readonly/>
         </el-form-item>
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
           <el-select v-model="form.bjid" @change="getClassList" placeholder="请选择日语班级">
@@ -178,9 +179,9 @@
 
     <!-- 成绩上传 -->
     <el-dialog :title="cjsc.title" :visible.sync="cjsc.open" width="600px" append-to-body>
-      <el-form ref="formState" :model="cjscForm" :rules="rules" label-width="80px">
+      <el-form ref="formState" :model="cjscForm" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
-          <el-input v-model="cjscForm.fsrmc"  readonly/>
+          <el-input v-model="cjscForm.lsxm"  readonly/>
         </el-form-item>
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
             <el-input v-model="cjscForm.bjmc"  readonly/>
@@ -257,36 +258,72 @@
       </span>
     </el-dialog>
 
-<!--    &lt;!&ndash; 导入对话框 &ndash;&gt;-->
-<!--    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">-->
-<!--      <el-upload-->
-<!--        ref="upload"-->
-<!--        :limit="1"-->
-<!--        accept=".xlsx, .xls"-->
-<!--        :headers="upload.headers"-->
-<!--        :action="upload.url + '?updateSupport=' + upload.updateSupport"-->
-<!--        :disabled="upload.isUploading"-->
-<!--        :on-progress="handleFileUploadProgress"-->
-<!--        :on-success="handleFileSuccess"-->
-<!--        :auto-upload="false"-->
-<!--        drag-->
-<!--      >-->
-<!--        <i class="el-icon-upload"></i>-->
-<!--        <div class="el-upload__text">-->
-<!--          将文件拖到此处，或-->
-<!--          <em>点击上传</em>-->
-<!--        </div>-->
-<!--        <div class="el-upload__tip" slot="tip">-->
-<!--          <el-checkbox v-model="upload.updateSupport"/>-->
-<!--          是否更新已经存在的数据-->
-<!--        </div>-->
-<!--        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>-->
-<!--      </el-upload>-->
-<!--      <div slot="footer" class="dialog-footer">-->
-<!--        <el-button type="primary" @click="submitFileForm">确 定</el-button>-->
-<!--        <el-button @click="upload.open = false">取 消</el-button>-->
-<!--      </div>-->
-<!--    </el-dialog>-->
+    <!-- 添加其他试卷对话框 -->
+    <el-dialog :title="title" :visible.sync="openQt" width="600px" append-to-body>
+      <el-form ref="formState" :model="formQt" :rules="rules" label-width="80px">
+        <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
+          <el-input v-model="formQt.lsxm" placeholder="请输入老师姓名" readonly/>
+        </el-form-item>
+        <el-form-item label="日语班级" label-width="120px" prop="bjid">
+          <el-select v-model="formQt.bjid" @change="getClassQtList" placeholder="请选择日语班级">
+            <el-option
+              v-for="dict in classList"
+              :key="dict.id"
+              :label="dict.rybjmc"
+              :value="dict.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="教材" label-width="120px" prop="jcid">
+          <el-select v-model="formQt.jcid" @change="getJcList" placeholder="请输入考试类型">
+            <el-option
+              v-for="(item,index) in jsList"
+              :key="index"
+              :label="item.jcmc"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="考试类型" label-width="120px" prop="kslx">
+          <el-select v-model="formQt.kslx" plac输入eholder="请考试类型">
+            <el-option
+              v-for="dict in kslxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="考试范围" label-width="120px" prop="ksfw">
+          <el-input v-model="formQt.ksfw" placeholder="请输入考试范围" maxlength="40"/>
+        </el-form-item>
+        <el-form-item label="考试时间" label-width="120px" prop="kskssj">
+          <el-date-picker
+            v-model="formQt.kskssj"
+            type="date"
+            value-format=" yyyy-MM-dd"
+            placeholder="选择考试时间"
+          ></el-date-picker>
+        </el-form-item>
+        <!--<el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
+          <el-date-picker
+            v-model="form.ksjssj"
+            type="datetime"
+            value-format=" yyyy-MM-dd HH:mm"
+            placeholder="选择考试开始时间"
+          ></el-date-picker>
+        </el-form-item>-->
+        <el-form-item label="备注" label-width="120px" prop="remark">
+          <el-input v-model="formQt.remark" placeholder/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="submitFormQt">提交</el-button>
+        <el-button @click="cancelQt">取 消</el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -327,6 +364,7 @@
         kscjzj: false,
         // 是否显示弹出层
         open: false,
+        openQt: false,
         // 考试类型字典
         kslxOptions: [],
         // 查询参数
@@ -351,6 +389,8 @@
         },
         // 表单参数
         form: {},
+        // 其他试卷表单参数
+        formQt: {},
         //成绩上传表参数
         cjscForm: {},
         // 考试分析总结
@@ -378,7 +418,6 @@
           // 是否显示弹出层
           open: false,
           title: "成绩上传",
-
         },
         // // 用户导入参数
         // upload: {
@@ -476,6 +515,13 @@
         this.open = false;
         this.reset();
       },
+      // 添加其他试卷取消按钮
+      cancelQt() {
+        this.openQt = false;
+        this.resetQt();
+      },
+
+
       // 表单重置
       reset() {
         this.form = {
@@ -508,6 +554,39 @@
         };
         this.resetForm("form");
       },
+      // 其他试卷表单重置
+      resetQt() {
+        this.formQt = {
+          id: null,
+          bjid: null,
+          bjmc: null,
+          lsid: null,
+          kslx: null,
+          ksnr: null,
+          ksfw: null,
+          jcid: null,
+          jcmc: null,
+          jwsjzt: null,
+          lssjzt: null,
+          kskssj: null,
+          ksjssj: null,
+          kssjwb: null,
+          fssj: null,
+          fsrid: null,
+          fsrmc: null,
+          status: "1",
+          remark: null,
+          dataOrder: null,
+          addOrUpdateTime: null,
+          kzzd1: null,
+          kzzd2: null,
+          kzzd3: null,
+          kzzd4: null,
+          kzzd5: null
+
+        };
+        this.resetForm("formQt");
+      },
       /** 搜索按钮操作 */
       handleQuery() {
         this.queryParams.pageNum = 1;
@@ -527,11 +606,22 @@
       /** 新增按钮操作 */
       handleAdd() {
         this.reset();
-        this.form.fsrmc = this.$store.state.user.nickName;
+        this.form.lsxm = this.$store.state.user.nickName;
         this.form.lsid = this.$store.state.user.glrid;
         this.open = true;
         this.title = "添加考卷";
       },
+      /** 新增其他试卷按钮操作 */
+      handleAddQt() {
+        this.resetQt();
+        this.formQt.lsxm = this.$store.state.user.nickName;
+        this.formQt.lsid = this.$store.state.user.glrid;
+        this.openQt = true;
+        this.title = "添加其他考卷";
+      },
+
+
+
       /** 成绩是否上传查询操作 */
       statusQuery(uploadStaus) {
         this.queryParams.pageNum = 1;
@@ -587,6 +677,27 @@
               addExaminationPaper(this.form).then(response => {
                 this.msgSuccess("新增成功");
                 this.open = false;
+                this.getList();
+              });
+            }
+          }
+        });
+      },
+      /** 提交其他试卷按钮 */
+      submitFormQt() {
+        this.formQt.lssjzt = "4";
+        this.$refs.formState.validate(valid => {
+          if (valid) {
+            if (this.formQt.id != null) {
+              updateExaminationPaper(this.formQt).then(response => {
+                this.msgSuccess("修改成功");
+                this.openQt = false;
+                this.getList();
+              });
+            } else {
+              addExaminationPaper(this.formQt).then(response => {
+                this.msgSuccess("新增成功");
+                this.openQt = false;
                 this.getList();
               });
             }
@@ -651,6 +762,17 @@
           }
         }
       },
+      //其他试卷班级id 和 名称
+      getClassQtList(value) {
+        for (let i = 0; i < this.classList.length; i++) {
+          if (this.classList[i].id == value) {
+            this.formQt.bjid = value;
+            this.formQt.bjmc = this.classList[i].rybjmc;
+          }
+        }
+      },
+
+
       //教材id 和 名称
       getJcList(value) {
         for (let i = 0; i < this.jsList.length; i++) {
