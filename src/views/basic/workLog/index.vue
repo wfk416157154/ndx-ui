@@ -543,7 +543,8 @@ export default {
     initGetListExaminationPaper() {
       let json = {
         jwsjzt: "1", //教务试卷状态(0未发送1已发送)
-        kzzd2: "9" //未上传的考卷
+        kzzd2: "9", //未上传的考卷
+        bjid: this.bjNameId//班级
       };
       listExaminationPaper(json).then(res => {
         this.getListExaminationPaper = res.rows;
@@ -610,6 +611,7 @@ export default {
     },
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery() {
+      this.initGetListExaminationPaper();
       this.getWorkLogStatusQuery();
     },
     // 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
@@ -777,27 +779,6 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      if (this.ruleForm.kczj == null) {
-        this.$notify({
-          message: "请先填写课程日志",
-          type: "error"
-        });
-        return;
-      }
-      if (this.ruleForm.kzzd3 == null) {
-        this.$notify({
-          message: "请先填写考试类型",
-          type: "error"
-        });
-        return;
-      }
-      if (!this.ruleForm.kzzd4) {
-        this.$notify({
-          message: "请选择考试",
-          type: "error"
-        });
-        return;
-      }
       getExaminationPaper(this.ruleForm.kzzd4).then(res => {
         if (res.data.kzzd2 === "3") {
           this.$notify({
@@ -809,7 +790,7 @@ export default {
           this.upload.open = true;
         }
       });
-
+      //上传时导入到表格中
       for (let j = 0; j < this.getListExaminationPaper.length; j++) {
         if (this.getListExaminationPaper[j].id == this.ruleForm.kzzd4) {
           this.getKssj = this.getListExaminationPaper[j].kskssj;
@@ -841,7 +822,6 @@ export default {
         message: response.msg,
         type: "success"
       });
-      this.getList();
       let json = {
         lssjzt: "4",
         kzzd2: "3",
@@ -855,9 +835,13 @@ export default {
       // 日志表变为上传状态
       let rzjson = {
         id: this.rzid,
-        kzzd2: "3"
+        kzzd2: "3",
+        kzzd3: this.ruleForm.kzzd3,
+    //之所以不直接用this.ruleForm.kzzd4是因为上传后getListExaminationPaper就没有对应值了
+        kzzd4: this.getKsName,
       };
       updateBasicTeacherWorkLog(rzjson);
+      this.getList();
     },
     // 提交上传文件
     submitFileForm() {
