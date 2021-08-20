@@ -685,7 +685,10 @@
       },
       /** 提交其他试卷按钮 */
       submitFormQt() {
+        //老师试卷状态:其他试卷
         this.formQt.lssjzt = "4";
+        //教务试卷状态:默认已发送
+        this.formQt.jwsjzt = "1";
         this.$refs.formState.validate(valid => {
           if (valid) {
             if (this.formQt.id != null) {
