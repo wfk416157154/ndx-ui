@@ -230,14 +230,26 @@ export default {
     },
     // 跳转到日志详情页面
     toDetails(id) {
-      updateBasicTeacherWorkLog({ id: id, isRead: 1 });
-      // 获取页面中参数配置的路由
-      this.getConfigKey("worklogDetail").then(resp => {
-        this.router = resp.msg;
-        this.$router.push({
-          path: this.router + id
+      console.log("a",this.$store.state.user.dataRoleWeightId)
+      if (this.$store.state.user.dataRoleWeightId ==80 ||this.$store.state.user.dataRoleWeightId ==90){
+        updateBasicTeacherWorkLog({ id: id, isRead: 1 });
+        // 获取页面中参数配置的路由
+        this.getConfigKey("jwLogDetails").then(resp => {
+          this.router = resp.msg;
+          this.$router.push({
+            path: this.router + id
+          });
         });
-      });
+      }else{
+        // 获取页面中参数配置的路由
+        this.getConfigKey("worklogDetail").then(resp => {
+          this.router = resp.msg;
+          this.$router.push({
+            path: this.router + id
+          });
+        });
+      }
+
     },
     downloadZipFile(id){
       let param={
