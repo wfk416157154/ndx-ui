@@ -18,7 +18,7 @@ import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
-import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels,renderDict, handleTree } from "@/utils/ruoyi";
+import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, renderDict, handleTree } from "@/utils/ruoyi";
 import Pagination from "@/components/Pagination";
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar"
@@ -31,6 +31,7 @@ import ImageUpload from "@/components/ImageUpload"
 // 字典标签组件（使用频繁可在全局挂载）
 import DictTag from '@/components/DictTag'
 import Moment from 'moment'
+import Bus from "./utils/bus"
 
 import 'xe-utils'
 import VXETable from 'vxe-table'
@@ -47,6 +48,8 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.renderDict = renderDict
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
+Vue.prototype.$bus = Bus
+
 
 Vue.prototype.msgSuccess = function (msg) {
   this.$message({ showClose: true, message: msg, type: "success" });

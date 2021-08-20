@@ -1,2 +1,2 @@
 import Vue from "vue"
-return new Vue()
+export default new Vue()

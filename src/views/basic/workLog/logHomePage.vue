@@ -87,7 +87,7 @@
             <!-- <div>
               <span>备课内容 :</span>
               <span>{{item.bkBcrz}}</span>
-            </div> -->
+            </div>-->
             <div>
               <span>课中内容 :</span>
               <span v-for="(list,j) in item.teacherWorkLogLessonList" :key="j">{{list.content}}</span>
@@ -230,38 +230,39 @@ export default {
     },
     // 跳转到日志详情页面
     toDetails(id) {
-      console.log("a",this.$store.state.user.dataRoleWeightId)
-      if (this.$store.state.user.dataRoleWeightId ==80 ||this.$store.state.user.dataRoleWeightId ==90){
-        updateBasicTeacherWorkLog({ id: id, isRead: 1 });
+      if (this.$store.state.user.dataRoleWeightId > 50) {
+        if (
+          this.$store.state.user.dataRoleWeightId == 80 ||
+          this.$store.state.user.dataRoleWeightId == 90
+        ) {
+          updateBasicTeacherWorkLog({ id: id, isRead: 1 });
+        }
         // 获取页面中参数配置的路由
-        this.getConfigKey("jwLogDetails").then(resp => {
-          this.router = resp.msg;
-          this.$router.push({
-            path: this.router + id
-          });
-        });
-      }else{
+        this.getRout("jwLogDetails", id);
+      } else {
         // 获取页面中参数配置的路由
-        this.getConfigKey("worklogDetail").then(resp => {
-          this.router = resp.msg;
-          this.$router.push({
-            path: this.router + id
-          });
-        });
+        this.getRout("worklogDetail", id);
       }
-
     },
-    downloadZipFile(id){
-      let param={
-        kzzd1:id
-      }
+    getRout(key, id) {
+      this.getConfigKey(key).then(resp => {
+        this.router = resp.msg;
+        this.$router.push({
+          path: this.router + id
+        });
+      });
+    },
+    downloadZipFile(id) {
+      let param = {
+        kzzd1: id
+      };
       // 查询文件表的文件名称
-      selectFileList(param).then(res=>{
-        if(200==res.code){
-          if(res.rows.length>0){
-            this.download('file/filetable/download',param, res.rows[0].name)
-          }else{
-            this.msgError("未上传压缩文件！")
+      selectFileList(param).then(res => {
+        if (200 == res.code) {
+          if (res.rows.length > 0) {
+            this.download("file/filetable/download", param, res.rows[0].name);
+          } else {
+            this.msgError("未上传压缩文件！");
           }
         }
       });
