@@ -89,9 +89,9 @@
                     size="small"
                   >
                     <el-option
-                      v-for="(item, index) in (new Date().getFullYear()-2010)"
-                      :label="(new Date().getFullYear()-5)+index"
-                      :value="(new Date().getFullYear()-5)+index"
+                      v-for="(item, index) in bjkbStartDate"
+                      :label="item"
+                      :value="item"
                       :key="index"
                     />
                   </el-select>
@@ -459,7 +459,9 @@ export default {
       //选中班级的数据
       classData: {},
       $index: null,
-      ybjSelection: null
+      ybjSelection: null,
+      isAdd: true,
+      bjkbStartDate: []
     };
   },
   created() {
@@ -474,6 +476,12 @@ export default {
     });
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
+    });
+    this.getConfigKey("bjkbStartDate").then(res => {
+      let date = new Date().getFullYear() + 1;
+      for (let i = res.msg; i <= date; i++) {
+        this.bjkbStartDate.push(i);
+      }
     });
     this.getList();
   },
@@ -768,6 +776,10 @@ export default {
     },
     // 保存课表
     async submitTimetable(value) {
+      if (!this.isAdd) {
+        this.msgError("错误: 开始时间不能大于结束时间");
+        return;
+      }
       if (value) {
         if (!this.queryParams.kbType || !this.queryParams.kzzd2) {
           return this.msgError("请选择课表类型！");
@@ -880,6 +892,9 @@ export default {
       date2 = new Date(date2 + " " + rows.jssj).getTime();
       if (date1 > date2) {
         this.msgError("错误: 开始时间不能大于结束时间");
+        this.isAdd = false;
+      } else {
+        this.isAdd = true;
       }
     }
   }
