@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 查询缴费进账方式列表(有图)
+export function listAndPhoto(query) {
+  return request({
+    url: '/basic/paymentIncome/listAndPhoto',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询缴费进账方式列表
 export function listPaymentIncome(query) {
   return request({

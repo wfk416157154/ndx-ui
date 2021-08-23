@@ -402,8 +402,6 @@ export default {
         this.fullscreenLoading = true;
         this.$refs.upload.submit();
       }
-
-
   }
 };
 </script>
