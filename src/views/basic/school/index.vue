@@ -148,11 +148,18 @@
           <el-input maxlength="5" v-model="form.ryxszrs" placeholder="日语学生总人数系统自动计算" readonly />
         </el-form-item>
         <el-form-item label-width="120px" label="校区负责人" prop="xqfzr">
-          <el-input maxlength="4" v-model="form.xqfzr" placeholder="请输入校区负责人" />
+          <el-select  v-model="form.xqfzr" filterable placeholder="请选择校区负责人" >
+          <el-option
+            v-for="item in areaManagerList"
+            :key="item.id"
+            :label="item.xm"
+            :value="item.id"
+          ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label-width="120px" label="负责人电话" prop="fzrdh">
-          <el-input maxlength="11" v-model="form.fzrdh" placeholder="请输入负责人电话" />
-        </el-form-item>
+<!--        <el-form-item label-width="120px" label="负责人电话" prop="fzrdh">-->
+<!--          <el-input maxlength="11" v-model="form.fzrdh" placeholder="请输入负责人电话" />-->
+<!--        </el-form-item>-->
         <el-form-item label-width="120px" label="校区状态">
           <el-radio-group v-model="form.kzzd1">
             <el-radio
@@ -223,6 +230,7 @@ import {
   addSchool,
   updateSchool
 } from "@/api/basic/school";
+import { listAreaManager} from "@/api/basic/areaManager";
 import { getToken } from "@/utils/auth";
 import {mapState} from "vuex";
 export default {
@@ -308,7 +316,8 @@ export default {
         url: process.env.VUE_APP_BASE_API + "/basic/school/importData"
       },
       statusOptions:[],
-      schoolStatusOptions:[]
+      schoolStatusOptions:[],
+      areaManagerList:[],
     };
   },
   created() {
@@ -318,6 +327,9 @@ export default {
     });
     this.getDicts("schoolStatus").then(response => {
       this.schoolStatusOptions = response.data;
+    });
+    listAreaManager().then(response => {
+      this.areaManagerList = response.rows;
     });
   },
   methods: {

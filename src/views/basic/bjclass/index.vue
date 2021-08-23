@@ -253,32 +253,42 @@
           placeholder="请输入开班时间"
         ></el-date-picker>
         </el-form-item>
+        <el-form-item label="市场人员" prop="scry">
+          <el-select v-model="form.scry"  placeholder="请选择市场人员" multiple>
+            <el-option
+              v-for="item in marketerList"
+              :key="item.id"
+              :label="item.xm"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input maxlength="300" v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
 
-        <el-form-item label="毕业状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择毕业状态" clearable @change="controlBysj" size="small">
-            <el-option
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            />
-          </el-select>
-        </el-form-item>
+<!--        <el-form-item label="毕业状态" prop="status">-->
+<!--          <el-select v-model="form.status" placeholder="请选择毕业状态" clearable @change="controlBysj" size="small" readonly>-->
+<!--            <el-option-->
+<!--              v-for="dict in statusOptions"-->
+<!--              :key="dict.dictValue"-->
+<!--              :label="dict.dictLabel"-->
+<!--              :value="dict.dictValue"-->
+<!--            />-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
 
-        <el-form-item label="毕业时间" prop="addOrUpdateTime">
-          <el-date-picker
-            :disabled="disableBysj"
-            clearable
-            size="mini"
-            v-model="form.addOrUpdateTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请输入毕业时间"
-          ></el-date-picker>
-        </el-form-item>
+<!--        <el-form-item label="毕业时间" prop="addOrUpdateTime">-->
+<!--          <el-date-picker-->
+<!--            :disabled="disableBysj"-->
+<!--            clearable-->
+<!--            size="mini"-->
+<!--            v-model="form.addOrUpdateTime"-->
+<!--            type="date"-->
+<!--            value-format="yyyy-MM-dd"-->
+<!--            placeholder="请输入毕业时间"-->
+<!--          ></el-date-picker>-->
+<!--        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
@@ -378,6 +388,7 @@ import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
+import { listMarketer} from "@/api/basic/marketer";
 import moment from "moment";
 
 export default {
@@ -423,7 +434,9 @@ export default {
         status: "1" //默认查询 未毕业的日语班级
       },
       // 表单参数
-      form: {},
+      form: {
+        scry: []
+      },
       // 表单校验
       rules: {
         xqmc: [
@@ -467,6 +480,7 @@ export default {
       photoNum2: 0,
       // 最大上传次数
       maxPhotoNum: 5,
+      marketerList: [],
       disableBysj:true
     };
   },
@@ -489,6 +503,10 @@ export default {
       if (response.rows.length==1){
        this.xqIsShow=false;
       }
+    });
+    //获取市场人员
+    listMarketer(this.queryParams).then(response => {
+      this.marketerList = response.rows;
     });
   },
   methods: {
