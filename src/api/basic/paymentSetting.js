@@ -26,6 +26,26 @@ export function addPaymentSetting(data) {
   })
 }
 
+// 批量新增缴费设置
+export function addBatchPaymentSetting(data) {
+  return request({
+    url: '/basic/paymentSetting/addBatch',
+    method: 'post',
+    data: data
+  })
+}
+
+// 批量新增缴费设置
+export function updateBatchPaymentSetting(data) {
+  return request({
+    url: '/basic/paymentSetting/editBatch',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
 // 修改缴费设置
 export function updatePaymentSetting(data) {
   return request({
