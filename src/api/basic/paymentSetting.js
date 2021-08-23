@@ -35,7 +35,7 @@ export function addBatchPaymentSetting(data) {
   })
 }
 
-// 批量新增缴费设置
+// 批量修改缴费设置
 export function updateBatchPaymentSetting(data) {
   return request({
     url: '/basic/paymentSetting/editBatch',
