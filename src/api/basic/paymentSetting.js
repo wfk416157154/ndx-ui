@@ -44,6 +44,15 @@ export function updateBatchPaymentSetting(data) {
   })
 }
 
+// 根据日语班级id删除缴费设置
+export function removePaymentSetting(data) {
+  return request({
+    url: '/basic/paymentSetting/removeByBjid',
+    method: 'post',
+    data: data
+  })
+}
+
 
 
 // 修改缴费设置
