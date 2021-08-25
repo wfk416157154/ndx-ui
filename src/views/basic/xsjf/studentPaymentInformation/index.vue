@@ -1,100 +1,122 @@
 <template>
   <div class="studentPaymentInformation">
+    <el-form ref="classForm" :model="classForm" label-width="80px">
+      <el-form-item label="班级">
+        <el-select v-model="classForm.bjid" @change="replaceClass" placeholder="请选择班级">
+          <el-option
+            :label="item.rybjmc"
+            :value="item.id"
+            v-for="(item,index) in classList"
+            :key="index"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
     <div style="text-align : center">
-      <h4>汉川二中19级21届--刘福音-武汉南斗星</h4>
-      <h5>总费用18000（元）分期：第三期/共四期 本期应缴：4500（元）</h5>
+      <h4>{{columnNamelist.bjbt}}</h4>
+      <h5>{{columnNamelist.wzsm}}</h5>
     </div>
 
     <div style="margin-bottom : 20px">
-      <el-button type="primary" size="mini">批量缴费</el-button>
+      <el-button type="primary" size="mini" @click="paymentAll">批量缴费</el-button>
       <el-button type="primary" size="mini" @click="specialAdd">特殊情况申请</el-button>
     </div>
 
     <el-table
       ref="multipleTable"
-      :data="tableData"
+      :data="paymentStudentData"
       tooltip-effect="dark"
       style="width: 100%"
       :border="true"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column type="index" width="50"></el-table-column>
-      <el-table-column label="姓名" width="120">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="第一期">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="第二期">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="第三期">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="第四期">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="本期未缴费(总)">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="剩余未缴费(总)">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="状态">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
-      </el-table-column>
-      <el-table-column label="操作" width="120">
+      <el-table-column
+        v-for="(item,index) in columnNamelist.columnNameList"
+        :key="index"
+        :label="item.label"
+        :prop="item.prop"
+      >
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="queryData(scope.$index, scope.row)">缴费</el-button>
+          <div v-if="item.prop == 'bqjfzt'">
+            <dict-tag :options="paymentStatus" :value="scope.row[item.prop]" />
+          </div>
+          <div v-else-if="item.prop == 'handle'">
+            <el-button
+              size="mini"
+              v-if="scope.row['bqjfzt'] == '0'"
+              type="primary"
+              @click="queryData(scope.row)"
+            >缴费</el-button>
+          </div>
+          <div v-else>
+            <span>{{ scope.row[item.prop] }}</span>
+          </div>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog title="缴费" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="缴费" :visible.sync="dialogVisible" width="40%">
       <el-form
         ref="studentPaymentInformationForm"
         :model="studentPaymentInformationForm"
         label-width="80px"
+        :rules="rules"
       >
         <el-form-item label="姓名">
           <div>
-            <span>占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,占山,</span>
+            <span
+              v-for="(item,index) in studentPaymentInformationForm.xsxm"
+              :key="index
+            "
+            >{{item}} -</span>
           </div>
         </el-form-item>
         <el-form-item label="班级">
-          <el-input v-model="studentPaymentInformationForm.name"></el-input>
+          <el-input v-model="className" disabled></el-input>
         </el-form-item>
         <el-form-item label="期数">
-          <el-input v-model="studentPaymentInformationForm.name"></el-input>
+          <el-input v-model="studentPaymentInformationForm.bqqsValue" disabled></el-input>
         </el-form-item>
-        <el-form-item label="缴费金额">
-          <el-input v-model="studentPaymentInformationForm.name"></el-input>
+        <el-form-item label="缴费金额" prop="jfje">
+          <el-input v-model="studentPaymentInformationForm.jfje" disabled></el-input>
         </el-form-item>
-        <el-form-item label="支付方式">
-          <el-select v-model="studentPaymentInformationForm.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="支付方式" prop="jffs">
+          <el-select v-model="studentPaymentInformationForm.jffs" placeholder="请选择支付方式">
+            <el-option
+              :label="item.dictLabel"
+              :value="item.dictValue"
+              v-for="(item,index) in paymentWay"
+              :key="index"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="缴费凭证">
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="upload.imgUrl"
+            :headers="upload.headers"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
+            :on-success="pzSuccess"
+            :file-list="files1"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
           <img width="100%" :src="dialogImageUrl" alt />
         </el-form-item>
-        <el-form-item label="转账时间">
-          <el-input v-model="studentPaymentInformationForm.name"></el-input>
+        <el-form-item label="转账时间" prop="zzsj">
+          <el-date-picker
+            type="date"
+            v-model="studentPaymentInformationForm.zzsj"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期"
+          ></el-date-picker>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="cancelPayment">取 消</el-button>
+        <el-button type="primary" @click="submitPayment">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -156,83 +178,221 @@
 </template>
 
 <script>
+import { listBjclass } from "@/api/basic/bjclass";
+import {
+  paymentStudent,
+  paymentStudentColumnNamelist,
+  addBatchStuPayment
+} from "@/api/basic/studentPaymentInformation";
+import { secretKey } from "@/utils/tools";
+import { getToken } from "@/utils/auth";
+import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-08",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-06",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-07",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
-      multipleSelection: [],
-      studentPaymentInformationForm: {},
+      paymentStudentData: [],
+      columnNamelist: [],
+      studentPaymentInformationForm: {
+        jffs: "",
+        jfje: 0,
+        jfpzid: "",
+        qsid: "",
+        rybjid: "",
+        xsbh: [],
+        xsxm: [],
+        zzsj: ""
+      },
       dialogImageUrl: "",
       dialogVisible: false,
       specialVisible: false,
       specialForm: {
         arr: []
+      },
+      classForm: {
+        bjid: ""
+      },
+      classList: [],
+      classTitle: {},
+      paymentStatus: [],
+      paymentWay: [],
+      className: "",
+      // 文件图片上传
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传图片地址
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      files1: [],
+      paymentAllList: [],
+      rules: {
+        jfje: [{ required: true, message: "请输入总费用", trigger: "blur" }],
+        jffs: [
+          { required: true, message: "请选择支付方式", trigger: "change" }
+        ],
+        zzsj: [{ required: true, message: "请选择日期", trigger: "change" }]
       }
     };
   },
-  created() {},
+  created() {
+    listBjclass().then(res => {
+      this.classList = res.rows;
+      if (this.classList.length >= 1) {
+        this.classForm.bjid = this.classList[0].id;
+        this.className = this.classList[0].rybjmc;
+        this.getList(this.classForm.bjid);
+      }
+    });
+    this.getDicts("payment_status").then(res => {
+      this.paymentStatus = res.data;
+    });
+    this.getDicts("payment_way").then(res => {
+      this.paymentWay = res.data;
+    });
+  },
   mounted() {},
   methods: {
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
+    // 替换班级
+    replaceClass(bjid) {
+      this.classList.forEach(value => {
+        if (value.id == bjid) {
+          this.className = value.rybjmc;
+        }
+      });
+      this.getList(bjid);
     },
+    // 获取缴费信息列表
+    getList(bjid) {
+      paymentStudent({ bjid }).then(res => {
+        if (res.code == 200) {
+          this.paymentStudentData = res.data;
+        }
+      });
+      paymentStudentColumnNamelist({ bjid }).then(res => {
+        if (res.code == 200) {
+          this.columnNamelist = res.data;
+        }
+      });
+    },
+    // 选中数据
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.paymentAllList = val;
     },
-    queryData() {
+    // 缴费按钮
+    queryData(row) {
+      if (row.bqjfzt != "0") {
+        this.msgError("当前学生已缴费,请勿重复操作");
+        return;
+      }
       this.dialogVisible = true;
+      this.studentPaymentInformationForm = {
+        rybjid: this.classForm.bjid,
+        bqqsValue: row.bqqsValue,
+        jfje: row.bqYjje,
+        qsid: row.bqqsKey,
+        xsbh: [row.xsbh],
+        xsxm: [row.xsxm]
+      };
     },
+    // 图片删除(缴费凭证)
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     },
+    // 图片预览(缴费凭证)
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+    // 上传图片成功回调(缴费凭证)
+    pzSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.studentPaymentInformationForm.jfpzid || secretKey();
+      this.studentPaymentInformationForm.jfpzid = data.kzzd1;
+      addImg(data).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("上传成功");
+        }
+      });
+    },
+    // 特殊情况申请
     specialAdd() {
       this.specialVisible = true;
+    },
+    // 批量缴费
+    paymentAll() {
+      if (this.paymentAllList.length == 0) {
+        this.msgError("错误 : 请选择学生");
+        return;
+      }
+      this.reset();
+      this.studentPaymentInformationForm = {
+        rybjid: this.classForm.bjid,
+        bqqsValue: this.paymentAllList[0].bqqsValue,
+        qsid: this.paymentAllList[0].bqqsKey,
+        xsbh: [],
+        xsxm: [],
+        jfje: 0
+      };
+      for (let i = 0; i < this.paymentAllList.length; i++) {
+        if (this.paymentAllList[i].bqjfzt != "0") {
+          this.msgError("错误 : 当前有部分学生已缴费,请勿重复操作");
+          return;
+        }
+        this.studentPaymentInformationForm.xsbh[i] = this.paymentAllList[
+          i
+        ].xsbh;
+        this.studentPaymentInformationForm.xsxm[i] = this.paymentAllList[
+          i
+        ].xsxm;
+        this.studentPaymentInformationForm.jfje += this.paymentAllList[
+          i
+        ].bqYjje;
+      }
+      this.dialogVisible = true;
+    },
+    //提交缴费
+    submitPayment() {
+      addBatchStuPayment(this.studentPaymentInformationForm).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("缴费成功");
+          this.getList();
+        }
+      });
+      this.dialogVisible = false;
+    },
+    // 取消缴费
+    cancelPayment() {
+      this.dialogVisible = false;
+    },
+    // 重置
+    reset() {
+      this.studentPaymentInformationForm = {
+        jffs: "",
+        jfje: 0,
+        jfpzid: "",
+        qsid: "",
+        rybjid: "",
+        xsbh: [],
+        xsxm: [],
+        zzsj: ""
+      };
     }
   }
 };

@@ -17,13 +17,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="校区名称" prop="kzzd1">
-        <el-select v-model="paymentSettingsForm.kzzd1" filterable placeholder="请选择校区名称" @change="xqmcOnChange" >
-          <el-option
-            v-for="item in schoolList"
-            :key="item.id"
-            :label="item.xxmc"
-            :value="item.id"
-          ></el-option>
+        <el-select
+          v-model="paymentSettingsForm.kzzd1"
+          filterable
+          placeholder="请选择校区名称"
+          @change="xqmcOnChange"
+        >
+          <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -88,11 +88,11 @@
             <el-date-picker
               size=" mini"
               v-model="item.chargeDateArr"
-              value-format="yyyy-MM-dd HH:MM"
+              value-format="yyyy-MM-dd HH:mm:ss"
               type="datetimerange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              :default-time="['12:00:00']"
+              :default-time="['00:00:00','23:59:59']"
             ></el-date-picker>
           </el-form-item>
           <el-form-item label="周期" prop="periodDateArr">
@@ -128,7 +128,7 @@
 
 <script>
 import { listSchool } from "@/api/basic/school";
-import { listAreaManager} from "@/api/basic/areaManager";
+import { listAreaManager } from "@/api/basic/areaManager";
 import { listBjclass, updateBjclass } from "@/api/basic/bjclass";
 import {
   listPaymentSetting,
@@ -142,8 +142,8 @@ export default {
       paymentSettingsForm: {
         pageNum: 1,
         pageSize: 10,
-        kzzd1:null,
-        xqfzr:null
+        kzzd1: null,
+        xqfzr: null
       },
       total: 0,
       paymentSettingsData: [],
@@ -175,7 +175,7 @@ export default {
       // 校区列表
       schoolList: [],
       // 区域负责人列表
-      areaManagerList:[]
+      areaManagerList: []
     };
   },
   created() {
@@ -188,7 +188,7 @@ export default {
     listPaymentIncome().then(res => {
       this.listPaymentIncomeList = res.rows;
     });
-    listAreaManager().then(res=>{
+    listAreaManager().then(res => {
       this.areaManagerList = res.rows;
     });
     // 获取校区
@@ -200,9 +200,9 @@ export default {
     this.getList();
   },
   methods: {
-    xqmcOnChange(id){
-      listBjclass({kzzd1:id}).then(response => {
-        this.paymentSettingsData = response.rows
+    xqmcOnChange(id) {
+      listBjclass({ kzzd1: id }).then(response => {
+        this.paymentSettingsData = response.rows;
       });
     },
     // 数据列表
@@ -213,7 +213,9 @@ export default {
       });
     },
     //查询数据
-    querySubmit() {},
+    querySubmit() {
+      this.getList();
+    },
     // 设置
     settingSubmit(row) {
       this.dialogVisible = true;
@@ -227,7 +229,7 @@ export default {
         // 班级id
         this.createdForm.rybjid = row.id;
         this.createdForm.jsonStr[0].rybjid = row.id;
-        this.getQs(row.kzzd4);
+        this.getQs(this.createdForm.kzzd4);
       }
       this.getlistPaymentSetting(this.createdForm.rybjid, row);
     },
@@ -260,7 +262,8 @@ export default {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
-          }).then(() => {
+          })
+            .then(() => {
               removePaymentSetting(row.id).then(res => {
                 if (res.code == 200) {
                   this.$message({
@@ -269,7 +272,8 @@ export default {
                   });
                 }
               });
-            }).catch(() => {
+            })
+            .catch(() => {
               this.$message({
                 type: "info",
                 message: "已取消删除"
@@ -304,7 +308,8 @@ export default {
     },
     //动态期数
     getQs(value) {
-      this.createdForm.kzzd4 = parseInt(value);
+      this.createdForm.kzzd4 =
+        typeof value == "number" ? value : parseInt(value);
       let leg = this.createdForm.jsonStr.length;
       if (value < leg) {
         this.createdForm.jsonStr = this.createdForm.jsonStr.splice(0, value);

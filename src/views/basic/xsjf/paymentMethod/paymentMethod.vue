@@ -53,7 +53,7 @@
               :key="index"
               style="width: 100px; height: 100px;margin-right : 10px"
               :src="item.url"
-              :preview-src-list="scope.row.weixinArr"
+              :preview-src-list="[item.url]"
             ></el-image>
           </div>
         </template>
@@ -66,7 +66,7 @@
               :key="index"
               style="width: 100px; height: 100px;margin-right : 10px"
               :src="item.url"
-              :preview-src-list="scope.row.zhifubaoArr"
+              :preview-src-list="[item.url]"
             ></el-image>
           </div>
         </template>

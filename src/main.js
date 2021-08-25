@@ -36,6 +36,7 @@ import Bus from "./utils/bus"
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
+import VueParticles from 'vue-particles'
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -75,6 +76,7 @@ Vue.use(directive)
 Vue.use(Moment)
 Vue.use(install)
 Vue.use(VXETable)
+Vue.use(VueParticles)
 
 /**
  * If you don't want to use mock-server

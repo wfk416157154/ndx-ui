@@ -1,54 +1,70 @@
 <template>
-  <div class="login">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">南斗星高考外语教务平台</h3>
-      <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
-          <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input
-          v-model="loginForm.password"
-          type="password"
-          auto-complete="off"
-          placeholder="密码"
-          @keyup.enter.native="handleLogin"
-        >
-          <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="code">
-        <el-input
-          v-model="loginForm.code"
-          auto-complete="off"
-          placeholder="验证码"
-          style="width: 63%"
-          @keyup.enter.native="handleLogin"
-        >
-          <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
-        </el-input>
-        <div class="login-code">
-          <img :src="codeUrl" @click="getCode" class="login-code-img"/>
-        </div>
-      </el-form-item>
-      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
-      <el-form-item style="width:100%;">
-        <el-button
-          :loading="loading"
-          size="medium"
-          type="primary"
-          style="width:100%;"
-          @click.native.prevent="handleLogin"
-        >
-          <span v-if="!loading">登 录</span>
-          <span v-else>登 录 中...</span>
-        </el-button>
-      </el-form-item>
-    </el-form>
-    <!--  底部  -->
-    <div class="el-login-footer">
-      <span>Copyright © 2007-2021 南斗星教育有限公司 All Rights Reserved.</span>
+  <div class="login" ref="clcheight">
+    <div id="app">
+      <vue-particles
+        class="login-bg"
+        color="#39AFFD"
+        :particleOpacity="0.7"
+        :particlesNumber="100"
+        shapeType="circle"
+        :particleSize="4"
+        linesColor="#8DD1FE"
+        :linesWidth="1"
+        :lineLinked="true"
+        :lineOpacity="0.4"
+        :linesDistance="150"
+        :moveSpeed="3"
+        :hoverEffect="true"
+        hoverMode="grab"
+        :clickEffect="true"
+        clickMode="push"
+      ></vue-particles>
+    </div>
+    <!-- 登录面板 -->
+    <div class="login-box">
+      <div class="login-box-title">南斗星教务系统</div>
+      <div class="login-box-from">
+        <el-form :model="loginForm" :rules="loginRules" ref="loginForm" class="demo-ruleForm">
+          <el-form-item prop="username">
+            <el-input v-model="loginForm.username" placeholder="请输入用户名" size="medium">
+              <el-button slot="prepend" icon="el-icon-user"></el-button>
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              placeholder="请输入密码"
+              size="medium"
+            >
+              <el-button slot="prepend" icon="el-icon-key"></el-button>
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="code">
+            <el-input
+              v-model="loginForm.code"
+              auto-complete="off"
+              placeholder="验证码"
+              style="width: 63%"
+              @keyup.enter.native="handleLogin"
+            >
+              <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
+            </el-input>
+            <div class="login-code">
+              <img width="100%" :src="codeUrl" @click="getCode" class="login-code-img" />
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              size="medium"
+              :loading="loading"
+              style="width:100%"
+              @click="handleLogin('loginForm')"
+            >立即登陆</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -56,7 +72,7 @@
 <script>
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
-import { encrypt, decrypt } from '@/utils/jsencrypt'
+import { encrypt, decrypt } from "@/utils/jsencrypt";
 
 export default {
   name: "Login",
@@ -96,21 +112,24 @@ export default {
     this.getCode();
     this.getCookie();
   },
+  mounted() {
+    this.$refs.clcheight.style.height = `${document.documentElement.clientHeight}px`;
+  },
   methods: {
     getCode() {
       getCodeImg().then(res => {
         this.codeUrl = "data:image/gif;base64," + res.img;
         this.loginForm.uuid = res.uuid;
-        // console.log(res)
       });
     },
     getCookie() {
       const username = Cookies.get("username");
       const password = Cookies.get("password");
-      const rememberMe = Cookies.get('rememberMe')
+      const rememberMe = Cookies.get("rememberMe");
       this.loginForm = {
         username: username === undefined ? this.loginForm.username : username,
-        password: password === undefined ? this.loginForm.password : decrypt(password),
+        password:
+          password === undefined ? this.loginForm.password : decrypt(password),
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
     },
@@ -120,19 +139,26 @@ export default {
           this.loading = true;
           if (this.loginForm.rememberMe) {
             Cookies.set("username", this.loginForm.username, { expires: 30 });
-            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
-            Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
+            Cookies.set("password", encrypt(this.loginForm.password), {
+              expires: 30
+            });
+            Cookies.set("rememberMe", this.loginForm.rememberMe, {
+              expires: 30
+            });
           } else {
             Cookies.remove("username");
             Cookies.remove("password");
-            Cookies.remove('rememberMe');
+            Cookies.remove("rememberMe");
           }
-          this.$store.dispatch("Login", this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-          }).catch(() => {
-            this.loading = false;
-            this.getCode();
-          });
+          this.$store
+            .dispatch("Login", this.loginForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || "/" }).catch(() => {});
+            })
+            .catch(() => {
+              this.loading = false;
+              this.getCode();
+            });
         }
       });
     }
@@ -142,40 +168,29 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss">
 .login {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
   height: 100%;
-  background-image: url("../assets/images/login-background.jpg");
-  background-size: cover;
+  position: relative;
+  overflow-y: hidden;
 }
-.title {
-  margin: 0px auto 30px auto;
-  text-align: center;
-  color: #707070;
+.login-bg {
+  width: 100%;
+  height: 100%;
+  background: #3e3e3e;
+  position: relative;
 }
-
-.login-form {
-  border-radius: 6px;
-  background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
-  .el-input {
-    height: 38px;
-    input {
-      height: 38px;
-    }
-  }
-  .input-icon {
-    height: 39px;
-    width: 14px;
-    margin-left: 2px;
-  }
-}
-.login-tip {
-  font-size: 13px;
-  text-align: center;
-  color: #bfbfbf;
+.login-box {
+  width: 350px;
+  background: hsla(0, 0%, 100%, 0.3);
+  border-radius: 5px;
+  box-shadow: 0 0 2px #f7f7f7;
+  border: 1px solid #f7f7f7;
+  position: absolute;
+  box-sizing: border-box;
+  left: 50%;
+  top: 50%;
+  margin-left: -175px;
+  margin-top: -150px;
 }
 .login-code {
   width: 33%;
@@ -186,19 +201,17 @@ export default {
     vertical-align: middle;
   }
 }
-.el-login-footer {
-  height: 40px;
-  line-height: 40px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+.login-box-title {
+  line-height: 50px;
+  font-size: 20px;
+  color: #ffffff;
   text-align: center;
-  color: #fff;
-  font-family: Arial;
-  font-size: 12px;
-  letter-spacing: 1px;
+  border-bottom: 1px solid #ffffff;
 }
-.login-code-img {
-  height: 38px;
+.login-box-from {
+  width: 100%;
+  height: auto;
+  padding: 30px;
+  box-sizing: border-box;
 }
 </style>
