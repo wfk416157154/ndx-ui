@@ -129,7 +129,6 @@ import { listBjclass, updateBjclass } from "@/api/basic/bjclass";
 import {
   listPaymentSetting,
   addBatchPaymentSetting,
-  updateBatchPaymentSetting,
   removePaymentSetting
 } from "@/api/basic/paymentSetting";
 import { listPaymentIncome } from "@/api/basic/paymentIncome";
@@ -206,11 +205,12 @@ export default {
         // 班级id
         this.createdForm.rybjid = row.id;
         this.createdForm.jsonStr[0].rybjid = row.id;
+        this.getQs(row.kzzd4);
       }
-      this.getlistPaymentSetting(this.createdForm.rybjid);
+      this.getlistPaymentSetting(this.createdForm.rybjid, row);
     },
     //获取设置数据
-    getlistPaymentSetting(bjid) {
+    getlistPaymentSetting(bjid, row) {
       listPaymentSetting({ rybjid: bjid }).then(res => {
         if (res.code == 200) {
           if (res.rows.length != 0) {
