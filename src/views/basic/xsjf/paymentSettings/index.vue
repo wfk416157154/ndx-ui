@@ -7,21 +7,23 @@
       label-width="80px"
     >
       <el-form-item label="负责人">
-        <el-select v-model="paymentSettingsForm.paymentSettingsForm" placeholder="请选择活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+        <el-select v-model="paymentSettingsForm.xqfzr" placeholder="请选择区域负责人">
+          <el-option
+            v-for="item in areaManagerList"
+            :key="item.id"
+            :label="item.xm"
+            :value="item.xm"
+          ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="学校">
-        <el-select v-model="paymentSettingsForm.paymentSettingsForm" placeholder="请选择活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="班级">
-        <el-select v-model="paymentSettingsForm.paymentSettingsForm" placeholder="请选择活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+      <el-form-item label="校区名称" prop="kzzd1">
+        <el-select v-model="paymentSettingsForm.kzzd1" filterable placeholder="请选择校区名称" @change="xqmcOnChange" >
+          <el-option
+            v-for="item in schoolList"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -125,6 +127,8 @@
 </template>
 
 <script>
+import { listSchool } from "@/api/basic/school";
+import { listAreaManager} from "@/api/basic/areaManager";
 import { listBjclass, updateBjclass } from "@/api/basic/bjclass";
 import {
   listPaymentSetting,
@@ -137,7 +141,9 @@ export default {
     return {
       paymentSettingsForm: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        kzzd1:null,
+        xqfzr:null
       },
       total: 0,
       paymentSettingsData: [],
@@ -165,7 +171,11 @@ export default {
         kzzd2: [{ required: true, message: "请输入总费用", trigger: "blur" }],
         kzzd4: [{ required: true, message: "请选择期数", trigger: "change" }],
         kzzd5: [{ required: true, message: "请选择期数", trigger: "change" }]
-      }
+      },
+      // 校区列表
+      schoolList: [],
+      // 区域负责人列表
+      areaManagerList:[]
     };
   },
   created() {
@@ -178,11 +188,23 @@ export default {
     listPaymentIncome().then(res => {
       this.listPaymentIncomeList = res.rows;
     });
+    listAreaManager().then(res=>{
+      this.areaManagerList = res.rows;
+    });
+    // 获取校区
+    listSchool().then(response => {
+      this.schoolList = response.rows;
+    });
   },
   mounted() {
     this.getList();
   },
   methods: {
+    xqmcOnChange(id){
+      listBjclass({kzzd1:id}).then(response => {
+        this.paymentSettingsData = response.rows
+      });
+    },
     // 数据列表
     getList() {
       listBjclass(this.paymentSettingsForm).then(res => {
@@ -238,8 +260,7 @@ export default {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
-          })
-            .then(() => {
+          }).then(() => {
               removePaymentSetting(row.id).then(res => {
                 if (res.code == 200) {
                   this.$message({
@@ -248,8 +269,7 @@ export default {
                   });
                 }
               });
-            })
-            .catch(() => {
+            }).catch(() => {
               this.$message({
                 type: "info",
                 message: "已取消删除"
