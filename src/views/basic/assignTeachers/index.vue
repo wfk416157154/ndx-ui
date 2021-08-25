@@ -259,7 +259,7 @@ export default {
     },
     // 获取老师列表
     getTeacherList() {
-      teacherList().then(response => {
+      teacherList({ kzzd4: 1 }).then(response => {
         this.teacherListOption = response.rows;
       });
     },
