@@ -26,3 +26,21 @@ export function addBatchStuPayment(data) {
     data: data
   })
 }
+
+// 减免申请
+export function exemptApply(data) {
+  return request({
+    url: '/basic/paymentSpecial/exemptApply',
+    method: 'post',
+    data: data
+  })
+}
+
+// 减免期数查询
+export function exemptPeriodsQuery(query) {
+  return request({
+    url: '/basic/paymentSpecial/exemptPeriodsQuery',
+    method: 'get',
+    params: query
+  })
+}

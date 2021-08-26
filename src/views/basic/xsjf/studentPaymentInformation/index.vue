@@ -130,30 +130,34 @@
       <el-form ref="specialForm" :model="specialForm" label-width="80px">
         <el-form-item label="班级">
           <div>
-            <span>汉川二中19级21届</span>
+            <span>{{className}}</span>
           </div>
         </el-form-item>
         <el-form-item label="老师">
           <div>
-            <span>吴珂</span>
+            <span>{{this.$store.state.user.nickName}}</span>
           </div>
         </el-form-item>
         <el-form-item label="姓名">
           <div>
-            <span>李东</span>
+            <span>{{specialForm.xsxm}}</span>
           </div>
         </el-form-item>
         <el-form-item label="减免类型">
-          <el-select v-model="specialForm.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="specialForm.jmlx" placeholder="请选择活动区域">
+            <el-option
+              :label="item.dictLabel"
+              :value="item.dictValue"
+              v-for="(item,index) in specialStatus"
+              :key="index"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="减免金额">
-          <el-input v-model="specialForm.name"></el-input>
+          <el-input v-model="specialForm.jmje"></el-input>
         </el-form-item>
         <el-form-item label="减免期数">
-          <el-checkbox-group v-model="specialForm.arr">
+          <el-checkbox-group v-model="specialForm.jmqs">
             <el-checkbox label="第一期"></el-checkbox>
             <el-checkbox label="第二期"></el-checkbox>
             <el-checkbox label="第三期"></el-checkbox>
@@ -161,23 +165,27 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="申请原因">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="specialForm.yy"></el-input>
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="specialForm.sqyy"></el-input>
         </el-form-item>
         <el-form-item label="申请资料">
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            accept="*"
+            :action="upload.imgUrl"
+            :headers="upload.headers"
             list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
+            :on-preview="jmPictureCardPreview"
+            :on-remove="jmRemove"
+            :on-success="jmSuccess"
+            :file-list="files2"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <img width="100%" :src="dialogImageUrl" alt />
+          <img width="100%" :src="dialogImageUrl1" alt />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="specialVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="specialCancel">取 消</el-button>
+        <el-button type="primary" @click=" specialSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -188,7 +196,9 @@ import { listBjclass } from "@/api/basic/bjclass";
 import {
   paymentStudent,
   paymentStudentColumnNamelist,
-  addBatchStuPayment
+  addBatchStuPayment,
+  exemptApply,
+  exemptPeriodsQuery
 } from "@/api/basic/studentPaymentInformation";
 import { secretKey } from "@/utils/tools";
 import { getToken } from "@/utils/auth";
@@ -209,11 +219,10 @@ export default {
         zzsj: ""
       },
       dialogImageUrl: "",
+      dialogImageUrl1: "",
       dialogVisible: false,
       specialVisible: false,
-      specialForm: {
-        arr: []
-      },
+      specialForm: {},
       classForm: {
         bjid: ""
       },
@@ -238,6 +247,7 @@ export default {
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
       files1: [],
+      files2: [],
       paymentAllList: [],
       rules: {
         jfje: [{ required: true, message: "请输入总费用", trigger: "blur" }],
@@ -246,7 +256,8 @@ export default {
         ],
         zzsj: [{ required: true, message: "请选择日期", trigger: "change" }]
       },
-      isDisabled: true
+      isDisabled: true,
+      specialStatus: []
     };
   },
   created() {
@@ -263,6 +274,9 @@ export default {
     });
     this.getDicts("payment_way").then(res => {
       this.paymentWay = res.data;
+    });
+    this.getDicts("special_status").then(res => {
+      this.specialStatus = res.data;
     });
   },
   mounted() {},
@@ -344,12 +358,9 @@ export default {
       addImg(data).then(res => {
         if (res.code == 200) {
           this.msgSuccess("上传成功");
+          this.selectPhotoList(data.kzzd1, "files1");
         }
       });
-    },
-    // 特殊情况申请
-    specialAdd() {
-      this.specialVisible = true;
     },
     // 批量缴费
     paymentAll() {
@@ -410,6 +421,75 @@ export default {
         xsxm: [],
         zzsj: ""
       };
+    },
+    // 特殊情况申请
+    specialAdd() {
+      if (this.paymentAllList.length == 0) {
+        this.msgError("错误 : 请选择需要减免的学生");
+        return;
+      }
+      if (this.paymentAllList.length > 1) {
+        this.msgError("错误 : 每次只能选择一位减免的学生");
+        return;
+      }
+      let obj = this.paymentAllList[0];
+      exemptPeriodsQuery({ xsbh: obj.xsbh }).then(res => {
+        console.log(res);
+      });
+      this.specialForm = {
+        xsbh: obj.xsbh,
+        xsxm: obj.xsxm,
+        rybjid: this.classForm.bjid,
+        jmqs: []
+      };
+      this.specialVisible = true;
+    },
+    // 减免提交
+    specialSubmit() {
+      specialVisible = false;
+    },
+    // 取消减免
+    specialCancel() {
+      specialVisible = false;
+    },
+    // 大图预览(减免)
+    jmPictureCardPreview(file, fileList) {
+      this.dialogImageUrl1 = file.url;
+      this.dialogVisible = true;
+    },
+    // 删除图片(减免)
+    jmRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    // 查询照片
+    selectPhotoList(jmzjfileid, file) {
+      let kzzdJson = {
+        kzzd1: jmzjfileid
+      };
+      selectFileList(kzzdJson).then(res => {
+        this[file] = res.rows;
+      });
+    },
+    // 成功回调(减免)
+    jmSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.specialForm.jmzjfileid || secretKey();
+      this.specialForm.jmzjfileid = data.kzzd1;
+      addImg(data).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("上传成功");
+          this.selectPhotoList(data.kzzd1, "files2");
+        }
+      });
     }
   }
 };
