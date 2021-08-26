@@ -127,7 +127,7 @@
     </el-dialog>
 
     <el-dialog title="特殊情况申请" :visible.sync="specialVisible" width="30%">
-      <el-form ref="specialForm" :model="specialForm" label-width="80px">
+      <el-form ref="specialForm" :rules="rules1" :model="specialForm" label-width="80px">
         <el-form-item label="班级">
           <div>
             <span>{{className}}</span>
@@ -143,8 +143,8 @@
             <span>{{specialForm.xsxm}}</span>
           </div>
         </el-form-item>
-        <el-form-item label="减免类型">
-          <el-select v-model="specialForm.jmlx" placeholder="请选择活动区域">
+        <el-form-item label="减免类型" prop="jmlx">
+          <el-select v-model="specialForm.jmlx" placeholder="请选择减免类型">
             <el-option
               :label="item.dictLabel"
               :value="item.dictValue"
@@ -153,18 +153,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="减免金额">
+        <el-form-item label="减免金额" prop="jmje">
           <el-input v-model="specialForm.jmje"></el-input>
         </el-form-item>
-        <el-form-item label="减免期数">
-          <el-checkbox-group v-model="specialForm.jmqs">
-            <el-checkbox label="第一期"></el-checkbox>
-            <el-checkbox label="第二期"></el-checkbox>
-            <el-checkbox label="第三期"></el-checkbox>
-            <el-checkbox label="第四期"></el-checkbox>
+        <el-form-item label="减免期数" prop="jmqsSz">
+          <el-checkbox-group v-model="specialForm.jmqsSz">
+            <el-checkbox
+              :label="item"
+              v-for="(item,index) in exemptPeriodsQueryList"
+              :key="index"
+            >第{{item}}期</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="申请原因">
+        <el-form-item label="申请原因" prop="sqyy">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="specialForm.sqyy"></el-input>
         </el-form-item>
         <el-form-item label="申请资料">
@@ -198,8 +199,10 @@ import {
   paymentStudentColumnNamelist,
   addBatchStuPayment,
   exemptApply,
-  exemptPeriodsQuery
+  exemptPeriodsQuery,
+  bujiaoStuPayment
 } from "@/api/basic/studentPaymentInformation";
+import { listPaymentSpecial } from "@/api/basic/paymentSpecial";
 import { secretKey } from "@/utils/tools";
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
@@ -256,8 +259,20 @@ export default {
         ],
         zzsj: [{ required: true, message: "请选择日期", trigger: "change" }]
       },
+      rules1: {
+        jmje: [{ required: true, message: "请输入减免金额", trigger: "blur" }],
+        sqyy: [{ required: true, message: "请输入申请原因", trigger: "blur" }],
+        jmlx: [
+          { required: true, message: "请选择减免类型", trigger: "change" }
+        ],
+        jmqsSz: [
+          { required: true, message: "请选择减免期数", trigger: "change" }
+        ],
+        zzsj: [{ required: true, message: "请选择日期", trigger: "change" }]
+      },
       isDisabled: true,
-      specialStatus: []
+      specialStatus: [],
+      exemptPeriodsQueryList: []
     };
   },
   created() {
@@ -325,6 +340,7 @@ export default {
       this.studentPaymentInformationForm = {
         rybjid: this.classForm.bjid,
         bqqsValue: row.bqqsValue,
+        jfpzid: row.jfpzid,
         jfje: jfje,
         qsid: row.bqqsKey,
         bqjfzt: row.bqjfzt,
@@ -397,13 +413,34 @@ export default {
     },
     //提交缴费
     submitPayment() {
-      addBatchStuPayment(this.studentPaymentInformationForm).then(res => {
-        if (res.code == 200) {
-          this.msgSuccess("缴费成功");
-          this.getList();
+      if (!this.studentPaymentInformationForm.jfpzid) {
+        this.msgError("错误 : 请上传缴费凭证");
+        return;
+      }
+      this.$refs["studentPaymentInformationForm"].validate(valid => {
+        if (valid) {
+          if (this.studentPaymentInformationForm.bqjfzt == "1") {
+            bujiaoStuPayment(this.studentPaymentInformationForm).then(res => {
+              if (res.code == 200) {
+                this.msgSuccess("缴费成功");
+                this.getList(this.classForm.bjid);
+                this.reset();
+              }
+            });
+          } else {
+            addBatchStuPayment(this.studentPaymentInformationForm).then(res => {
+              if (res.code == 200) {
+                this.msgSuccess("缴费成功");
+                this.getList(this.classForm.bjid);
+                this.reset();
+              }
+            });
+          }
+          this.dialogVisible = false;
+        } else {
+          this.msgError("错误 : 请填写完数据再提交");
         }
       });
-      this.dialogVisible = false;
     },
     // 取消缴费
     cancelPayment() {
@@ -421,6 +458,9 @@ export default {
         xsxm: [],
         zzsj: ""
       };
+      this.specialForm = [];
+      this.files1 = [];
+      this.files2 = [];
     },
     // 特殊情况申请
     specialAdd() {
@@ -433,24 +473,47 @@ export default {
         return;
       }
       let obj = this.paymentAllList[0];
-      exemptPeriodsQuery({ xsbh: obj.xsbh }).then(res => {
-        console.log(res);
+      listPaymentSpecial({ xsbh: obj.xsbh }).then(res => {
+        if (res.rows.length > 0) {
+          this.msgError("错误 : 你已提交过减免申请,请勿重复操作");
+        } else {
+          exemptPeriodsQuery(obj.xsbh).then(res => {
+            if (res.code == 200) {
+              this.exemptPeriodsQueryList = res.data;
+            }
+          });
+          this.specialForm = {
+            xsbh: obj.xsbh,
+            xsxm: obj.xsxm,
+            rybjid: this.classForm.bjid,
+            jmqsSz: []
+          };
+          this.specialVisible = true;
+        }
       });
-      this.specialForm = {
-        xsbh: obj.xsbh,
-        xsxm: obj.xsxm,
-        rybjid: this.classForm.bjid,
-        jmqs: []
-      };
-      this.specialVisible = true;
     },
     // 减免提交
     specialSubmit() {
-      specialVisible = false;
+      if (!this.specialForm.jmzjfileid) {
+        this.msgError("错误 : 请上传申请资料");
+        return;
+      }
+      this.$refs["specialForm"].validate(valid => {
+        if (valid) {
+          exemptApply(this.specialForm).then(res => {
+            if (res.code == 200) {
+              this.msgSuccess("成功 : 减免申请提交成功");
+              this.specialVisible = false;
+            }
+          });
+        } else {
+          this.msgError("错误 : 请填写完数据再提交");
+        }
+      });
     },
     // 取消减免
     specialCancel() {
-      specialVisible = false;
+      this.specialVisible = false;
     },
     // 大图预览(减免)
     jmPictureCardPreview(file, fileList) {
