@@ -48,6 +48,12 @@
               type="primary"
               @click="queryData(scope.row)"
             >缴费</el-button>
+            <el-button
+              size="mini"
+              v-if="scope.row['bqjfzt'] == '1'"
+              type="primary"
+              @click="queryData(scope.row)"
+            >补缴</el-button>
           </div>
           <div v-else>
             <span>{{ scope.row[item.prop] }}</span>
@@ -79,7 +85,7 @@
           <el-input v-model="studentPaymentInformationForm.bqqsValue" disabled></el-input>
         </el-form-item>
         <el-form-item label="缴费金额" prop="jfje">
-          <el-input v-model="studentPaymentInformationForm.jfje" disabled></el-input>
+          <el-input v-model="studentPaymentInformationForm.jfje" :disabled="isDisabled"></el-input>
         </el-form-item>
         <el-form-item label="支付方式" prop="jffs">
           <el-select v-model="studentPaymentInformationForm.jffs" placeholder="请选择支付方式">
@@ -239,7 +245,8 @@ export default {
           { required: true, message: "请选择支付方式", trigger: "change" }
         ],
         zzsj: [{ required: true, message: "请选择日期", trigger: "change" }]
-      }
+      },
+      isDisabled: true
     };
   },
   created() {
@@ -288,16 +295,25 @@ export default {
     },
     // 缴费按钮
     queryData(row) {
-      if (row.bqjfzt != "0") {
+      if (row.bqjfzt == "0") {
+        this.dtPayment(row, row.bqYjje);
+      } else if (row.bqjfzt == "1") {
+        this.dtPayment(row, row.bqwjf);
+      } else {
         this.msgError("当前学生已缴费,请勿重复操作");
         return;
       }
+    },
+    // 动态缴费
+    dtPayment(row, jfje) {
       this.dialogVisible = true;
+      this.isDisabled = false;
       this.studentPaymentInformationForm = {
         rybjid: this.classForm.bjid,
         bqqsValue: row.bqqsValue,
-        jfje: row.bqYjje,
+        jfje: jfje,
         qsid: row.bqqsKey,
+        bqjfzt: row.bqjfzt,
         xsbh: [row.xsbh],
         xsxm: [row.xsxm]
       };
@@ -365,6 +381,7 @@ export default {
           i
         ].bqYjje;
       }
+      this.isDisabled = true;
       this.dialogVisible = true;
     },
     //提交缴费
