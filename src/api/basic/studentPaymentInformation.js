@@ -27,6 +27,15 @@ export function addBatchStuPayment(data) {
   })
 }
 
+// 补缴
+export function bujiaoStuPayment(data) {
+  return request({
+    url: '/basic/paymentStudent/bujiaoStuPayment',
+    method: 'post',
+    data: data
+  })
+}
+
 // 减免申请
 export function exemptApply(data) {
   return request({
@@ -39,8 +48,7 @@ export function exemptApply(data) {
 // 减免期数查询
 export function exemptPeriodsQuery(query) {
   return request({
-    url: '/basic/paymentSpecial/exemptPeriodsQuery',
+    url: '/basic/paymentSpecial/exemptPeriodsQuery/' + query,
     method: 'get',
-    params: query
   })
 }
