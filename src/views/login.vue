@@ -59,9 +59,9 @@
               type="primary"
               size="medium"
               :loading="loading"
-              style="width:100%"
+              style="width:100%;font-size: large"
               @click="handleLogin('loginForm')"
-            >立即登陆</el-button>
+            >登&nbsp;&nbsp;录</el-button>
           </el-form-item>
         </el-form>
       </div>
