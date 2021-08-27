@@ -13,8 +13,8 @@
       </el-form-item>
     </el-form>
     <div style="text-align : center">
-      <h4>{{columnNamelist.bjbt}}</h4>
-      <h5>{{columnNamelist.wzsm}}</h5>
+      <h4>{{columnNameItem.bjbt}}</h4>
+      <h5>{{columnNameItem.wzsm}}</h5>
     </div>
 
     <div style="margin-bottom : 20px">
@@ -32,7 +32,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column
-        v-for="(item,index) in columnNamelist.columnNameList"
+        v-for="(item,index) in columnNameItem.columnNameList"
         :key="index"
         :label="item.label"
         :prop="item.prop"
@@ -210,7 +210,7 @@ export default {
   data() {
     return {
       paymentStudentData: [],
-      columnNamelist: [],
+      columnNameItem: [],
       studentPaymentInformationForm: {
         jffs: "",
         jfje: 0,
@@ -314,7 +314,7 @@ export default {
       });
       paymentStudentColumnNamelist({ bjid }).then(res => {
         if (res.code == 200) {
-          this.columnNamelist = res.data;
+          this.columnNameItem = res.data;
         }
       });
     },
