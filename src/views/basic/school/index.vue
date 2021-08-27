@@ -100,6 +100,11 @@
       <el-table-column label="日语学生总人数" align="center" prop="ryxszrs" />
       <el-table-column label="校区负责人" align="center" prop="xqfzr" />
       <el-table-column label="负责人电话" align="center" prop="fzrdh" />
+      <el-table-column label="合作方式" align="center" prop="kzzd2" >
+        <template slot-scope="scope">
+          <dict-tag :options="hzfsOptions" :value="scope.row.kzzd2"/>
+        </template>
+      </el-table-column>
       <el-table-column label="校区状态" align="center" prop="kzzd1" >
         <template slot-scope="scope">
           <dict-tag :options="schoolStatusOptions" :value="scope.row.kzzd1"/>
@@ -155,6 +160,16 @@
             :label="item.xm"
             :value="item.id"
           ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label-width="120px" label="合作方式" prop="xqfzr">
+          <el-select  v-model="form.kzzd2" filterable placeholder="请选择合作方式" >
+            <el-option
+              v-for="dict in hzfsOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
           </el-select>
         </el-form-item>
 <!--        <el-form-item label-width="120px" label="负责人电话" prop="fzrdh">-->
@@ -318,6 +333,7 @@ export default {
       statusOptions:[],
       schoolStatusOptions:[],
       areaManagerList:[],
+      hzfsOptions:[]// 合作方式集合
     };
   },
   created() {
@@ -330,6 +346,9 @@ export default {
     });
     listAreaManager().then(response => {
       this.areaManagerList = response.rows;
+    });
+    this.getDicts("hzfs").then(response => {
+      this.hzfsOptions = response.data;
     });
   },
   methods: {
