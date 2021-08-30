@@ -99,7 +99,7 @@
       <el-table-column prop="bqjfzt" label="本期缴费状态">
         <template slot-scope="scope">
           <div>
-            <dict-tag :options="paymentStatus" :value="scope.row.bqjfzt" />
+            <dict-tag :options="bqStatus" :value="scope.row.bqjfzt" />
           </div>
         </template>
       </el-table-column>
@@ -158,7 +158,8 @@ export default {
       // 进账方式
       paymentIncomeList: [],
       // 缴费状态
-      paymentStatus: []
+      paymentStatus: [],
+      bqStatus : []
     };
   },
   created() {
@@ -176,6 +177,9 @@ export default {
     });
     this.getDicts("payment_status").then(res => {
       this.paymentStatus = res.data;
+    });
+    this.getDicts("bjjf_qszt").then(res => {
+      this.bqStatus = res.data;
     });
   },
   mounted() {},

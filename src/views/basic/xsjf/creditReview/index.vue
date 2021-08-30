@@ -67,11 +67,31 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="wjlj" label="审核文件"></el-table-column>
+      <el-table-column prop="wjlj" label="审核文件">
+        <template slot-scope="scope">
+          <div>
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="scope.row.wjlj"
+              :preview-src-list="[scope.row.wjlj]"
+            ></el-image>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="cz" label="操作" width="180">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="tsSubmit(scope.row,1)">通过</el-button>
-          <el-button size="mini" type="primary" @click="tsSubmit(scope.row,0)">不通过</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            :disabled="scope.row.shzt !=  2 ? true : false"
+            @click="tsSubmit(scope.row,1)"
+          >通过</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            :disabled="scope.row.shzt !=  2 ? true : false"
+            @click="tsSubmit(scope.row,0)"
+          >不通过</el-button>
         </template>
       </el-table-column>
     </el-table>
