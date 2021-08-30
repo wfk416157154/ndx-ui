@@ -23,6 +23,9 @@
           <div v-if="item.prop == 'bqjfzt'">
             <dict-tag :options="paymentStatus" :value="scope.row[item.prop]" />
           </div>
+          <div v-else-if="item.prop == 'specialKey'">
+            <dict-tag :options="specialStatus" :value="scope.row[item.prop]" />
+          </div>
           <div v-else-if="item.prop == 'handle'">
             <el-button
               size="mini"
@@ -57,13 +60,17 @@ export default {
   data() {
     return {
       paymentStudentData: [],
-      columnNamelist: []
+      columnNamelist: [],
+      specialStatus: []
     };
   },
   created() {
     this.getList(this.$route.params.bjid);
     this.getDicts("payment_status").then(res => {
       this.paymentStatus = res.data;
+    });
+    this.getDicts("special_status").then(res => {
+      this.specialStatus = res.data;
     });
   },
   methods: {

@@ -41,6 +41,9 @@
           <div v-if="item.prop == 'bqjfzt'">
             <dict-tag :options="paymentStatus" :value="scope.row[item.prop]" />
           </div>
+          <div v-else-if="item.prop == 'specialKey'">
+            <dict-tag :options="specialStatus" :value="scope.row[item.prop]" />
+          </div>
           <div v-else-if="item.prop == 'handle'">
             <el-button
               size="mini"

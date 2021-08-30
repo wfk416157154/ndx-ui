@@ -336,8 +336,10 @@ export default {
     },
     // 保存
     saveSubmit() {
-      let { jsonStr } = this.createdForm;
+      let { jsonStr, kzzd2 } = this.createdForm;
+      let fy = 0;
       for (let i = 0; i < jsonStr.length; i++) {
+        fy += parseInt(jsonStr[i].bqyjfje);
         if (
           jsonStr[i].chargeDateArr.length == 0 ||
           jsonStr[i].periodDateArr.length == 0 ||
@@ -346,6 +348,10 @@ export default {
           this.msgError("错误 : 请输入内容");
           return;
         }
+      }
+      if (fy != kzzd2) {
+        this.msgError("错误 : 每期费用总和不等于你输入的总费用");
+        return;
       }
       jsonStr = JSON.stringify(jsonStr);
       this.$refs["createdForm"].validate(valid => {
