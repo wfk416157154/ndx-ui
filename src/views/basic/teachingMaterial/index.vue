@@ -89,7 +89,17 @@
           <treeselect v-model="form.parentId" :options="teachingMaterialOptions" :normalizer="normalizer" placeholder="请选择父教材id" />
         </el-form-item>
         <el-form-item label="教材图片" prop="jctp">
-          <el-input v-model="form.jctp" placeholder="请输入教材图片" />
+          <el-upload
+            :action="upload.url"
+            :headers="upload.headers"
+            list-type="picture-card"
+            :on-remove="handleRemove"
+            :on-success="handleAvatarSuccess"
+            :limit="maxPhotoNum"
+            :file-list="jctpPhoto"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
         </el-form-item>
         <el-form-item label="教材册数" prop="jcce">
           <el-input v-model="form.jcce" placeholder="请输入教材册数" />
@@ -109,6 +119,9 @@
 <script>
 import { listTeachingMaterial, getTeachingMaterial, delTeachingMaterial, addTeachingMaterial, updateTeachingMaterial, exportTeachingMaterial } from "@/api/basic/teachingMaterial";
 import Treeselect from "@riophae/vue-treeselect";
+import { getToken } from "@/utils/auth";
+import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
@@ -139,7 +152,26 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      // 上传参数
+      upload: {
+        // 是否显示弹出层
+        open: false,
+        // 弹出层标题
+        title: "上传图片",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      // 图片示例数组
+      jctpPhoto:[],
+      // 最多上传的图片数量
+      maxPhotoNum:3
     };
   },
   created() {
@@ -232,9 +264,16 @@ export default {
       }
       getTeachingMaterial(row.id).then(response => {
         this.form = response.data;
+        this.jctpPhoto=this.ifNullToNewArray(response.data.jctpArr)
         this.open = true;
         this.title = "修改教材";
       });
+    },
+    ifNullToNewArray(arr){
+      if(null==arr){
+        return [];
+      }
+      return arr;
     },
     /** 提交按钮 */
     submitForm() {
@@ -270,7 +309,43 @@ export default {
         }).catch((e)=>{
           console.log(e);
       })
-    }
+    },
+
+    // 图片上传成功的回调
+    handleAvatarSuccess(response, file, fileList) {
+      this.ifPhotoLimit(fileList.length," 张图片")
+      let data = response.data;
+      data.kzzd1 = this.form.jctp || secretKey();
+      this.form.jctp = data.kzzd1;
+      addImg(data).then(res => {
+        file.id=res.data.id;
+        this.msgSuccess("图片上传成功")
+      });
+    },
+
+    //公共图片删除
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    // 图片限制判断
+    ifPhotoLimit(num,msg) {
+      if (num >= this.maxPhotoNum) {
+        this.$message({
+          message: "最多上传 "+this.maxPhotoNum+msg,
+          type: "warning"
+        });
+      }
+    },
+
   }
 };
 </script>
