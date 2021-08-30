@@ -770,15 +770,15 @@ export default {
     };
   },
   created() {
-    // 日语班级选项 -当老师角色登录
-    if(this.$store.state.user.dataRoleWeightId==50){
-      listBjclass().then(response => {
-        this.bjclassList = response.rows
+    listBjclass().then(response => {
+      this.bjclassList = response.rows
+      // 日语班级选项 -当老师角色登录
+      if(this.$store.state.user.dataRoleWeightId==50){
         if (response.rows.length==1){
           this.queryParams.ryb=response.rows[0].id
         }
-      });
-    }
+      }
+    });
     this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
