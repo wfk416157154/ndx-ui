@@ -7,12 +7,12 @@
       label-width="80px"
     >
       <el-form-item label="负责人">
-        <el-select v-model="paymentSettingsForm.xqfzr" placeholder="请选择区域负责人">
+        <el-select v-model="paymentSettingsForm.qyfzrid" placeholder="请选择区域负责人">
           <el-option
             v-for="item in areaManagerList"
             :key="item.id"
             :label="item.xm"
-            :value="item.xm"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -143,7 +143,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         kzzd1: null,
-        xqfzr: null
+        qyfzrid: null
       },
       total: 0,
       paymentSettingsData: [],
