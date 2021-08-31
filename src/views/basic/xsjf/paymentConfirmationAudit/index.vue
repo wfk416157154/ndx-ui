@@ -57,8 +57,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="success" size="mini" @click="getList(3)">已审批</el-button>
-        <el-button type="warning" size="mini" @click="getList(2)">未审批</el-button>
+        <el-button type="success" size="mini" @click="getList('3')">已审批</el-button>
+        <el-button type="warning" size="mini" @click="getList('2')">未审批</el-button>
         <el-button type="primary" size="mini" @click="getList()">查询</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -113,13 +113,13 @@
           <el-button
             size="mini"
             type="success"
-            :disabled="scope.row.jfzt == 3 ? true : false"
+            :disabled="scope.row.jfzt == '3' ? true : false"
             @click="paymentSubmit(scope.row,1)"
           >已收到</el-button>
           <el-button
             size="mini"
             type="danger"
-            :disabled="scope.row.jfzt == 3 ? true : false"
+            :disabled="scope.row.jfzt == '3' ? true : false"
             @click="paymentSubmit(scope.row,0)"
           >未收到</el-button>
         </template>
@@ -131,7 +131,7 @@
       :total="total"
       :page.sync="paymentConfirmationAuditForm.pageNum"
       :limit.sync="paymentConfirmationAuditForm.pageSize"
-      @pagination="getList"
+      @pagination="getList()"
     />
   </div>
 </template>
@@ -206,7 +206,7 @@ export default {
       if (jfzt) {
         this.paymentConfirmationAuditForm.jfzt = jfzt;
       } else {
-        this.paymentConfirmationAuditForm.jfzt = "";
+        this.paymentConfirmationAuditForm.jfzt = null;
       }
       queryStuTeacherChecklist(this.paymentConfirmationAuditForm).then(res => {
         this.paymentConfirmationAuditData = res.rows;
