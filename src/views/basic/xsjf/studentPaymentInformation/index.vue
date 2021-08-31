@@ -74,10 +74,7 @@
       >
         <el-form-item label="姓名">
           <div>
-            <span
-              v-for="(item,index) in studentPaymentInformationForm.xsxm"
-              :key="index"
-            >{{item}} -</span>
+            <span v-for="(item,index) in studentPaymentInformationForm.xsxm" :key="index">{{item}} -</span>
           </div>
         </el-form-item>
         <el-form-item label="班级">
@@ -202,7 +199,8 @@ import {
   addBatchStuPayment,
   exemptApply,
   exemptPeriodsQuery,
-  bujiaoStuPayment
+  bujiaoStuPayment,
+  ifIsNowPayment
 } from "@/api/basic/studentPaymentInformation";
 import { listPaymentSpecial } from "@/api/basic/paymentSpecial";
 import { secretKey } from "@/utils/tools";
@@ -310,14 +308,22 @@ export default {
     },
     // 获取缴费信息列表
     getList(bjid) {
-      paymentStudent({ bjid }).then(res => {
-        if (res.code == 200) {
-          this.paymentStudentData = res.data;
-        }
-      });
-      paymentStudentColumnNamelist({ bjid }).then(res => {
-        if (res.code == 200) {
-          this.columnNameItem = res.data;
+      ifIsNowPayment({ bjid }).then(res => {
+        if (res.data) {
+          paymentStudent({ bjid }).then(res => {
+            if (res.code == 200) {
+              this.paymentStudentData = res.data;
+            }
+          });
+          paymentStudentColumnNamelist({ bjid }).then(res => {
+            if (res.code == 200) {
+              this.columnNameItem = res.data;
+            }
+          });
+        } else {
+          this.msgError("警告 : 当前不在缴费时间内");
+          this.columnNameItem = [];
+          this.paymentStudentData = [];
         }
       });
     },
@@ -402,19 +408,31 @@ export default {
           this.msgError("错误 : 当前有部分学生已缴费,请勿重复操作");
           return;
         }
-        this.studentPaymentInformationForm.xsbh[i] = this.paymentAllList[i].xsbh;
-        this.studentPaymentInformationForm.xsxm[i] = this.paymentAllList[i].xsxm;
-        this.studentPaymentInformationForm.jfje += this.paymentAllList[i].bqYjje;
+        this.studentPaymentInformationForm.xsbh[i] = this.paymentAllList[
+          i
+        ].xsbh;
+        this.studentPaymentInformationForm.xsxm[i] = this.paymentAllList[
+          i
+        ].xsxm;
+        this.studentPaymentInformationForm.jfje += this.paymentAllList[
+          i
+        ].bqYjje;
       }
       this.isDisabled = true;
       this.dialogVisible = true;
     },
     //提交缴费
     submitPayment() {
-      let reg = /^[1-9][0-9]+[0-9]$/g;
-      if (!reg.test(this.studentPaymentInformationForm.jfje)) {
-        this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-        return;
+      if (this.studentPaymentInformationForm.jfje.length == 1) {
+        let reg = /[1-9]/g;
+        if (!reg.test(this.studentPaymentInformationForm.jfje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      } else {
+        let reg = /^[1-9][0-9]*[0-9]$/g;
+        if (!reg.test(this.studentPaymentInformationForm.jfje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
       }
       if (this.studentPaymentInformationForm.jfje > this.$yjje) {
         this.msgError("错误 : 缴费金额不能大于应缴金额");

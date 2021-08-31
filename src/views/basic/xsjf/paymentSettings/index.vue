@@ -340,13 +340,16 @@ export default {
         let reg = /[1-9]/g;
         if (!reg.test(value)) {
           this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+          return reg.test(value);
         }
       } else {
         let reg = /^[1-9][0-9]*[0-9]$/g;
         if (!reg.test(value)) {
           this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+          return reg.test(value);
         }
       }
+      return true;
     },
     // 保存
     saveSubmit() {
@@ -354,6 +357,9 @@ export default {
       let fy = 0;
       for (let i = 0; i < jsonStr.length; i++) {
         fy += parseInt(jsonStr[i].bqyjfje);
+        if (!this.regTest(jsonStr[i].bqyjfje)) {
+          return;
+        }
         if (
           jsonStr[i].chargeDateArr.length == 0 ||
           jsonStr[i].periodDateArr.length == 0 ||

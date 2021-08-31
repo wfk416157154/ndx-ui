@@ -18,6 +18,15 @@ export function paymentStudentColumnNamelist(query) {
   })
 }
 
+// 查询判断当前是缴费时间
+export function ifIsNowPayment(query) {
+  return request({
+    url: '/basic/paymentStudent/ifIsNowPayment',
+    method: 'get',
+    params: query
+  })
+}
+
 // 学生缴费（包含批量缴费）
 export function addBatchStuPayment(data) {
   return request({

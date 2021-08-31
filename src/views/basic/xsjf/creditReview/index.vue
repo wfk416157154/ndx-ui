@@ -1,7 +1,7 @@
 <template>
   <div class="creditReview">
     <el-form ref="creditReviewForm" :inline="true" :model="creditReviewForm" label-width="80px">
-      <el-form-item label="负责人">
+      <el-form-item label="负责人" prop="fzrid">
         <el-select v-model="creditReviewForm.fzrid" placeholder="请选择区域负责人">
           <el-option
             v-for="item in areaManagerList"
@@ -11,7 +11,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="学校">
+      <el-form-item label="学校" prop="xxid">
         <el-select
           v-model="creditReviewForm.xxid"
           filterable
@@ -21,7 +21,7 @@
           <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="班级">
+      <el-form-item label="班级" prop="bjid">
         <el-select v-model="creditReviewForm.bjid" placeholder="请选择班级">
           <el-option
             :label="item.rybjmc"
@@ -31,7 +31,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="减免状态">
+      <el-form-item label="减免状态" prop="jmlx">
         <el-select v-model="creditReviewForm.jmlx" placeholder="请选择减免类型">
           <el-option
             :label="item.dictLabel"
@@ -42,9 +42,10 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="mini" @click="getList(1)">通过</el-button>
-        <el-button type="primary" size="mini" @click="getList(0)">不通过</el-button>
+        <el-button type="success" size="mini" @click="getList(1)">通过</el-button>
+        <el-button type="danger" size="mini" @click="getList(0)">不通过</el-button>
         <el-button type="primary" size="mini" @click="getList(2)">待审核</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -82,13 +83,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="primary"
+            type="success"
             :disabled="scope.row.shzt !=  2 ? true : false"
             @click="tsSubmit(scope.row,1)"
           >通过</el-button>
           <el-button
             size="mini"
-            type="primary"
+            type="danger"
             :disabled="scope.row.shzt !=  2 ? true : false"
             @click="tsSubmit(scope.row,0)"
           >不通过</el-button>
@@ -116,7 +117,11 @@ export default {
     return {
       creditReviewForm: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        fzrid : null,
+        xxid : null,
+        bjid : null,
+        jmlx : null
       },
       creditReviewData: [],
       // 区域负责人列表
@@ -169,6 +174,12 @@ export default {
         }
         this.total = res.total;
       });
+    },
+    // 重置
+    resetQuery() {
+      this.resetForm("creditReviewForm");
+      this.xqmcOnChange();
+      this.getList();
     },
     // 是否通过
     tsSubmit(row, status) {

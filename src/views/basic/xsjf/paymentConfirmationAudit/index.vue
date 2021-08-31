@@ -90,8 +90,12 @@
       </el-table-column>
       <el-table-column prop="jzfs" label="进账方式"></el-table-column>
       <el-table-column prop="qyfzrxm" label="负责人"></el-table-column>
-      <el-table-column prop="jfpzid" label="凭证" v-if="false" ></el-table-column>
-      <el-table-column prop="jfpzidArr" label="凭证图片" :width="flexColumnWidth('jfpzidArr',paymentConfirmationAuditData)" >
+      <el-table-column prop="jfpzid" label="凭证" v-if="false"></el-table-column>
+      <el-table-column
+        prop="jfpzidArr"
+        label="凭证图片"
+        :width="flexColumnWidth('jfpzidArr',paymentConfirmationAuditData)"
+      >
         <template slot-scope="scope">
           <div class="block" style="display : flex; width : 100% ; height : 100%">
             <el-image
@@ -99,9 +103,13 @@
               v-for="(item,index) in scope.row.jfpzidArr"
               :key="index"
               :src="item"
-              :preview-src-list="scope.row.jfpzidArr">
-              <div slot="error"
-                   style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc" class="image-slot">
+              :preview-src-list="scope.row.jfpzidArr"
+            >
+              <div
+                slot="error"
+                style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc"
+                class="image-slot"
+              >
                 <span>加载失败</span>
               </div>
             </el-image>
@@ -170,7 +178,7 @@ export default {
       // 缴费方式
       paymentWay: [],
       // 缴费状态
-      paymentStatus:[]
+      paymentStatus: []
     };
   },
   created() {
@@ -234,7 +242,7 @@ export default {
       }
       if (!status) {
         this.$confirm(
-          "点击'attr-value未收到'将删除当条缴费记录, 是否继续?",
+          "点击'未收到'将删除当条缴费记录,并且需要当事人重新提交缴费记录, 是否继续?",
           "提示",
           {
             confirmButtonText: "确定",
