@@ -275,7 +275,8 @@ export default {
       },
       isDisabled: true,
       specialStatus: [],
-      exemptPeriodsQueryList: []
+      exemptPeriodsQueryList: [],
+      $yjje: 0
     };
   },
   created() {
@@ -350,6 +351,7 @@ export default {
         xsbh: [row.xsbh],
         xsxm: [row.xsxm]
       };
+      this.$yjje = this.studentPaymentInformationForm.jfje;
     },
     // 图片删除(缴费凭证)
     handleRemove(file, fileList) {
@@ -416,6 +418,15 @@ export default {
     },
     //提交缴费
     submitPayment() {
+      let reg = /^[1-9][0-9]+[0-9]$/g;
+      if (!reg.test(this.studentPaymentInformationForm.jfje)) {
+        this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        return;
+      }
+      if (this.studentPaymentInformationForm.jfje > this.$yjje) {
+        this.msgError("错误 : 缴费金额不能大于应缴金额");
+        return;
+      }
       if (!this.studentPaymentInformationForm.jfpzid) {
         this.msgError("错误 : 请上传缴费凭证");
         return;
@@ -497,6 +508,17 @@ export default {
     },
     // 减免提交
     specialSubmit() {
+      if (this.specialForm.jmje.length == 1) {
+        let reg = /[1-9]/g;
+        if (!reg.test(this.specialForm.jmje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      } else {
+        let reg = /^[1-9][0-9]*[0-9]$/g;
+        if (!reg.test(this.specialForm.jmje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      }
       if (!this.specialForm.jmzjfileid) {
         this.msgError("错误 : 请上传申请资料");
         return;

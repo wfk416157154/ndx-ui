@@ -71,7 +71,7 @@
           <el-input v-model="createdForm.kzzd2"></el-input>
         </el-form-item>
         <el-form-item label="期数" prop="kzzd4">
-          <el-select v-model="createdForm.kzzd4" @change="getQs" placeholder="请选择活动区域">
+          <el-select v-model="createdForm.kzzd4" @change="getQs" placeholder="请选择期数">
             <el-option
               :label="item.dictLabel"
               :value="item.dictValue"
@@ -82,7 +82,7 @@
         </el-form-item>
         <div v-for="(item,index) in createdForm.jsonStr" :key="index">
           <el-form-item :label="item.qsm" prop="bqyjfje">
-            <el-input v-model="item.bqyjfje"></el-input>
+            <el-input v-model="item.bqyjfje" @change="regTest"></el-input>
           </el-form-item>
           <el-form-item label="缴费时间" prop="chargeDateArr">
             <el-date-picker
@@ -333,6 +333,20 @@ export default {
     // 考试类型字典翻译
     getStatus(row, column) {
       return this.selectDictLabel(this.graduateStatusList, row.status);
+    },
+    // 验证
+    regTest(value) {
+      if (value.length == 1) {
+        let reg = /[1-9]/g;
+        if (!reg.test(value)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      } else {
+        let reg = /^[1-9][0-9]*[0-9]$/g;
+        if (!reg.test(value)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      }
     },
     // 保存
     saveSubmit() {
