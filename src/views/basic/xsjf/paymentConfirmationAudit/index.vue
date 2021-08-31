@@ -37,7 +37,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="缴费方式" prop="jffs">
-        <el-select v-model="paymentConfirmationAuditForm.jffs" placeholder="请选择班级状态">
+        <el-select v-model="paymentConfirmationAuditForm.jffs" placeholder="请选择缴费方式">
           <el-option
             :label="item.dictLabel"
             :value="item.dictValue"
@@ -49,17 +49,17 @@
       <el-form-item label="进账方式" prop="jzfs">
         <el-select v-model="paymentConfirmationAuditForm.jzfs" placeholder="请选择进账方式">
           <el-option
+            v-for="(item,index) in paymentIncomeList"
             :label="item.jzmc"
             :value="item.id"
-            v-for="(item,index) in paymentIncomeList"
             :key="index"
           ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="mini" @click="getList(3)">已审批</el-button>
-        <el-button type="primary" size="mini" @click="getList(2)">未审批</el-button>
-        <el-button type="primary" size="mini" @click="getList()">全部</el-button>
+        <el-button type="success" size="mini" @click="getList(3)">已审批</el-button>
+        <el-button type="warning" size="mini" @click="getList(2)">未审批</el-button>
+        <el-button type="primary" size="mini" @click="getList()">查询</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
       <el-form-item>
@@ -81,26 +81,44 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="jzfs" label="进账方式">
+      <el-table-column prop="jfzt" label="缴费状态">
         <template slot-scope="scope">
           <div>
-            <dict-tag :options="paymentIncomeList" :value="scope.row.jzfs" />
+            <dict-tag :options="paymentStatus" :value="scope.row.jfzt" />
           </div>
         </template>
       </el-table-column>
+      <el-table-column prop="jzfs" label="进账方式"></el-table-column>
       <el-table-column prop="qyfzrxm" label="负责人"></el-table-column>
-      <el-table-column prop="jfpzid" label="凭证"></el-table-column>
+      <el-table-column prop="jfpzid" label="凭证" v-if="false" ></el-table-column>
+      <el-table-column prop="jfpzidArr" label="凭证图片" :width="flexColumnWidth('jfpzidArr',paymentConfirmationAuditData)" >
+        <template slot-scope="scope">
+          <div class="block" style="display : flex; width : 100% ; height : 100%">
+            <el-image
+              style="width: 60px; height: 60px; margin : 0px 5px"
+              v-for="(item,index) in scope.row.jfpzidArr"
+              :key="index"
+              :src="item"
+              :preview-src-list="scope.row.jfpzidArr">
+              <div slot="error"
+                   style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc" class="image-slot">
+                <span>加载失败</span>
+              </div>
+            </el-image>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="cz" label="操作" width="180">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="primary"
+            type="success"
             :disabled="scope.row.jfzt == 3 ? true : false"
             @click="paymentSubmit(scope.row,1)"
           >已收到</el-button>
           <el-button
             size="mini"
-            type="primary"
+            type="danger"
             :disabled="scope.row.jfzt == 3 ? true : false"
             @click="paymentSubmit(scope.row,0)"
           >未收到</el-button>
@@ -122,7 +140,7 @@
 import { listSchool } from "@/api/basic/school";
 import { listAreaManager } from "@/api/basic/areaManager";
 import { listBjclass } from "@/api/basic/bjclass";
-import { listAndPhoto } from "@/api/basic/paymentIncome";
+import { listPaymentIncome } from "@/api/basic/paymentIncome";
 import {
   queryStuTeacherChecklist,
   checkStuPayment
@@ -149,8 +167,10 @@ export default {
       total: 0,
       // 进账方式
       paymentIncomeList: [],
-      // 进账方式
+      // 缴费方式
       paymentWay: [],
+      // 缴费状态
+      paymentStatus:[]
     };
   },
   created() {
@@ -160,11 +180,14 @@ export default {
     listAreaManager().then(res => {
       this.areaManagerList = res.rows;
     });
-    listAndPhoto(this.queryParams).then(response => {
+    listPaymentIncome().then(response => {
       this.paymentIncomeList = response.rows;
     });
     this.getDicts("payment_way").then(res => {
       this.paymentWay = res.data;
+    });
+    this.getDicts("payment_status").then(res => {
+      this.paymentStatus = res.data;
     });
   },
   methods: {
@@ -239,6 +262,20 @@ export default {
           this.msgSuccess("成功 : 审核完成");
         }
       });
+    },
+    // 宽度适配
+    flexColumnWidth(str, tableData) {
+      let arr = [];
+      for (let i = 0; i < tableData.length; i++) {
+        if (tableData[i] && tableData[i][str] && tableData[i][str].length > 0) {
+          tableData.forEach(obj => {
+            if (obj[str] && obj[str].length) arr.push(obj[str].length);
+          });
+        } else {
+          continue;
+        }
+      }
+      return Math.max.call(null, ...arr) * 75;
     }
   }
 };

@@ -76,8 +76,7 @@
           <div>
             <span
               v-for="(item,index) in studentPaymentInformationForm.xsxm"
-              :key="index
-            "
+              :key="index"
             >{{item}} -</span>
           </div>
         </el-form-item>
@@ -403,15 +402,9 @@ export default {
           this.msgError("错误 : 当前有部分学生已缴费,请勿重复操作");
           return;
         }
-        this.studentPaymentInformationForm.xsbh[i] = this.paymentAllList[
-          i
-        ].xsbh;
-        this.studentPaymentInformationForm.xsxm[i] = this.paymentAllList[
-          i
-        ].xsxm;
-        this.studentPaymentInformationForm.jfje += this.paymentAllList[
-          i
-        ].bqYjje;
+        this.studentPaymentInformationForm.xsbh[i] = this.paymentAllList[i].xsbh;
+        this.studentPaymentInformationForm.xsxm[i] = this.paymentAllList[i].xsxm;
+        this.studentPaymentInformationForm.jfje += this.paymentAllList[i].bqYjje;
       }
       this.isDisabled = true;
       this.dialogVisible = true;
@@ -585,7 +578,7 @@ export default {
 
 <style lang="scss" scoped>
 .studentPaymentInformation {
-  width: 1005;
+  width: 100%;
   height: 100%;
   padding: 40px;
   box-sizing: border-box;
