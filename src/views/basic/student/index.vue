@@ -779,7 +779,6 @@ export default {
         }
       }
     });
-    this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
     });
@@ -801,6 +800,11 @@ export default {
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   mounted() {
+    let bjid=this.$route.params.bjid;
+    if(bjid!==":bjid"){// 从班级信息页面跳转过来时带的班级id参数
+      this.queryParams.ryb=bjid
+    }
+    this.getList();
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   methods: {
