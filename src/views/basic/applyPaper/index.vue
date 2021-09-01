@@ -128,7 +128,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-select v-model="form.jcid" @change="getJcList" placeholder="请输入考试类型">
+          <el-select v-model="form.jcid" @change="getJcList" placeholder="请选择教材">
             <el-option
               v-for="(item,index) in jsList"
               :key="index"
@@ -275,7 +275,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-select v-model="formQt.jcid" @change="getJcList" placeholder="请输入考试类型">
+          <el-select v-model="formQt.jcid" @change="getJcList" placeholder="请选择教材">
             <el-option
               v-for="(item,index) in jsList"
               :key="index"
@@ -338,6 +338,7 @@
   import {getToken} from "@/utils/auth";
   import {listBjclass} from "@/api/basic/bjclass";
   import { addExamSummary } from "@/api/basic/examSummary";
+  import { listTeachingMaterial} from "@/api/basic/teachingMaterial";
 
   export default {
     name: "ExaminationPaper",
@@ -453,9 +454,6 @@
           // 上传图片地址
           imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
         },
-
-
-
         // 用户关联id
         glrid: "",
         // 老师教学班级
@@ -478,7 +476,9 @@
       this.getDicts("paper_upload_type").then(response => {
         this.getCjscztList = response.data;
       });
-
+      listTeachingMaterial().then(resp=>{
+        this.jsList=resp.data
+      });
     },
     mounted() {
       this.getList();
@@ -619,9 +619,6 @@
         this.openQt = true;
         this.title = "添加其他考卷";
       },
-
-
-
       /** 成绩是否上传查询操作 */
       statusQuery(uploadStaus) {
         this.queryParams.pageNum = 1;
@@ -774,8 +771,6 @@
           }
         }
       },
-
-
       //教材id 和 名称
       getJcList(value) {
         for (let i = 0; i < this.jsList.length; i++) {
