@@ -175,7 +175,8 @@ export default {
       // 校区列表
       schoolList: [],
       // 区域负责人列表
-      areaManagerList: []
+      areaManagerList: [],
+      $qs: ""
     };
   },
   created() {
@@ -224,6 +225,7 @@ export default {
         this.createdForm.kzzd2 = row.kzzd2;
         // 期数
         this.createdForm.kzzd4 = row.kzzd4 || 1;
+        this.$qs = row.kzzd4 || 1;
         // 进账方式
         this.createdForm.kzzd5 = row.kzzd5;
         // 班级id
@@ -252,7 +254,7 @@ export default {
         }
       });
     },
-    // 删除栓塞制
+    // 删除设置
     handleDelete(row) {
       listPaymentSetting({ rybjid: row.id }).then(res => {
         if (res.rows.length == 0) {
@@ -308,6 +310,10 @@ export default {
     },
     //动态期数
     getQs(value) {
+      if (this.$qs > value) {
+        this.msgError("错误 : 选择期数不能少于原有期数");
+        return;
+      }
       this.createdForm.kzzd4 =
         typeof value == "number" ? value : parseInt(value);
       let leg = this.createdForm.jsonStr.length;

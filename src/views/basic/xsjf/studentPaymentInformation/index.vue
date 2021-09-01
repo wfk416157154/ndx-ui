@@ -118,6 +118,14 @@
             placeholder="选择日期"
           ></el-date-picker>
         </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input
+            type="textarea"
+            :rows="4"
+            placeholder="请输入内容"
+            v-model="studentPaymentInformationForm.remark"
+          ></el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelPayment">取 消</el-button>
@@ -219,7 +227,8 @@ export default {
         rybjid: "",
         xsbh: [],
         xsxm: [],
-        zzsj: ""
+        zzsj: "",
+        remark: ""
       },
       dialogImageUrl: "",
       dialogImageUrl1: "",
@@ -352,6 +361,7 @@ export default {
         jfpzid: row.jfpzid,
         jfje: jfje,
         qsid: row.bqqsKey,
+        remark: row.remark,
         bqjfzt: row.bqjfzt,
         xsbh: [row.xsbh],
         xsxm: [row.xsxm]
@@ -418,6 +428,7 @@ export default {
           i
         ].bqYjje;
       }
+      this.$yjje = this.studentPaymentInformationForm.jfje;
       this.isDisabled = true;
       this.dialogVisible = true;
     },
