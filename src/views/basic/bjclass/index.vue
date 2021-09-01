@@ -160,8 +160,16 @@
         </template>
       </el-table-column>
       <el-table-column label="校区名称" align="center" prop="xqmc" />
-
-      <el-table-column label="日语班级名称" align="center" prop="rybjmc" />
+      <el-table-column label="日语班级名称" align="center" prop="rybjmc" >
+        <template slot-scope="scope">
+          <a href="#">
+            <span
+              style="margin-left: 10px;color: #00afff"
+              @click="showStudentPage(scope.row)"
+            >{{ scope.row.rybjmc }}</span>
+          </a>
+        </template>
+      </el-table-column>
       <el-table-column label="班级人数" align="center" prop="bjrs" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="开班学期" align="center" prop="nj" >
@@ -799,6 +807,16 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
+    },
+    // 展示学生界面
+    showStudentPage(row){
+      // 获取页面中参数配置的路由
+      this.getConfigKey("studentMainPage").then(resp => {
+        this.router = resp.msg;
+        this.$router.push({
+          path: this.router + row.id
+        });
+      });
     },
     // 宽度适配
     flexColumnWidth(str, tableData) {
