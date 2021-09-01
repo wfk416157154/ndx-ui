@@ -275,28 +275,27 @@
           <el-input maxlength="300" v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
 
-<!--        <el-form-item label="毕业状态" prop="status">-->
-<!--          <el-select v-model="form.status" placeholder="请选择毕业状态" clearable @change="controlBysj" size="small" readonly>-->
-<!--            <el-option-->
-<!--              v-for="dict in statusOptions"-->
-<!--              :key="dict.dictValue"-->
-<!--              :label="dict.dictLabel"-->
-<!--              :value="dict.dictValue"-->
-<!--            />-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="毕业时间" prop="addOrUpdateTime">-->
-<!--          <el-date-picker-->
-<!--            :disabled="disableBysj"-->
-<!--            clearable-->
-<!--            size="mini"-->
-<!--            v-model="form.addOrUpdateTime"-->
-<!--            type="date"-->
-<!--            value-format="yyyy-MM-dd"-->
-<!--            placeholder="请输入毕业时间"-->
-<!--          ></el-date-picker>-->
-<!--        </el-form-item>-->
+       <el-form-item label="毕业状态" prop="status">
+         <el-select v-model="form.status" placeholder="请选择毕业状态" clearable @change="controlBysj" size="small" >
+           <el-option
+             v-for="dict in statusOptions"
+             :key="dict.dictValue"
+             :label="dict.dictLabel"
+             :value="dict.dictValue"
+           />
+         </el-select>
+       </el-form-item>
+        <el-form-item label="毕业时间" prop="addOrUpdateTime">
+          <el-date-picker
+            :disabled="disableBysj"
+            clearable
+            size="mini"
+            v-model="form.addOrUpdateTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请输入毕业时间"
+          ></el-date-picker>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>

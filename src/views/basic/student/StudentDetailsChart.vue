@@ -4,8 +4,6 @@
       <el-table
         :data="listAll"
         border
-        :cell-style="addClass"
-        :summary-method="getSummaries"
         show-summary
         style="width: 100%"
       >

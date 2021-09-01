@@ -184,7 +184,7 @@
         <template slot-scope="scope">
           <a href="#">
             <span
-              style="margin-left: 10px"
+              style="margin-left: 10px;color: #00afff"
               @click="showStudentDetailsPage(scope.row)"
             >{{ scope.row.xsxm }}</span>
           </a>
