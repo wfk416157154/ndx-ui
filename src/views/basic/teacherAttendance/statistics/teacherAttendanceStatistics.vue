@@ -38,7 +38,7 @@
     >{{teacherAndBjmc}}</div>
 
     <div style="display : flex;justify-content : space-between">
-      <div style="width : 49%">
+      <div style="width : 50%">
         <el-table :data="resultItem" border style="width: 100%">
           <el-table-column
             :prop="item.prop"
@@ -50,12 +50,12 @@
         </el-table>
       </div>
 
-      <div style="width : 49%">
-        <el-table :data="detailItem" border style="width: 100%">
+      <div style="margin-left:10px;">
+        <el-table :data="detailItem" border style="width: 100%" :height="$root.tableHeight">
           <el-table-column
             :prop="item.prop"
             :label="item.label"
-            width="130"
+            width="100"
             v-for="(item,index) in detailList"
             :key="index"
           >
