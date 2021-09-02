@@ -278,7 +278,9 @@ export default {
         xxmc: null,
         xxdz: null,
         xqfzr: null,
-        status: null
+        status: null,
+        //是否查询各种总人数（1代表是）
+        isCountRsQuery: 1,
       },
       // 表单参数
       form: {},

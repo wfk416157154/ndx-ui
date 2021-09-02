@@ -438,7 +438,7 @@ export default {
         nj: null,
         rybjmc: null,
         lsxm: null,
-        status: "1" //默认查询 未毕业的日语班级
+        status: "10" //默认查询 未毕业的日语班级
       },
       // 表单参数
       form: {
