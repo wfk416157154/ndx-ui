@@ -121,13 +121,13 @@
           <el-button
             size="mini"
             type="success"
-            :disabled="scope.row.jfzt == '3' ? true : false"
+            :disabled="scope.row.jfzt != '2' ? true : false"
             @click="paymentSubmit(scope.row,1)"
           >已收到</el-button>
           <el-button
             size="mini"
             type="danger"
-            :disabled="scope.row.jfzt == '3' ? true : false"
+            :disabled="scope.row.jfzt != '2' ? true : false"
             @click="paymentSubmit(scope.row,0)"
           >未收到</el-button>
         </template>
@@ -197,6 +197,7 @@ export default {
     this.getDicts("payment_status").then(res => {
       this.paymentStatus = res.data;
     });
+    this.getList("2");// 默认进来只查询待审批的数据
   },
   methods: {
     // 获取班级
@@ -232,15 +233,12 @@ export default {
     // 是否收到
     paymentSubmit(row, status) {
       let json = {
-        shzt: status
+        shzt: status,
+        xsbh : row.xsbh,
+        qsid : row.qsid,
+        batchid : row.batchid,
       };
-      if (row.batchid) {
-        json.batchid = row.batchid;
-      } else {
-        json.xsbh = row.xsbh;
-        json.qsid = row.qsid;
-      }
-      if (!status) {
+      if (0==status) {
         this.$confirm(
           "点击'未收到'将删除当条缴费记录,并且需要当事人重新提交缴费记录, 是否继续?",
           "提示",

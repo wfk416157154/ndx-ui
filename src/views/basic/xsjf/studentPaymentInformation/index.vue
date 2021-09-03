@@ -161,7 +161,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="减免金额" prop="jmje">
-          <el-input v-model="specialForm.jmje"></el-input>
+          <el-input v-model="specialForm.jmje" placeholder="请输入每期减免的金额" ></el-input>
         </el-form-item>
         <el-form-item label="减免期数" prop="jmqsSz">
           <el-checkbox-group v-model="specialForm.jmqsSz">
