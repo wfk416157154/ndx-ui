@@ -208,7 +208,8 @@ export default {
     },
     // 数据列表
     getList() {
-      listBjclass(this.paymentSettingsForm).then(res => {
+      //默认查询 未毕业的日语班级
+      listBjclass({statusArr: ["1", "3", "4"]}).then(res => {
         this.paymentSettingsData = res.rows;
         this.total = res.total;
       });
