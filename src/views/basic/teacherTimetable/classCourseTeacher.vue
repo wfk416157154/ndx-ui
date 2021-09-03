@@ -428,7 +428,7 @@ export default {
       // 查询课表
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 100,
         kbType: null,
         kzzd2: new Date().getFullYear(),
         bjid: null,
