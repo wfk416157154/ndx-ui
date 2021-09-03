@@ -323,13 +323,14 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label-width="100px" label="选科" >
-            <el-radio-group v-model="form.xk">
+            <!-- <el-radio-group v-model="form.xk">
               <el-radio
                 v-for="dict in xkOptions"
                 :key="dict.dictValue"
                 :label="dict.dictValue"
               >{{dict.dictLabel}}</el-radio>
-            </el-radio-group>
+            </el-radio-group> -->
+             <el-input maxlength="5" v-model="form.xk" placeholder="请输入学科" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
