@@ -359,7 +359,11 @@ export default {
     },
     // 保存
     saveSubmit() {
-      let { jsonStr, kzzd2 } = this.createdForm;
+      let { jsonStr, kzzd2, kzzd4 } = this.createdForm;
+      if (this.$qs > kzzd4) {
+        this.msgError("错误 : 选择期数不能少于原有期数");
+        return;
+      }
       let fy = 0;
       for (let i = 0; i < jsonStr.length; i++) {
         fy += parseInt(jsonStr[i].bqyjfje);
