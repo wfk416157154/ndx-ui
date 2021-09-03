@@ -133,6 +133,7 @@ export default {
         xqmc: null,
         ybj: null,
         ryb: null,
+        rybjid:null,
         rbsj: null,
         tbsj: null,
         xsbh: null,
@@ -204,7 +205,7 @@ export default {
             this.$refs.chart.getChart();
           });
         }
-        getBjclass(this.form.kzzd1).then(res => {
+        getBjclass(this.form.rybjid).then(res => {
           this.rylsxm = res.data.lsxm;
           this.lsid = res.data.kzzd2;
           this.getTeacherTalkList(this.form.id);
