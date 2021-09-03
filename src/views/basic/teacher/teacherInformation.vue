@@ -38,6 +38,14 @@
                 日语等级
                 <div class="pull-right">{{ userInfo.kzzd3 }}</div>
               </li>
+              <li class="list-group-item">
+                正在代课班
+                <div class="pull-right">{{ userInfo.dkrybj }}</div>
+              </li>
+              <li class="list-group-item">
+                已代毕业班
+                <div class="pull-right">{{ userInfo.ydrybj }}</div>
+              </li>
             </ul>
           </div>
         </el-card>
@@ -161,7 +169,7 @@
 </template>
 
 <script>
-import { getTeacher } from "@/api/basic/teacher";
+import { getTeacher,getTeacherDetail } from "@/api/basic/teacher";
 import { selectFileList } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
 export default {
@@ -198,7 +206,7 @@ export default {
   methods: {
     /** 修改按钮操作 */
     getUser(id) {
-      getTeacher(id).then(response => {
+      getTeacherDetail(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改老师信息";

@@ -25,7 +25,13 @@ export function getTeacher(id) {
     method: 'get'
   })
 }
-
+// 获取老师详情页面
+export function getTeacherDetail(id) {
+  return request({
+    url: '/basic/teacher/getTeacherDetail/' + id,
+    method: 'get'
+  })
+}
 // 新增老师信息
 export function addTeacher(data) {
   return request({
@@ -50,4 +56,6 @@ export function delTeacher(id) {
     url: '/basic/teacher/' + id,
     method: 'delete'
   })
+
+
 }
