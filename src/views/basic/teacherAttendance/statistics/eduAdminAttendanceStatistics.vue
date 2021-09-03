@@ -50,7 +50,19 @@
           :label="item.label"
           v-for="(item,index) in jwColumnNameItem"
           :key="index"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            <div v-if="item.prop == 'talk'">
+              <div v-if="scope.row[item.prop] >= '8'">
+                合格-{{scope.row[item.prop]}}
+              </div>
+              <div v-else>
+                不合格-{{scope.row[item.prop]}}
+              </div>
+            </div>
+            <div v-else>{{scope.row[item.prop]}}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-search" @click="pageTurnTeacherAttendanceDetail(scope.$index, scope.row)">查看</el-button>
