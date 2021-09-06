@@ -271,7 +271,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
-          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+          <el-link type="info" style="font-size:12px" :disabled="enabledImportTemplate" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
@@ -297,6 +297,7 @@ import {
   updateStugrade,
   listAll,
   getColumnNameList,
+  generateTemplate,
   syncKsmcToExaminationPaper
 } from "@/api/basic/stugrade";
 import { listBjclass } from "@/api/basic/bjclass";
@@ -344,6 +345,7 @@ export default {
         wl: null,
         status: null
       },
+      enabledImportTemplate:true,
       // 表单参数
       form: {},
       // 表单校验
@@ -648,12 +650,22 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
+      this.enabledImportTemplate=true
+      this.msgInfo("请稍等，正在生成下载模板！")
       this.importBtn = false;
       this.upload.title = "学生成绩基础表数据导入";
       this.upload.open = true;
       this.$nextTick(() => {
         // 页面元素加载完成后执行该方法
         this.$refs.upload.clearFiles();
+      });
+      generateTemplate().then(resp=>{
+        if(1==resp){
+          this.msgSuccess("模板已成功生成！请点击下载模板")
+          this.enabledImportTemplate=false
+        }else{
+          this.msgError("模板生成失败！请联系管理员！")
+        }
       });
     },
     /** 下载模板操作 */

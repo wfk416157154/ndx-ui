@@ -61,6 +61,14 @@ export function addStugrade(data) {
   })
 }
 
+// 生成学生成绩基础表导入模板
+export function generateTemplate() {
+  return request({
+    url: '/basic/stugrade/generateTemplate',
+    method: 'post',
+  })
+}
+
 // 修改学生成绩基础表
 export function updateStugrade(data) {
   return request({
