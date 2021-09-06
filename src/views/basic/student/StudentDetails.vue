@@ -22,7 +22,7 @@
             </span>
             <el-divider direction="vertical"></el-divider>
 
-            <span>{{form.ryb}}</span>
+            <span>{{form.rybjmc}}</span>
             <el-divider direction="vertical"></el-divider>
             <span>原班级：{{form.ybj}}</span>
             <el-divider direction="vertical"></el-divider>
@@ -42,8 +42,6 @@
           </div>
           <hr size="B5" width="80%" align="left" />
           <div style="font-family: 微软雅黑">
-            <span>入班时间：{{form.rbsj}}</span>
-            <el-divider direction="vertical"></el-divider>
             <span>入班时间：{{form.rbsj}}</span>
             <el-divider direction="vertical"></el-divider>
             <span>综合分数：{{form.zhfs}}</span>
