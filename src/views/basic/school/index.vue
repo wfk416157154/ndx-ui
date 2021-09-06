@@ -97,7 +97,7 @@
       <el-table-column v-if="false" label="状态" align="center" prop="id" />
       <el-table-column label="学校名称" align="center" prop="xxmc" />
       <el-table-column label="学校地址" align="center" prop="xxdz" />
-      <el-table-column label="日语学生总人数" align="center" prop="ryxszrs" />
+      <el-table-column label="日语学生总人数/毕业人数/正常上课人数" align="center" prop="ryxszrs" />
       <el-table-column label="校区负责人" align="center" prop="xqfzr" />
       <el-table-column label="负责人电话" align="center" prop="fzrdh" />
       <el-table-column label="合作方式" align="center" prop="kzzd2" >
@@ -149,9 +149,9 @@
         <el-form-item label-width="120px" label="学校地址" prop="xxdz">
           <el-input maxlength="50" v-model="form.xxdz" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label-width="120px" label="日语学生总人数" prop="ryxszrs">
-          <el-input maxlength="5" v-model="form.ryxszrs" placeholder="日语学生总人数系统自动计算" readonly />
-        </el-form-item>
+<!--        <el-form-item label-width="120px" label="日语学生总人数" prop="ryxszrs">-->
+<!--          <el-input maxlength="5" v-model="form.ryxszrs" placeholder="日语学生总人数系统自动计算" readonly />-->
+<!--        </el-form-item>-->
         <el-form-item label-width="120px" label="校区负责人" prop="xqfzr">
           <el-select  v-model="form.xqfzr" filterable placeholder="请选择校区负责人" >
           <el-option
