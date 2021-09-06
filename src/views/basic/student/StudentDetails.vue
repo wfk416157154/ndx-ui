@@ -203,7 +203,7 @@ export default {
             this.$refs.chart.getChart();
           });
         }
-        getBjclass(this.form.rybjid).then(res => {
+        getBjclass(this.form.ryb).then(res => {
           this.rylsxm = res.data.lsxm;
           this.lsid = res.data.kzzd2;
           this.getTeacherTalkList(this.form.id);
