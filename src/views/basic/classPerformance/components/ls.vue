@@ -211,7 +211,8 @@ export default {
       // 考试范围
       getExaminationPaper: [],
       // echart 图形化实例
-      obj: {}
+      obj: {},
+      objel: {}
     };
   },
   created() {
@@ -277,20 +278,19 @@ export default {
     },
     // 切换统计图模型
     selectChart(value, index) {
-      console.log(value)
-      this.obj[index].series[0].type = value;
-      // this.getListClassGrade();
+      this.option.series[0].type = value;
       this.getChart(this.listClassGradeItem, index);
     },
     // 可视化统计图
     getChart(item, index) {
+      console.log(item);
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
           this.obj[i] = JSON.parse(JSON.stringify(this.option));
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
-          this.obj[i + "a"] = echarts.init(chartDom);
+          this.objel[i + "a"] = echarts.init(chartDom);
           for (var k = 1; k < item[i].gradeDiffResps.length; k++) {
             this.obj[i].series.push(this.option.series[0]);
           }
@@ -312,7 +312,7 @@ export default {
               }
             }
           }
-          this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
+          this.obj[i] && this.objel[i + "a"].setOption(this.obj[i]);
         }
       });
     },
