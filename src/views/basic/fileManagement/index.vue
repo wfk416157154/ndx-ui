@@ -95,7 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column label="文件id" align="center" prop="wjid" v-if="false" />
-      <el-table-column label="点击文件名下载" align="center" prop="wjidArr" width="280px" >
+      <el-table-column label="文件下载" align="center" prop="wjidArr" width="280px" >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -103,7 +103,7 @@
             v-for="(item,index) in scope.row.wjidArr"
             :key="index"
             @click="downloadFileName(item.wjmc,scope.row.title)"
-          >{{item.wjmc}}</el-button>
+          >点击下载</el-button>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
