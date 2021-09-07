@@ -1,80 +1,45 @@
 <template>
   <div class="score-chart">
-    <div
-      v-if="optionIf"
-      class="wrap-score-chart __float clearfix"
-      style="border-right: 4px #fff solid"
-    >
-      <div class="right-chart __float">
-        <div id="pie1" style="width: 100%;height:100%;"></div>
-      </div>
-      <div class="title-content __float">
-        <div>
-          <i></i>
-          <span>90分以下次数 :</span>
-          <span>{{fraction150.onegrade}}</span>
+    <div class="wrap-chart" v-for="(item,index) in getStudentGradeEverytimeList" :key="index">
+      <div
+        v-if="optionIf"
+        class="wrap-score-chart __float clearfix"
+        style="border-right: 4px #fff solid"
+      >
+        <div class="right-chart __float">
+          <div :id="['pie' + index]" style="width: 100%;height:100%;"></div>
         </div>
-        <div>
-          <i></i>
-          <span>90-120分的次数 :</span>
-          <span>{{fraction150.twograde}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>120-150分的次数 :</span>
-          <span>{{fraction150.threegrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最高分 :</span>
-          <span>{{fraction150.maxgrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最低分 :</span>
-          <span>{{fraction150.mingrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>平均分 :</span>
-          <span>{{fraction150.avggrade}}</span>
-        </div>
-      </div>
-    </div>
-    <div v-if="optionIf1" class="wrap-score-chart __float clearfix">
-      <div class="right-chart __float">
-        <div id="pie2" style="width: 100%;height:100%;"></div>
-      </div>
-      <div class="title-content">
-        <div>
-          <i></i>
-          <span>60分以下次数 :</span>
-          <span>{{fraction100.onegrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>60-80分的次数 :</span>
-          <span>{{fraction100.twograde}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>80-100分的次数 :</span>
-          <span>{{fraction100.threegrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最高分 :</span>
-          <span>{{fraction100.maxgrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最低分 :</span>
-          <span>{{fraction100.mingrade}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>平均分 :</span>
-          <span>{{fraction100.avggrade}}</span>
+        <div class="title-content __float">
+          <div>
+            <i></i>
+            <span>60分以下次数 :</span>
+            <span>{{item.onegrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>60-80分的次数 :</span>
+            <span>{{item.twograde}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>80-100分的次数 :</span>
+            <span>{{item.threegrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>最高分 :</span>
+            <span>{{item.maxgrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>最低分 :</span>
+            <span>{{item.mingrade}}</span>
+          </div>
+          <div>
+            <i></i>
+            <span>平均分 :</span>
+            <span>{{item.avggrade}}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -257,7 +222,9 @@ export default {
       fraction100: {},
       fraction150: {},
       optionIf: true,
-      optionIf1: true
+      optionIf1: true,
+      obj: {},
+      myChart: {}
     };
   },
   props: ["query"],
@@ -267,7 +234,7 @@ export default {
       for (let i = 0; i < array.length; i++) {
         str += array[i] + ",";
       }
-      str=str.substr(0, str.length - 1);
+      str = str.substr(0, str.length - 1);
       return str;
     },
     getChart() {
@@ -285,74 +252,57 @@ export default {
       };
       // 学生成绩详细饼状图
       getStudentGradeEverytime(obj).then(res => {
-        this.optionIf = true;
-        this.optionIf1 = true;
         this.getStudentGradeEverytimeList = res.data.countGrade;
-        this.fraction100 = this.getStudentGradeEverytimeList["100"];
-        this.fraction150 = this.getStudentGradeEverytimeList["150"];
-        if (this.fraction100 == undefined) {
-          this.optionIf1 = false;
-        } else if (this.fraction150 == undefined) {
-          this.optionIf = false;
-        }
-        if (this.optionIf1) {
-          // 100 分制
-          this.option1.graphic.style.text = "100分制";
-          this.option1.series[0].data[0].value = Math.round(
-            (parseInt(this.fraction100.threegrade) /
-              (parseInt(this.fraction100.onegrade) +
-                parseInt(this.fraction100.twograde) +
-                parseInt(this.fraction100.threegrade))) *
-              100
-          );
-          this.option1.series[0].data[1].value = Math.round(
-            (parseInt(this.fraction100.twograde) /
-              (parseInt(this.fraction100.onegrade) +
-                parseInt(this.fraction100.twograde) +
-                parseInt(this.fraction100.threegrade))) *
-              100
-          );
-          this.option1.series[0].data[2].value = Math.round(
-            (parseInt(this.fraction100.onegrade) /
-              (parseInt(this.fraction100.onegrade) +
-                parseInt(this.fraction100.twograde) +
-                parseInt(this.fraction100.threegrade))) *
-              100
-          );
-          this.$nextTick(function() {
-            let myChart2 = this.$echarts.init(document.getElementById("pie2"));
-            myChart2.setOption(this.option1);
-          });
-        }
-        if (this.optionIf) {
-          // 150分制
-          this.option.graphic.style.text = "150分制";
-          this.option.series[0].data[0].value = Math.round(
-            (parseInt(this.fraction150.threegrade) /
-              (parseInt(this.fraction150.onegrade) +
-                parseInt(this.fraction150.twograde) +
-                parseInt(this.fraction150.threegrade))) *
-              100
-          );
-          this.option.series[0].data[1].value = Math.round(
-            (parseInt(this.fraction150.twograde) /
-              (parseInt(this.fraction150.onegrade) +
-                parseInt(this.fraction150.twograde) +
-                parseInt(this.fraction150.threegrade))) *
-              100
-          );
-          this.option.series[0].data[2].value = Math.round(
-            (parseInt(this.fraction150.onegrade) /
-              (parseInt(this.fraction150.onegrade) +
-                parseInt(this.fraction150.twograde) +
-                parseInt(this.fraction150.threegrade))) *
-              100
-          );
-          this.$nextTick(function() {
-            let myChart1 = this.$echarts.init(document.getElementById("pie1"));
-            myChart1.setOption(this.option);
-          });
-        }
+        this.$nextTick(() => {
+          for (let i = 0; i < this.getStudentGradeEverytimeList.length; i++) {
+            this.obj["state" + i] = this.option;
+            if (JSON.stringify(this.getStudentGradeEverytimeList[i]) == "{}") {
+              this.optionIf1 = false;
+            } else if (
+              JSON.stringify(this.getStudentGradeEverytimeList[i]) == "{}"
+            ) {
+              this.optionIf = false;
+            }
+            let fz60 = Math.round(
+              this.getStudentGradeEverytimeList[i].mf * 0.6
+            );
+            let fz80 = Math.round(
+              this.getStudentGradeEverytimeList[i].mf * 0.8
+            );
+            // 考试分制
+            this.obj[
+              "state" + i
+            ].graphic.style.text = `${this.getStudentGradeEverytimeList[i].mf}分制`;
+            this.obj[
+              "state" + i
+            ].series[0].data[0].value = this.getStudentGradeEverytimeList[
+              i
+            ].onegrade;
+            this.obj[
+              "state" + i
+            ].series[0].data[1].value = this.getStudentGradeEverytimeList[
+              i
+            ].twograde;
+            this.obj[
+              "state" + i
+            ].series[0].data[2].value = this.getStudentGradeEverytimeList[
+              i
+            ].threegrade;
+            this.obj["state" + i].series[0].data[2].name = fz60 + "分以下";
+            this.obj["state" + i].legend.data[2] = fz60 + "分以下";
+            this.obj["state" + i].series[0].data[1].name =
+              fz60 + "分至" + fz80 + "分";
+            this.obj["state" + i].legend.data[1] = fz60 + "分至" + fz80 + "分";
+            this.obj["state" + i].series[0].data[0].name =
+              fz80 + "分至" + this.getStudentGradeEverytimeList[i].mf + "分";
+            this.obj["state" + i].legend.data[0] =
+              fz80 + "分至" + this.getStudentGradeEverytimeList[i].mf + "分";
+            this.myChart[`chart${i}`] = this.$echarts.init(
+              document.getElementById("pie" + i)
+            );
+            this.myChart[`chart${i}`].setOption(this.obj["state" + i]);
+          }
+        });
       });
     }
   }

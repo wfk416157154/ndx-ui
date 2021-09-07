@@ -161,16 +161,22 @@
           </el-select>
         </el-form-item>
         <el-form-item label="减免金额" prop="jmje">
-          <el-input v-model="specialForm.jmje" placeholder="请输入每期减免的金额" ></el-input>
+          <el-input v-model="specialForm.jmje" placeholder="请输入减免总金额"></el-input>
         </el-form-item>
-        <el-form-item label="减免期数" prop="jmqsSz">
-          <el-checkbox-group v-model="specialForm.jmqsSz">
+        <el-form-item
+          :label="['第' + item + '期']"
+          prop="jmqsSz"
+          v-for="(item,index) in exemptPeriodsQueryList"
+          :key="index"
+        >
+          <!-- <el-checkbox-group v-model="specialForm.jmqsSz">
             <el-checkbox
               :label="item"
               v-for="(item,index) in exemptPeriodsQueryList"
               :key="index"
             >第{{item}}期</el-checkbox>
-          </el-checkbox-group>
+          </el-checkbox-group>-->
+          <el-input v-model="specialForm.jmqsSz[index]" placeholder="请输入每期减免的金额"></el-input>
         </el-form-item>
         <el-form-item label="申请原因" prop="sqyy">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="specialForm.sqyy"></el-input>
@@ -530,33 +536,34 @@ export default {
     },
     // 减免提交
     specialSubmit() {
-      if (this.specialForm.jmje.length == 1) {
-        let reg = /[1-9]/g;
-        if (!reg.test(this.specialForm.jmje)) {
-          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-        }
-      } else {
-        let reg = /^[1-9][0-9]*[0-9]$/g;
-        if (!reg.test(this.specialForm.jmje)) {
-          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-        }
-      }
-      if (!this.specialForm.jmzjfileid) {
-        this.msgError("错误 : 请上传申请资料");
-        return;
-      }
-      this.$refs["specialForm"].validate(valid => {
-        if (valid) {
-          exemptApply(this.specialForm).then(res => {
-            if (res.code == 200) {
-              this.msgSuccess("成功 : 减免申请提交成功");
-              this.specialVisible = false;
-            }
-          });
-        } else {
-          this.msgError("错误 : 请填写完数据再提交");
-        }
-      });
+      // if (this.specialForm.jmje.length == 1) {
+      //   let reg = /[1-9]/g;
+      //   if (!reg.test(this.specialForm.jmje)) {
+      //     this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+      //   }
+      // } else {
+      //   let reg = /^[1-9][0-9]*[0-9]$/g;
+      //   if (!reg.test(this.specialForm.jmje)) {
+      //     this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+      //   }
+      // }
+      // if (!this.specialForm.jmzjfileid) {
+      //   this.msgError("错误 : 请上传申请资料");
+      //   return;
+      // }
+      console.log(this.specialForm);
+      // this.$refs["specialForm"].validate(valid => {
+      //   if (valid) {
+      //     exemptApply(this.specialForm).then(res => {
+      //       if (res.code == 200) {
+      //         this.msgSuccess("成功 : 减免申请提交成功");
+      //         this.specialVisible = false;
+      //       }
+      //     });
+      //   } else {
+      //     this.msgError("错误 : 请填写完数据再提交");
+      //   }
+      // });
     },
     // 取消减免
     specialCancel() {

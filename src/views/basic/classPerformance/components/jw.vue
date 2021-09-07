@@ -219,7 +219,7 @@ export default {
             name: "",
             type: "line",
             stack: "总量",
-            data: []
+            data: [,,,,,1,2,3,4]
           }
         ]
       },
