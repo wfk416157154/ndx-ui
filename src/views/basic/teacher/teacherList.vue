@@ -152,7 +152,7 @@
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
 <!--      <el-table-column label="分配的日语班级" align="center" prop="fpbj" />-->
       <el-table-column label="代课日语班级" align="center" prop="dkrybj" />
-      <el-table-column label="已代日语班级" align="center" prop="ydrybj" />
+      <el-table-column label="已代毕业班" align="center" prop="ydrybj" />
       <el-table-column label="入职时间" align="center" prop="rzsj" width="180"  />
       <el-table-column label="工龄(月)" align="center" prop="rzgl" />
       <el-table-column label="身份证号" align="center" prop="sfzh" v-if="false" />
