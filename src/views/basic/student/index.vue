@@ -171,6 +171,7 @@
       border
       v-loading="loading"
       :data="studentList"
+      :height="$root.tableHeight"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
@@ -193,7 +194,7 @@
       <el-table-column label="学生编号" align="center" prop="xsbh" />
       <el-table-column label="校区名称" align="center" prop="xqmc" />
       <el-table-column label="原班级" align="center" prop="ybj" />
-      <el-table-column label="日语班" align="center" prop="ryb" />
+      <el-table-column label="日语班" align="center" prop="rybjmc" width="180" />
       <el-table-column label="入班时间" align="center" prop="rbsj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.rbsj, '{y}-{m}-{d}') }}</span>
@@ -997,7 +998,6 @@ export default {
         if (Object.keys(this.uploadData).length == 0) {
           return;
         }
-        addImg(this.uploadData).then(res => {});
       });
     },
     /** 删除按钮操作 */

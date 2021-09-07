@@ -21,7 +21,7 @@
               <span
                 v-if="item.prop == 'xsxm' || item.prop == 'rybj'  || item.prop == 'zhcj'"
               >{{scope.row[item.prop]}}</span>
-              <span v-if="item.prop == 'wl'">{{selectDictLabel(wlOption,scope.row[item.prop])}}</span>
+              <span v-if="item.prop == 'wl'">{{scope.row[item.prop]}}</span>
               <div v-else>
                 <div
                   v-if="scope.row[item.colour] == 1"

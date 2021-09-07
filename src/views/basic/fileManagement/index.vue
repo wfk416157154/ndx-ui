@@ -95,14 +95,14 @@
         </template>
       </el-table-column>
       <el-table-column label="文件id" align="center" prop="wjid" v-if="false" />
-      <el-table-column label="文件下载" align="center" prop="wjidArr" width="280px" >
+      <el-table-column label="点击文件名下载" align="center" prop="wjidArr" width="280px" >
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             v-for="(item,index) in scope.row.wjidArr"
             :key="index"
-            @click="downloadFileName(item.wjmc)"
+            @click="downloadFileName(item.wjmc,scope.row.title)"
           >{{item.wjmc}}</el-button>
         </template>
       </el-table-column>
@@ -394,13 +394,13 @@
         }).catch((e)=>{
           console.log(e);
         })
-
       },
       /** 下载模板操作 */
-      downloadFileName(fileName) {
+      downloadFileName(fileName,title) {
+        title=title+fileName.substring(fileName.indexOf("."),fileName.length);
         this.download('file/filetable/download', {
           wjmc:fileName
-        }, fileName)
+        }, title)
       },
 
       // 图片上传成功的回调

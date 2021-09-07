@@ -120,7 +120,7 @@
               >{{scope.row[item.prop]}}</el-link>
             </span>
             <span v-else-if="item.prop == 'wl'">
-              <dict-tag :options="wlOption" :value="scope.row[item.prop]" />
+              <div>{{scope.row[item.prop]}}</div>
             </span>
             <div v-else>
               <div

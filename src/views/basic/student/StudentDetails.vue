@@ -22,7 +22,7 @@
             </span>
             <el-divider direction="vertical"></el-divider>
 
-            <span>{{form.ryb}}</span>
+            <span>{{form.rybjmc}}</span>
             <el-divider direction="vertical"></el-divider>
             <span>原班级：{{form.ybj}}</span>
             <el-divider direction="vertical"></el-divider>
@@ -34,16 +34,13 @@
 
             <el-divider direction="vertical"></el-divider>
             <span>
-              选科：
-              <dict-tag style="display: inline-block" :options="xkTypeOptions" :value="form.xk" />
+              选科：{{form.xk}}
             </span>
             <el-divider direction="vertical"></el-divider>
             <span>进班英语分数：{{form.yyfs}}</span>
           </div>
           <hr size="B5" width="80%" align="left" />
           <div style="font-family: 微软雅黑">
-            <span>入班时间：{{form.rbsj}}</span>
-            <el-divider direction="vertical"></el-divider>
             <span>入班时间：{{form.rbsj}}</span>
             <el-divider direction="vertical"></el-divider>
             <span>综合分数：{{form.zhfs}}</span>
@@ -205,7 +202,7 @@ export default {
             this.$refs.chart.getChart();
           });
         }
-        getBjclass(this.form.rybjid).then(res => {
+        getBjclass(this.form.ryb).then(res => {
           this.rylsxm = res.data.lsxm;
           this.lsid = res.data.kzzd2;
           this.getTeacherTalkList(this.form.id);
