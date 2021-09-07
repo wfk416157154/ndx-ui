@@ -34,8 +34,7 @@
 
             <el-divider direction="vertical"></el-divider>
             <span>
-              选科：
-              <dict-tag style="display: inline-block" :options="xkTypeOptions" :value="form.xk" />
+              选科：{{form.xk}}
             </span>
             <el-divider direction="vertical"></el-divider>
             <span>进班英语分数：{{form.yyfs}}</span>
