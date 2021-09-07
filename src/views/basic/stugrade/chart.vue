@@ -12,17 +12,17 @@
         <div class="title-content __float">
           <div>
             <i></i>
-            <span>60分以下次数 :</span>
+            <span>{{item.onetitle}} :</span>
             <span>{{item.onegrade}}</span>
           </div>
           <div>
             <i></i>
-            <span>60-80分的次数 :</span>
+            <span>{{item.twotitle}} :</span>
             <span>{{item.twograde}}</span>
           </div>
           <div>
             <i></i>
-            <span>80-100分的次数 :</span>
+            <span>{{item.threetitle}} :</span>
             <span>{{item.threegrade}}</span>
           </div>
           <div>

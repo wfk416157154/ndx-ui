@@ -60,7 +60,6 @@
         :data="listAll"
         border
         :summary-method="getSummaries"
-        show-summary
         style="width: 100%"
       >
         <el-table-column

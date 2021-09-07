@@ -29,6 +29,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="分制" prop="fz">
+          <el-select v-model="form.studentGradeType" placeholder="请选择分制">
+            <el-option
+              v-for="item in studentGradeType"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="考试范围" prop="ksfw" v-if="false" label-width="120px">
           <el-select
             width="100px"
@@ -212,7 +222,7 @@ export default {
       getExaminationPaper: [],
       // echart 图形化实例
       obj: {},
-      objel: {}
+      studentGradeType:[]
     };
   },
   created() {
@@ -221,6 +231,9 @@ export default {
     });
     this.getDicts("nianji").then(response => {
       this.selectNj = response.data;
+    });
+    this.getDicts("studentGradeType").then(response => {
+      this.studentGradeType = response.data;
     });
   },
   mounted() {
@@ -278,41 +291,30 @@ export default {
     },
     // 切换统计图模型
     selectChart(value, index) {
-      this.option.series[0].type = value;
+      this.obj[index].series[0].type = value;
       this.getChart(this.listClassGradeItem, index);
     },
     // 可视化统计图
     getChart(item, index) {
-      console.log(item);
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
-          this.obj[i] = JSON.parse(JSON.stringify(this.option));
+          this.obj[i] = this.option;
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
-          this.objel[i + "a"] = echarts.init(chartDom);
-          for (var k = 1; k < item[i].gradeDiffResps.length; k++) {
-            this.obj[i].series.push(this.option.series[0]);
-          }
-          if (
-            item[i].gradeDiffResps.length != 0 &&
-            k == item[i].gradeDiffResps.length
-          ) {
-            for (let j = 0; j < item[i].gradeDiffResps.length; j++) {
-              for (let z = 0; z < item[i].gradeDiffResps[j].length; z++) {
-                if (j == 1) {
-                  this.obj[i].xAxis[0].data.push(
-                    item[i].gradeDiffResps[j][z].ksmc
-                  );
-                }
-                this.obj[i].series[j].data.push(
-                  item[i].gradeDiffResps[j][z].pjfs
-                );
-                this.obj[i].series[j].name = `(${item[i].rybj})班平均分`;
-              }
+          this.obj[i + "a"] = echarts.init(chartDom);
+          if (item[i].everyTimeGradeInfoQueries.length != 0) {
+            for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
+              this.obj[i].xAxis[0].data.push(
+                item[i].everyTimeGradeInfoQueries[j].ksmc
+              );
+              this.obj[i].series[0].data.push(
+                item[i].everyTimeGradeInfoQueries[j].pjfs
+              );
+              this.obj[i].series[0].name = `(${item[i].rybj})班平均分`;
             }
+            this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
           }
-          this.obj[i] && this.objel[i + "a"].setOption(this.obj[i]);
         }
       });
     },

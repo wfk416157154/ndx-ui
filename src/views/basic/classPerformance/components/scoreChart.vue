@@ -2,13 +2,7 @@
   <div class="score-chart">
     <div id="wrap-score-chart">
       <div class="left-table">
-        <el-table
-          :data="listAll"
-          :summary-method="getSummaries"
-          border
-          show-summary
-          style="width: 100%"
-        >
+        <el-table :data="listAll" :summary-method="getSummaries" border style="width: 100%">
           <el-table-column
             :fixed="item.fixed"
             :label="item.label"
@@ -36,75 +30,80 @@
                   style="background : red; display : inline-block ; width :100%;color : #fff"
                 >{{scope.row[item.prop]}}</span>
                 <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
+                <span v-if="scope.row[item.colour] == 5">{{scope.row[item.prop]}}</span>
               </div>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div class="right-chart">
-        <div id="pie1" style="width: 100%;height:100%;"></div>
+      <div class="warp-box">
+        <div class="wrap-th">
+          <div class="right-chart">
+            <div id="pie1" style="width: 100%;height:100%;"></div>
+          </div>
+          <div class="title-content">
+            <div>
+              <i></i>
+              <span>考试范围 :</span>
+              <span>{{chartList.ksfw}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>考试时间 :</span>
+              <span>{{chartList.kssj}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>考试类型 :</span>
+              <span>{{chartList.kslxmc}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>{{fzTitle1}} :</span>
+              <span>{{chartList.bhers}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>{{fzTitle2}} :</span>
+              <span>{{chartList.hers}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>{{fzTitle3}} :</span>
+              <span>{{chartList.yxrs}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>最高分 :</span>
+              <span>{{chartList.zgf}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>最低分 :</span>
+              <span>{{chartList.zdf}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>平均分 :</span>
+              <span>{{chartList.pjf}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>考试人数 :</span>
+              <span>{{chartList.ksrs}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>缺考人数 :</span>
+              <span>{{chartList.qkrs}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="analysis-and-summary">
+          <p>考试分析总结</p>
+          <span>{{getKsfxzj}}</span>
+        </div>
       </div>
-      <div class="title-content">
-        <div>
-          <i></i>
-          <span>考试范围 :</span>
-          <span>{{chartList.ksfw}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>考试时间 :</span>
-          <span>{{chartList.kssj}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>考试类型 :</span>
-          <span>{{chartList.kslxmc}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>{{fzTitle1}} :</span>
-          <span>{{chartList.bhers}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>{{fzTitle2}} :</span>
-          <span>{{chartList.hers}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>{{fzTitle3}} :</span>
-          <span>{{chartList.yxrs}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最高分 :</span>
-          <span>{{chartList.zgf}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>最低分 :</span>
-          <span>{{chartList.zdf}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>平均分 :</span>
-          <span>{{chartList.pjf}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>考试人数 :</span>
-          <span>{{chartList.ksrs}}</span>
-        </div>
-        <div>
-          <i></i>
-          <span>缺考人数 :</span>
-          <span>{{chartList.qkrs}}</span>
-        </div>
-      </div>
-    </div>
-    <div class="analysis-and-summary">
-      <p>考试分析总结</p>
-      <span>{{getKsfxzj}}</span>
     </div>
   </div>
 </template>
@@ -320,48 +319,53 @@ export default {
     .left-table {
       width: 50%;
     }
-    .right-chart {
-      width: 25%;
-      height: 300px;
-      margin-left: 20px;
-    }
-    .title-content {
-      width: 25%;
-      height: 100%;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      color: #fff;
-      span {
-        line-height: 25px;
+    .warp-box {
+      width: 50%;
+      .wrap-th {
+        width: 100%;
+        display: flex;
+        .title-content {
+          width: 50%;
+          height: 100%;
+          font-size: 14px;
+          padding: 10px;
+          box-sizing: border-box;
+          color: #fff;
+          span {
+            line-height: 25px;
+          }
+          i {
+            display: inline-block;
+            background-color: #67c23a;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+          }
+        }
+        .right-chart {
+          width: 50%;
+          height: 300px;
+          margin-left: 20px;
+        }
       }
-      i {
-        display: inline-block;
-        background-color: #67c23a;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
+      .analysis-and-summary {
+        width: 90%;
+        margin: 0 auto;
+        background: #f2f6fc;
+        padding: 20px;
+        padding-top: 10px;
+        box-sizing: border-box;
+        border-radius: 20px;
+        margin: 40px;
+        p {
+          color: #606266;
+        }
+        span {
+          // 强制换行
+          word-wrap: break-word;
+        }
       }
-    }
-  }
-  .analysis-and-summary {
-    display: inline-block;
-    width: 50%;
-    // height: 300px;
-    background: #f2f6fc;
-    padding: 20px;
-    padding-top: 0px;
-    box-sizing: border-box;
-    border-radius: 20px;
-    margin-left: 40px;
-    margin-bottom: 40px;
-    p {
-      color: #606266;
-    }
-    span {
-      // 强制换行
-      word-wrap: break-word;
     }
   }
 }
