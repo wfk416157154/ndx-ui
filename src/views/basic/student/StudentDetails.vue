@@ -33,9 +33,7 @@
             <span>日语老师：{{rylsxm}}</span>
 
             <el-divider direction="vertical"></el-divider>
-            <span>
-              选科：{{form.xk}}
-            </span>
+            <span>选科：{{form.xk}}</span>
             <el-divider direction="vertical"></el-divider>
             <span>进班英语分数：{{form.yyfs}}</span>
           </div>
@@ -78,6 +76,12 @@
     </el-collapse-item>
     <el-collapse-item name="3">
       <template slot="title">
+        <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">折线图</span>
+      </template>
+      <lineChart :query="form.xsbh " ref="chart1" />
+    </el-collapse-item>
+    <el-collapse-item name="3">
+      <template slot="title">
         <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">成绩统计</span>
       </template>
       <StudentDetailsChart :query="form.xsbh " ref="chart" />
@@ -86,7 +90,7 @@
       <template slot="title">
         <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">老师谈话</span>
       </template>
-      <el-table  border v-loading="loading" :data="teacherTalkList" >
+      <el-table border v-loading="loading" :data="teacherTalkList">
         <el-table-column type="selection" width="55" v-if="false" align="center" />
         <el-table-column label="id" align="center" v-if="false" prop="id" />
         <el-table-column label="老师姓名" align="center" prop="lsxm" />
@@ -106,6 +110,7 @@
 
 <script>
 import StudentDetailsChart from "./StudentDetailsChart";
+import lineChart from "./lineChart";
 import {
   listStudent,
   getStudent,
@@ -113,24 +118,22 @@ import {
   addStudent,
   updateStudent
 } from "@/api/basic/student";
-import {
-  listTeacherTalk,
-} from "@/api/basic/teacherTalk";
-import {  getBjclass } from "@/api/basic/bjclass";
+import { listTeacherTalk } from "@/api/basic/teacherTalk";
+import { getBjclass } from "@/api/basic/bjclass";
 
 export default {
   name: "StudentDetails",
   data() {
     return {
       loading: false,
-      activeNames: ["1", "2","3"],
+      activeNames: ["1", "2", "3"],
       form: {
         id: null,
         xstx: null,
         xqmc: null,
         ybj: null,
         ryb: null,
-        rybjid:null,
+        rybjid: null,
         rbsj: null,
         tbsj: null,
         xsbh: null,
@@ -187,7 +190,8 @@ export default {
     });
   },
   components: {
-    StudentDetailsChart
+    StudentDetailsChart,
+    lineChart
   },
   mounted() {
     this.form.id = this.$route.params.id;
@@ -200,6 +204,7 @@ export default {
         if (this.form) {
           this.$nextTick(() => {
             this.$refs.chart.getChart();
+            this.$refs.chart1.getChart();
           });
         }
         getBjclass(this.form.ryb).then(res => {

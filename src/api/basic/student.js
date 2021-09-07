@@ -8,6 +8,14 @@ export function listStudent(query) {
     params: query
   })
 }
+// 个人每次考试成绩折线图
+export function studentGradeBrokenLine(query) {
+  return request({
+    url: '/basic/everytime/studentGradeBrokenLine',
+    method: 'get',
+    params: query
+  })
+}
 
 // 查询学生信息详细
 export function getStudent(id) {
