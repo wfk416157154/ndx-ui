@@ -724,7 +724,7 @@ export default {
             required: false,
             message: "格式不对,只能填写数字",
             trigger: "blur",
-            pattern: /^[0-9]+$/
+            pattern: /^[0-9 a-z]+$/
           }
         ],
         xsdh: [

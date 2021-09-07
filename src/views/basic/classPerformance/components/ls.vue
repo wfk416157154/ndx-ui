@@ -277,6 +277,7 @@ export default {
     },
     // 切换统计图模型
     selectChart(value, index) {
+      console.log(value)
       this.obj[index].series[0].type = value;
       // this.getListClassGrade();
       this.getChart(this.listClassGradeItem, index);
@@ -285,27 +286,33 @@ export default {
     getChart(item, index) {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
-          this.obj[i] = this.option;
+          this.obj[i] = JSON.parse(JSON.stringify(this.option));
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
           this.obj[i + "a"] = echarts.init(chartDom);
-          if (item[i].everyTimeGradeInfoQueries.length != 0) {
-            for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
-              if (j >= item[i].everyTimeGradeInfoQueries.length - 1) {
-                continue;
-              } else {
-                this.obj[i].xAxis[0].data.push(
-                  item[i].everyTimeGradeInfoQueries[j].ksmc
+          for (var k = 1; k < item[i].gradeDiffResps.length; k++) {
+            this.obj[i].series.push(this.option.series[0]);
+          }
+          if (
+            item[i].gradeDiffResps.length != 0 &&
+            k == item[i].gradeDiffResps.length
+          ) {
+            for (let j = 0; j < item[i].gradeDiffResps.length; j++) {
+              for (let z = 0; z < item[i].gradeDiffResps[j].length; z++) {
+                if (j == 1) {
+                  this.obj[i].xAxis[0].data.push(
+                    item[i].gradeDiffResps[j][z].ksmc
+                  );
+                }
+                this.obj[i].series[j].data.push(
+                  item[i].gradeDiffResps[j][z].pjfs
                 );
-                this.obj[i].series[0].data.push(
-                  item[i].everyTimeGradeInfoQueries[j].pjfs
-                );
-                this.obj[i].series[0].name = `(${item[i].rybj})班平均分`;
+                this.obj[i].series[j].name = `(${item[i].rybj})班平均分`;
               }
             }
-            this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
           }
+          this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
         }
       });
     },

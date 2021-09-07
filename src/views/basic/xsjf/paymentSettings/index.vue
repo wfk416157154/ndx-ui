@@ -142,6 +142,7 @@ export default {
       paymentSettingsForm: {
         pageNum: 1,
         pageSize: 10,
+        statusArr: ["1", "3", "4"],
         kzzd1: null,
         qyfzrid: null
       },
@@ -209,7 +210,7 @@ export default {
     // 数据列表
     getList() {
       //默认查询 未毕业的日语班级
-      listBjclass({statusArr: ["1", "3", "4"]}).then(res => {
+      listBjclass(this.paymentSettingsForm).then(res => {
         this.paymentSettingsData = res.rows;
         this.total = res.total;
       });

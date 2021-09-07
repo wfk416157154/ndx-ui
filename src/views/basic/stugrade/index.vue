@@ -62,25 +62,6 @@
           />
         </el-select>
       </el-form-item>
-      <!--<el-form-item label="文理" prop="wl">
-        <el-input
-          v-model="queryParams.wl"
-          placeholder="请输入文理"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
-          <el-option
-            v-for="dict in statusOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">查询</el-button>
         <el-button type="primary" size="mini" @click="getWhole">全部</el-button>
@@ -89,38 +70,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!--<el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['basic:stugrade:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['basic:stugrade:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['basic:stugrade:remove']"
-        >删除</el-button>
-      </el-col>-->
       <el-col :span="1.5">
         <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
@@ -151,7 +100,6 @@
         :data="listAll"
         border
         :summary-method="getSummaries"
-        show-summary
         @selection-change="handleSelectionChange"
         style="width: 100%"
       >
