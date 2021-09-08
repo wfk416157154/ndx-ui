@@ -78,7 +78,7 @@
       <template slot="title">
         <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">折线图</span>
       </template>
-      <lineChart :query="form.xsbh " ref="chart1" />
+      <lineChart :query="form" ref="chart1" />
     </el-collapse-item>
     <el-collapse-item name="3">
       <template slot="title">
@@ -133,7 +133,7 @@ export default {
         xqmc: null,
         ybj: null,
         ryb: null,
-        rybjid: null,
+        rybjmc: null,
         rbsj: null,
         tbsj: null,
         xsbh: null,
