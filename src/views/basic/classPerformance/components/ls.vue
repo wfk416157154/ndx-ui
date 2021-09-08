@@ -29,16 +29,6 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="分制" prop="fz">
-          <el-select v-model="form.studentGradeType" placeholder="请选择分制">
-            <el-option
-              v-for="item in studentGradeType"
-              :key="item.dictValue"
-              :label="item.dictLabel"
-              :value="item.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="考试范围" prop="ksfw" v-if="false" label-width="120px">
           <el-select
             width="100px"
@@ -65,6 +55,16 @@
           <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
           <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            v-for="item in studentGradeType"
+            :key="item.dictValue"
+            type="primary"
+            class="el-btn"
+            plain
+            @click="getAchievement(item.dictValue)"
+          >{{item.dictLabel}}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -156,7 +156,8 @@ export default {
         xq: null,
         ksfw: null,
         maxfs: null,
-        minfs: null
+        minfs: null,
+        studentGradeType: null
       },
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -222,7 +223,7 @@ export default {
       getExaminationPaper: [],
       // echart 图形化实例
       obj: {},
-      studentGradeType:[]
+      studentGradeType: []
     };
   },
   created() {
@@ -325,7 +326,8 @@ export default {
       console.log(`当前页: ${val}`);
     },
     // 查询按钮
-    getAchievement() {
+    getAchievement(fz) {
+      this.form.studentGradeType = fz;
       this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();

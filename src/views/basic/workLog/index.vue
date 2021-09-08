@@ -635,11 +635,11 @@ export default {
         switch (res.data) {
           case 2:
             this.$confirm(
-              `${rybjName}-当天日志已经填写,但未被查看, 是否要去日志主页查看?`,
+              `是否修改《${rybjName}》当前日志?`,
               "提示",
               {
-                confirmButtonText: "去主页",
-                cancelButtonText: "当前页",
+                confirmButtonText: "返回主页",
+                cancelButtonText: "修改日志",
                 type: "warning"
               }
             )
@@ -654,7 +654,7 @@ export default {
           case 3:
             this.ifForm = false;
             this.$confirm(
-              `${rybjName}当天日志已经填写,并已被查看, 请到日志主页查看!`,
+              `您的日志已记录，不能进行修改。联系教务老师!`,
               "提示",
               {
                 confirmButtonText: "确定",

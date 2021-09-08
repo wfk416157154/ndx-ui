@@ -36,16 +36,6 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="分制" prop="xq">
-          <el-select v-model="form.studentGradeType" placeholder="请选择分制">
-            <el-option
-              v-for="item in studentGradeType"
-              :key="item.dictValue"
-              :label="item.dictLabel"
-              :value="item.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="老师姓名" prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名"></el-input>
         </el-form-item>
@@ -98,6 +88,16 @@
         <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+        <el-form-item>
+          <el-button
+            v-for="item in studentGradeType"
+            :key="item.dictValue"
+            type="primary"
+            class="el-btn"
+            plain
+            @click="getAchievement(item.dictValue)"
+          >{{item.dictLabel}}</el-button>
+        </el-form-item>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -188,7 +188,8 @@ export default {
         month: null,
         nj: null,
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        studentGradeType: null
       },
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -363,7 +364,8 @@ export default {
       this.getListClassGrade();
     },
     // 查询按钮
-    getAchievement() {
+    getAchievement(fz) {
+      this.form.studentGradeType = fz;
       //this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
