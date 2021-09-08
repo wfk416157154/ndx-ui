@@ -30,6 +30,9 @@ export default {
             type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
           }
         },
+        legend: {
+          data: []
+        },
         grid: {
           left: "3%",
           right: "4%",
@@ -54,18 +57,12 @@ export default {
             type: "value",
           }
         ],
-        series: [
-          {
-            name: "",
-            type: "line",
-            stack: "总量",
-            data: []
-          }
-        ]
+        series: []
       },
       lineChartForm: {
         studentGradeType: null,
-        xsbh: null
+        xsbh: null,
+        bjid:null
       },
       studentGradeType: []
     };
@@ -80,19 +77,16 @@ export default {
   methods: {
     getChart(studentGradeType) {
       this.option.yAxis[0].max=studentGradeType
-      this.lineChartForm.xsbh = this.query;
+      this.lineChartForm.xsbh = this.query.xsbh;
+      this.lineChartForm.bjid = this.query.ryb;
       this.lineChartForm.studentGradeType = studentGradeType;
+      let chartDom = document.getElementById("line");
+      chartDom = echarts.init(chartDom);
       studentGradeBrokenLine(this.lineChartForm).then(res => {
-        this.option.xAxis[0].data = [];
-        this.option.series[0].data = [];
-        let chartDom = document.getElementById("line");
-        chartDom = echarts.init(chartDom);
-        if (res.data.length != 0) {
-          for (let j = 0; j < res.data.length; j++) {
-            this.option.xAxis[0].data.push(res.data[j].ksmc);
-            this.option.series[0].data.push(res.data[j].kscj);
-            this.option.series[0].name = `(${res.data[j].ksmc})考试分数`;
-          }
+        if (res.code==200) {
+          this.option.legend.data=res.data.legend
+          this.option.xAxis[0].data=res.data.xAxisTitle
+          this.option.series=res.data.yData
           this.option && chartDom.setOption(this.option);
         }
       });
