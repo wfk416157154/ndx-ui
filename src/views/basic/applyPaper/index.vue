@@ -38,7 +38,7 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">申请试卷</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini"  @click="handleAddQt">添加其他试卷</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddQt">添加其他试卷</el-button>
       </el-col>
       <el-button type="primary" icon="el-icon-search" size="mini" @click="statusQuery(9)">成绩未上传</el-button>
       <el-button type="primary" icon="el-icon-search" size="mini" @click="statusQuery(3)">成绩已上传</el-button>
@@ -66,7 +66,7 @@
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="试卷状态" align="center" :formatter="getKszt" prop="lssjzt"/>-->
+      <!--      <el-table-column label="试卷状态" align="center" :formatter="getKszt" prop="lssjzt"/>-->
 
       <el-table-column label="成绩上传状态" align="center" :formatter="getCjsczt" prop="kzzd2">
         <template slot-scope="scope">
@@ -111,7 +111,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改考卷对话框 -->
+    <!-- 申请试卷 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="formState" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
@@ -138,7 +138,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="form.kslx" plac输入eholder="请考试类型">
+          <el-select v-model="form.kslx" placeholder="请考试类型">
             <el-option
               v-for="dict in kslxOptions"
               :key="dict.dictValue"
@@ -181,26 +181,40 @@
     <el-dialog :title="cjsc.title" :visible.sync="cjsc.open" width="600px" append-to-body>
       <el-form ref="formState" :model="cjscForm" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
-          <el-input v-model="cjscForm.lsxm"  readonly/>
+          <el-input v-model="cjscForm.lsxm" disabled/>
         </el-form-item>
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
-            <el-input v-model="cjscForm.bjmc"  readonly/>
+          <el-select v-model="cjscForm.bjid" disabled>
+            <el-option
+              v-for="dict in classList"
+              :key="dict.id"
+              :label="dict.rybjmc"
+              :value="dict.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-input v-model="cjscForm.jcmc"  readonly/>
+          <el-input v-model="cjscForm.jcmc" disabled/>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-input v-model="cjscForm.kslx"  readonly/>
+          <el-select v-model="cjscForm.kslx" disabled>
+            <el-option
+              v-for="dict in kslxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-input v-model="cjscForm.ksfw"  readonly/>
+          <el-input v-model="cjscForm.ksfw" disabled/>
         </el-form-item>
         <el-form-item label="考试时间" label-width="120px" prop="kskssj">
-          <el-input v-model="cjscForm.kskssj" readonly/>
+          <el-input v-model="cjscForm.kskssj" disabled/>
         </el-form-item>
 
         <el-form-item label="备注" label-width="120px" prop="remark">
-          <el-input v-model="cjscForm.remark"  readonly/>
+          <el-input v-model="cjscForm.remark" disabled/>
         </el-form-item>
         <div class="button">
           <el-button
@@ -209,7 +223,8 @@
             size="mini"
             @click="handleCjImport"
             v-has-role="['teacher']"
-          >导入成绩</el-button>
+          >导入成绩
+          </el-button>
         </div>
       </el-form>
 
@@ -265,7 +280,7 @@
           <el-input v-model="formQt.lsxm" placeholder="请输入老师姓名" readonly/>
         </el-form-item>
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
-          <el-select v-model="formQt.bjid" @change="getClassQtList" placeholder="请选择日语班级">
+          <el-select v-model="formQt.bjid" @change="getClassList" placeholder="请选择日语班级">
             <el-option
               v-for="dict in classList"
               :key="dict.id"
@@ -337,8 +352,8 @@
   } from "@/api/basic/examinationPaper";
   import {getToken} from "@/utils/auth";
   import {listBjclass} from "@/api/basic/bjclass";
-  import { addExamSummary } from "@/api/basic/examSummary";
-  import { listTeachingMaterial} from "@/api/basic/teachingMaterial";
+  import {addExamSummary} from "@/api/basic/examSummary";
+  import {listTeachingMaterial} from "@/api/basic/teachingMaterial";
 
   export default {
     name: "ExaminationPaper",
@@ -446,7 +461,7 @@
           // 是否更新已经存在的用户数据
           updateSupport: 0,
           // 设置上传的请求头部
-          headers: { Authorization: "Bearer " + getToken() },
+          headers: {Authorization: "Bearer " + getToken()},
           // 上传考试成绩地址
           fileUrl:
             process.env.VUE_APP_BASE_API +
@@ -476,8 +491,8 @@
       this.getDicts("paper_upload_type").then(response => {
         this.getCjscztList = response.data;
       });
-      listTeachingMaterial().then(resp=>{
-        this.jsList=resp.data
+      listTeachingMaterial().then(resp => {
+        this.jsList = resp.data
       });
     },
     mounted() {
@@ -498,7 +513,8 @@
       // 获取老师所带班级
       getListBjclass() {
         this.glrid = this.$store.state.user.glrid;
-        listBjclass().then(res => {
+        //只查未毕业的
+        listBjclass({statusArr: ["1", "3", "4"]}).then(res => {
           this.classList = res.rows;
           if (res.rows.length == 1) {
             this.queryParams.bjid = res.rows[0].id;
@@ -609,6 +625,9 @@
         this.form.lsxm = this.$store.state.user.nickName;
         this.form.lsid = this.$store.state.user.glrid;
         this.open = true;
+        if (this.classList.length == 1) {
+          this.form.bjid = this.classList[0].id;
+        }
         this.title = "添加考卷";
       },
       /** 新增其他试卷按钮操作 */
@@ -617,6 +636,9 @@
         this.formQt.lsxm = this.$store.state.user.nickName;
         this.formQt.lsid = this.$store.state.user.glrid;
         this.openQt = true;
+        if (this.classList.length == 1) {
+          this.formQt.bjid = this.classList[0].id;
+        }
         this.title = "添加其他考卷";
       },
       /** 成绩是否上传查询操作 */
@@ -627,15 +649,15 @@
       },
       /** 打开成绩上传对话框*/
       handleCjsc(row) {
-        this.cjsc.open =true;
-        this.cjscForm =row;
+        this.cjsc.open = true;
+        this.cjscForm = row;
       },
       // 下载模板操作
       importTemplate() {
         this.download(
           "basic/examinationPaper/importClassGradeTemplate",
           {
-            rybjmc: this.cjscForm.bjmc
+            bjid: this.cjscForm.bjid
           },
           `考试-导入模板.xlsx`
         );
@@ -657,11 +679,11 @@
         });
       },
       /** 提交按钮 */
-      submitForm(status) {
-        if (status === "3") {
-          // this.form = status;
-          this.form.lssjzt = status;
-        }
+      submitForm() {
+        // if (status === "3") {
+        //   // this.form = status;
+        //   this.form.lssjzt = status;
+        // }
         this.$refs.formState.validate(valid => {
           if (valid) {
             if (this.form.id != null) {
@@ -713,8 +735,8 @@
           },
           `考卷-${new Date().getTime()}.zip`
         );
-        // 修改老师试卷状态
-        this.submitForm("3");
+        // // 修改老师试卷状态
+        // this.submitForm("3"); by 2021/9/8可多次下载不改状态
       },
       /** 成绩导入按钮操作 */
       handleCjImport() {
@@ -738,7 +760,6 @@
           type: "success"
         });
         let json = {
-          lssjzt: "4",
           kzzd2: "3",
           id: this.cjscForm.id
         };
@@ -759,13 +780,6 @@
           if (this.classList[i].id == value) {
             this.form.bjid = value;
             this.form.bjmc = this.classList[i].rybjmc;
-          }
-        }
-      },
-      //其他试卷班级id 和 名称
-      getClassQtList(value) {
-        for (let i = 0; i < this.classList.length; i++) {
-          if (this.classList[i].id == value) {
             this.formQt.bjid = value;
             this.formQt.bjmc = this.classList[i].rybjmc;
           }
@@ -777,6 +791,8 @@
           if (this.jsList[i].id == value) {
             this.form.jcid = value;
             this.form.jcmc = this.jsList[i].jcmc;
+            this.formQt.jcid = value;
+            this.formQt.jcmc = this.classList[i].rybjmc;
           }
         }
       },
