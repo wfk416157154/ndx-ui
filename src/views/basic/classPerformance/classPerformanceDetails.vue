@@ -72,10 +72,13 @@
           :prop="item.prop"
         >
           <template slot-scope="scope">
-            <span
-              v-if="item.prop == 'xsxm' || item.prop == 'rybj' ||  item.prop == 'zhcj'"
-            >{{scope.row[item.prop]}}</span>
-
+            <span v-if="item.prop == 'xsxm'">
+              <el-link
+                type="primary"
+                @click.stop="chooseStudent(scope.row)"
+              >{{scope.row[item.prop]}}</el-link>
+            </span>
+            <span v-if="item.prop == 'rybj' ||  item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
             <span v-if="item.prop == 'wl'">{{scope.row[item.prop]}}</span>
             <div v-else>
               <div
@@ -122,6 +125,7 @@ import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import scoreChart from "./components/scoreChart";
 import { listExaminationPaper } from "@/api/basic/examinationPaper";
+import { listStudent } from "@/api/basic/student";
 export default {
   name: "Stugrade",
   components: {},
@@ -379,6 +383,24 @@ export default {
         },
         `学生成绩基础表.xlsx`
       );
+    },
+    // 当选择一个学生进行点击时，查看该学生的成绩分析
+    chooseStudent(row) {
+      let json = {
+        xsbh: row.xsbh,
+      };
+      // 学生基础数据表
+      listStudent(json).then(res => {
+        if (res.rows.length > 0) {
+          // 获取页面中参数配置的路由
+          this.getConfigKey("showStudentDetails").then(resp => {
+            this.router = resp.msg;
+            this.$router.push({
+              path: this.router + res.rows[0].id
+            });
+          });
+        }
+      });
     },
     // 全部按钮
     getWhole() {
