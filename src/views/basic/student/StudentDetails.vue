@@ -126,7 +126,7 @@ export default {
   data() {
     return {
       loading: false,
-      activeNames: ["1", "2", "3"],
+      activeNames: ["1", "2", "3","4"],
       form: {
         id: null,
         xstx: null,
