@@ -370,7 +370,9 @@ export default {
     },
     // 查询按钮
     getAchievement(fz) {
-      this.form.studentGradeType = fz;
+      if(undefined!=fz){
+        this.form.studentGradeType = fz;
+      }
       //this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();

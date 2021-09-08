@@ -300,7 +300,7 @@ export default {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
           this.obj[i] = this.option;
-          obj[i].yAxis[0].max=this.form.studentGradeType
+          this.obj[i].yAxis[0].max=this.form.studentGradeType
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
@@ -328,7 +328,9 @@ export default {
     },
     // 查询按钮
     getAchievement(fz) {
-      this.form.studentGradeType = fz;
+      if(undefined!=fz){
+        this.form.studentGradeType = fz;
+      }
       this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
