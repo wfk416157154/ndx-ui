@@ -52,13 +52,13 @@
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
+          <el-button type="primary" class="el-btn" plain @click="getAchievement()">查询</el-button>
           <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
         </el-form-item>
         <el-form-item>
           <el-button
-            v-for="item in studentGradeType"
+            v-for="item in studentGradeTypeList"
             :key="item.dictValue"
             type="primary"
             class="el-btn"
@@ -157,7 +157,7 @@ export default {
         ksfw: null,
         maxfs: null,
         minfs: null,
-        studentGradeType: null
+        studentGradeType: 150 // 默认150分
       },
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -223,7 +223,7 @@ export default {
       getExaminationPaper: [],
       // echart 图形化实例
       obj: {},
-      studentGradeType: []
+      studentGradeTypeList: []
     };
   },
   created() {
@@ -234,7 +234,7 @@ export default {
       this.selectNj = response.data;
     });
     this.getDicts("studentGradeType").then(response => {
-      this.studentGradeType = response.data;
+      this.studentGradeTypeList = response.data;
     });
   },
   mounted() {
@@ -300,6 +300,7 @@ export default {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
           this.obj[i] = this.option;
+          obj[i].yAxis[0].max=this.form.studentGradeType
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
