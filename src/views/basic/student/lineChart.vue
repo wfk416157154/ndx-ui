@@ -11,7 +11,7 @@
       </el-form-item>
     </el-form>
 
-    <div id="pie" v-if="true" style="width : 90%; height : 340px; display: inline-block;"></div>
+    <div id="line" v-if="true" style="width : 90%; height : 340px; display: inline-block;"></div>
   </div>
 </template>
 
@@ -51,7 +51,7 @@ export default {
         ],
         yAxis: [
           {
-            type: "value"
+            type: "value",
           }
         ],
         series: [
@@ -79,12 +79,13 @@ export default {
   },
   methods: {
     getChart(studentGradeType) {
+      this.option.yAxis[0].max=studentGradeType
       this.lineChartForm.xsbh = this.query;
       this.lineChartForm.studentGradeType = studentGradeType;
       studentGradeBrokenLine(this.lineChartForm).then(res => {
         this.option.xAxis[0].data = [];
         this.option.series[0].data = [];
-        let chartDom = document.getElementById("pie");
+        let chartDom = document.getElementById("line");
         chartDom = echarts.init(chartDom);
         if (res.data.length != 0) {
           for (let j = 0; j < res.data.length; j++) {

@@ -39,6 +39,9 @@
         <el-form-item label="老师姓名" prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名"></el-input>
         </el-form-item>
+        <el-form-item label="届数" prop="bjmc">
+          <el-input v-model="form.bjmc" placeholder="请输入届数"></el-input>
+        </el-form-item>
         <el-form-item label="考试范围" v-if="false" label-width="120px" prop="ksfw">
           <el-select width="100px" height="“10px" v-model="form.ksfw" placeholder="请选择考试范围">
             <el-option
@@ -49,7 +52,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="最高分" prop="maxfs">
+        <!--<el-form-item label="最高分" prop="maxfs">
           <el-input v-model="form.maxfs" placeholder="请输入最高分"></el-input>
         </el-form-item>
         <el-form-item label="最低分" prop="minfs">
@@ -84,7 +87,7 @@
               :value="item.dictValue"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
         <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
@@ -181,6 +184,7 @@ export default {
       form: {
         xqid: null,
         lsxm: null,
+        bjmc:null,
         ksfw: null,
         maxfs: null,
         minfs: null,

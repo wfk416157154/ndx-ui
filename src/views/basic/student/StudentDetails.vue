@@ -74,7 +74,7 @@
         </el-col>
       </el-form>
     </el-collapse-item>
-    <el-collapse-item name="3">
+    <el-collapse-item name="4">
       <template slot="title">
         <span style="margin-left: 20px;font-family: 微软雅黑;color: #00afff">折线图</span>
       </template>
@@ -126,7 +126,7 @@ export default {
   data() {
     return {
       loading: false,
-      activeNames: ["1", "2", "3"],
+      activeNames: ["1", "2", "3","4"],
       form: {
         id: null,
         xstx: null,

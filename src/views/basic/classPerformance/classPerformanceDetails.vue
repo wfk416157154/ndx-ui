@@ -59,6 +59,7 @@
       <el-table
         :data="listAll"
         border
+        :height="$root.tableHeight"
         :summary-method="getSummaries"
         style="width: 100%"
       >

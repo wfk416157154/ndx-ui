@@ -706,17 +706,15 @@ export default {
         yyfs: [
           {
             required: true,
-            message: "格式不对,只能填写数字",
+            message: "不能为空",
             trigger: "blur",
-            pattern: /^[0-9]+$/
           }
         ],
         zhfs: [
           {
             required: true,
-            message: "格式不对,只能填写数字",
+            message: "不能为空",
             trigger: "blur",
-            pattern: /^[0-9]+$/
           }
         ],
         qqh: [
