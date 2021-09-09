@@ -517,7 +517,15 @@ export default {
       let obj = this.paymentAllList[0];
       listPaymentSpecial({ xsbh: obj.xsbh }).then(res => {
         if (res.rows.length > 0) {
-          this.msgError("错误 : 你已提交过减免申请,请勿重复操作");
+          if (res.rows[0].shzt == 0){
+            this.msgError("错误 : 申请已被驳回,不可以再次申请");
+          }else  if (res.rows[0].shzt == 1){
+            this.msgSuccess("申请已通过,不可以再次申请");
+          }else if (res.rows[0].shzt == 2){
+            this.msgError("错误 : 申请还在审核中,不可以再次申请");
+          }else {
+            this.msgError("错误 : 你已提交过减免申请,不可以再次申请");
+          }
         } else {
           exemptPeriodsQuery(obj.xsbh).then(res => {
             if (res.code == 200) {
