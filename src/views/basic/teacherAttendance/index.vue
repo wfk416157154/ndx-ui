@@ -163,12 +163,12 @@
           <dict-tag :options="qjlxOptions" :value="scope.row.qjlx"/>
         </template>
       </el-table-column>
-      <el-table-column label="请假开始时间" align="center" prop="qjkssj" width="180">
+      <el-table-column label="请假开始时间" align="center" prop="qjkssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.qjkssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="请假结束时间" align="center" prop="qjjssj" width="180">
+      <el-table-column label="请假结束时间" align="center" prop="qjjssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.qjjssj, '{y}-{m}-{d}') }}</span>
         </template>
@@ -202,15 +202,15 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="学校事务安排" align="center" prop="xxswap"/>
-      <el-table-column label="补课/调课时间" align="center" prop="bktksj" width="180">
+      <el-table-column label="学校事务安排" align="center" prop="xxswap" v-if="false"  />
+      <el-table-column label="补课/调课时间" align="center" prop="bktksj" v-if="false"  width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.bktksj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="补课内容" align="center" prop="bknr"/>
+      <el-table-column label="补课内容" align="center" prop="bknr" v-if="false" />
       <el-table-column label="备注" align="center" prop="remark"/>
-      <el-table-column label="录入或修改人名称" align="center" prop="userName"/>
+      <el-table-column label="录入或修改人名称" align="center" prop="userName" v-if="false" />
     </el-table>
 
     <pagination
