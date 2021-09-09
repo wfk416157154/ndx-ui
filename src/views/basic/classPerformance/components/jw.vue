@@ -88,12 +88,12 @@
             ></el-option>
           </el-select>
         </el-form-item>-->
-        <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
+        <el-button type="primary" class="el-btn" plain @click="getAchievement()">查询</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
         <el-form-item>
           <el-button
-            v-for="item in studentGradeType"
+            v-for="item in studentGradeTypeList"
             :key="item.dictValue"
             type="primary"
             class="el-btn"
@@ -193,7 +193,7 @@ export default {
         nj: null,
         pageNum: 1,
         pageSize: 10,
-        studentGradeType: null
+        studentGradeType: 150 // 默认150分
       },
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -257,7 +257,7 @@ export default {
       getExaminationPaper: [],
       // 年份
       getYear: [],
-      studentGradeType: []
+      studentGradeTypeList: []
     };
   },
   created() {
@@ -268,7 +268,7 @@ export default {
       this.selectNj = response.data;
     });
     this.getDicts("studentGradeType").then(response => {
-      this.studentGradeType = response.data;
+      this.studentGradeTypeList = response.data;
     });
   },
   mounted() {
@@ -340,6 +340,7 @@ export default {
           obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
           obj[i + "a"] = echarts.init(chartDom);
+          obj[i].yAxis[0].max=this.form.studentGradeType
           if (item[i].everyTimeGradeInfoQueries.length != 0) {
             for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
               if (j >= item[i].everyTimeGradeInfoQueries.length - 1) {
@@ -369,7 +370,9 @@ export default {
     },
     // 查询按钮
     getAchievement(fz) {
-      this.form.studentGradeType = fz;
+      if(undefined!=fz){
+        this.form.studentGradeType = fz;
+      }
       //this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
