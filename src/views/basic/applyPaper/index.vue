@@ -71,7 +71,7 @@
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="180">
+      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
@@ -99,6 +99,7 @@
         </template>
       </el-table-column>
       <el-table-column label="发送人" align="center" prop="fsrmc"/>
+      <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <span v-if="scope.row.lssjzt == '1'">暂无试卷</span>
@@ -627,8 +628,6 @@
         this.openQt = false;
         this.resetQt();
       },
-
-
       // 表单重置
       reset() {
         this.form = {
@@ -682,7 +681,7 @@
           fsrid: null,
           fsrmc: null,
           status: "1",
-          remark: null,
+          remark: "添加的其他试卷",
           dataOrder: null,
           addOrUpdateTime: null,
           kzzd1: null,

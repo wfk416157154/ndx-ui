@@ -66,17 +66,18 @@
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="180">
+      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="试卷状态" align="center" :formatter="getKszt" prop="jwsjzt" />
-      <el-table-column label="发送时间" align="center" prop="fssj" width="180">
+      <el-table-column label="发送时间" align="center" prop="fssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.fssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
