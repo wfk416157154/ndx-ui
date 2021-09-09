@@ -775,6 +775,7 @@ export default {
     /** 导入按钮操作 */
     handleImport() {
       getExaminationPaper(this.ruleForm.kzzd4).then(res => {
+        console.log(res)
         if (res.data.kzzd2 === "3") {
           this.$notify({
             message: "该成绩已上传,不可重复上传",
@@ -814,7 +815,7 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$notify({
-        message: response.msg,
+        message: "上传成功",
         type: "success"
       });
       let json = {
