@@ -109,7 +109,7 @@
         <el-form-item label="异常类型">
           <el-select v-model="abnormalForm.qdyclx" placeholder="请选择活动区域">
             <el-option
-              v-for="item in stuCheckIN"
+              v-for="item in signStuCheckIN"
               :key="item.dictValue"
               :label="item.dictLabel"
               :value="item.dictValue"
@@ -163,6 +163,8 @@ export default {
       selectAllData: false,
       // 签到异常类型
       stuCheckIN: [],
+      // 标记里的签到异常类型
+      signStuCheckIN: [],
       // 签到id 集合
       stuQdIds: []
     };
@@ -171,6 +173,16 @@ export default {
     this.courseInformation = JSON.parse(this.$route.query.query);
     this.getDicts("stuYcChenIn").then(response => {
       this.stuCheckIN = response.data;
+      //克隆一份
+      response.data=JSON.parse(JSON.stringify(response.data));
+      //只留异常的
+      for (let i = 0; i <response.data.length; i++) {
+        if (response.data[i].dictLabel=='未签到'||response.data[i].dictLabel=='正常'||response.data[i].dictLabel=='迟到'){
+          response.data.splice(i, 1);
+          i--;
+        }
+      }
+      this.signStuCheckIN = response.data;
     });
   },
   mounted() {

@@ -397,12 +397,13 @@ export default {
     },
     // 获取校区
     getListSchool() {
-      listSchool().then(response => {
+      listSchool({bjStatusArr : ["1","3","4"]}).then(response => {
         this.selectXqmc = response.rows;
         if (response.rows.length == 1) {
           // 当只查询到一条数据，则直接给这个选择框赋值
           this.queryParams.xqmc = response.rows[0].id;
           this.xqmcOnChange(this.queryParams.xqmc); // 给日语班级赋值
+          this.getList();
         }
       });
     },
