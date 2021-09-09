@@ -517,7 +517,15 @@ export default {
       let obj = this.paymentAllList[0];
       listPaymentSpecial({ xsbh: obj.xsbh }).then(res => {
         if (res.rows.length > 0) {
-          this.msgError("错误 : 你已提交过减免申请,请勿重复操作");
+          if (res.rows[0].shzt == 0){
+            this.msgError("错误 : 申请已被驳回,不可以再次申请");
+          }else  if (res.rows[0].shzt == 1){
+            this.msgSuccess("申请已通过,不可以再次申请");
+          }else if (res.rows[0].shzt == 2){
+            this.msgError("错误 : 申请还在审核中,不可以再次申请");
+          }else {
+            this.msgError("错误 : 你已提交过减免申请,不可以再次申请");
+          }
         } else {
           exemptPeriodsQuery(obj.xsbh).then(res => {
             if (res.code == 200) {
@@ -536,34 +544,33 @@ export default {
     },
     // 减免提交
     specialSubmit() {
-      // if (this.specialForm.jmje.length == 1) {
-      //   let reg = /[1-9]/g;
-      //   if (!reg.test(this.specialForm.jmje)) {
-      //     this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-      //   }
-      // } else {
-      //   let reg = /^[1-9][0-9]*[0-9]$/g;
-      //   if (!reg.test(this.specialForm.jmje)) {
-      //     this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-      //   }
-      // }
-      // if (!this.specialForm.jmzjfileid) {
-      //   this.msgError("错误 : 请上传申请资料");
-      //   return;
-      // }
-      console.log(this.specialForm);
-      // this.$refs["specialForm"].validate(valid => {
-      //   if (valid) {
-      //     exemptApply(this.specialForm).then(res => {
-      //       if (res.code == 200) {
-      //         this.msgSuccess("成功 : 减免申请提交成功");
-      //         this.specialVisible = false;
-      //       }
-      //     });
-      //   } else {
-      //     this.msgError("错误 : 请填写完数据再提交");
-      //   }
-      // });
+      if (this.specialForm.jmje.length == 1) {
+        let reg = /[1-9]/g;
+        if (!reg.test(this.specialForm.jmje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      } else {
+        let reg = /^[1-9][0-9]*[0-9]$/g;
+        if (!reg.test(this.specialForm.jmje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      }
+      if (!this.specialForm.jmzjfileid) {
+        this.msgError("错误 : 请上传申请资料");
+        return;
+      }
+      this.$refs["specialForm"].validate(valid => {
+        if (valid) {
+          exemptApply(this.specialForm).then(res => {
+            if (res.code == 200) {
+              this.msgSuccess("成功 : 减免申请提交成功");
+              this.specialVisible = false;
+            }
+          });
+        } else {
+          this.msgError("错误 : 请填写完数据再提交");
+        }
+      });
     },
     // 取消减免
     specialCancel() {
