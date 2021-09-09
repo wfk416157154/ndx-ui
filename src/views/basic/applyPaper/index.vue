@@ -55,7 +55,17 @@
       <el-table-column label="老师" align="center" prop="lsxm"/>
       <el-table-column label="教材" align="center" prop="jcmc"/>
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx"/>
-      <el-table-column label="考试范围" align="center" prop="ksfw"/>
+      <el-table-column label="考试范围" align="center" prop="ksfw"  >
+        <template slot-scope="scope">
+          <span v-if="'1'==scope.row.kslx">
+            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
+          </span>
+          <span v-else>
+            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
+            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
@@ -112,7 +122,7 @@
     />
 
     <!-- 申请试卷 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="formState" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
           <el-input v-model="form.lsxm" placeholder="请输入老师姓名" readonly/>
@@ -138,7 +148,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="form.kslx" placeholder="请考试类型">
+          <el-select v-model="form.kslx" placeholder="请考试类型" @change="onKslxClick">
             <el-option
               v-for="dict in kslxOptions"
               :key="dict.dictValue"
@@ -148,7 +158,32 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-input v-model="form.ksfw" placeholder="请输入考试范围" maxlength="40"/>
+          <el-select v-model="form.ksfw" v-if="showKsfw" >
+            <el-option
+              v-for="dict in sjglKsfwJsbfList"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+
+          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs" >
+            <el-option
+              v-for="dict in sjglKsfwKsbfList"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+          <span v-if="showKsfwKsJs">--至--</span>
+          <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
+            <el-option
+              v-for="dict in sjglKsfwJsbfList"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="考试时间" label-width="120px" prop="kskssj">
           <el-date-picker
@@ -206,9 +241,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="考试范围" label-width="120px" prop="ksfw">
+        <!--<el-form-item label="考试范围" label-width="120px" prop="ksfw">
           <el-input v-model="cjscForm.ksfw" disabled/>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="考试时间" label-width="120px" prop="kskssj">
           <el-input v-model="cjscForm.kskssj" disabled/>
         </el-form-item>
@@ -274,7 +309,7 @@
     </el-dialog>
 
     <!-- 添加其他试卷对话框 -->
-    <el-dialog :title="title" :visible.sync="openQt" width="600px" append-to-body>
+    <el-dialog :title="title" :visible.sync="openQt" width="800px" append-to-body>
       <el-form ref="formState" :model="formQt" :rules="rules" label-width="80px">
         <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
           <el-input v-model="formQt.lsxm" placeholder="请输入老师姓名" readonly/>
@@ -300,7 +335,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="formQt.kslx" plac输入eholder="请考试类型">
+          <el-select v-model="formQt.kslx" plac输入eholder="请考试类型" @change="onKslxClick">
             <el-option
               v-for="dict in kslxOptions"
               :key="dict.dictValue"
@@ -310,7 +345,32 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-input v-model="formQt.ksfw" placeholder="请输入考试范围" maxlength="40"/>
+          <el-select v-model="formQt.ksfw" v-if="showKsfw" >
+            <el-option
+              v-for="dict in sjglKsfwJsbfList"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+
+          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs" >
+            <el-option
+              v-for="dict in sjglKsfwKsbfList"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+          <span v-if="showKsfwKsJs">--至--</span>
+          <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
+            <el-option
+              v-for="dict in sjglKsfwJsbfList"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="考试时间" label-width="120px" prop="kskssj">
           <el-date-picker
@@ -425,6 +485,12 @@
           ksfw: [
             {required: true, message: '必填', trigger: 'blur'}
           ],
+          ksfw_ksbf: [
+            {required: true, message: '必填', trigger: 'blur'}
+          ],
+          ksfw_jsbf: [
+              {required: true, message: '必填', trigger: 'blur'}
+            ],
           kskssj: [
             {required: true, message: '必填', trigger: 'blur'}
           ]
@@ -478,7 +544,15 @@
         // 成绩上传状态
         getCjscztList: [],
         // 教材名称
-        jsList: []
+        jsList: [],
+        // 是否显示考试范围
+        showKsfw:true,
+        // 是否显示考试范围-开始结束两个部分
+        showKsfwKsJs:false,
+        ksfw_ksbf:null,
+        ksfw_jsbf:null,
+        sjglKsfwKsbfList:[],
+        sjglKsfwJsbfList:[],
       };
     },
     created() {
@@ -490,6 +564,14 @@
       });
       this.getDicts("paper_upload_type").then(response => {
         this.getCjscztList = response.data;
+      });
+      // 试卷管理-考试范围-开始部分
+      this.getDicts("sjgl-ksfw-ksbf").then(response => {
+        this.sjglKsfwKsbfList = response.data;
+      });
+      // 试卷管理-考试范围-结束部分
+      this.getDicts("sjgl-ksfw-jsbf").then(response => {
+        this.sjglKsfwJsbfList = response.data;
       });
       listTeachingMaterial().then(resp => {
         this.jsList = resp.data
@@ -509,7 +591,16 @@
           this.loading = false;
         });
       },
-
+      // 选择考试类型后动态显示隐藏考试范围
+      onKslxClick(val){
+        if("1"===val){
+          this.showKsfw=true
+          this.showKsfwKsJs=false
+        }else{
+          this.showKsfw=false
+          this.showKsfwKsJs=true
+        }
+      },
       // 获取老师所带班级
       getListBjclass() {
         this.glrid = this.$store.state.user.glrid;
@@ -625,6 +716,7 @@
         this.form.lsxm = this.$store.state.user.nickName;
         this.form.lsid = this.$store.state.user.glrid;
         this.open = true;
+        this.ksfw_ksbf="0" // 默认 0=五十音图
         if (this.classList.length == 1) {
           this.form.bjid = this.classList[0].id;
         }
@@ -636,6 +728,7 @@
         this.formQt.lsxm = this.$store.state.user.nickName;
         this.formQt.lsid = this.$store.state.user.glrid;
         this.openQt = true;
+        this.ksfw_ksbf="0" // 默认 0=五十音图
         if (this.classList.length == 1) {
           this.formQt.bjid = this.classList[0].id;
         }
@@ -678,12 +771,19 @@
 
         });
       },
+      // 根据考试类型判断是否需要进行拼接赋值
+      setFormKsfwValue(kslx){
+        if("1"!==kslx){ //考试类型不等于 1=课考，则进行赋值
+          this.form.ksfw=this.ksfw_ksbf+"-"+this.ksfw_jsbf;
+        }
+      },
       /** 提交按钮 */
       submitForm() {
         // if (status === "3") {
         //   // this.form = status;
         //   this.form.lssjzt = status;
         // }
+        this.setFormKsfwValue(this.form.kslx)
         this.$refs.formState.validate(valid => {
           if (valid) {
             if (this.form.id != null) {
@@ -708,6 +808,7 @@
         this.formQt.lssjzt = "4";
         //教务试卷状态:默认已发送
         this.formQt.jwsjzt = "1";
+        this.setFormKsfwValue(this.formQt.kslx)
         this.$refs.formState.validate(valid => {
           if (valid) {
             if (this.formQt.id != null) {

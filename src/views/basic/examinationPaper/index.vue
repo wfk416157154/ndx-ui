@@ -50,7 +50,17 @@
       <el-table-column label="日语老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
-      <el-table-column label="考试范围" align="center" prop="ksfw" />
+      <el-table-column label="考试范围" align="center" prop="ksfw" >
+        <template slot-scope="scope">
+          <span v-if="'1'==scope.row.kslx">
+            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
+          </span>
+          <span v-else>
+            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
+            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="考试时间" align="center" prop="kskssj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
@@ -207,7 +217,9 @@ export default {
       // 老师试卷状态
       getStatusList: [],
       // 考试信息id
-      examinationInformationId: ""
+      examinationInformationId: "",
+      sjglKsfwKsbfList:[],
+      sjglKsfwJsbfList:[],
     };
   },
   created() {
@@ -218,6 +230,14 @@ export default {
     });
     this.getDicts("sjzt").then(response => {
       this.getStatusList = response.data;
+    });
+    // 试卷管理-考试范围-开始部分
+    this.getDicts("sjgl-ksfw-ksbf").then(response => {
+      this.sjglKsfwKsbfList = response.data;
+    });
+    // 试卷管理-考试范围-结束部分
+    this.getDicts("sjgl-ksfw-jsbf").then(response => {
+      this.sjglKsfwJsbfList = response.data;
     });
   },
   methods: {
