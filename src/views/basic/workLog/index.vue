@@ -61,10 +61,9 @@
         <div class="log-content">
           <el-form-item label-width="120px" prop="kczj">
             <el-input
-              @blur="sendOut"
+              @blur="sendOut('$if')"
               resize="none"
               type="textarea"
-              :autosize="{ minRows: 5, maxRows: 5 }"
               placeholder="请输入内容"
               v-model="ruleForm.kczj"
             ></el-input>
@@ -544,7 +543,7 @@ export default {
       let json = {
         jwsjzt: "1", //教务试卷状态(0未发送1已发送)
         kzzd2: "9", //未上传的考卷
-        bjid: this.bjNameId//班级
+        bjid: this.bjNameId //班级
       };
       listExaminationPaper(json).then(res => {
         this.getListExaminationPaper = res.rows;
@@ -623,7 +622,7 @@ export default {
       for (let i = 0; i < this.getListBjclass.length; i++) {
         if (this.getListBjclass[i].id === this.bjNameId) {
           var rybjName = this.getListBjclass[i].rybjmc;
-          this.bjName=rybjName;
+          this.bjName = rybjName;
         }
       }
       if (this.logTiem) {
@@ -634,15 +633,11 @@ export default {
       workLogStatusQuery(json).then(res => {
         switch (res.data) {
           case 2:
-            this.$confirm(
-              `是否修改《${rybjName}》当前日志?`,
-              "提示",
-              {
-                confirmButtonText: "返回主页",
-                cancelButtonText: "修改日志",
-                type: "warning"
-              }
-            )
+            this.$confirm(`是否修改《${rybjName}》当前日志?`, "提示", {
+              confirmButtonText: "返回主页",
+              cancelButtonText: "修改日志",
+              type: "warning"
+            })
               .then(() => {
                 this.skipToLogHomePage();
               })
@@ -671,8 +666,8 @@ export default {
             break;
           default:
             this.findTemplateQuery(); // 查询课表的课中模板
-            this.files1=[]
-            this.files2=[]
+            this.files1 = [];
+            this.files2 = [];
             break;
         }
       });
@@ -780,6 +775,7 @@ export default {
     /** 导入按钮操作 */
     handleImport() {
       getExaminationPaper(this.ruleForm.kzzd4).then(res => {
+        console.log(res)
         if (res.data.kzzd2 === "3") {
           this.$notify({
             message: "该成绩已上传,不可重复上传",
@@ -819,7 +815,7 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$notify({
-        message: response.msg,
+        message: "上传成功",
         type: "success"
       });
       let json = {
@@ -837,8 +833,8 @@ export default {
         id: this.rzid,
         kzzd2: "3",
         kzzd3: this.ruleForm.kzzd3,
-    //之所以不直接用this.ruleForm.kzzd4是因为上传后getListExaminationPaper就没有对应值了
-        kzzd4: this.getKsName,
+        //之所以不直接用this.ruleForm.kzzd4是因为上传后getListExaminationPaper就没有对应值了
+        kzzd4: this.getKsName
       };
       updateBasicTeacherWorkLog(rzjson);
       this.getList();
@@ -930,7 +926,7 @@ export default {
       });
     },
     // 保存
-    sendOut() {
+    sendOut($if) {
       if (true == this.sfbrz) {
         if (null == this.logTiem) {
           this.msgError("请选择补哪一天的日志！");
@@ -939,7 +935,7 @@ export default {
       }
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          this.addWorkLog();
+          this.addWorkLog($if);
         } else {
           this.$notify({
             message: "请先填写日志内容",
@@ -961,7 +957,8 @@ export default {
       }
     },
     // 第一次添加日志时， this.rzid为空
-    addWorkLog() {
+    addWorkLog($if) {
+      $if = $if == "$if" ? true : false;
       this.ruleForm.kzzd1 = this.bjNameId;
       this.ruleForm.lsid = this.$store.state.user.glrid;
       addSave(this.ruleForm).then(async res => {
@@ -982,10 +979,12 @@ export default {
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
           }
+          if ($if) return;
           this.$notify({
             message: "日志保存成功",
             type: "success"
           });
+          this.skipToLogHomePage();
         }
       });
     },

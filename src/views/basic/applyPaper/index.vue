@@ -66,8 +66,6 @@
           <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <!--      <el-table-column label="试卷状态" align="center" :formatter="getKszt" prop="lssjzt"/>-->
-
       <el-table-column label="成绩上传状态" align="center" :formatter="getCjsczt" prop="kzzd2">
         <template slot-scope="scope">
           <span v-if="scope.row.kzzd2 == '3'">已上传</span>
@@ -103,6 +101,7 @@
         </template>
       </el-table-column>
     </el-table>
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -733,7 +732,7 @@
           {
             kzzd1: row.id
           },
-          `考卷-${new Date().getTime()}.zip`
+          `考卷-${row.bjmc}-${row.ksfw}.zip`
         );
         // // 修改老师试卷状态
         // this.submitForm("3"); by 2021/9/8可多次下载不改状态

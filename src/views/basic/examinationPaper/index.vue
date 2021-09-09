@@ -75,12 +75,12 @@
             @click="handleUpdate(scope.row)"
             v-if="scope.row.jwsjzt == '0'"
           >上传试卷</el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             @click="submitForm(scope.row)"
             v-if="scope.row.jwsjzt == '0'"
-          >发送试卷</el-button>
+          >发送试卷</el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -170,7 +170,7 @@ export default {
         jcmc: null,
         jwsjzt: null,
         lssjzt: null,
-        status: "1",// 默认查询正常的数据
+        status: "1", // 默认查询正常的数据
         dataOrder: null,
         addOrUpdateTime: null,
         kzzd1: null,
@@ -207,7 +207,8 @@ export default {
       // 老师试卷状态
       getStatusList: [],
       // 考试信息id
-      examinationInformationId: ""
+      examinationInformationId: "",
+      $row: null
     };
   },
   created() {
@@ -305,36 +306,24 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.$row = row;
       this.examinationInformationId = row.id;
       this.upload.open = true;
     },
     // 考卷发送
     submitForm(row) {
-      this.$confirm("确定是否发送?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.form = row;
-          this.form.jwsjzt = "1";
-          this.form.lssjzt = "2";
-          if (this.form.id != null) {
-            this.form.fsrid = this.$store.state.user.glrid
-            this.form.fsrmc = this.$store.state.user.nickName
-            updateExaminationPaper(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        })
-        .catch(err => {
-          this.$message({
-            type: "info",
-            message: "已取消发送"
-          });
+      this.form = row;
+      this.form.jwsjzt = "1";
+      this.form.lssjzt = "2";
+      if (this.form.id != null) {
+        this.form.fsrid = this.$store.state.user.glrid;
+        this.form.fsrmc = this.$store.state.user.nickName;
+        updateExaminationPaper(this.form).then(response => {
+          this.msgSuccess("上传并试卷成功");
+          this.open = false;
+          this.getList();
         });
+      }
     },
     /** 导入按钮操作 */
     handleImport() {
@@ -363,11 +352,7 @@ export default {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      this.$notify({
-        title: "成功",
-        message: "上传试卷成功",
-        type: "success"
-      });
+      this.submitForm(this.$row);
       data.kzzd1 = this.examinationInformationId;
 
       // 保存文件上传地址

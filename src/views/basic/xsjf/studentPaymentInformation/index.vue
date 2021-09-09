@@ -544,34 +544,33 @@ export default {
     },
     // 减免提交
     specialSubmit() {
-      // if (this.specialForm.jmje.length == 1) {
-      //   let reg = /[1-9]/g;
-      //   if (!reg.test(this.specialForm.jmje)) {
-      //     this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-      //   }
-      // } else {
-      //   let reg = /^[1-9][0-9]*[0-9]$/g;
-      //   if (!reg.test(this.specialForm.jmje)) {
-      //     this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
-      //   }
-      // }
-      // if (!this.specialForm.jmzjfileid) {
-      //   this.msgError("错误 : 请上传申请资料");
-      //   return;
-      // }
-      console.log(this.specialForm);
-      // this.$refs["specialForm"].validate(valid => {
-      //   if (valid) {
-      //     exemptApply(this.specialForm).then(res => {
-      //       if (res.code == 200) {
-      //         this.msgSuccess("成功 : 减免申请提交成功");
-      //         this.specialVisible = false;
-      //       }
-      //     });
-      //   } else {
-      //     this.msgError("错误 : 请填写完数据再提交");
-      //   }
-      // });
+      if (this.specialForm.jmje.length == 1) {
+        let reg = /[1-9]/g;
+        if (!reg.test(this.specialForm.jmje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      } else {
+        let reg = /^[1-9][0-9]*[0-9]$/g;
+        if (!reg.test(this.specialForm.jmje)) {
+          this.msgError("错误 : 缴费金额不能为负数和0,且只能输入数字");
+        }
+      }
+      if (!this.specialForm.jmzjfileid) {
+        this.msgError("错误 : 请上传申请资料");
+        return;
+      }
+      this.$refs["specialForm"].validate(valid => {
+        if (valid) {
+          exemptApply(this.specialForm).then(res => {
+            if (res.code == 200) {
+              this.msgSuccess("成功 : 减免申请提交成功");
+              this.specialVisible = false;
+            }
+          });
+        } else {
+          this.msgError("错误 : 请填写完数据再提交");
+        }
+      });
     },
     // 取消减免
     specialCancel() {
