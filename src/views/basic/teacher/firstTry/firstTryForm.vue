@@ -29,6 +29,29 @@
         <el-form-item label="期望地区">
           <el-input v-model="form.yxdq"></el-input>
         </el-form-item>
+        <el-form-item label="文件" prop="wjid">
+          <el-upload
+            ref="upload"
+            :limit="maxFileNum"
+            accept=".*"
+            :headers="upload.headers"
+            :action="upload.url"
+            :disabled="upload.isUploading"
+            :on-remove="handleRemove"
+            :on-progress="handleFileUploadProgress"
+            :on-success="handleFileSuccess"
+            :auto-upload="true"
+            :file-list="wjidFile"
+            drag
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              将文件拖到此处，或
+              <em>点击上传</em>
+            </div>
+            <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传50M以下文件！</div>
+          </el-upload>
+        </el-form-item>
         <!-- <el-form-item label="初试结果">
           <el-select v-model="form.mszt" clearable placeholder="请选择">
             <el-option
@@ -42,6 +65,9 @@
         <el-form-item label-width="90px" label="录入人账号">
           <el-input disabled v-model="form.lrrid"></el-input>
         </el-form-item>
+        <el-form-item label-width="90px" label="备注">
+          <el-input type="textarea" v-model="form.remark"></el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -53,6 +79,9 @@
 
 <script>
 import { teacherPersonnel, editTeacherPersonnel } from "@/api/basic/firstTry";
+import { getToken } from "@/utils/auth";
+import { addImg, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
@@ -63,10 +92,30 @@ export default {
         lrrid: this.$store.state.user.name,
         xb: "",
         yxdq: "",
-        jtzz: ""
+        jtzz: "",
+        remark:null
       },
       // 初试结果
-      resultList: []
+      resultList: [],
+      // 上传参数
+      upload: {
+        // 是否显示弹出层
+        open: false,
+        // 弹出层标题
+        title: "上传文件",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      // 文件id数组
+      wjidFile:[],
+      // 最多上传的文件数量
+      maxFileNum:3
     };
   },
   created() {
@@ -106,6 +155,13 @@ export default {
     editFirstTryForm(value) {
       this.dialogVisible = true;
       this.form = value;
+      this.wjidFile=this.ifNullToNewArray(value.jlArr);
+    },
+    ifNullToNewArray(arr){
+      if(null==arr){
+        return [];
+      }
+      return arr;
     },
     // 数据初始化
     cancel() {
@@ -119,7 +175,48 @@ export default {
         jtzz: "",
         id: null
       };
-    }
+    },
+    //公共图片删除
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.ifFileLimit(fileList.length," 个文件")
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      let data = response.data;
+      data.kzzd1 = this.form.kzzd1 || secretKey();
+      this.form.kzzd1 = data.kzzd1;
+      addImg(data).then(res => {
+        file.id=res.data.id;
+        this.msgSuccess("文件上传成功")
+        this.wjidFile=fileList;
+      });
+      this.$refs.upload.clearFiles();
+    },
+    // 图片限制判断
+    ifFileLimit(num,msg) {
+      if (num >= this.maxFileNum) {
+        this.$message({
+          message: "最多上传 "+this.maxFileNum+msg,
+          type: "warning"
+        });
+      }
+    },
   }
 };
 </script>

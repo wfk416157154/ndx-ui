@@ -28,6 +28,19 @@
       <el-table-column property="zt" label="复试结果" :formatter="getResult"></el-table-column>
       <el-table-column property="dhsj" label="来汉时间"></el-table-column>
       <el-table-column property="pqdq" label="派遣地区"></el-table-column>
+      <el-table-column property="jlArr" label="简历下载" width="280px" >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            v-for="(item,index) in scope.row.jlArr"
+            :key="index"
+            @click="downloadFileName(item.wjmc)"
+          >{{item.wjmc}}</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column property="fpbjqk" label="分配班级情况"></el-table-column>
+      <el-table-column property="remark" label="备注"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">审核</el-button>
@@ -91,7 +104,13 @@ export default {
     // 状态字典翻译 面试结果
     getResult(row, column) {
       return this.selectDictLabel(this.result, row.zt);
-    }
+    },
+    /** 下载文件操作 */
+    downloadFileName(fileName) {
+      this.download('file/filetable/download', {
+        wjmc:fileName
+      }, fileName)
+    },
   }
 };
 </script>
