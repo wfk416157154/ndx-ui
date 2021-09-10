@@ -17,7 +17,7 @@
       <el-form-item label="选择日期" v-if="showxzrq">
         <el-date-picker
           v-model="logTiem"
-          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
           type="date"
           placeholder="选择日期时间"
           @change="onLogTime"
@@ -359,6 +359,7 @@
         :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
+        :on-error="handleFileError"
         :auto-upload="false"
         :data="{ ksmc: getKsName, kslx: ruleForm.kzzd3, kssj: getKssj }"
         drag
@@ -564,7 +565,7 @@ export default {
       this.getWorkLogTemplateQuery();
     },
     // 获取课中课表信息
-    getList() {
+    getList($false) {
       /* 默认查询角色是教务员的用户 */
       /*selectInRoleUser({ roleId: "4" }).then(res => {
         this.getListUser = res.rows;
@@ -607,14 +608,15 @@ export default {
         listBjclass().then(res => {
           if (res.rows.length > 0) {
             this.bjNameId = res.rows[0].id;
-            this.getWorkLogTemplateQuery();
+            this.getWorkLogTemplateQuery($false);
           }
         });
       }
     },
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
-    getWorkLogTemplateQuery() {
+    getWorkLogTemplateQuery($false) {
       this.initGetListExaminationPaper();
+      if ($false == "false") return;
       this.getWorkLogStatusQuery();
     },
     // 查询日志状态(1:未填写,2:已填写未发送,3:已发送)
@@ -778,8 +780,12 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      getExaminationPaper(this.ruleForm.kzzd4).then(res => {
-        if (res.data.kzzd2 === "3") {
+      let obj = {
+        ksfw: this.ruleForm.kzzd4,
+        bjid: this.bjNameId
+      };
+      listExaminationPaper(obj).then(res => {
+        if (res.rows[0].kzzd2 === "3") {
           this.$notify({
             message: "该成绩已上传,不可重复上传",
             type: "error"
@@ -812,16 +818,17 @@ export default {
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;
     },
+    // 上传失败
+    handleFileError(err, file, fileList) {
+      console.log("errerrerrerr", err);
+    },
     // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
+    async handleFileSuccess(response, file, fileList) {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      if(response.code==200){
-        this.$notify({
-          message: "上传成功",
-          type: "success"
-        });
+      if (response.code == 200) {
+        this.msgSuccess("上传成功");
         let json = {
           lssjzt: "4",
           kzzd2: "3",
@@ -841,17 +848,10 @@ export default {
           kzzd4: this.getKsName
         };
         updateBasicTeacherWorkLog(rzjson);
-      }else {
-        this.$notify({
-          message: response.msg,
-          type: "error"
-        });
+      } else {
+        await this.msgError("上传失败");
       }
-
-
-
-
-      this.getList();
+      this.getList("false");
     },
     // 提交上传文件
     submitFileForm() {
@@ -974,6 +974,7 @@ export default {
     addWorkLog($if) {
       $if = $if == "$if" ? true : false;
       this.ruleForm.kzzd1 = this.bjNameId;
+      this.ruleForm.date = this.logTiem;
       this.ruleForm.lsid = this.$store.state.user.glrid;
       addSave(this.ruleForm).then(async res => {
         this.rzid = res.data.id;

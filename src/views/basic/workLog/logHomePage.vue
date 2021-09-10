@@ -2,7 +2,7 @@
   <div class="Log-home-page">
     <el-form ref="queryParams" :inline="true" :model="queryParams">
       <el-form-item label="校区" v-if="xqIsShow">
-        <el-select v-model="queryParams.xqid" @change="getSchoolId" placeholder="请选择校区">
+        <el-select v-model="queryParams.xqid" filterable @change="getSchoolId" placeholder="请选择校区">
           <el-option
             v-for="(item,index) in getListSchool"
             :label="item.xxmc"
@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级">
-        <el-select v-model="queryParams.rybid" placeholder="请选择班级">
+        <el-select v-model="queryParams.rybid" filterable placeholder="请选择班级">
           <el-option
             v-for="(item,index) in getBjClass"
             :label="item.rybjmc"
@@ -164,7 +164,11 @@ export default {
     // 获取校区
     async getSchool() {
       let listSchoolResult = await listSchool();
-      this.getListSchool = listSchoolResult.rows;
+      this.getListSchool = listSchoolResult.rows.map(value => {
+        value.value = value.id;
+        value.label = value.xxmc;
+        return value;
+      });
       if (listSchoolResult.code == 200 && listSchoolResult.rows.length == 1) {
         this.queryParams.xqid = listSchoolResult.rows[0].id;
         this.getSchoolId(this.queryParams.xqid);
@@ -208,7 +212,11 @@ export default {
     // 获取班级
     getSchoolId(schoolId) {
       listBjclass({ kzzd1: schoolId }).then(res => {
-        this.getBjClass = res.rows;
+        this.getBjClass = res.rows.map(value => {
+          value.value = value.id;
+          value.label = value.rybjmc;
+          return value;
+        });
         if (res.rows.length == 1) {
           this.queryParams.rybid = res.rows[0].id;
         }
