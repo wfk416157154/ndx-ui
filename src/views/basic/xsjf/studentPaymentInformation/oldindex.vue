@@ -111,19 +111,11 @@
           <img width="100%" :src="dialogImageUrl" alt />
         </el-form-item>
         <el-form-item label="转账时间" prop="zzsj">
-          <!-- <el-date-picker
+          <el-date-picker
             type="date"
             v-model="studentPaymentInformationForm.zzsj"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
-          ></el-date-picker>-->
-          <el-date-picker
-            v-model="studentPaymentInformationForm.zzsj"
-            type="datetimerange"
-            range-separator="至"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -169,16 +161,22 @@
           </el-select>
         </el-form-item>
         <el-form-item label="减免金额" prop="jmje">
-          <el-input v-model="specialForm.jmje" placeholder="请输入每期减免的金额"></el-input>
+          <el-input v-model="specialForm.jmje" placeholder="请输入减免总金额"></el-input>
         </el-form-item>
-        <el-form-item label="减免期数" prop="jmqsSz">
-          <el-checkbox-group v-model="specialForm.jmqsSz">
+        <el-form-item
+          :label="['第' + item + '期']"
+          prop="jmqsSz"
+          v-for="(item,index) in exemptPeriodsQueryList"
+          :key="index"
+        >
+          <!-- <el-checkbox-group v-model="specialForm.jmqsSz">
             <el-checkbox
               :label="item"
               v-for="(item,index) in exemptPeriodsQueryList"
               :key="index"
             >第{{item}}期</el-checkbox>
-          </el-checkbox-group>
+          </el-checkbox-group>-->
+          <el-input v-model="specialForm.jmqsSz[index]" placeholder="请输入每期减免的金额"></el-input>
         </el-form-item>
         <el-form-item label="申请原因" prop="sqyy">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="specialForm.sqyy"></el-input>
@@ -519,7 +517,15 @@ export default {
       let obj = this.paymentAllList[0];
       listPaymentSpecial({ xsbh: obj.xsbh }).then(res => {
         if (res.rows.length > 0) {
-          this.msgError("错误 : 你已提交过减免申请,请勿重复操作");
+          if (res.rows[0].shzt == 0){
+            this.msgError("错误 : 申请已被驳回,不可以再次申请");
+          }else  if (res.rows[0].shzt == 1){
+            this.msgSuccess("申请已通过,不可以再次申请");
+          }else if (res.rows[0].shzt == 2){
+            this.msgError("错误 : 申请还在审核中,不可以再次申请");
+          }else {
+            this.msgError("错误 : 你已提交过减免申请,不可以再次申请");
+          }
         } else {
           exemptPeriodsQuery(obj.xsbh).then(res => {
             if (res.code == 200) {
