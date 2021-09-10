@@ -414,7 +414,7 @@ import { listBjclass } from "@/api/basic/bjclass";
 import { listUser, selectInRoleUser } from "@/api/system/user";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { addExamSummary } from "@/api/basic/examSummary";
-
+import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
 export default {
   data() {
     return {
@@ -571,8 +571,12 @@ export default {
       });*/
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        this.msgError("当前日志只能预览,不可编辑");
-        this.$refs.prent.style.pointerEvents = "none";
+        homePageQuery({ id: this.$route.params.id }).then(res => {
+          if (res.rows[0].isRead == 1) {
+            this.msgError("当前日志只能预览,不可编辑");
+            this.$refs.prent.style.pointerEvents = "none";
+          }
+        });
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
           if (res.data.length != 0) {
@@ -775,7 +779,6 @@ export default {
     /** 导入按钮操作 */
     handleImport() {
       getExaminationPaper(this.ruleForm.kzzd4).then(res => {
-        console.log(res)
         if (res.data.kzzd2 === "3") {
           this.$notify({
             message: "该成绩已上传,不可重复上传",

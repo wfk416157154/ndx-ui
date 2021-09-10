@@ -84,10 +84,6 @@
               <span>课程内容 :</span>
               <span>{{item.kczj}}</span>
             </div>
-            <!-- <div>
-              <span>备课内容 :</span>
-              <span>{{item.bkBcrz}}</span>
-            </div>-->
             <div>
               <span>课中内容 :</span>
               <span v-for="(list,j) in item.teacherWorkLogLessonList" :key="j">{{list.content}}</span>
