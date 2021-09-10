@@ -9,6 +9,15 @@ export function listTeacherAttendance(query) {
   })
 }
 
+// 查询某个班级在某个时间范围内的课堂签到情况列表
+export function queryClassQiandaoList(query) {
+  return request({
+    url: '/basic/stuQiandao/queryClassQiandaoList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师考勤详细
 export function getTeacherAttendance(id) {
   return request({
