@@ -56,6 +56,16 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="缴费时间" prop="jzfs">
+        <el-date-picker
+          v-model="paymentConfirmationAuditForm.zzsjDate"
+          type="datetimerange"
+          range-separator="至"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
       <el-form-item>
         <el-button type="success" size="mini" @click="getList('3')">已审批</el-button>
         <el-button type="warning" size="mini" @click="getList('2')">未审批</el-button>
@@ -197,7 +207,7 @@ export default {
     this.getDicts("payment_status").then(res => {
       this.paymentStatus = res.data;
     });
-    this.getList("2");// 默认进来只查询待审批的数据
+    this.getList("2"); // 默认进来只查询待审批的数据
   },
   methods: {
     // 获取班级
@@ -234,11 +244,11 @@ export default {
     paymentSubmit(row, status) {
       let json = {
         shzt: status,
-        xsbh : row.xsbh,
-        qsid : row.qsid,
-        batchid : row.batchid,
+        xsbh: row.xsbh,
+        qsid: row.qsid,
+        batchid: row.batchid
       };
-      if (0==status) {
+      if (0 == status) {
         this.$confirm(
           "点击'未收到'将删除当条缴费记录,并且需要当事人重新提交缴费记录, 是否继续?",
           "提示",
