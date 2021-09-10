@@ -817,29 +817,40 @@ export default {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      this.$notify({
-        message: "上传成功",
-        type: "success"
-      });
-      let json = {
-        lssjzt: "4",
-        kzzd2: "3",
-        id: this.ruleForm.kzzd4,
-        kzzd3: this.rzid
-      };
-      // 改变老师试卷状态
-      updateExaminationPaper(json).then(res => {
-        this.kscjzj = true;
-      });
-      // 日志表变为上传状态
-      let rzjson = {
-        id: this.rzid,
-        kzzd2: "3",
-        kzzd3: this.ruleForm.kzzd3,
-        //之所以不直接用this.ruleForm.kzzd4是因为上传后getListExaminationPaper就没有对应值了
-        kzzd4: this.getKsName
-      };
-      updateBasicTeacherWorkLog(rzjson);
+      if(response.code==200){
+        this.$notify({
+          message: "上传成功",
+          type: "success"
+        });
+        let json = {
+          lssjzt: "4",
+          kzzd2: "3",
+          id: this.ruleForm.kzzd4,
+          kzzd3: this.rzid
+        };
+        // 改变老师试卷状态
+        updateExaminationPaper(json).then(res => {
+          this.kscjzj = true;
+        });
+        // 日志表变为上传状态
+        let rzjson = {
+          id: this.rzid,
+          kzzd2: "3",
+          kzzd3: this.ruleForm.kzzd3,
+          //之所以不直接用this.ruleForm.kzzd4是因为上传后getListExaminationPaper就没有对应值了
+          kzzd4: this.getKsName
+        };
+        updateBasicTeacherWorkLog(rzjson);
+      }else {
+        this.$notify({
+          message: response.msg,
+          type: "error"
+        });
+      }
+
+
+
+
       this.getList();
     },
     // 提交上传文件
