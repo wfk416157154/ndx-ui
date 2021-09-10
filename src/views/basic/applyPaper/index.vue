@@ -685,6 +685,7 @@
         // }
         this.$refs.formState.validate(valid => {
           if (valid) {
+            this.getClassList(this.form.bjid)
             if (this.form.id != null) {
               updateExaminationPaper(this.form).then(response => {
                 this.msgSuccess("修改成功");
@@ -709,6 +710,7 @@
         this.formQt.jwsjzt = "1";
         this.$refs.formState.validate(valid => {
           if (valid) {
+            this.getClassList(this.formQt.bjid)
             if (this.formQt.id != null) {
               updateExaminationPaper(this.formQt).then(response => {
                 this.msgSuccess("修改成功");
@@ -754,18 +756,25 @@
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
         // this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
-        this.$notify({
-          message: response.msg,
-          type: "success"
-        });
-        let json = {
-          kzzd2: "3",
-          id: this.cjscForm.id
-        };
-        // 改变老师试卷状态
-        updateExaminationPaper(json).then(res => {
-          this.kscjzj = true;
-        });
+        if(response.code==200){
+          let json = {
+            kzzd2: "3",
+            id: this.cjscForm.id
+          };
+          // 改变老师试卷状态
+          updateExaminationPaper(json).then(res => {
+            this.kscjzj = true;
+          });
+          this.$notify({
+            message: response.msg,
+            type: "success"
+          });
+        }else {
+          this.$notify({
+            message: response.msg,
+            type: "error"
+          });
+        }
         this.getList();
 
       },
