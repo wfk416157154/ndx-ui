@@ -31,7 +31,7 @@
       <el-table-column label="班级" prop="rybjmc"></el-table-column>
       <el-table-column label="老师" prop="lsxm"></el-table-column>
       <el-table-column label="日期" prop="sjrq"></el-table-column>
-      <el-table-column label="上课时间" prop="sksj" width="300"  > 
+      <el-table-column label="上课时间" prop="sksj" width="300"  >
         <template slot-scope="scope">
           <div style="display : flex">
             <dict-tag :options="weeksOptions" :value="scope.row.sksj.split('-')[0]" /> -
@@ -42,7 +42,15 @@
         </template>
       </el-table-column>
       <el-table-column label="考勤异常学生" prop="kqycxsxm"></el-table-column>
-      <el-table-column label="老师签到情况" prop="lsqdqk"></el-table-column>
+      <el-table-column label="老师签到情况" prop="lsqdqk" >
+        <template slot-scope="scope">
+          <div style="display : flex" v-if="scope.row.lsqdqk!=''&&scope.row.lsqdqk!=null">
+            <dict-tag :options="teaCheckInTypeOptions" :value="scope.row.lsqdqk.split('-')[0]" />
+            <span>-{{scope.row.lsqdqk.split('-')[1]}}分-</span>
+            <span>{{scope.row.lsqdqk.split('-')[2]}}</span>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-link type="primary" @click="submitQuery(scope.row)">
@@ -64,7 +72,8 @@ export default {
       attendanceList: [],
       classList: [],
       weeksOptions: [],
-      statusOptions: []
+      statusOptions: [],
+      teaCheckInTypeOptions:[]
     };
   },
   created() {
@@ -80,6 +89,9 @@ export default {
     });
     this.getDicts("weeks").then(res => {
       this.weeksOptions = res.data;
+    });
+    this.getDicts("tea_checkIn_type").then(res => {
+      this.teaCheckInTypeOptions = res.data;
     });
   },
   methods: {
