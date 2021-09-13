@@ -134,29 +134,32 @@
       </ul>
     </div>
 
-    <el-table :data="optionalClassesAll" border style="width: 100%">
-      <el-table-column prop="xxmc" label="学校名称" width="180"></el-table-column>
-      <el-table-column prop="rybjmc" label="班级名称" width="180"></el-table-column>
-      <el-table-column prop="bjrs" label="班级人数"></el-table-column>
-      <el-table-column prop="kbsj" label="开班时间"></el-table-column>
-      <el-table-column prop="updateTime" label="分配时间"></el-table-column>
-      <el-table-column prop="kbsj" label="已分配的老师姓名">
-        <template slot-scope="scope">
-          <span
-            v-for="(item,index) in scope.row.lsxmArr"
-            :key="index"
-            style="margin-right : 10px"
-          >{{item}}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="allQueryParams.pageNum"
-      :limit.sync="allQueryParams.pageSize"
-      @pagination="selectAllAllotTeacherList"
-    />
+    <div class="wrap-class clearfix">
+      <el-button type="warning" icon="el-icon-download" style="margin-bottom: 10px" @click="exportTeacher">导出数据</el-button>
+      <el-table :data="optionalClassesAll" border style="width: 100%">
+        <el-table-column prop="xxmc" label="学校名称" width="180"></el-table-column>
+        <el-table-column prop="rybjmc" label="班级名称" width="180"></el-table-column>
+        <el-table-column prop="bjrs" label="班级人数"></el-table-column>
+        <el-table-column prop="kbsj" label="开班时间"></el-table-column>
+        <el-table-column prop="updateTime" label="分配时间"></el-table-column>
+        <el-table-column prop="lsxmArr" label="已分配的老师姓名">
+          <template slot-scope="scope">
+            <span
+              v-for="(item,index) in scope.row.lsxmArr"
+              :key="index"
+              style="margin-right : 10px"
+            >{{item}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="allQueryParams.pageNum"
+        :limit.sync="allQueryParams.pageSize"
+        @pagination="selectAllAllotTeacherList"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -351,6 +354,14 @@ export default {
           message: "请选择老师"
         });
       }
+    },
+    // 导出已分配的老师信息
+    exportTeacher(){
+      this.download(
+        "basic/bjclass/exportAllAllotTeacher",
+        {},
+        `已分配的老师信息.xlsx`
+      );
     }
   }
 };
