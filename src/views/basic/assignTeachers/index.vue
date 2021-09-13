@@ -330,8 +330,7 @@ export default {
         lsidArr
       };
       if (undefined != json.bjid) {
-        classAllotTeacher(json)
-          .then(res => {
+        classAllotTeacher(json).then(res => {
             if (res.code != 200) {
               this.$notify.error({
                 title: "失败",
@@ -344,8 +343,7 @@ export default {
               });
               this.onSubmit();
             }
-          })
-          .catch(e => {
+          }).catch(e => {
             console.log(e);
           });
       } else {
@@ -358,8 +356,7 @@ export default {
     // 导出已分配的老师信息
     exportTeacher(){
       this.download(
-        "basic/bjclass/exportAllAllotTeacher",
-        {},
+        "basic/bjclass/exportAllAllotTeacher", {},
         `已分配的老师信息.xlsx`
       );
     }
