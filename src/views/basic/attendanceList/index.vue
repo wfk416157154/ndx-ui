@@ -97,12 +97,19 @@ export default {
   },
   methods: {
     getList() {
+      if(!this.attendanceListForm.qdsjArr){
+        this.msgError("请选择查询的时间范围！")
+        return;
+      }
+      if(!this.attendanceListForm.bjid){
+        this.msgError("请选择日语班级！")
+        return;
+      }
       queryClassQiandaoList(this.attendanceListForm).then(res => {
         this.attendanceList = res.rows;
       });
     },
     submitQuery(row) {
-      // this.msgError("提示 : 开发中")
       this.getConfigKey("jwattendanceDetails").then(res => {
         if (res.code == 200) {
           this.$router.push({

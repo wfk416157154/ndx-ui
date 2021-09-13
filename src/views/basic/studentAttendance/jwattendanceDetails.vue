@@ -206,7 +206,6 @@ export default {
   methods: {
     // 查学生
     getList() {
-      console.log(this.courseInformation);
       stuQiandaoDetailQuery({
         kbxqid: this.courseInformation.dqkcid,
         rq: this.courseInformation.sjrq
