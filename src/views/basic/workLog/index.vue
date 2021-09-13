@@ -23,9 +23,9 @@
           @change="onLogTime"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button type="primary" @click="sendOut">保存日志</el-button>
-      </el-form-item>
+      </el-form-item>-->
       <!--<el-form-item>
         <el-button
           type="primary"
@@ -346,6 +346,17 @@
           </div>-->
         </div>
       </div>
+      <!-- 课中 -->
+      <div class="in-class clearfix">
+        <div class="in-class-title clearfix">
+          <span>提交</span>
+        </div>
+        <div class="in-class-list">
+          <div class="in-class-content" style="text-align : center">
+            <el-button type="primary" @click="sendOut">保存日志</el-button>
+          </div>
+        </div>
+      </div>
     </el-form>
 
     <!-- 导入对话框 -->
@@ -572,7 +583,7 @@ export default {
       });*/
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        homePageQuery({ id: this.$route.params.id }).then(res => {
+        homePageQuery({ teacherWorkLogId: this.$route.params.id}).then(res => {
           if (res.rows[0].isRead == 1) {
             this.msgError("当前日志只能预览,不可编辑");
             this.$refs.prent.style.pointerEvents = "none";
