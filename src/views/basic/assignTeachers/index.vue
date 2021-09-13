@@ -99,13 +99,7 @@
           <br />
           <span>已分配的老师姓名 :</span>
           <span>
-            <el-select
-              v-model="item.lsxmArr"
-              filterable
-              multiple
-              placeholder="当前老师"
-              disabled
-            >
+            <el-select v-model="item.lsxmArr" filterable multiple placeholder="当前老师" disabled>
               <el-option
                 v-for="item in teacherListOption"
                 :key="item.id"
@@ -150,6 +144,7 @@
         </template>
       </el-table-column>
     </el-table>
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -223,7 +218,7 @@ export default {
       //已分配班级
       optionalClasses1: [],
       // 所有学校所有日语班级分配的老师
-      optionalClassesAll:[],
+      optionalClassesAll: [],
       // 分配老师班级
       json: {},
       // 班级选择
@@ -239,7 +234,7 @@ export default {
   created() {
     this.getList();
     this.getTeacherList();
-    this.selectAllAllotTeacherList()
+    this.selectAllAllotTeacherList();
   },
   methods: {
     onRybChange(id) {
@@ -304,9 +299,10 @@ export default {
       });
     },
     // 查询所有学校已分配的老师信息
-    selectAllAllotTeacherList(){
+    selectAllAllotTeacherList() {
       classAllotList(this.allQueryParams).then(res => {
         this.optionalClassesAll = res.rows;
+        this.total = res.total;
       });
     },
     onAddTeacher() {
