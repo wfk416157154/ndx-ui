@@ -310,6 +310,7 @@ export default {
     selectAllAllotTeacherList(){
       classAllotList(this.allQueryParams).then(res => {
         this.optionalClassesAll = res.rows;
+        this.total = res.total
       });
     },
     onAddTeacher() {
