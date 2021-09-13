@@ -86,21 +86,17 @@ export default {
     getList() {
       queryClassQiandaoList(this.attendanceListForm).then(res => {
         this.attendanceList = res.rows;
-        let arr = res.rows.map(value=>{
-           return value.sksj.split("-")
-        })
-        console.log(arr)
       });
     },
     submitQuery(row) {
-      this.msgError("提示 : 开发中")
-      // this.getConfigKey("attendanceDetails").then(res => {
-      //   if (res.code == 200) {
-      //     this.$router.push({
-      //       path: res.msg + "?query=" + JSON.stringify(row)
-      //     });
-      //   }
-      // });
+      // this.msgError("提示 : 开发中")
+      this.getConfigKey("jwattendanceDetails").then(res => {
+        if (res.code == 200) {
+          this.$router.push({
+            path: res.msg + "?query=" + JSON.stringify(row)
+          });
+        }
+      });
     }
   }
 };

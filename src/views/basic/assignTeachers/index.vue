@@ -99,13 +99,7 @@
           <br />
           <span>已分配的老师姓名 :</span>
           <span>
-            <el-select
-              v-model="item.lsxmArr"
-              filterable
-              multiple
-              placeholder="当前老师"
-              disabled
-            >
+            <el-select v-model="item.lsxmArr" filterable multiple placeholder="当前老师" disabled>
               <el-option
                 v-for="item in teacherListOption"
                 :key="item.id"
