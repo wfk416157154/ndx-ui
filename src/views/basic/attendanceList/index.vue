@@ -31,13 +31,13 @@
       <el-table-column label="班级" prop="rybjmc"></el-table-column>
       <el-table-column label="老师" prop="lsxm"></el-table-column>
       <el-table-column label="日期" prop="sjrq"></el-table-column>
-      <el-table-column label="上课时间" prop="sksj" width="300"  > 
+      <el-table-column label="上课时间" prop="sksj" width="300">
         <template slot-scope="scope">
           <div style="display : flex">
-            <dict-tag :options="weeksOptions" :value="scope.row.sksj.split('-')[0]" /> -
-            <dict-tag :options="statusOptions" :value="scope.row.sksj.split('-')[1]" /> -
+            <dict-tag :options="weeksOptions" :value="scope.row.sksj.split('-')[0]" />-
+            <dict-tag :options="statusOptions" :value="scope.row.sksj.split('-')[1]" />-
             <span>{{scope.row.sksj.split('-')[2]}} -</span>
-            <span>{{scope.row.sksj.split('-')[3]}} </span>
+            <span>{{scope.row.sksj.split('-')[3]}}</span>
           </div>
         </template>
       </el-table-column>
@@ -84,6 +84,12 @@ export default {
   },
   methods: {
     getList() {
+      let mydate = new Date().getTime(),
+        origin = new Date(this.attendanceListForm.qdsjArr[1]).getTime();
+      if (origin > mydate) {
+        this.msgError("错误 : 结束时间超出范围,不得大于当前时间");
+        return;
+      }
       queryClassQiandaoList(this.attendanceListForm).then(res => {
         this.attendanceList = res.rows;
       });
