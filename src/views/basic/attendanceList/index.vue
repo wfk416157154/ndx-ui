@@ -41,6 +41,7 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column label="应到人数/实到人数/未签到人数" prop="rstj"></el-table-column>
       <el-table-column label="考勤异常学生" prop="kqycxsxm"></el-table-column>
       <el-table-column label="老师签到情况" prop="lsqdqk" >
         <template slot-scope="scope">

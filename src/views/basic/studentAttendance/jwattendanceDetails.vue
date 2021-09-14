@@ -122,7 +122,7 @@
 
 <script>
 import {
-  stuQiandaoHomePageQuery,
+  stuQiandaoDetailQuery,
   batchCheckIn,
   batchYiChang
 } from "@/api/basic/classCourseBasic";
@@ -162,12 +162,8 @@ export default {
   },
   created() {
     this.courseInformation = JSON.parse(this.$route.query.query);
-    this.courseInformation.kssj = this.courseInformation.sksj
-      .split("-")[2]
-      .replace(/[(]|[)]/g, "");
-    this.courseInformation.jssj = this.courseInformation.sksj
-      .split("-")[3]
-      .replace(/[(]|[)]/g, "");
+    this.courseInformation.kssj = this.courseInformation.sksj.split("-")[2].replace(/[(]|[)]/g, "");
+    this.courseInformation.jssj = this.courseInformation.sksj.split("-")[3].replace(/[(]|[)]/g, "");
     this.courseInformation.kcType = this.courseInformation.sksj.split("-")[1];
     this.courseInformation.rq = this.courseInformation.sksj.split("-")[0];
     this.getDicts("kc_type").then(res => {
@@ -211,11 +207,9 @@ export default {
     // 查学生
     getList() {
       console.log(this.courseInformation);
-      stuQiandaoHomePageQuery({
-        bjid: this.courseInformation.rybjid,
+      stuQiandaoDetailQuery({
         kbxqid: this.courseInformation.dqkcid,
-        kcType: this.courseInformation.kcType,
-        xq: this.courseInformation.rq
+        rq: this.courseInformation.sjrq
       }).then(res => {
         this.noSignItem = res.data.wqdList;
         this.abnormalSignItem = res.data.ycList;
