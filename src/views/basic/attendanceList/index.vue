@@ -45,18 +45,23 @@
       <el-table-column label="考勤异常学生" prop="kqycxsxm"></el-table-column>
       <el-table-column label="老师签到情况" prop="lsqdqk">
         <template slot-scope="scope">
-          <div style="display : flex" v-if="scope.row.lsqdqk!=''&&scope.row.lsqdqk!=null">
+          <div style="display : flex" v-if="scope.row.lsqdqk!=''&&scope.row.lsqdqk!=null&&scope.row.lsqdqk!='旷课'">
             <dict-tag :options="teaCheckInTypeOptions" :value="scope.row.lsqdqk.split('-')[0]" />
             <span>-{{scope.row.lsqdqk.split('-')[1]}}分-</span>
             <span>{{scope.row.lsqdqk.split('-')[2]}}</span>
+          </div>
+          <div style="display : flex" v-else>
+            {{scope.row.lsqdqk}}
           </div>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-link type="primary" @click="submitQuery(scope.row)">
-            <i class="el-icon-view el-icon--right"></i> 查看详情
-          </el-link>
+          <div style="display : flex" v-if="scope.row.kqycxsxm!=''&&null!=scope.row.kqycxsxm&&scope.row.kqycxsxm!='旷课'">
+            <el-link type="primary"  @click="submitQuery(scope.row)">
+              <i class="el-icon-view el-icon--right"></i>查看详情
+            </el-link>
+          </div>
         </template>
       </el-table-column>
     </el-table>
