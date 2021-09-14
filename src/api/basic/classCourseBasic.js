@@ -33,6 +33,15 @@ export function stuQiandaoHomePageQuery(query) {
   })
 }
 
+// 学生签到数据详情页查询
+export function stuQiandaoDetailQuery(query) {
+  return request({
+    url: '/basic/stuQiandao/stuBjkcQianDaoXq',
+    method: 'get',
+    params: query
+  })
+}
+
 // 签到
 export function batchCheckIn(data) {
   return request({

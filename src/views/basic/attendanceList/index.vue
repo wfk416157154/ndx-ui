@@ -41,8 +41,17 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column label="应到人数/实到人数/未签到人数" prop="rstj"></el-table-column>
       <el-table-column label="考勤异常学生" prop="kqycxsxm"></el-table-column>
-      <el-table-column label="老师签到情况" prop="lsqdqk"></el-table-column>
+      <el-table-column label="老师签到情况" prop="lsqdqk">
+        <template slot-scope="scope">
+          <div style="display : flex" v-if="scope.row.lsqdqk!=''&&scope.row.lsqdqk!=null">
+            <dict-tag :options="teaCheckInTypeOptions" :value="scope.row.lsqdqk.split('-')[0]" />
+            <span>-{{scope.row.lsqdqk.split('-')[1]}}分-</span>
+            <span>{{scope.row.lsqdqk.split('-')[2]}}</span>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-link type="primary" @click="submitQuery(scope.row)">
@@ -64,7 +73,8 @@ export default {
       attendanceList: [],
       classList: [],
       weeksOptions: [],
-      statusOptions: []
+      statusOptions: [],
+      teaCheckInTypeOptions: []
     };
   },
   created() {
@@ -81,9 +91,20 @@ export default {
     this.getDicts("weeks").then(res => {
       this.weeksOptions = res.data;
     });
+    this.getDicts("tea_checkIn_type").then(res => {
+      this.teaCheckInTypeOptions = res.data;
+    });
   },
   methods: {
     getList() {
+      if (!this.attendanceListForm.qdsjArr) {
+        this.msgError("请选择查询的时间范围！");
+        return;
+      }
+      if (!this.attendanceListForm.bjid) {
+        this.msgError("请选择日语班级！");
+        return;
+      }
       let mydate = new Date().getTime(),
         origin = new Date(this.attendanceListForm.qdsjArr[1]).getTime();
       if (origin > mydate) {
@@ -95,7 +116,6 @@ export default {
       });
     },
     submitQuery(row) {
-      // this.msgError("提示 : 开发中")
       this.getConfigKey("jwattendanceDetails").then(res => {
         if (res.code == 200) {
           this.$router.push({
