@@ -53,8 +53,8 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-zoom-in" @click="handleQuery">查询</el-button>
-        <el-button type="danger">未审批</el-button>
-        <el-button type="success">已审批</el-button>
+        <el-button type="danger" @click="queryShenpi('1,2')">未审批</el-button>
+        <el-button type="success" @click="queryShenpi('3,4,5,6')">已审批</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -221,6 +221,11 @@
           this.total = response.total;
           this.loading = false;
         });
+      },
+      // 查询审批或未审批的数据
+      queryShenpi(val) {
+        this.queryParams.shztArr = val.split(",")
+        this.getList()
       },
       /** 搜索按钮操作 */
       handleQuery() {
