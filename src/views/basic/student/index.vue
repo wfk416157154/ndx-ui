@@ -8,13 +8,13 @@
       label-width="68px"
     >
       <el-form-item label="校区名称" prop="xqmc" v-if="xqIsShow">
-        <el-select v-model="queryParams.xqmc" filterable placeholder="请选择校区名称" @change="xqmcOnChange">
-          <el-option
-            v-for="item in schoolList"
-            :key="item.id"
-            :label="item.xxmc"
-            :value="item.id"
-          ></el-option>
+        <el-select
+          v-model="queryParams.xqmc"
+          filterable
+          placeholder="请选择校区名称"
+          @change="xqmcOnChange"
+        >
+          <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日语班" prop="ryb">
@@ -164,6 +164,33 @@
           @click="lookStuTalk"
         >查看谈话内容</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          icon="el-icon-position"
+          size="mini"
+          :disabled="single"
+          @click="toPageitem('tbsqPage')"
+        >退班申请</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          icon="el-icon-aim"
+          size="mini"
+          :disabled="single"
+          @click="toPageitem('xxsqPage')"
+        >休学申请</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          icon="el-icon-close"
+          size="mini"
+          :disabled="single"
+          @click="toPageitem('mzsqPage')"
+        >免责申请</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -201,7 +228,7 @@
         </template>
       </el-table-column>
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
-      <el-table-column label="选科" align="center" prop="xk"  />
+      <el-table-column label="选科" align="center" prop="xk" />
       <el-table-column label="英语分数" align="center" prop="yyfs" />
       <el-table-column label="综合分数" align="center" prop="zhfs" />
       <el-table-column label="QQ号" width="120px" align="center" prop="qqh" />
@@ -283,7 +310,7 @@
         <el-col :span="12">
           <el-form-item label-width="100px" label="日语班" prop="ryb">
             <!-- <el-input maxlength="30" v-model="form.ryb" placeholder="请输入日语班" /> -->
-            <el-select v-model="form.ryb" filterable placeholder="请选择日语班" >
+            <el-select v-model="form.ryb" filterable placeholder="请选择日语班">
               <el-option
                 v-for="item in bjclassList"
                 :key="item.id"
@@ -323,15 +350,15 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label-width="100px" label="选科" >
+          <el-form-item label-width="100px" label="选科">
             <!-- <el-radio-group v-model="form.xk">
               <el-radio
                 v-for="dict in xkOptions"
                 :key="dict.dictValue"
                 :label="dict.dictValue"
               >{{dict.dictLabel}}</el-radio>
-            </el-radio-group> -->
-             <el-input maxlength="5" v-model="form.xk" placeholder="请输入学科" />
+            </el-radio-group>-->
+            <el-input maxlength="5" v-model="form.xk" placeholder="请输入学科" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -566,12 +593,22 @@
         <div class="el-upload__tip" slot="tip">
           <!--<el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据-->
           <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
-          <el-link type="info" style="margin-left:50px ;font-size:12px;color: red" v-if="checkFailExcel" @click="downloadFailExcel">查看错误信息</el-link>
+          <el-link
+            type="info"
+            style="margin-left:50px ;font-size:12px;color: red"
+            v-if="checkFailExcel"
+            @click="downloadFailExcel"
+          >查看错误信息</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button>
+        <el-button
+          type="primary"
+          v-prevent-re-click
+          :disabled="importBtn"
+          @click="submitFileForm"
+        >确 定</el-button>
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -656,7 +693,7 @@ export default {
         status: null
       },
       xqQueryParams: {
-        id: null ,//班级关联校区id
+        id: null //班级关联校区id
       },
       // 表单参数
       form: {},
@@ -707,14 +744,14 @@ export default {
           {
             required: true,
             message: "不能为空",
-            trigger: "blur",
+            trigger: "blur"
           }
         ],
         zhfs: [
           {
             required: true,
             message: "不能为空",
-            trigger: "blur",
+            trigger: "blur"
           }
         ],
         qqh: [
@@ -763,19 +800,20 @@ export default {
       schoolList: [],
       // 班级选择
       bjclassList: [],
-      fullFilePath:null,
-      checkFailExcel:false,
-      importBtn:false,
-      fullscreenLoading:false
+      fullFilePath: null,
+      checkFailExcel: false,
+      importBtn: false,
+      fullscreenLoading: false,
+      paramsList: null
     };
   },
   created() {
     listBjclass().then(response => {
-      this.bjclassList = response.rows
+      this.bjclassList = response.rows;
       // 日语班级选项 -当老师角色登录
-      if(this.$store.state.user.dataRoleWeightId==50){
-        if (response.rows.length==1){
-          this.queryParams.ryb=response.rows[0].id
+      if (this.$store.state.user.dataRoleWeightId == 50) {
+        if (response.rows.length == 1) {
+          this.queryParams.ryb = response.rows[0].id;
         }
       }
     });
@@ -793,24 +831,25 @@ export default {
     });
     listSchool().then(response => {
       this.schoolList = response.rows;
-      if (this.schoolList.length==1){
-        this.xqIsShow =false;
+      if (this.schoolList.length == 1) {
+        this.xqIsShow = false;
       }
     });
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   mounted() {
-    let bjid=this.$route.params.bjid;
-    if(bjid!==":bjid"){// 从班级信息页面跳转过来时带的班级id参数
-      this.queryParams.ryb=bjid
+    let bjid = this.$route.params.bjid;
+    if (bjid !== ":bjid") {
+      // 从班级信息页面跳转过来时带的班级id参数
+      this.queryParams.ryb = bjid;
     }
     this.getList();
     this.$store.state.adminleftnavnum = "0"; //设置左侧导航2-2 active
   },
   methods: {
-    xqmcOnChange(id){
-      listBjclass({kzzd1:id}).then(response => {
-        this.bjclassList = response.rows
+    xqmcOnChange(id) {
+      listBjclass({ kzzd1: id }).then(response => {
+        this.bjclassList = response.rows;
       });
     },
     showStudentDetailsPage(row) {
@@ -830,7 +869,6 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
-
     },
 
     /** 查询老师学生谈话列表 */
@@ -948,6 +986,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      this.paramsList = selection;
       selection.map(item => {
         this.ids = item.id;
         this.stuRow = item;
@@ -1059,10 +1098,10 @@ export default {
 
     /** 导入按钮操作 */
     handleImport() {
-      this.importBtn=false
+      this.importBtn = false;
       this.upload.title = "学生信息导入";
       this.upload.open = true;
-      this.checkFailExcel=false
+      this.checkFailExcel = false;
       this.upload.isUploading = false;
       this.$nextTick(() => {
         // 页面元素加载完成后执行该方法
@@ -1085,7 +1124,7 @@ export default {
       this.download(
         "basic/basicCommonController/download",
         {
-          fullFilePath:this.fullFilePath
+          fullFilePath: this.fullFilePath
         },
         `学生信息导入-校验未通过数据详情_${new Date().getTime()}.xlsx`
       );
@@ -1099,24 +1138,29 @@ export default {
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
       this.fullscreenLoading = false;
-      if(undefined!=response.data){
-        this.fullFilePath=response.data
-        this.checkFailExcel=true
-        this.notify(true,"warning","导入数据警告，校验不通过，请查看错误信息",response.msg)
-      }else if(undefined!=response.code&&response.code==500){
-        this.notify(false,"error","导入失败，请联系技术管理员",response.msg)
-      }else{
-        this.notify(false,"success","导入成功",response.msg)
+      if (undefined != response.data) {
+        this.fullFilePath = response.data;
+        this.checkFailExcel = true;
+        this.notify(
+          true,
+          "warning",
+          "导入数据警告，校验不通过，请查看错误信息",
+          response.msg
+        );
+      } else if (undefined != response.code && response.code == 500) {
+        this.notify(false, "error", "导入失败，请联系技术管理员", response.msg);
+      } else {
+        this.notify(false, "success", "导入成功", response.msg);
         this.getList();
       }
     },
     // 提交上传文件
     submitFileForm() {
-      this.importBtn=true
+      this.importBtn = true;
       this.fullscreenLoading = true;
       this.$refs.upload.submit();
     },
-    notify(flag,type,title,msg){
+    notify(flag, type, title, msg) {
       this.upload.open = flag;
       this.upload.isUploading = flag;
       this.$refs.upload.clearFiles();
@@ -1191,6 +1235,15 @@ export default {
             this.openStu = false;
           });
           /* }*/
+        }
+      });
+    },
+    toPageitem(path) {
+      this.getConfigKey(path).then(res => {
+        if (res.code == 200) {
+          this.$router.push({
+            path: res.msg + "?query=" + JSON.stringify(this.paramsList[0])
+          });
         }
       });
     }
