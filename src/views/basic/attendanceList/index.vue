@@ -28,10 +28,10 @@
 
     <el-table :data="attendanceList" border>
       <el-table-column label="序号" type="index"></el-table-column>
-      <el-table-column label="班级" prop="rybjmc"></el-table-column>
-      <el-table-column label="老师" prop="lsxm"></el-table-column>
-      <el-table-column label="日期" prop="sjrq"></el-table-column>
-      <el-table-column label="上课时间" prop="sksj" width="300">
+      <el-table-column label="班级" prop="rybjmc" width="150px"></el-table-column>
+      <el-table-column label="老师" prop="lsxm" width="100px"></el-table-column>
+      <el-table-column label="日期" prop="sjrq" width="100px"></el-table-column>
+      <el-table-column label="上课时间" prop="sksj" width="200px">
         <template slot-scope="scope">
           <div style="display : flex">
             <dict-tag :options="weeksOptions" :value="scope.row.sksj.split('-')[0]" />-
@@ -41,13 +41,13 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="应到人数/实到人数/未签到人数" prop="rstj"></el-table-column>
-      <el-table-column label="考勤异常学生" prop="kqycxsxm"></el-table-column>
-      <el-table-column label="老师签到情况" prop="lsqdqk">
+      <el-table-column label="应到人数/实到人数/未签到人数" prop="rstj" width="150px"></el-table-column>
+      <el-table-column label="考勤异常学生" prop="kqycxsxm" width="400px"></el-table-column>
+      <el-table-column label="老师签到情况" prop="lsqdqk" width="300px">
         <template slot-scope="scope">
           <div style="display : flex" v-if="scope.row.lsqdqk!=''&&scope.row.lsqdqk!=null&&scope.row.lsqdqk!='旷课'">
             <dict-tag :options="teaCheckInTypeOptions" :value="scope.row.lsqdqk.split('-')[0]" />
-            <span>-{{scope.row.lsqdqk.split('-')[1]}}分-</span>
+            <span>-{{scope.row.lsqdqk.split('-')[1]}}-</span>
             <span>{{scope.row.lsqdqk.split('-')[2]}}</span>
           </div>
           <div style="display : flex" v-else>
