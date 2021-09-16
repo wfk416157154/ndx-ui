@@ -643,9 +643,9 @@ export default {
         }
       }
       if (this.logTiem) {
-        json.rq = this.logTiem;
+        json.date = this.logTiem;
       } else {
-        json.rq = new Date();
+        json.date = new Date();
       }
       workLogStatusQuery(json).then(res => {
         switch (res.data) {
@@ -660,7 +660,7 @@ export default {
               })
               .catch(() => {
                 this.findTemplateQuery(); // 查询课表的课中模板
-                this.getWorkLogListQuery(this.bjNameId, json.rq); // 查询已填写未发送的日志
+                this.getWorkLogListQuery(this.bjNameId, json.date); // 查询已填写未发送的日志
               });
             break;
           case 3:
