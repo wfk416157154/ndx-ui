@@ -7,7 +7,7 @@
           placeholder="请输入老师姓名"
           clearable
           size="small"
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="getList"
         />
       </el-form-item>
       <el-form-item>
