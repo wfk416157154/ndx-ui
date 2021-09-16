@@ -1,7 +1,7 @@
 <template>
   <div class="Log-home-page">
-    <el-form ref="queryParams" :inline="true" :model="queryParams">
-      <el-form-item label="校区" v-if="xqIsShow">
+    <el-form ref="queryForm" :inline="true" :model="queryParams">
+      <el-form-item label="校区" v-if="xqIsShow" prop="xqid">
         <el-select v-model="queryParams.xqid" filterable @change="getSchoolId" placeholder="请选择校区">
           <el-option
             v-for="(item,index) in getListSchool"
@@ -11,7 +11,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="日语班级">
+      <el-form-item label="日语班级" prop="rybid">
         <el-select v-model="queryParams.rybid" filterable placeholder="请选择班级">
           <el-option
             v-for="(item,index) in getBjClass"
@@ -21,10 +21,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="老师姓名">
+      <el-form-item label="老师姓名" prop="lsxm">
         <el-input v-model="queryParams.lsxm" placeholder="请输入老师姓名"></el-input>
       </el-form-item>
-      <el-form-item label="日志日期">
+      <el-form-item label="日志日期" prop="sj">
         <el-date-picker
           v-model="queryParams.sj"
           type="daterange"
@@ -34,8 +34,20 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
+      <el-form-item label="排序方式" prop="orderChoose">
+        <el-radio v-model="queryParams.orderChoose" label="0" border @change="getList" >升序</el-radio>
+        <el-radio v-model="queryParams.orderChoose" label="1" border @change="getList">倒序</el-radio>
+      </el-form-item>
+
+      <el-form-item label="选项" prop="isRead">
+        <el-radio v-model="queryParams.isRead" label="0" border @change="getList">未读</el-radio>
+        <el-radio v-model="queryParams.isRead" label="1" border @change="getList">已读</el-radio>
+      </el-form-item>
+
       <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
       <el-button type="primary" icon="el-icon-download" disabled @click="handleExport">导出日志</el-button>
+      <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+
       <!--<el-button
         type="success"
         icon="el-icon-plus"
@@ -143,7 +155,13 @@ export default {
       // 查询条件
       queryParams: {
         pageNum: 1,
-        pageSize: 50
+        pageSize: 50,
+        orderChoose:null,
+        isRead:null,
+        xqid:null,
+        rybid:null,
+        lsxm:null,
+        sj:[],
       },
       // 总条数
       total: 0,
@@ -153,40 +171,53 @@ export default {
       getBjClass: [],
       // 学生表现图片预览
       //所有日志
-      allLogs: []
+      allLogs: [],
+      // session键、保存的查询参数
+      sessionKey:"logHomePageQueryParams"
     };
+  },
+  created(){
+    listBjclass().then(res => {
+      this.getBjClass = res.rows
+      if (res.rows.length == 1) {
+        this.queryParams.rybid = res.rows[0].id;
+      }
+    });
   },
   mounted() {
     this.getSchool();
+    let obj=sessionStorage.getItem(this.sessionKey);
+    if(null!=obj){
+      this.queryParams=JSON.parse(obj)
+    }
     this.getList();
   },
   methods: {
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.getList();
+    },
     // 获取校区
-    async getSchool() {
-      let listSchoolResult = await listSchool();
-      this.getListSchool = listSchoolResult.rows.map(value => {
-        value.value = value.id;
-        value.label = value.xxmc;
-        return value;
-      });
-      if (listSchoolResult.code == 200 && listSchoolResult.rows.length == 1) {
-        this.queryParams.xqid = listSchoolResult.rows[0].id;
-        this.getSchoolId(this.queryParams.xqid);
-        this.xqIsShow = false;
-      }
+    getSchool() {
+      listSchool().then(res=>{
+        this.getListSchool =res.rows
+        if (res.code == 200 && res.rows.length == 1) {
+          this.queryParams.xqid = res.rows[0].id;
+          this.xqIsShow = false;
+        }
+      })
     },
     // 查询日志
     getList() {
-      if (this.queryParams.sj) {
+      if (null!=this.queryParams.sj&&this.queryParams.sj.length==2) {
         let dateArr = [];
         this.queryParams.sj.forEach(date => {
-          dateArr.push(
-            date.getFullYear() +
-              "-" +
-              (date.getMonth() + 1) +
-              "-" +
-              date.getDate()
-          );
+          if(date.toString().indexOf("-")<0){// 如果是未格式化的时间则进行格式化
+            dateArr.push(date.getFullYear() + "-" + (this.addZero(date.getMonth()+ 1) ) + "-" + this.addZero(date.getDate()));
+          }else{// 如果是已格式化的日期则直接添加到字符串类型的日期数组中
+            dateArr.push(date)
+          }
         });
         this.queryParams.sj = dateArr;
       }
@@ -209,14 +240,18 @@ export default {
         });
       });
     },
+    // 小于10则补0
+    addZero(num){
+      if(num<10){
+        return "0"+num;
+      }
+      return num;
+    },
     // 获取班级
     getSchoolId(schoolId) {
+      this.queryParams.rybid=null
       listBjclass({ kzzd1: schoolId }).then(res => {
-        this.getBjClass = res.rows.map(value => {
-          value.value = value.id;
-          value.label = value.rybjmc;
-          return value;
-        });
+        this.getBjClass = res.rows
         if (res.rows.length == 1) {
           this.queryParams.rybid = res.rows[0].id;
         }
@@ -234,6 +269,7 @@ export default {
     },
     // 跳转到日志详情页面
     toDetails(id) {
+      sessionStorage.setItem(this.sessionKey,JSON.stringify(this.queryParams))
       if (this.$store.state.user.dataRoleWeightId > 50) {
         if (
           this.$store.state.user.dataRoleWeightId == 80 ||
@@ -270,7 +306,6 @@ export default {
           }
         }
       });
-      //
     }
   }
 };
