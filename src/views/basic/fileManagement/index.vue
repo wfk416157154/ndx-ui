@@ -187,7 +187,7 @@
               将文件拖到此处，或
               <em>点击上传</em>
             </div>
-            <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传“xls”或“xlsx”格式文件！</div>
+            <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传50M以内的文件！</div>
           </el-upload>
         </el-form-item>
         <el-form-item label="备注" prop="remark">

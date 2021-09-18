@@ -7,7 +7,7 @@
           placeholder="请输入老师姓名"
           clearable
           size="small"
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="getList"
         />
       </el-form-item>
       <el-form-item>
@@ -29,8 +29,8 @@
             type="text"
             v-for="(item,index) in scope.row.jlArr"
             :key="index"
-            @click="downloadFileName(item.wjmc)"
-          >{{item.wjmc}}</el-button>
+            @click="downloadFileName(item.wjmc,(scope.row.xm)+'-'+(index)+(item.wjmc.substring(item.wjmc.indexOf('.'),item.wjmc.length)))"
+          >{{scope.row.xm}}-{{index}}{{item.wjmc.substring(item.wjmc.indexOf("."),item.wjmc.length)}}</el-button>
         </template>
       </el-table-column>
       <el-table-column property="fpbjqk" label="分配班级情况"></el-table-column>
@@ -104,10 +104,10 @@ export default {
       return this.selectDictLabel(this.result, row.mszt);
     },
     /** 下载文件操作 */
-    downloadFileName(fileName) {
+    downloadFileName(fileName,name) {
       this.download('file/filetable/download', {
         wjmc:fileName
-      }, fileName)
+      }, name)
     },
   }
 };

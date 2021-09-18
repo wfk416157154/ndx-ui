@@ -99,14 +99,15 @@
           <br />
           <span>已分配的老师姓名 :</span>
           <span>
-            <el-select v-model="item.lsxmArr" filterable multiple placeholder="当前老师" disabled>
+            {{item.lsxm}}
+            <!--<el-select v-model="item.lsxm" filterable multiple placeholder="当前老师" disabled>
               <el-option
                 v-for="item in teacherListOption"
                 :key="item.id"
                 :label="item.lsxm"
-                :value="item.id"
+                :value="item.lsxm"
               ></el-option>
-            </el-select>
+            </el-select>-->
           </span>
           <br />
           <el-select
@@ -297,8 +298,10 @@ export default {
         this.total = res.total
       });
     },
+    // 单独给某个日语班添加老师
     onAddTeacher() {
-      this.fenpei(this.formInline);
+      let lsidArr=[this.formInline.lsid]
+      this.fenpei(this.formInline.bjid,lsidArr);
     },
     // 分配老师
     fenpei(bjid, lsidArr) {

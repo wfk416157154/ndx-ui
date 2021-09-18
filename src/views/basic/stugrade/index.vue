@@ -99,7 +99,7 @@
       <el-table
         :data="listAll"
         border
-        :height="$root.tableHeight+150"
+        :height="tableHeight"
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
         style="width: 100%"
@@ -268,6 +268,8 @@ export default {
   components: {},
   data() {
     return {
+      // 表格高度
+      tableHeight:this.$root.tableHeight+150,
       // 所有数据详细数据切换
       allData: false,
       // 遮罩层
@@ -435,8 +437,6 @@ export default {
         kslx: one
       };
       // 学生成绩表数据
-      // let res = await listAll(listAllJson);
-      // 学生成绩表数据
       listAll(listAllJson).then(res => {
         if (res.rows && res.rows.length > 0) {
           this.listAll = res.rows;
@@ -484,6 +484,7 @@ export default {
         if (response.rows.length == 1) {
           // 当该老师只有一个日语班时，系统自动赋值
           this.queryParams.kzzd1 = response.rows[0].id;
+          this.xsbhDisabled = false;
         } else {
           this.queryParams.kzzd1 = null;
         }

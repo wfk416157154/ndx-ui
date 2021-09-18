@@ -23,17 +23,6 @@
           @change="onLogTime"
         ></el-date-picker>
       </el-form-item>
-      <!-- <el-form-item>
-        <el-button type="primary" @click="sendOut">保存日志</el-button>
-      </el-form-item>-->
-      <!--<el-form-item>
-        <el-button
-          type="primary"
-          @click="getWorkLogListQuery(bjNameId, logTiem)"
-        >日志查询
-        </el-button
-        >
-      </el-form-item>-->
     </el-form>
     <el-form
       :model="ruleForm"
@@ -41,18 +30,7 @@
       ref="ruleForm"
       label-width="100px"
       class="demo-ruleForm"
-      v-if="ifForm"
-    >
-      <!-- <div class="clearfix" style="margin-bottom: 10px">
-        <el-button
-          style="float: right"
-          type="primary"
-          icon="el-icon-search"
-          size="medium"
-        >查看工作日志
-        </el-button
-        >
-      </div>-->
+      v-if="ifForm">
       <!-- 课程 -->
       <div class="wrap-log">
         <div class="curriculum-title">
@@ -63,6 +41,7 @@
             <el-input
               @blur="sendOut('$if')"
               resize="none"
+
               type="textarea"
               placeholder="请输入内容"
               v-model="ruleForm.kczj"
@@ -112,16 +91,12 @@
                     :before-upload="beforeAvatarUploadZIP"
                     :on-success="addFileSuccess"
                     :auto-upload="false"
-                    drag
-                  >
+                    drag>
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">
                       将文件拖到此处，或
                       <em>点击上传</em>
                     </div>
-                    <!--<div class="el-upload__tip" slot="tip">
-                      <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
-                    </div>-->
                     <div
                       class="el-upload__tip"
                       style="color:red"
@@ -150,17 +125,10 @@
             <ul>
               <li v-for="(item, index) in ruleForm.basicTeacherWorkLogLessonList" :key="index">
                 <el-form-item :label="item.courseTypeName">
-                  <el-input
-                    v-model="
-                      ruleForm.basicTeacherWorkLogLessonList[index].content
-                    "
-                  ></el-input>
+                  <el-input v-model="ruleForm.basicTeacherWorkLogLessonList[index].content"></el-input>
                 </el-form-item>
               </li>
             </ul>
-            <!-- <el-form-item label="补充" label-width="120px">
-              <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 4}" v-model="ruleForm.bc"></el-input>
-            </el-form-item>-->
           </div>
         </div>
       </div>
@@ -178,15 +146,9 @@
                   disabled
                   type="textarea"
                   :autosize="{ minRows: 5, maxRows: 5 }"
-                  v-model="ruleForm.khXtrz"
-                ></el-input>
+                  v-model="ruleForm.khXtrz"></el-input>
               </el-form-item>
             </div>
-            <!-- <div style="margin-left : 120px ;margin-bottom : 10px">
-              <el-checkbox v-model="ruleForm.tx">听写</el-checkbox>
-              <el-checkbox v-model="ruleForm.kwbs">课文背诵</el-checkbox>
-              <el-checkbox v-model="ruleForm.tl">听力</el-checkbox>
-            </div>-->
             <div class="history-log-content">
               <el-form-item label="补充日志" label-width="120px">
                 <el-input
@@ -215,8 +177,7 @@
                   style="width: 200px"
                   @change="examinationStatus"
                   v-model="ruleForm.isExam"
-                  :disabled="ifsfyks"
-                >
+                  :disabled="ifsfyks">
                   <el-radio label="1">是</el-radio>
                   <el-radio label="0">否</el-radio>
                 </el-radio-group>
@@ -281,8 +242,7 @@
                   :limit="maxPhotoNum"
                   :on-success="jswsSuccess"
                   :file-list="files1"
-                  :disabled="ifRoleHasPerms"
-                >
+                  :disabled="ifRoleHasPerms">
                   <i class="el-icon-plus"></i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
@@ -301,8 +261,7 @@
                   :limit="maxPhotoNum"
                   :on-success="xsbxSuccess"
                   :file-list="files2"
-                  :disabled="ifRoleHasPerms"
-                >
+                  :disabled="ifRoleHasPerms">
                   <i class="el-icon-plus"></i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
@@ -322,31 +281,6 @@
               ></el-input>
             </el-form-item>
           </div>
-          <!-- 发送到人 -->
-          <!--<div class="send-out">
-            <h4>发送到人</h4>
-            <el-select
-              v-model="ruleForm.sendUserArr"
-              filterable
-              multiple
-              placeholder="请选择"
-              @change="validSentBtn"
-            >
-              <el-option
-                v-for="item in getListUser"
-                :key="item.userId"
-                :label="item.nickName"
-                :value="item.userId"
-              ></el-option>
-            </el-select>
-            <el-button
-              :disabled="sendBtn"
-              type="primary"
-              v-prevent-re-click
-              @click="updateWorkLog()"
-              v-has-permi="['basic:basicTeacherWorkLog:save']"
-            >发送</el-button>
-          </div>-->
         </div>
       </div>
       <!-- 课中 -->
@@ -361,7 +295,6 @@
         </div>
       </div>
     </el-form>
-
     <!-- 导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
@@ -376,8 +309,7 @@
         :on-error="handleFileError"
         :auto-upload="false"
         :data="{ ksmc: getKsName, kslx: ruleForm.kzzd3, kssj: getKssj ,bjid: bjNameId,workLogId: rzid }"
-        drag
-      >
+        drag>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
           将文件拖到此处，或
@@ -393,7 +325,6 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-
     <!-- 考试成绩分析总结 -->
     <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzj" width="60%">
       <el-form label-width="120px">
@@ -408,29 +339,16 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
-  import {
-    workLogListQuery,
-    addSave,
-    updateBasicTeacherWorkLog,
-    workLogTemplateQuery,
-    workLogStatusQuery
-  } from "@/api/basic/basicTeacherWorkLog";
+  import {workLogListQuery, addSave, updateBasicTeacherWorkLog, workLogTemplateQuery, workLogStatusQuery} from "@/api/basic/basicTeacherWorkLog";
   import {getToken} from "@/utils/auth";
   import {addImg, addFile, selectFileList, deleteImg} from "@/api/tool/common";
   import {secretKey} from "@/utils/tools";
-  import {
-    updateExaminationPaper,
-    listExaminationPaper,
-    getExaminationPaper
-  } from "@/api/basic/examinationPaper";
+  import {updateExaminationPaper, listExaminationPaper, getExaminationPaper} from "@/api/basic/examinationPaper";
   import {listBjclass} from "@/api/basic/bjclass";
-  import {listUser, selectInRoleUser} from "@/api/system/user";
   import {listClassCourse} from "@/api/basic/classCourse";
   import {addExamSummary} from "@/api/basic/examSummary";
   import {homePageQuery} from "@/api/basic/basicTeacherWorkLog";
-
   export default {
     data() {
       return {
@@ -460,9 +378,7 @@
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
           // 上传考试成绩地址
-          fileUrl:
-            process.env.VUE_APP_BASE_API +
-            "/basic/examinationPaper/importClassGradeData",
+          fileUrl: process.env.VUE_APP_BASE_API + "/basic/examinationPaper/importClassGradeData",
           // 上传图片地址
           imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
         },
@@ -479,8 +395,6 @@
         basicTeacherWorkLogLessonList: [],
         // 课程数据
         kcType: [],
-        // // 课后 听说读写
-        // khLogType : [],
         // 个人日志 考试上传状态
         getExaminationStatus: [],
         // 个人日志 考试类型
@@ -515,7 +429,6 @@
         getKscjzj: "",
         // 日志id
         rzid: null,
-        sendBtn: true, // 发送按钮：默认禁用，当选择发送人和填写课程日志时才启用
         //是否上传文件
         getselectFileList: []
       };
@@ -542,7 +455,6 @@
     mounted() {
       this.initBjClassList();
       this.getList();
-      this.validSentBtn();
       this.initGetListExaminationPaper();
     },
     methods: {
@@ -582,10 +494,6 @@
       },
       // 获取课中课表信息
       getList($false) {
-        /* 默认查询角色是教务员的用户 */
-        /*selectInRoleUser({ roleId: "4" }).then(res => {
-          this.getListUser = res.rows;
-        });*/
         // 当从主页面点击查看详情时跳转过来时
         if (this.$route.params.id && this.$route.params.id != ":id") {
           homePageQuery({teacherWorkLogId: this.$route.params.id}).then(res => {
@@ -609,15 +517,9 @@
               });
               this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
               // 教室卫生照片回显
-              this.selectPhotoList(
-                (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-                "files1"
-              );
+              this.selectPhotoList((this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()), "files1");
               // 学生表现照片回显
-              this.selectPhotoList(
-                (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-                "files2"
-              );
+              this.selectPhotoList((this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()), "files2");
             }
           });
         } else {
@@ -655,40 +557,29 @@
         workLogStatusQuery(json).then(res => {
           switch (res.data) {
             case 1:
-                  this.findTemplateQuery(json.date); // 查询课表的课中模板
+              this.findTemplateQuery(json.date); // 查询课表的课中模板
               break;
             case 2:
               this.$confirm(`是否修改《${rybjName}》当前日志?`, "提示", {
                 confirmButtonText: "返回主页",
                 cancelButtonText: "修改日志",
                 type: "warning"
-              })
-                .then(() => {
-                  this.skipToLogHomePage();
-                })
-                .catch(() => {
-                  // this.findTemplateQuery(json.date); // 查询课表的课中模板
-                  console.log("js",json.date)
-                  this.getWorkLogListQuery(this.bjNameId, json.date); // 查询已填写未发送的日志
-                });
+              }).then(() => {
+                this.skipToLogHomePage();
+              }).catch(() => {
+                this.getWorkLogListQuery(this.bjNameId, json.date); // 查询已填写未发送的日志
+              });
               break;
             case 3:
               this.ifForm = false;
-              this.$confirm(
-                `您的日志已记录，不能进行修改。联系教务老师!`,
-                "提示",
-                {
+              this.$confirm(`您的日志已记录，不能进行修改。联系教务老师!`, "提示", {
                   confirmButtonText: "确定",
                   cancelButtonText: "取消",
                   type: "warning"
                 }
-              )
-                .then(() => {
-                  this.skipToLogHomePage();
-                })
-                .catch(() => {
-                  // this.skipToLogHomePage();
-                });
+              ).then(() => {
+                this.skipToLogHomePage();
+              }).catch(() => {});
               break;
             default:
               this.findTemplateQuery(json.date); // 查询课表的课中模板
@@ -700,10 +591,8 @@
       },
       // 查询课中的课表模板
       findTemplateQuery(date) {
-        console.log(date)
-        this.rzid=null;
-        workLogTemplateQuery({bjid: this.bjNameId,date}).then(res => {
-          console.log(res)
+        this.rzid = null;
+        workLogTemplateQuery({bjid: this.bjNameId, date}).then(res => {
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data;
@@ -718,26 +607,17 @@
             });
             this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
           }
-          if (
-            this.ruleForm.basicTeacherWorkLogLessonList &&
-            this.ruleForm.basicTeacherWorkLogLessonList.length == 0
-          ) {
+          if (this.ruleForm.basicTeacherWorkLogLessonList && this.ruleForm.basicTeacherWorkLogLessonList.length == 0) {
             this.ruleForm.basicTeacherWorkLogLessonList = [];
           }
-          console.log("ruleForm",this.ruleForm)
         });
       },
       // 获取页面中参数配置的路由
       skipToLogHomePage() {
-        this.getConfigKey("logHomePage").then(resp => {
-          this.$router.push({
-            path: resp.msg
-          });
-        });
+        this.getConfigKey("logHomePage").then(resp => {this.$router.push({path: resp.msg})});
       },
       // 查询某一班级日志
       async getWorkLogListQuery(bjid, date) {
-        // console.log("date",date)
         if (!bjid || !date) {
           this.$notify({
             message: "请选择班级和日期",
@@ -745,24 +625,17 @@
           });
           return;
         }
-        // date =
-        //   date &&
-        //   date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         this.ifForm = true;
         let json = {
-          // 老师id
-          lsid: this.$store.state.user.glrid,
-          // 班级 id
-          kzzd1: bjid,
-          // 时间
-          date: date
+          lsid: this.$store.state.user.glrid,// 老师id
+          kzzd1: bjid,// 班级 id
+          date: date// 时间
         };
-        if (typeof ( json.date) != 'string'){
-          json.date=  json.date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        if (typeof (json.date) != 'string') {
+          json.date = json.date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         }
         this.ruleForm = json;
-        // 获取日志信息
-        workLogListQuery(json).then(res => {
+        workLogListQuery(json).then(res => {// 获取日志信息
           if (res.data.length != 0) {
             this.rzid = res.data[0].id;
             this.ruleForm.id = this.rzid;
@@ -771,9 +644,8 @@
                 this.getselectFileList = res.rows;
               }
             });
-            //如果已保存考试信息并且上传则禁用下拉框
             if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
-              this.ksmcdisable = true;
+              this.ksmcdisable = true;//如果已保存考试信息并且上传则禁用下拉框
             } else {
               this.ksmcdisable = false;
             }
@@ -788,20 +660,11 @@
             });
             this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
             // 教室卫生照片回显
-            this.selectPhotoList(
-              (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-              "files1"
-            );
+            this.selectPhotoList((this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()), "files1");
             // 学生表现照片回显
-            this.selectPhotoList(
-              (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-              "files2"
-            );
+            this.selectPhotoList((this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()), "files2");
           }
-          if (
-            this.ruleForm.basicTeacherWorkLogLessonList &&
-            this.ruleForm.basicTeacherWorkLogLessonList.length == 0
-          ) {
+          if (this.ruleForm.basicTeacherWorkLogLessonList && this.ruleForm.basicTeacherWorkLogLessonList.length == 0) {
             this.ruleForm.basicTeacherWorkLogLessonList = [];
           }
         });
@@ -834,22 +697,14 @@
       },
       // 下载模板操作
       importTemplate() {
-        this.download(
-          "basic/examinationPaper/importClassGradeTemplate",
-          {
-            bjid: this.bjNameId
-          },
-          `考试成绩-导入模板.xlsx`
-        );
+        this.download("basic/examinationPaper/importClassGradeTemplate", {bjid: this.bjNameId}, `考试成绩-导入模板.xlsx`);
       },
       // 文件上传中处理
       handleFileUploadProgress(event, file, fileList) {
         this.upload.isUploading = true;
       },
       // 上传失败
-      handleFileError(err, file, fileList) {
-        // console.log("errerrerrerr", err);
-      },
+      handleFileError(err, file, fileList) {},
       // 文件上传成功处理
       async handleFileSuccess(response, file, fileList) {
         this.upload.open = false;
@@ -857,12 +712,6 @@
         this.$refs.upload.clearFiles();
         if (response.code == 200) {
           this.msgSuccess("上传成功");
-          // let json = {
-          //   lssjzt: "4",
-          //   kzzd2: "3",
-          //   id: this.ruleForm.kzzd4,
-          //   kzzd3: this.rzid
-          // };
           // 日志表变为上传状态
           let rzjson = {
             id: this.rzid,
@@ -887,11 +736,11 @@
       },
       //是否有考试
       examinationStatus(value) {
-        if (!this.rzid){
+        if (!this.rzid) {
           this.msgError("错误：请先填写课程内容");
-          this.ifsfyks =true;
+          this.ifsfyks = true;
           return;
-        }else {
+        } else {
           this.ifExamination = value == "1" ? true : false;
         }
       },
@@ -970,7 +819,6 @@
           kzzd1: glid
         };
         selectFileList(kzzdJson).then(res => {
-          this.photoNum = res.total;
           this[file] = res.rows;
         });
       },
@@ -986,24 +834,10 @@
           if (valid) {
             this.addWorkLog($if);
           } else {
-            this.$notify({
-              message: "请先填写日志内容",
-              type: "error"
-            });
+            this.$notify({message: "请先填写日志内容", type: "error"});
             return false;
           }
         });
-      },
-      // 校验发送按钮
-      validSentBtn() {
-        if (
-          null == this.ruleForm.sendUserArr ||
-          this.ruleForm.sendUserArr.length < 1
-        ) {
-          this.sendBtn = true;
-        } else {
-          this.sendBtn = false;
-        }
       },
       // 第一次添加日志时， this.rzid为空
       addWorkLog($if) {
@@ -1014,13 +848,12 @@
         addSave(this.ruleForm).then(async res => {
           this.rzid = res.data.id;
           this.ruleForm.id = this.rzid;
-          this.validSentBtn();
           if (!this.logTiem) {
             this.logTiem = new Date();
           }
           this.getWorkLogListQuery(this.bjNameId, this.logTiem);
           if (res.code == 200) {
-            this.ifsfyks=false;
+            this.ifsfyks = false;
             if (this.ruleForm.kzzd4) {
               // 选择考试范围
               let jsonObj = {
@@ -1031,34 +864,8 @@
               await updateExaminationPaper(jsonObj);
             }
             if ($if) return;
-            this.$notify({
-              message: "日志保存成功",
-              type: "success"
-            });
+            this.$notify({message: "日志保存成功", type: "success"});
             this.skipToLogHomePage();
-          }
-        });
-      },
-      // 更新发送日志， this.rzid为已经不为空
-      updateWorkLog() {
-        addSave(this.ruleForm).then(async res => {
-          if (res.code == 200) {
-
-            this.rzid = res.data.id;
-            if (this.ruleForm.kzzd4) {
-              // 选择考试范围
-              let jsonObj = {
-                id: this.ruleForm.kzzd4,
-                kzzd3: res.data.id
-              };
-              // 保存日志id到对应试卷
-              await updateExaminationPaper(jsonObj);
-            }
-            this.$notify({
-              message: "日志发送成功",
-              type: "success"
-            });
-            this.skipLogHome();
           }
         });
       },
@@ -1079,7 +886,6 @@
           ksfxzj: this.getKscjzj,
         };
         addExamSummary(json).then(res => {
-          console.log("res",res)
           if (res.code == 200) {
             this.$notify({
               message: res.msg,
@@ -1097,10 +903,7 @@
       },
       // 文件上传前验证
       beforeAvatarUploadZIP(file) {
-        const isZIP =
-          this.upload.type.indexOf(
-            file.name.substring(file.name.lastIndexOf(".") + 1)
-          ) != -1;
+        const isZIP = this.upload.type.indexOf(file.name.substring(file.name.lastIndexOf(".") + 1)) != -1;
         const isLt40M = file.size / 1024 / 1024 < 40;
         if (!isZIP) {
           this.$message.error("上传文件格式不正确");
@@ -1127,8 +930,7 @@
         });
         data.kzzd1 = this.rzid;
         // 保存文件上传地址
-        addFile(data).then(res => {
-        });
+        addFile(data).then(res => {});
         this.getList();
       },
       // 提交上传文件
@@ -1138,271 +940,3 @@
     }
   };
 </script>
-
-<style lang="scss">
-  .work-log {
-    padding: 20px;
-    box-sizing: border-box;
-    // cursor: not-allowed;
-    .wrap-log {
-      width: 100%;
-      height: 150px;
-      position: relative;
-      border: 2px #ccc solid;
-
-      .curriculum-title {
-        width: 20%;
-        height: 100%;
-        text-align: center;
-        border-right: 2px #ccc solid;
-        float: left;
-        //background-color: #84af9b;
-        //color: #fff;
-
-        span {
-          line-height: 150px;
-        }
-      }
-
-      .log-content {
-        padding: 15px;
-        box-sizing: border-box;
-        float: right;
-        width: 80%;
-        height: 100%;
-        padding-left: 10px;
-        box-sizing: border-box;
-        //background-color: #aedd81;
-      }
-    }
-
-    .wrap-preparation {
-      width: 100%;
-      height: 900px;
-      position: relative;
-      border: 2px #ccc solid;
-      border-top: none;
-
-      .preparation-title {
-        width: 20%;
-        height: 100%;
-        text-align: center;
-        float: left;
-        //background-color: #84af9b;
-        //color: #fff;
-        position: relative;
-        bottom: 0;
-        top: 0;
-        border-right: 2px #ccc solid;
-
-        span {
-          line-height: 900px;
-        }
-      }
-
-      .preparation-list {
-        float: right;
-        width: 80%;
-        height: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        //background-color: #aedd81;
-
-        .wrap-history {
-          width: 100%;
-
-          .history-log-content {
-            float: right;
-            width: 100%;
-            height: 100%;
-
-            .el-upload-dragger {
-              width: 100%;
-              height: 100px;
-            }
-          }
-        }
-      }
-    }
-
-    .kh-wrap-preparation {
-      width: 100%;
-      height: 300px;
-      position: relative;
-      border: 2px #ccc solid;
-      border-top: none;
-
-      .preparation-title {
-        width: 20%;
-        height: 100%;
-        text-align: center;
-        float: left;
-        //background-color: #84af9b;
-        //color: #fff;
-        position: relative;
-        bottom: 0;
-        top: 0;
-        border-right: 2px #ccc solid;
-
-        span {
-          line-height: 300px;
-        }
-      }
-
-      .preparation-list {
-        float: right;
-        width: 80%;
-        height: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        //background-color: #aedd81;
-
-        .wrap-history {
-          width: 100%;
-
-          .history-log-content {
-            float: right;
-            width: 100%;
-            height: 100%;
-          }
-        }
-      }
-    }
-
-    .in-class {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      border: 2px #ccc solid;
-      border-top: none;
-      position: relative;
-
-      .in-class-title {
-        width: 20%;
-        height: 100%;
-        // text-align: center;
-        float: left;
-        border-right: 2px #ccc solid;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        //background-color: #84af9b;
-        //color: #fff;
-
-        span {
-          position: absolute;
-          display: inline-block;
-          width: 100%;
-          text-align: center;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-      }
-
-      .in-class-list {
-        float: right;
-        width: 80%;
-        height: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        //background-color: #aedd81;
-
-        .in-class-content {
-          width: 100%;
-          height: 100%;
-
-          ul {
-            list-style: none;
-            padding-left: 20px;
-            box-sizing: border-box;
-
-            li {
-              width: 100%;
-              height: 40px;
-              padding-left: 10px;
-              box-sizing: border-box;
-              margin-bottom: 5px;
-
-              span {
-                line-height: 40px;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .personal-log {
-      width: 100%;
-      height: 300%;
-      position: relative;
-      border: 2px #ccc solid;
-      border-top: none;
-      position: relative;
-
-      .personal-title {
-        width: 20%;
-        height: 100%;
-        text-align: center;
-        float: left;
-        border-right: 2px #ccc solid;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        //background-color: #84af9b;
-        //color: #fff;
-
-        span {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          transform: translateX(-50%);
-        }
-      }
-
-      .personal-log-list {
-        width: 80%;
-        height: 100%;
-        float: right;
-        //background-color: #aedd81;
-
-        .wrap-examination {
-          width: 100%;
-          height: 100%;
-          margin-bottom: 20px;
-
-          .examination-text {
-            // float: left;
-            // width: 20%;
-          }
-
-          .examination-upload {
-            padding: 20px;
-            box-sizing: border-box;
-            //background-color: greenyellow;
-            // background-image: linear-gradient( to right, greenyellow , green);
-            //background: linear-gradient(to right, #bb313e25);
-            .button {
-              margin-left: 100px;
-            }
-          }
-        }
-
-        .class-photos {
-          width: 100%;
-          height: 100%;
-          padding-left: 20px;
-          box-sizing: border-box;
-        }
-
-        .bz {
-          margin: 10px;
-        }
-
-        .send-out {
-          margin: 10px;
-        }
-      }
-    }
-  }
-</style>
