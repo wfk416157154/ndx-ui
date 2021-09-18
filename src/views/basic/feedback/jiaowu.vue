@@ -11,6 +11,9 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="标题" prop="kzzd1">
+        <el-input v-model="queryParams.kzzd1" placeholder="请输入内容"></el-input>
+      </el-form-item>
       <el-form-item label="问题类型" prop="problemType">
         <el-select v-model="queryParams.problemType" placeholder="请选择问题类型" clearable size="small">
           <el-option
@@ -104,22 +107,29 @@
 
     <el-table v-loading="loading" :height="$root.tableHeight" border :data="feedbackList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="班级" align="center" prop="rybjid" />
+      <el-table-column label="班级" align="center" prop="rybjmc" />
       <el-table-column label="姓名" align="center" prop="problemUserNickname" />
+      <el-table-column label="标题" align="center" prop="kzzd1"/>
       <el-table-column prop="problemType" label="问题类型">
         <template slot-scope="scope">
-          <div>
             <dict-tag :options="problemTypesOptions" :value="scope.row.problemType" />
-          </div>
         </template>
       </el-table-column>
-      <el-table-column label="时间" align="center" prop="createTime" width="180">
+      <el-table-column label="提问时间" align="center" prop="createTime" width="180"></el-table-column>
+      <el-table-column label="文件下载" align="center" prop="wjidArr">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <el-button
+            size="mini"
+            type="text"
+            v-for="(item,index) in scope.row.wjidArr"
+            :key="index"
+            @click="downloadFileName(item.wjmc)"
+          >{{item.wjmc}}</el-button>
         </template>
       </el-table-column>
+      <el-table-column label="问题解决时间" align="center" prop="solutionTime" width="180"></el-table-column>
 <!--      <el-table-column label="描述" align="center" prop="problemDescribe" />-->
-      <el-table-column prop="solutionStatus" label="状态">
+      <el-table-column prop="solutionStatus" label="问题解决状态">
         <template slot-scope="scope">
           <div>
             <dict-tag :options="problemStatusOptions" :value="scope.row.solutionStatus" />
@@ -155,13 +165,16 @@
     />
 
     <!-- 添加或修改问题反馈对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="80%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="班级" prop="rybjid">
-          <el-input v-model="form.rybjid" disabled/>
+        <el-form-item label="班级" prop="rybjmc">
+          <el-input v-model="form.rybjmc" disabled/>
         </el-form-item>
         <el-form-item label="姓名" prop="problemUserNickname">
           <el-input v-model="form.problemUserNickname" disabled/>
+        </el-form-item>
+        <el-form-item label="标题" prop="kzzd1">
+          <el-input v-model="form.kzzd1" maxLength="200" placeholder="不能超过200个字" />
         </el-form-item>
         <el-form-item label="问题类型" prop="problemType">
           <el-select v-model="form.problemType" disabled>
@@ -392,7 +405,7 @@ export default {
       getFeedback(id).then(response => {
         this.form = response.data;
         this.open = true;
-        // this.title = "修改问题反馈";
+        this.title = "查看问题反馈";
       });
     },
     /** 提交按钮 */
@@ -432,47 +445,12 @@ export default {
       })
 
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('basic/feedback/export', {
-        ...this.queryParams
-      }, `问题反馈-${new Date().getTime()}.xlsx`)
+    /** 下载模板操作 */
+    downloadFileName(fileName) {
+      this.download('file/filetable/download', {
+        wjmc:fileName
+      }, fileName)
     },
-
-      /** 导入按钮操作 */
-      handleImport() {
-          this.importBtn=false
-          this.upload.title = "问题反馈数据导入";
-          this.upload.open = true;
-          this.$nextTick(() => {// 页面元素加载完成后执行该方法
-              this.$refs.upload.clearFiles();
-          });
-      },
-      /** 下载模板操作 */
-      importTemplate() {
-          this.download('basic/feedback/importTemplate', {
-              ...this.queryParams
-          }, `问题反馈-导入模板-${new Date().getTime()}.xlsx`)
-      },
-      // 文件上传中处理
-      handleFileUploadProgress(event, file, fileList) {
-          this.upload.isUploading = true;
-      },
-      // 文件上传成功处理
-      handleFileSuccess(response, file, fileList) {
-          this.fullscreenLoading = false;
-          this.upload.open = false;
-          this.upload.isUploading = false;
-          this.$refs.upload.clearFiles();
-          this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-          this.getList();
-      },
-      // 提交上传文件
-      submitFileForm() {
-        this.importBtn=true
-        this.fullscreenLoading = true;
-        this.$refs.upload.submit();
-      }
 
 
   }
