@@ -583,7 +583,7 @@ export default {
       });*/
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        homePageQuery({ teacherWorkLogId: this.$route.params.id}).then(res => {
+        homePageQuery({ teacherWorkLogId: this.$route.params.id }).then(res => {
           if (res.rows[0].isRead == 1) {
             this.msgError("当前日志只能预览,不可编辑");
             this.$refs.prent.style.pointerEvents = "none";
@@ -1052,7 +1052,6 @@ export default {
         teacherWorklogId: this.rzid,
         examPaperId: this.ruleForm.kzzd4,
         ksfxzj: this.getKscjzj,
-        teacherWorklogId: res.data.id
       };
       addExamSummary(json).then(res => {
         this.$notify({
@@ -1104,7 +1103,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .work-log {
   padding: 20px;
   box-sizing: border-box;

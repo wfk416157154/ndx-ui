@@ -54,7 +54,7 @@ export default {
         ],
         yAxis: [
           {
-            type: "value",
+            type: "value"
           }
         ],
         series: []
@@ -62,7 +62,7 @@ export default {
       lineChartForm: {
         studentGradeType: null,
         xsbh: null,
-        bjid:null
+        bjid: null
       },
       studentGradeType: []
     };
@@ -76,17 +76,17 @@ export default {
   },
   methods: {
     getChart(studentGradeType) {
-      this.option.yAxis[0].max=studentGradeType
+      this.option.yAxis[0].max = studentGradeType;
       this.lineChartForm.xsbh = this.query.xsbh;
-      this.lineChartForm.bjid = this.query.ryb;
+      this.lineChartForm.bjid = this.query.ryb || this.query.kzzd1;
       this.lineChartForm.studentGradeType = studentGradeType;
       let chartDom = document.getElementById("line");
       chartDom = echarts.init(chartDom);
       studentGradeBrokenLine(this.lineChartForm).then(res => {
-        if (res.code==200) {
-          this.option.legend.data=res.data.legend
-          this.option.xAxis[0].data=res.data.xAxisTitle
-          this.option.series=res.data.yData
+        if (res.code == 200) {
+          this.option.legend.data = res.data.legend;
+          this.option.xAxis[0].data = res.data.xAxisTitle;
+          this.option.series = res.data.yData;
           this.option && chartDom.setOption(this.option);
         }
       });
