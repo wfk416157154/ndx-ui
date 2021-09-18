@@ -174,8 +174,6 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 班级基础信息表格数据
-      bjclassList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
