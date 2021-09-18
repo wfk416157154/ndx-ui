@@ -117,7 +117,7 @@
             <span v-else-if="item.prop == 'xsxm'">
               <el-link
                 type="primary"
-                @click.stop="chooseStudent(scope.row[item.prop])"
+                @click.stop="chooseStudent(scope.row)"
               >{{scope.row[item.prop]}}</el-link>
             </span>
             <span v-else-if="item.prop == 'wl'">
@@ -149,6 +149,8 @@
 
     <!-- 成绩分析 -->
     <chart ref="chart" v-if="allData" :query="queryParams" />
+
+    <lineChart v-show="iflineChart" :query="iflineChart" ref="chart1" />
 
     <!-- 添加或修改学生成绩基础表对话框 -->
     <el-dialog
@@ -221,7 +223,12 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
-          <el-link type="info" style="font-size:12px" :disabled="enabledImportTemplate" @click="importTemplate">下载模板</el-link>
+          <el-link
+            type="info"
+            style="font-size:12px"
+            :disabled="enabledImportTemplate"
+            @click="importTemplate"
+          >下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
@@ -255,7 +262,7 @@ import { listSchool } from "@/api/basic/school";
 import { getToken } from "@/utils/auth";
 import { listStudent } from "@/api/basic/student";
 import chart from "./chart";
-
+import lineChart from "../student/lineChart";
 export default {
   name: "Stugrade",
   components: {},
@@ -297,7 +304,7 @@ export default {
         wl: null,
         status: null
       },
-      enabledImportTemplate:true,
+      enabledImportTemplate: true,
       // 表单参数
       form: {},
       // 表单校验
@@ -352,7 +359,8 @@ export default {
       getExaminationType: [],
       wlOption: [],
       importBtn: false,
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      iflineChart: null
     };
   },
   created() {
@@ -367,7 +375,8 @@ export default {
     });
   },
   components: {
-    chart
+    chart,
+    lineChart
   },
   mounted() {
     // this.getList();
@@ -375,9 +384,12 @@ export default {
   },
   methods: {
     // 当选择一个学生进行点击时，查看该学生的成绩分析
-    chooseStudent(xsxm) {
-      this.tableHeight=250
-      this.queryParams.xsxm = xsxm;
+    chooseStudent(row) {
+      this.queryParams.xsxm = row.xsxm;
+      this.$nextTick(() => {
+        this.iflineChart = row;
+        this.$refs.chart1.getChart();
+      });
       let json = {
         kzzd1: this.queryParams.kzzd1,
         xsxm: this.queryParams.xsxm
@@ -400,7 +412,7 @@ export default {
     },
     // 获取校区
     getListSchool() {
-      listSchool({bjStatusArr : ["1","3","4"]}).then(response => {
+      listSchool({ bjStatusArr: ["1", "3", "4"] }).then(response => {
         this.selectXqmc = response.rows;
         if (response.rows.length == 1) {
           // 当只查询到一条数据，则直接给这个选择框赋值
@@ -603,8 +615,8 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.enabledImportTemplate=true
-      this.msgInfo("请稍等，正在生成下载模板！")
+      this.enabledImportTemplate = true;
+      this.msgInfo("请稍等，正在生成下载模板！");
       this.importBtn = false;
       this.upload.title = "学生成绩基础表数据导入";
       this.upload.open = true;
@@ -612,12 +624,12 @@ export default {
         // 页面元素加载完成后执行该方法
         this.$refs.upload.clearFiles();
       });
-      generateTemplate().then(resp=>{
-        if(1==resp){
-          this.msgSuccess("模板已成功生成！请点击下载模板")
-          this.enabledImportTemplate=false
-        }else{
-          this.msgError("模板生成失败！请联系管理员！")
+      generateTemplate().then(resp => {
+        if (1 == resp) {
+          this.msgSuccess("模板已成功生成！请点击下载模板");
+          this.enabledImportTemplate = false;
+        } else {
+          this.msgError("模板生成失败！请联系管理员！");
         }
       });
     },
@@ -675,6 +687,7 @@ export default {
         (this.studentsList = null);
       this.getList();
       this.allData = false;
+      this.iflineChart = null;
       this.rybjDisabled = true;
       this.xsbhDisabled = true;
     },
