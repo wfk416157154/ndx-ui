@@ -22,6 +22,9 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
+      <el-form-item label="标题" prop="kzzd1">
+        <el-input v-model="queryParams.kzzd1" placeholder="请输入内容"></el-input>
+      </el-form-item>
       <!--      <el-form-item label="问题解决状态" prop="solutionStatus">-->
       <!--        <el-select v-model="queryParams.solutionStatus" placeholder="请选择问题解决状态" clearable size="small">-->
       <!--          <el-option label="请选择字典生成" value="" />-->
@@ -90,27 +93,41 @@
     <el-table v-loading="loading" :height="$root.tableHeight" border :data="feedbackList"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="班级" align="center" prop="rybjid"/>
+      <el-table-column label="班级" align="center" prop="rybjmc" />
       <el-table-column label="姓名" align="center" prop="problemUserNickname"/>
+      <el-table-column label="标题" align="center" prop="kzzd1"/>
       <el-table-column prop="problemType" label="问题类型">
         <template slot-scope="scope">
-          <div>
             <dict-tag :options="problemTypesOptions" :value="scope.row.problemType" />
-          </div>
         </template>
       </el-table-column>
-      <el-table-column label="时间" align="center" prop="createTime" width="180">
+      <el-table-column label="提问时间" align="center" prop="createTime" width="180"></el-table-column>
+      <el-table-column label="问题描述" align="center" prop="problemDescribe" v-if="false"/>
+      <el-table-column label="文件下载" align="center" prop="wjidArr">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <el-button
+            size="mini"
+            type="text"
+            v-for="(item,index) in scope.row.wjidArr"
+            :key="index"
+            @click="downloadFileName(item.wjmc)"
+          >{{item.wjmc}}</el-button>
         </template>
       </el-table-column>
-<!--      <el-table-column label="问题描述" align="center" prop="problemDescribe"/>-->
-      <el-table-column label="解决方法" align="center" prop="solution"/>
-      <el-table-column prop="solutionStatus" label="状态">
+      <el-table-column label="解决方法" align="center" prop="solution">
         <template slot-scope="scope">
-          <div>
+          <el-button
+            size="mini"
+            type="text"
+            @click="checkJjbf(scope.row)"
+          >点击查看</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="问题解决时间" align="center" prop="solutionTime" width="180"></el-table-column>
+
+      <el-table-column prop="solutionStatus" label="问题解决状态">
+        <template slot-scope="scope">
             <dict-tag :options="problemStatusOptions" :value="scope.row.solutionStatus" />
-          </div>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -122,6 +139,13 @@
             v-if="scope.row.solutionStatus == 2"
             @click="handleUpdate(scope.row)"
           >修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-flag"
+            @click="handleCheck(scope.row)"
+          >查看
           </el-button>
         </template>
       </el-table-column>
@@ -139,7 +163,7 @@
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="班级" prop="rybjid">
-          <el-select v-model="form.rybjid" placeholder="" disabled>
+          <el-select v-model="form.rybjid" placeholder="请选择" disabled>
             <el-option
               v-for="dict in bjclassList"
               :key="dict.id"
@@ -148,11 +172,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <!--        <el-form-item label="姓名" prop="problemUserId">-->
-        <!--          <el-input v-model="form.problemUserId" placeholder="请输入问题提出人id" />-->
-        <!--        </el-form-item>-->
         <el-form-item label="姓名" prop="problemUserNickname">
           <el-input v-model="form.problemUserNickname" disabled/>
+        </el-form-item>
+        <el-form-item label="标题" prop="kzzd1">
+          <el-input v-model="form.kzzd1" maxLength="200" placeholder="不能超过200个字" />
         </el-form-item>
         <el-form-item label="问题类型" prop="problemType">
           <el-select v-model="form.problemType" placeholder="请选择问题类型">
@@ -167,14 +191,14 @@
         <el-form-item label="问题描述" prop="problemDescribe">
           <editor v-model="form.problemDescribe" :min-height="192"/>
         </el-form-item>
-          <!--<el-form-item label="资料上传" prop="wjid">
+          <el-form-item label="文件上传" prop="wjid">
             <el-upload
               ref="upload"
               :limit="maxPhotoNum"
               accept=".*"
               :headers="upload.headers"
               :action="upload.url"
-              :disabled="upload.isUploading"
+              :disabled="isCheck"
               :on-remove="handleRemove"
               :on-progress="handleFileUploadProgress"
               :on-success="handleFileSuccess"
@@ -186,54 +210,25 @@
               <div class="el-upload__text">
                 将文件拖到此处，或
                 <em>点击上传</em>
+                <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传50M以内文件！</div>
               </div>
-              <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传50M以内文件！</div>
+
             </el-upload>
-          </el-form-item>-->
+          </el-form-item>
         <el-form-item label="备注">
           <editor v-model="form.remark" :min-height="192"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" v-prevent-re-click :disabled="isCheck" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel" >取 消</el-button>
       </div>
     </el-dialog>
 
-    <!-- 导入对话框 -->
-    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
-      <el-upload
-        ref="upload"
-        :limit="1"
-        accept=".xlsx, .xls"
-        :headers="upload.headers"
-        :action="upload.url + '?updateSupport=' + upload.updateSupport"
-        :disabled="upload.isUploading"
-        :on-progress="handleFileUploadProgress"
-        :on-success="handleFileSuccess"
-        :auto-upload="false"
-        drag
-        v-loading="fullscreenLoading"
-        element-loading-text="正在进行数据导入·······"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
-      >
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          将文件拖到此处，或
-          <em>点击上传</em>
+    <!-- 弹出解决办法对话框 -->
+    <el-dialog :title="title" :visible.sync="jjbfOpen" width="80%">
+        <div v-html="form.solution" style="padding: 10px">
         </div>
-        <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport"/>
-          是否更新已经存在的数据
-          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
-        </div>
-        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button>
-        <el-button @click="upload.open = false">取 消</el-button>
-      </div>
     </el-dialog>
 
   </div>
@@ -245,16 +240,17 @@
   import {listFeedback, getFeedback, delFeedback, addFeedback, updateFeedback} from "@/api/basic/feedback";
   import {getToken} from "@/utils/auth";
   import {listBjclass} from "@/api/basic/bjclass";
-
+  import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
+  import { secretKey } from "@/utils/tools";
   export default {
     name: "Feedback",
     components: {},
     data() {
       return {
+        isCheck:false,
         // 遮罩层
         loading: true,
-        importBtn: false,
-        fullscreenLoading: false,
+        jjbfOpen:false,
         // 选中数组
         ids: [],
         // 非单个禁用
@@ -282,7 +278,15 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {},
+        rules: {
+          kzzd1: [
+            {
+              required: true,
+              message: "标题不能为空",
+              trigger: "blur",
+            }
+          ],
+        },
         // 导入参数
         upload: {
           // 是否显示弹出层
@@ -322,15 +326,12 @@
     },
     methods: {
       getListBjclass() {
-        // 获取老师所带班级
-        if (this.$store.state.user.dataRoleWeightId == 50) {
-          listBjclass().then(response => {
-            this.bjclassList = response.rows
-            if (response.rows.length >= 1) {
-              this.bjid = response.rows[0].id;
-            }
-          });
-        }
+        listBjclass().then(response => {
+          this.bjclassList = response.rows
+          if (this.$store.state.user.dataRoleWeightId == 50&&response.rows.length >= 1) {
+            this.bjid = response.rows[0].id;// 获取老师所带班级
+          }
+        });
       },
       /** 查询问题反馈列表 */
       getList() {
@@ -408,6 +409,17 @@
           this.title = "修改问题反馈";
         });
       },
+      // 查看
+      handleCheck(row){
+        this.reset();
+        this.isCheck=true
+        const id = row.id || this.ids
+        getFeedback(id).then(response => {
+          this.form = response.data;
+          this.open = true;
+          this.title = "查看问题反馈";
+        });
+      },
       /** 提交按钮 */
       submitForm() {
         this.$refs["form"].validate(valid => {
@@ -445,52 +457,67 @@
         })
 
       },
-      /** 导出按钮操作 */
-      handleExport() {
-        this.download('basic/feedback/export', {
-          ...this.queryParams
-        }, `问题反馈-${new Date().getTime()}.xlsx`)
-      },
-
-      /** 导入按钮操作 */
-      handleImport() {
-        this.importBtn = false
-        this.upload.title = "问题反馈数据导入";
-        this.upload.open = true;
-        this.$nextTick(() => {// 页面元素加载完成后执行该方法
-          this.$refs.upload.clearFiles();
-        });
-      },
-      /** 下载模板操作 */
-      importTemplate() {
-        this.download('basic/feedback/importTemplate', {
-          ...this.queryParams
-        }, `问题反馈-导入模板-${new Date().getTime()}.xlsx`)
-      },
       // 文件上传中处理
       handleFileUploadProgress(event, file, fileList) {
         this.upload.isUploading = true;
       },
       // 文件上传成功处理
       handleFileSuccess(response, file, fileList) {
-        this.fullscreenLoading = false;
+        this.ifPhotoLimit(fileList.length," 个文件")
         this.upload.open = false;
         this.upload.isUploading = false;
+        let data = response.data;
+        data.kzzd1 = this.form.wjid || secretKey();
+        this.form.wjid = data.kzzd1;
+        addImg(data).then(res => {
+          file.id=res.data.id;
+          this.msgSuccess("文件上传成功")
+          this.wjidFile=fileList;
+        });
         this.$refs.upload.clearFiles();
-        this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
-        this.getList();
       },
       // 提交上传文件
       submitFileForm() {
-        this.importBtn = true
-        this.fullscreenLoading = true;
         this.$refs.upload.submit();
       },
-      // // 状态字典翻译
-      // statusFormat(row, column) {
-      //   return this.selectDictLabel(this.statusOptions, row.status);
-      // },
-
+      // 文件限制判断
+      ifPhotoLimit(num,msg) {
+        if (num >= this.maxPhotoNum) {
+          this.$message({
+            message: "最多上传 "+this.maxPhotoNum+msg,
+            type: "warning"
+          });
+        }
+      },
+      //公共图片删除
+      handleRemove(file, fileList) {
+        deleteImg(file.id).then(res => {
+          if (res.code == 200) {
+            this.$message({
+              message: "删除成功",
+              type: "success"
+            });
+          } else {
+            this.$message.error("删除失败");
+          }
+        });
+      },
+      /** 下载模板操作 */
+      downloadFileName(fileName) {
+        this.download('file/filetable/download', {
+          wjmc:fileName
+        }, fileName)
+      },
+      // 查看解决办法
+      checkJjbf(row){
+        this.reset();
+        const id = row.id || this.ids
+        getFeedback(id).then(response => {
+          this.form = response.data;
+          this.jjbfOpen = true;
+          this.title = "查看解决办法";
+        });
+      },
     }
   };
 </script>
