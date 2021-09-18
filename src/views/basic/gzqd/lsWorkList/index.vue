@@ -49,7 +49,6 @@
           <tr>
             <th style="width : 20%">时间周期</th>
             <th>工作任务</th>
-            <th style="width : 20%">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -57,23 +56,74 @@
             <th>{{item.dictLabel}}</th>
             <th>
               <ul v-if="item.dictValue == 'oneWeek'" style="list-style : none">
-                <li v-for="(items,index) in oneWeek" :key="index">
+                <li
+                  v-for="(items,index) in oneWeek"
+                  :key="index"
+                  style="display : flex;justify-content: space-between;align-items: center;"
+                >
                   <p>{{items.dictLabel}}</p>
+                  <div style="display : flex;justify-content: space-between;align-items: center;">
+                    <el-button
+                      size="mini"
+                      type="success"
+                      @click="addSuccess(items.dictValue,'oneWeek')"
+                      :disabled="oneWeekItem.includes(oneWeek[index].dictValue)"
+                    >已完成</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      v-if="!oneWeekItem.includes(oneWeek[index].dictValue)"
+                      disabled
+                    >未完成</el-button>
+                  </div>
                 </li>
               </ul>
               <ul v-else-if="item.dictValue == 'twoWeek'" style="list-style : none">
-                <li v-for="(items,index) in twoWeek" :key="index">
+                <li
+                  v-for="(items,index) in twoWeek"
+                  :key="index"
+                  style="display : flex;justify-content: space-between;align-items: center;"
+                >
                   <p>{{items.dictLabel}}</p>
+                  <div style="display : flex;justify-content: space-between;align-items: center;">
+                    <el-button
+                      size="mini"
+                      type="success"
+                      @click="addSuccess(items.dictValue,'twoWeek')"
+                      :disabled="twoWeekItem.includes(twoWeek[index].dictValue)"
+                    >已完成</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      v-if="!twoWeekItem.includes(twoWeek[index].dictValue)"
+                      disabled
+                    >未完成</el-button>
+                  </div>
                 </li>
               </ul>
               <ul v-else-if="item.dictValue == 'threeWeek'" style="list-style : none">
-                <li v-for="(items,index) in threeWeek" :key="index">
+                <li
+                  v-for="(items,index) in threeWeek"
+                  :key="index"
+                  style="display : flex;justify-content: space-between;align-items: center;"
+                >
                   <p>{{items.dictLabel}}</p>
+                  <div style="display : flex;justify-content: space-between;align-items: center;">
+                    <el-button
+                      size="mini"
+                      type="success"
+                      @click="addSuccess(items.dictValue,'threeWeek')"
+                      :disabled="threeWeekItem.includes(threeWeek[index].dictValue)"
+                    >已完成</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      v-if="!threeWeekItem.includes(threeWeek[index].dictValue)"
+                      disabled
+                    >未完成</el-button>
+                  </div>
                 </li>
               </ul>
-            </th>
-            <th>
-              <el-button type="success">已完成</el-button>
             </th>
           </tr>
         </tbody>
@@ -83,13 +133,21 @@
 </template>
 
 <script>
+import {
+  listTeacherTasklist,
+  addTeacherTasklist
+} from "@/api/basic/teacherTasklist";
 export default {
   data() {
     return {
       weekDictType: [],
       oneWeek: [],
       twoWeek: [],
-      threeWeek: []
+      threeWeek: [],
+      oneWeekItem: "",
+      twoWeekItem: "",
+      threeWeekItem: "",
+      checked1: true
     };
   },
   created() {
@@ -105,6 +163,34 @@ export default {
     this.getDicts("weekDictType").then(res => {
       this.weekDictType = res.data;
     });
+  },
+  mounted() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      listTeacherTasklist({ lsid: this.$store.state.user.glrid }).then(res => {
+        if (res.code == 200 && res.rows.length != 0) {
+          let result = res.rows[0];
+          this.oneWeekItem = result.oneWeek || "";
+          this.twoWeekItem = result.twoWeek || "";
+          this.threeWeekItem = result.threeWeek || "";
+        }
+      });
+    },
+    addSuccess(value, key) {
+      if (value && key) {
+        addTeacherTasklist({
+          [key]: value,
+          lsid: this.$store.state.user.glrid
+        }).then(res => {
+          if (res.code == 200) {
+            this.msgSuccess("成功 : 操作成功");
+            this.getList();
+          }
+        });
+      }
+    }
   }
 };
 </script>
@@ -115,5 +201,8 @@ td {
   border: 1px solid #aaa;
   padding: 20px;
   box-sizing: border-box;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: space-between;
 }
 </style>

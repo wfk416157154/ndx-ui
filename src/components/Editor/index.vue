@@ -1,5 +1,5 @@
 <template>
-  <div :style="parentSstyle">
+  <div :style="parentStyle">
     <el-upload
       :action="uploadUrl"
       :before-upload="handleBeforeUpload"
@@ -110,9 +110,12 @@ export default {
       if (this.item) {
         return this.item;
       }
+      if (this.disabled) {
+        style.backgroundColor = "rgb(245, 247, 250)";
+      }
       return style;
     },
-    parentSstyle() {
+    parentStyle() {
       let style = {};
       if (this.disabled) {
         style.pointerEvents = "none";
