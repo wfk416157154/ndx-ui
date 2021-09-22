@@ -210,12 +210,8 @@
   import { getToken } from "@/utils/auth";
   import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
   import { secretKey } from "@/utils/tools";
-  import Template from "../../teaching/template/index";
   export default {
     name: "FileManagement",
-    components: {
-      Template
-    },
     data() {
       return {
         // 遮罩层
