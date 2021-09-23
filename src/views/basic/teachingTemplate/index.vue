@@ -1,24 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="关联教材表id" prop="glid">
-        <el-input
-          v-model="queryParams.glid"
-          placeholder="请输入关联教材表id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="父节点id" prop="parentId">
-        <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入父节点id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="节点名称" prop="jdmc">
         <el-input
           v-model="queryParams.jdmc"
@@ -37,8 +19,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="课程类型(新课、复习课)" prop="kclx">
-        <el-select v-model="queryParams.kclx" placeholder="请选择课程类型(新课、复习课)" clearable size="small">
+      <el-form-item label="课程类型" prop="kclx">
+        <el-select v-model="queryParams.kclx" placeholder="新课、复习课" clearable size="small">
           <el-option
             v-for="dict in kclxOptions"
             :key="dict.dictValue"
@@ -47,8 +29,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="层级类型(单元/课程/课程任务)" prop="cjlx">
-        <el-select v-model="queryParams.cjlx" placeholder="请选择层级类型(单元/课程/课程任务)" clearable size="small">
+      <el-form-item label="层级类型" prop="cjlx">
+        <el-select v-model="queryParams.cjlx" placeholder="单元/课程/课程任务" clearable size="small">
           <el-option
             v-for="dict in cjlxOptions"
             :key="dict.dictValue"
@@ -125,19 +107,19 @@
     </el-table>
 
     <!-- 添加或修改教学计划模板对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="关联教材表id" prop="glid">
-          <el-input v-model="form.glid" placeholder="请输入关联教材表id" />
+    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="教材或册数" prop="glid">
+          <treeselect v-model="form.glid" :options="teachingMaterialOptions" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
         </el-form-item>
-        <el-form-item label="父节点id" prop="parentId">
-          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :normalizer="normalizer" placeholder="请选择父节点id" />
+        <el-form-item label="归属节点" prop="parentId">
+          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :normalizer="normalizer" placeholder="请选择父节点" />
         </el-form-item>
         <el-form-item label="节点名称" prop="jdmc">
           <el-input v-model="form.jdmc" placeholder="请输入节点名称" />
         </el-form-item>
-        <el-form-item label="课程名称" prop="kcmc">
-          <el-input v-model="form.kcmc" placeholder="请输入课程名称" />
+        <el-form-item label="课程" prop="kcmc">
+          <el-input v-model="form.kcmc" placeholder="请输入课程名称,例如:第1课，第2课，第3课·····" />
         </el-form-item>
         <el-form-item label="预计所需课时" prop="yjsxks">
           <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" />
@@ -146,10 +128,10 @@
           <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" />
         </el-form-item>
         <el-form-item label="教学要求" prop="jxyq">
-          <el-input v-model="form.jxyq" placeholder="请输入教学要求" />
+          <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" />
         </el-form-item>
-        <el-form-item label="课程类型(新课、复习课)" prop="kclx">
-          <el-select v-model="form.kclx" placeholder="请选择课程类型(新课、复习课)">
+        <el-form-item label="课程类型" prop="kclx">
+          <el-select v-model="form.kclx" placeholder="新课、复习课">
             <el-option
               v-for="dict in kclxOptions"
               :key="dict.dictValue"
@@ -162,10 +144,10 @@
           <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" />
         </el-form-item>
         <el-form-item label="主要内容" prop="zynr">
-          <el-input v-model="form.zynr" placeholder="请输入主要内容" />
+          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" />
         </el-form-item>
-        <el-form-item label="层级类型(单元/课程/课程任务)" prop="cjlx">
-          <el-select v-model="form.cjlx" placeholder="请选择层级类型(单元/课程/课程任务)">
+        <el-form-item label="层级类型" prop="cjlx">
+          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务">
             <el-option
               v-for="dict in cjlxOptions"
               :key="dict.dictValue"
@@ -175,7 +157,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -190,7 +172,7 @@
 import { listTeachingTemplate, getTeachingTemplate, delTeachingTemplate, addTeachingTemplate, updateTeachingTemplate, exportTeachingTemplate } from "@/api/basic/teachingTemplate";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-
+import { listTeachingMaterial} from "@/api/basic/teachingMaterial";
 export default {
   name: "TeachingTemplate",
   components: {
@@ -227,7 +209,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      // 教材树选项
+      teachingMaterialOptions:[]
     };
   },
   created() {
@@ -266,6 +250,27 @@ export default {
         const data = { id: 0, jdmc: '顶级节点', children: [] };
         data.children = this.handleTree(response.data, "id", "parentId");
         this.teachingTemplateOptions.push(data);
+      });
+    },
+    /** 转换教材数据结构 */
+    normalizerMaterial(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.id,
+        label: node.jcmc,
+        children: node.children
+      };
+    },
+    /** 查询教材下拉树结构 */
+    getMaterialTreeselect() {
+      listTeachingMaterial().then(response => {
+        console.log("listTeachingMaterial:",response.data)
+        this.teachingMaterialOptions = [];
+        const data = { id: 0, jcmc: '顶级节点', children: [] };
+        data.children = this.handleTree(response.data, "id", "parentId");
+        this.teachingMaterialOptions.push(data);
       });
     },
     // 课程类型(新课、复习课)字典翻译
@@ -322,7 +327,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.reset();
-      this.getTreeselect();
+      this.invokeTreeselect();
       if (row != null && row.id) {
         this.form.parentId = row.id;
       } else {
@@ -334,7 +339,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      this.getTreeselect();
+      this.invokeTreeselect();
       if (row != null) {
         this.form.parentId = row.id;
       }
@@ -343,6 +348,10 @@ export default {
         this.open = true;
         this.title = "修改教学计划模板";
       });
+    },
+    invokeTreeselect(){
+      this.getTreeselect();
+      this.getMaterialTreeselect()
     },
     /** 提交按钮 */
     submitForm() {
