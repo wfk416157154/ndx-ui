@@ -940,3 +940,6 @@
     }
   };
 </script>
+<style lang="scss" scoped>
+     @import"./logFormStyle.scss";
+</style>
