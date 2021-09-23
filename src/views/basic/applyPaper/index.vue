@@ -138,7 +138,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-select v-model="form.jcid" @change="getJcList" placeholder="请选择教材">
+          <el-select v-model="form.jcid"  @change="getJcList" placeholder="请选择教材">
             <el-option
               v-for="(item,index) in jsList"
               :key="index"
@@ -476,9 +476,6 @@
           bjid: [
             {required: true, message: '必填', trigger: 'blur'}
           ],
-          // jcid: [
-          //   { required: true, message: '必填', trigger: 'blur' }
-          // ],
           kslx: [
             {required: true, message: '必填', trigger: 'blur'}
           ],
@@ -501,21 +498,6 @@
           open: false,
           title: "成绩上传",
         },
-        // // 用户导入参数
-        // upload: {
-        //   // 是否显示弹出层
-        //   open: false,
-        //   // 弹出层标题
-        //   title: "导入考卷数据",
-        //   // 是否禁用上传
-        //   isUploading: false,
-        //   // 是否更新已经存在的数据
-        //   updateSupport: 0,
-        //   // 设置上传的请求头部
-        //   headers: {Authorization: "Bearer " + getToken()},
-        //   // 上传的地址
-        //   url: process.env.VUE_APP_BASE_API + "basic/examinationPaper/importData"
-        // },
         // 成绩上传
         upload: {
           // 是否显示弹出层（用户导入）
@@ -714,7 +696,7 @@
         this.form.lsxm = this.$store.state.user.nickName;
         this.form.lsid = this.$store.state.user.glrid;
         this.open = true;
-        this.ksfw_ksbf="0" // 默认 0=五十音图
+        this.ksfw_ksbf="五十音图" // 默认 0=五十音图
         if (this.classList.length == 1) {
           this.form.bjid = this.classList[0].id;
         }
@@ -726,7 +708,7 @@
         this.formQt.lsxm = this.$store.state.user.nickName;
         this.formQt.lsid = this.$store.state.user.glrid;
         this.openQt = true;
-        this.ksfw_ksbf="0" // 默认 0=五十音图
+        this.ksfw_ksbf="五十音图" // 默认 0=五十音图
         if (this.classList.length == 1) {
           this.formQt.bjid = this.classList[0].id;
         }
@@ -769,20 +751,15 @@
         });
       },
       // 根据考试类型判断是否需要进行拼接赋值
-      setFormKsfwValue(kslx){
-        let ksfw=""
-        if("1"!==kslx){ //考试类型不等于 1=课考，则进行赋值
+      setFormKsfwValue(kslx,ksfw){
+        if(null!=kslx&&"1"!==kslx){ //考试类型不等于 1=课考，则进行赋值
           ksfw=this.ksfw_ksbf+"-"+this.ksfw_jsbf;
         }
         return ksfw;
       },
       /** 提交按钮 */
       submitForm() {
-        // if (status === "3") {
-        //   // this.form = status;
-        //   this.form.lssjzt = status;
-        // }
-        this.form.ksfw=this.setFormKsfwValue(this.form.kslx)
+        this.form.ksfw=this.setFormKsfwValue(this.form.kslx,this.form.ksfw)
         this.$refs.formState.validate(valid => {
           if (valid) {
             this.getClassList(this.form.bjid)
@@ -808,7 +785,7 @@
         this.formQt.lssjzt = "4";
         //教务试卷状态:默认已发送
         this.formQt.jwsjzt = "1";
-        this.formQt.ksfw=this.setFormKsfwValue(this.formQt.kslx)
+        this.formQt.ksfw=this.setFormKsfwValue(this.formQt.kslx,this.formQt.ksfw)
         this.$refs.formState.validate(valid => {
           if (valid) {
             this.getClassList(this.formQt.bjid)
@@ -856,7 +833,6 @@
         this.cjsc.open = false;
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
-        // this.$alert(response.msg, "导入结果", {dangerouslyUseHTMLString: true});
         if(response.code==200){
           let json = {
             kzzd2: "3",
@@ -901,7 +877,7 @@
             this.form.jcid = value;
             this.form.jcmc = this.jsList[i].jcmc;
             this.formQt.jcid = value;
-            this.formQt.jcmc = this.classList[i].rybjmc;
+            this.formQt.jcmc = this.jsList[i].jcmc;
           }
         }
       },
