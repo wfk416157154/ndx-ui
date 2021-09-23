@@ -56,7 +56,7 @@
       <el-table-column label="教材" align="center" prop="jcmc"/>
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx"/>
       <el-table-column label="考试范围" align="center" prop="ksfw"  >
-        <template slot-scope="scope">
+<!--        <template slot-scope="scope">
           <span v-if="'1'==scope.row.kslx">
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
           </span>
@@ -64,7 +64,7 @@
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
           </span>
-        </template>
+        </template>-->
       </el-table-column>
       <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
         <template slot-scope="scope">
@@ -163,7 +163,7 @@
               v-for="dict in sjglKsfwJsbfList"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
 
@@ -172,16 +172,16 @@
               v-for="dict in sjglKsfwKsbfList"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
-          <span v-if="showKsfwKsJs">--至--</span>
+          <span v-if="showKsfwKsJs">----</span>
           <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
             <el-option
               v-for="dict in sjglKsfwJsbfList"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -350,7 +350,7 @@
               v-for="dict in sjglKsfwJsbfList"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
 
@@ -359,16 +359,16 @@
               v-for="dict in sjglKsfwKsbfList"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
-          <span v-if="showKsfwKsJs">--至--</span>
+<!--          <span v-if="showKsfwKsJs">&#45;&#45;&#45;&#45;</span>-->
           <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
             <el-option
               v-for="dict in sjglKsfwJsbfList"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
         </el-form-item>
