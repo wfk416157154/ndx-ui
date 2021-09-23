@@ -111,19 +111,11 @@
           <img width="100%" :src="dialogImageUrl" alt />
         </el-form-item>
         <el-form-item label="转账时间" prop="zzsj">
-          <!-- <el-date-picker
-            type="date"
+          <el-date-picker
+            type="datetime"
             v-model="studentPaymentInformationForm.zzsj"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
-          ></el-date-picker>-->
-          <el-date-picker
-            v-model="studentPaymentInformationForm.zzsj"
-            type="datetimerange"
-            range-separator="至"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
