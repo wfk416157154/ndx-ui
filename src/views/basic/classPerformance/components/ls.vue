@@ -223,7 +223,8 @@ export default {
       getExaminationPaper: [],
       // echart 图形化实例
       obj: {},
-      studentGradeTypeList: []
+      studentGradeTypeList: [],
+      getExaminationType: []
     };
   },
   created() {
@@ -235,6 +236,9 @@ export default {
     });
     this.getDicts("studentGradeType").then(response => {
       this.studentGradeTypeList = response.data;
+    });
+    this.getDicts("examination_type").then(response => {
+      this.getExaminationType = response.data;
     });
   },
   mounted() {
@@ -300,7 +304,7 @@ export default {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
           this.obj[i] = this.option;
-          this.obj[i].yAxis[0].max=this.form.studentGradeType
+          this.obj[i].yAxis[0].max = this.form.studentGradeType;
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
@@ -308,7 +312,10 @@ export default {
           if (item[i].everyTimeGradeInfoQueries.length != 0) {
             for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
               this.obj[i].xAxis[0].data.push(
-                item[i].everyTimeGradeInfoQueries[j].ksmc
+                item[i].everyTimeGradeInfoQueries[j].ksmc +
+                  this.ifGetExaminationType(
+                    item[i].everyTimeGradeInfoQueries[j].kslx
+                  )
               );
               this.obj[i].series[0].data.push(
                 item[i].everyTimeGradeInfoQueries[j].pjfs
@@ -320,6 +327,13 @@ export default {
         }
       });
     },
+    ifGetExaminationType(kslx) {
+      for (let i = 0; i < this.getExaminationType.length; i++) {
+        if (this.getExaminationType[i].dictValue == kslx) {
+          return `-${this.getExaminationType[i].dictLabel}`;
+        }
+      }
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
@@ -328,7 +342,7 @@ export default {
     },
     // 查询按钮
     getAchievement(fz) {
-      if(undefined!=fz){
+      if (undefined != fz) {
         this.form.studentGradeType = fz;
       }
       this.form.lsid = this.$store.state.user.glrid;
