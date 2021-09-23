@@ -51,7 +51,7 @@
       <el-table-column label="教材" align="center" prop="jcmc" />
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
       <el-table-column label="考试范围" align="center" prop="ksfw" >
-        <template slot-scope="scope">
+        <!--<template slot-scope="scope">
           <span v-if="'1'==scope.row.kslx">
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
           </span>
@@ -59,7 +59,7 @@
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
           </span>
-        </template>
+        </template>-->
       </el-table-column>
       <el-table-column label="考试时间" align="center" prop="kskssj" width="180">
         <template slot-scope="scope">
