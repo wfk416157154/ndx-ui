@@ -761,7 +761,6 @@
           ksfxzj: this.getKscjzj,
         };
         addExamSummary(json).then(res => {
-
           this.$notify({
             message: res.msg,
             type: "success"
@@ -771,9 +770,11 @@
       },
       // 根据考试类型判断是否需要进行拼接赋值
       setFormKsfwValue(kslx){
+        let ksfw=""
         if("1"!==kslx){ //考试类型不等于 1=课考，则进行赋值
-          this.form.ksfw=this.ksfw_ksbf+"-"+this.ksfw_jsbf;
+          ksfw=this.ksfw_ksbf+"-"+this.ksfw_jsbf;
         }
+        return ksfw;
       },
       /** 提交按钮 */
       submitForm() {
@@ -781,7 +782,7 @@
         //   // this.form = status;
         //   this.form.lssjzt = status;
         // }
-        this.setFormKsfwValue(this.form.kslx)
+        this.form.ksfw=this.setFormKsfwValue(this.form.kslx)
         this.$refs.formState.validate(valid => {
           if (valid) {
             this.getClassList(this.form.bjid)
@@ -807,7 +808,7 @@
         this.formQt.lssjzt = "4";
         //教务试卷状态:默认已发送
         this.formQt.jwsjzt = "1";
-        this.setFormKsfwValue(this.formQt.kslx)
+        this.formQt.ksfw=this.setFormKsfwValue(this.formQt.kslx)
         this.$refs.formState.validate(valid => {
           if (valid) {
             this.getClassList(this.formQt.bjid)
