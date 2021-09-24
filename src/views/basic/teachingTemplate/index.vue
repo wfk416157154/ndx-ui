@@ -72,9 +72,9 @@
     >
       <el-table-column label="关联教材表id" prop="glid" v-if="false" />
       <el-table-column label="父节点id" align="center" prop="parentId" v-if="false" />
-      <el-table-column label="节点名称" align="center" prop="jdmc" />
+      <el-table-column label="单元/课程" align="center" prop="kcmc" />
+      <el-table-column label="课程主题" align="center" prop="jdmc" />
       <el-table-column label="层级类型(单元/课程/课程任务)" align="center" prop="cjlx" :formatter="cjlxFormat" />
-      <el-table-column label="课程名称" align="center" prop="kcmc" />
       <el-table-column label="预计所需课时" align="center" prop="yjsxks" />
       <el-table-column label="预计所需天数" align="center" prop="yjsxts" />
       <el-table-column label="教学要求" align="center" prop="jxyq" />
@@ -114,13 +114,13 @@
     <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="教材或册数" prop="glid">
-          <treeselect v-model="form.glid" :options="teachingMaterialOptions" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
+          <treeselect v-model="form.glid" :options="teachingMaterialOptions" @select="teachingMaterialSelect"  :showCount="true"  :disabled="glidEnabled" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
         </el-form-item>
         <el-form-item label="归属节点" prop="parentId">
-          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :normalizer="normalizer" placeholder="请选择父节点" />
+          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :disabled="glidEnabled" :showCount="true" :normalizer="normalizer" placeholder="请选择父节点" />
         </el-form-item>
         <el-form-item label="层级类型" prop="cjlx">
-          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务" @change="onCjlxChange" >
+          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务" :disabled="cjlxDisabled" @change="onCjlxChange" >
             <el-option
               v-for="dict in cjlxOptions"
               :key="dict.dictCode"
@@ -129,22 +129,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="dykcRender" prop="kcmc" v-if="dykcEnabled">
+          <el-input v-model="form.kcmc" :placeholder="dykcPlaceholder" maxLength="50" />
+        </el-form-item>
         <el-form-item :label="jdmcRender" prop="jdmc">
           <el-input v-model="form.jdmc" placeholder="请输入" maxLength="100" />
         </el-form-item>
-        <el-form-item label="课程" prop="kcmc" v-if="enableShow">
-          <el-input v-model="form.kcmc" placeholder="请输入课程名称,例如:第1课，第2课，第3课·····" maxLength="50" />
+        <el-form-item label="主要内容" prop="zynr" v-if="taskEnableShow">
+          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxLength="100" />
         </el-form-item>
-        <el-form-item label="预计所需课时" prop="yjsxks" v-if="enableShow">
-          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" maxLength="5" />
-        </el-form-item>
-        <el-form-item label="预计所需天数" prop="yjsxts" v-if="enableShow">
-          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" maxLength="5" />
-        </el-form-item>
-        <el-form-item label="教学要求" prop="jxyq">
+        <el-form-item label="教学参考" prop="jxyq" v-if="jxyqenableShow">
           <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" maxLength="200" />
         </el-form-item>
-        <el-form-item label="课程类型" prop="kclx" v-if="enableShow">
+        <el-form-item label="课程类型" prop="kclx" v-if="jxyqenableShow">
           <el-select v-model="form.kclx" placeholder="新课、复习课">
             <el-option
               v-for="dict in kclxOptions"
@@ -154,14 +151,17 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="对应学期数" prop="dyxqs" v-if="enableShow">
+        <el-form-item label="对应学期数" prop="dyxqs" v-if="taskEnableShow">
           <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" maxLength="5" />
-        </el-form-item>
-        <el-form-item label="主要内容" prop="zynr" v-if="enableShow">
-          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxLength="100" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" maxLength="80" />
+        </el-form-item>
+        <el-form-item label="预计所需课时" prop="yjsxks" v-if="enableShow">
+          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" :disabled="taskDisabled" maxLength="5" />
+        </el-form-item>
+        <el-form-item label="预计所需天数" prop="yjsxts" v-if="enableShow">
+          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" :disabled="taskDisabled" maxLength="5" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -219,7 +219,24 @@ export default {
       // 渲染:节点名称
       jdmcRender:"名称",
       // 启用显示
-      enableShow:false
+      enableShow:false,
+      // 关联id是否可用
+      glidEnabled:false,
+      // 启用显示
+      taskEnableShow:false,
+      // 是否禁用
+      taskDisabled:true,
+      // 渲染:单元/课程
+      dykcRender:"单元/课程",
+      // 渲染:单元/课程 提示语
+      dykcPlaceholder:"",
+      // 单元/课程 是否显示
+      dykcEnabled:true,
+      // 教学参考，当选择 课程类型才显示,默认不显示
+      jxyqenableShow:false,
+      // 层级类型、默认启用，编辑时禁用
+      cjlxDisabled:false
+
     };
   },
   created() {
@@ -334,11 +351,15 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd(row) {
+      this.cjlxDisabled=false
       this.reset();
       this.invokeTreeselect();
       if (row != null && row.id) {
         this.form.parentId = row.id;
+        this.form.glid=row.glid;
+        this.glidEnabled=true;
       } else {
+        this.glidEnabled=false;
         this.form.parentId = 0;
       }
       this.open = true;
@@ -349,7 +370,10 @@ export default {
       this.reset();
       this.invokeTreeselect();
       this.onCjlxChange(row.cjlx);
+      this.glidEnabled=false;
+      this.cjlxDisabled=true
       if (row != null) {
+        this.glidEnabled=true;
         this.form.parentId = row.id;
       }
       getTeachingTemplate(row.id).then(response => {
@@ -405,13 +429,36 @@ export default {
           this.jdmcRender=dict[i].dictLabel;
         }
       }
-      if("1"!==val){// 不是单元类型时显示
-        this.enableShow=true
-      }else{
+      if("1"==val){ // 单元
+        this.dykcEnabled=true
+        this.taskEnableShow=false
         this.enableShow=false
+        this.taskDisabled=true
+        this.jxyqenableShow=false
+        this.dykcRender="单元"
+        this.dykcPlaceholder="请输入单元名称,例如:第1单元，第2单元，第3单元·····"
+      }else if("2"==val){
+        this.dykcEnabled=true
+        this.taskEnableShow=false
+        this.enableShow=true
+        this.taskDisabled=true
+        this.jxyqenableShow=true
+        this.dykcRender="课程"
+        this.dykcPlaceholder="请输入课程名称,例如:第1课，第2课，第3课·····"
+      }else{
+        this.dykcEnabled=false
+        this.enableShow=true
+        this.taskEnableShow=true
+        this.taskDisabled=false
+        this.jxyqenableShow=false
       }
+    },
+    teachingMaterialSelect(node,instanceId){
+      //console.log("node:",node,"-instanceId:",instanceId)
 
     },
+
+
   }
 };
 </script>
