@@ -184,7 +184,7 @@ export default {
       form: {
         xqid: null,
         lsxm: null,
-        bjmc:null,
+        bjmc: null,
         ksfw: null,
         maxfs: null,
         minfs: null,
@@ -257,7 +257,8 @@ export default {
       getExaminationPaper: [],
       // 年份
       getYear: [],
-      studentGradeTypeList: []
+      studentGradeTypeList: [],
+      getExaminationType: []
     };
   },
   created() {
@@ -269,6 +270,9 @@ export default {
     });
     this.getDicts("studentGradeType").then(response => {
       this.studentGradeTypeList = response.data;
+    });
+    this.getDicts("examination_type").then(response => {
+      this.getExaminationType = response.data;
     });
   },
   mounted() {
@@ -340,25 +344,31 @@ export default {
           obj[i].series[0].data = [];
           let chartDom = document.getElementById(i);
           obj[i + "a"] = echarts.init(chartDom);
-          obj[i].yAxis[0].max=this.form.studentGradeType
+          obj[i].yAxis[0].max = this.form.studentGradeType;
           if (item[i].everyTimeGradeInfoQueries.length != 0) {
             for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
-              if (j >= item[i].everyTimeGradeInfoQueries.length - 1) {
-                continue;
-              } else {
                 obj[i].xAxis[0].data.push(
-                  item[i].everyTimeGradeInfoQueries[j].ksmc
+                  item[i].everyTimeGradeInfoQueries[j].ksmc +
+                    this.ifGetExaminationType(
+                      item[i].everyTimeGradeInfoQueries[j].kslx
+                    )
                 );
                 obj[i].series[0].data.push(
                   item[i].everyTimeGradeInfoQueries[j].pjfs
                 );
                 obj[i].series[0].name = `(${item[i].rybj})班平均分`;
               }
-            }
           }
           obj[i] && obj[i + "a"].setOption(obj[i]);
         }
       });
+    },
+    ifGetExaminationType(kslx) {
+      for (let i = 0; i < this.getExaminationType.length; i++) {
+        if (this.getExaminationType[i].dictValue == kslx) {
+          return `-${this.getExaminationType[i].dictLabel}`;
+        }
+      }
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -370,7 +380,7 @@ export default {
     },
     // 查询按钮
     getAchievement(fz) {
-      if(undefined!=fz){
+      if (undefined != fz) {
         this.form.studentGradeType = fz;
       }
       //this.form.lsid = this.$store.state.user.glrid;
