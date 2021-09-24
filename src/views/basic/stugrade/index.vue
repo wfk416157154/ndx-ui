@@ -385,6 +385,7 @@ export default {
   methods: {
     // 当选择一个学生进行点击时，查看该学生的成绩分析
     chooseStudent(row) {
+      this.tableHeight=250
       this.queryParams.xsxm = row.xsxm;
       this.$nextTick(() => {
         this.iflineChart = row;
