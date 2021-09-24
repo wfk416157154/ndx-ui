@@ -39,6 +39,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="教材或册数" label-width="100px" prop="glid" >
+        <treeselect v-model="queryParams.glid" style="width: 200px" :options="teachingMaterialOptions" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
+      </el-form-item>
       <el-form-item>
 	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -67,9 +70,10 @@
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="关联教材表id" prop="glid" />
-      <el-table-column label="父节点id" align="center" prop="parentId" />
+      <el-table-column label="关联教材表id" prop="glid" v-if="false" />
+      <el-table-column label="父节点id" align="center" prop="parentId" v-if="false" />
       <el-table-column label="节点名称" align="center" prop="jdmc" />
+      <el-table-column label="层级类型(单元/课程/课程任务)" align="center" prop="cjlx" :formatter="cjlxFormat" />
       <el-table-column label="课程名称" align="center" prop="kcmc" />
       <el-table-column label="预计所需课时" align="center" prop="yjsxks" />
       <el-table-column label="预计所需天数" align="center" prop="yjsxts" />
@@ -77,7 +81,7 @@
       <el-table-column label="课程类型(新课、复习课)" align="center" prop="kclx" :formatter="kclxFormat" />
       <el-table-column label="对应学期数" align="center" prop="dyxqs" />
       <el-table-column label="主要内容" align="center" prop="zynr" />
-      <el-table-column label="层级类型(单元/课程/课程任务)" align="center" prop="cjlx" :formatter="cjlxFormat" />
+
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -115,22 +119,32 @@
         <el-form-item label="归属节点" prop="parentId">
           <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :normalizer="normalizer" placeholder="请选择父节点" />
         </el-form-item>
-        <el-form-item label="节点名称" prop="jdmc">
-          <el-input v-model="form.jdmc" placeholder="请输入节点名称" />
+        <el-form-item label="层级类型" prop="cjlx">
+          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务" @change="onCjlxChange" >
+            <el-option
+              v-for="dict in cjlxOptions"
+              :key="dict.dictCode"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="课程" prop="kcmc">
-          <el-input v-model="form.kcmc" placeholder="请输入课程名称,例如:第1课，第2课，第3课·····" />
+        <el-form-item :label="jdmcRender" prop="jdmc">
+          <el-input v-model="form.jdmc" placeholder="请输入" maxLength="100" />
         </el-form-item>
-        <el-form-item label="预计所需课时" prop="yjsxks">
-          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" />
+        <el-form-item label="课程" prop="kcmc" v-if="enableShow">
+          <el-input v-model="form.kcmc" placeholder="请输入课程名称,例如:第1课，第2课，第3课·····" maxLength="50" />
         </el-form-item>
-        <el-form-item label="预计所需天数" prop="yjsxts">
-          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" />
+        <el-form-item label="预计所需课时" prop="yjsxks" v-if="enableShow">
+          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" maxLength="5" />
+        </el-form-item>
+        <el-form-item label="预计所需天数" prop="yjsxts" v-if="enableShow">
+          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" maxLength="5" />
         </el-form-item>
         <el-form-item label="教学要求" prop="jxyq">
-          <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" />
+          <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" maxLength="200" />
         </el-form-item>
-        <el-form-item label="课程类型" prop="kclx">
+        <el-form-item label="课程类型" prop="kclx" v-if="enableShow">
           <el-select v-model="form.kclx" placeholder="新课、复习课">
             <el-option
               v-for="dict in kclxOptions"
@@ -140,24 +154,14 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="对应学期数" prop="dyxqs">
-          <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" />
+        <el-form-item label="对应学期数" prop="dyxqs" v-if="enableShow">
+          <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" maxLength="5" />
         </el-form-item>
-        <el-form-item label="主要内容" prop="zynr">
-          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" />
-        </el-form-item>
-        <el-form-item label="层级类型" prop="cjlx">
-          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务">
-            <el-option
-              v-for="dict in cjlxOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
+        <el-form-item label="主要内容" prop="zynr" v-if="enableShow">
+          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxLength="100" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" maxLength="80" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -211,7 +215,11 @@ export default {
       rules: {
       },
       // 教材树选项
-      teachingMaterialOptions:[]
+      teachingMaterialOptions:[],
+      // 渲染:节点名称
+      jdmcRender:"名称",
+      // 启用显示
+      enableShow:false
     };
   },
   created() {
@@ -222,6 +230,7 @@ export default {
     this.getDicts("teachingCjlx").then(response => {
       this.cjlxOptions = response.data;
     });
+    this.getMaterialTreeselect()
   },
   methods: {
     /** 查询教学计划模板列表 */
@@ -266,7 +275,6 @@ export default {
     /** 查询教材下拉树结构 */
     getMaterialTreeselect() {
       listTeachingMaterial().then(response => {
-        console.log("listTeachingMaterial:",response.data)
         this.teachingMaterialOptions = [];
         const data = { id: 0, jcmc: '顶级节点', children: [] };
         data.children = this.handleTree(response.data, "id", "parentId");
@@ -340,6 +348,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       this.invokeTreeselect();
+      this.onCjlxChange(row.cjlx);
       if (row != null) {
         this.form.parentId = row.id;
       }
@@ -387,7 +396,22 @@ export default {
         }).catch((e)=>{
           console.log(e);
       })
-    }
+    },
+    // 选择层级类型触发
+    onCjlxChange(val){
+      let dict=this.cjlxOptions
+      for (let i = 0; i <dict.length ; i++) {
+        if(dict[i].dictValue==val){
+          this.jdmcRender=dict[i].dictLabel;
+        }
+      }
+      if("1"!==val){// 不是单元类型时显示
+        this.enableShow=true
+      }else{
+        this.enableShow=false
+      }
+
+    },
   }
 };
 </script>
