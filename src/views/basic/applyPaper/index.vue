@@ -277,7 +277,7 @@
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
         :auto-upload="false"
-        :data="{ ksmc: cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.ksjssj }"
+        :data="{ ksmc: cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj }"
         drag
       >
         <i class="el-icon-upload"></i>
