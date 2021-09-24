@@ -99,7 +99,6 @@
       <el-table
         :data="listAll"
         border
-        :height="tableHeight"
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
         style="width: 100%"
