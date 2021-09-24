@@ -74,6 +74,9 @@ export default {
       this.lineChartForm.studentGradeType = this.studentGradeType[0].dictValue;
     });
   },
+  mounted(){
+      this.getChart(150)
+  },
   methods: {
     getChart(studentGradeType) {
       this.option.yAxis[0].max = studentGradeType;

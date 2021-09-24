@@ -36,7 +36,7 @@
       </el-form-item>
       <el-form-item label="学生姓名" prop="xsbh">
         <el-select
-          v-model="queryParams.xsbh"
+          v-model="queryParams.xsxm"
           filterable
           remote
           reserve-keyword
@@ -146,12 +146,9 @@
         <span>共{{total}}条</span>
       </div>
     </div>
-
+    <lineChart v-if="iflineChart" :query="iflineChart" ref="chart1" />
     <!-- 成绩分析 -->
     <chart ref="chart" v-if="allData" :query="queryParams" />
-
-    <lineChart v-show="iflineChart" :query="iflineChart" ref="chart1" />
-
     <!-- 添加或修改学生成绩基础表对话框 -->
     <el-dialog
       :close-on-click-modal="false"
