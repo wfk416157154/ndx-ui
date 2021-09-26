@@ -87,7 +87,7 @@
               alt
             />
             <div class="info-item">
-              <h4 style="line-height : 30px;margin : 5px 0">正常进度</h4>
+              <h4 style="line-height : 30px;margin : 5px 0">目前进度</h4>
               <Ul style="list-style : none">
                 <li>
                   <span>姓名:</span>

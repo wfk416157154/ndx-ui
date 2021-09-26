@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="节点名称" prop="jdmc">
         <el-input
           v-model="queryParams.jdmc"
@@ -39,11 +45,17 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="教材或册数" label-width="100px" prop="glid" >
-        <treeselect v-model="queryParams.glid" style="width: 200px" :options="teachingMaterialOptions" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
+      <el-form-item label="教材或册数" label-width="100px" prop="glid">
+        <treeselect
+          v-model="queryParams.glid"
+          style="width: 200px"
+          :options="teachingMaterialOptions"
+          :normalizer="normalizerMaterial"
+          placeholder="请选择教材或册数"
+        />
       </el-form-item>
       <el-form-item>
-	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -63,6 +75,7 @@
     </el-row>
 
     <el-table
+      style="font-size : 18px"
       border
       v-loading="loading"
       :data="teachingTemplateList"
@@ -114,13 +127,23 @@
     <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="教材或册数" prop="glid">
-          <treeselect v-model="form.glid" :options="teachingMaterialOptions" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
+          <treeselect
+            v-model="form.glid"
+            :options="teachingMaterialOptions"
+            :normalizer="normalizerMaterial"
+            placeholder="请选择教材或册数"
+          />
         </el-form-item>
         <el-form-item label="归属节点" prop="parentId">
-          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :normalizer="normalizer" placeholder="请选择父节点" />
+          <treeselect
+            v-model="form.parentId"
+            :options="teachingTemplateOptions"
+            :normalizer="normalizer"
+            placeholder="请选择父节点"
+          />
         </el-form-item>
         <el-form-item label="层级类型" prop="cjlx">
-          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务" @change="onCjlxChange" >
+          <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务" @change="onCjlxChange">
             <el-option
               v-for="dict in cjlxOptions"
               :key="dict.dictCode"
@@ -130,19 +153,19 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="jdmcRender" prop="jdmc">
-          <el-input v-model="form.jdmc" placeholder="请输入" maxLength="100" />
+          <el-input v-model="form.jdmc" placeholder="请输入" maxlength="100" />
         </el-form-item>
         <el-form-item label="课程" prop="kcmc" v-if="enableShow">
-          <el-input v-model="form.kcmc" placeholder="请输入课程名称,例如:第1课，第2课，第3课·····" maxLength="50" />
+          <el-input v-model="form.kcmc" placeholder="请输入课程名称,例如:第1课，第2课，第3课·····" maxlength="50" />
         </el-form-item>
         <el-form-item label="预计所需课时" prop="yjsxks" v-if="enableShow">
-          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" maxLength="5" />
+          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" maxlength="5" />
         </el-form-item>
         <el-form-item label="预计所需天数" prop="yjsxts" v-if="enableShow">
-          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" maxLength="5" />
+          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" maxlength="5" />
         </el-form-item>
         <el-form-item label="教学要求" prop="jxyq">
-          <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" maxLength="200" />
+          <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" maxlength="200" />
         </el-form-item>
         <el-form-item label="课程类型" prop="kclx" v-if="enableShow">
           <el-select v-model="form.kclx" placeholder="新课、复习课">
@@ -155,13 +178,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="对应学期数" prop="dyxqs" v-if="enableShow">
-          <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" maxLength="5" />
+          <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" maxlength="5" />
         </el-form-item>
         <el-form-item label="主要内容" prop="zynr" v-if="enableShow">
-          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxLength="100" />
+          <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxlength="100" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" maxLength="80" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" maxlength="80" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -173,10 +196,17 @@
 </template>
 
 <script>
-import { listTeachingTemplate, getTeachingTemplate, delTeachingTemplate, addTeachingTemplate, updateTeachingTemplate, exportTeachingTemplate } from "@/api/basic/teachingTemplate";
+import {
+  listTeachingTemplate,
+  getTeachingTemplate,
+  delTeachingTemplate,
+  addTeachingTemplate,
+  updateTeachingTemplate,
+  exportTeachingTemplate
+} from "@/api/basic/teachingTemplate";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { listTeachingMaterial} from "@/api/basic/teachingMaterial";
+import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
 export default {
   name: "TeachingTemplate",
   components: {
@@ -207,19 +237,18 @@ export default {
         jdmc: null,
         kcmc: null,
         kclx: null,
-        cjlx: null,
+        cjlx: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       // 教材树选项
-      teachingMaterialOptions:[],
+      teachingMaterialOptions: [],
       // 渲染:节点名称
-      jdmcRender:"名称",
+      jdmcRender: "名称",
       // 启用显示
-      enableShow:false
+      enableShow: false
     };
   },
   created() {
@@ -230,14 +259,18 @@ export default {
     this.getDicts("teachingCjlx").then(response => {
       this.cjlxOptions = response.data;
     });
-    this.getMaterialTreeselect()
+    this.getMaterialTreeselect();
   },
   methods: {
     /** 查询教学计划模板列表 */
     getList() {
       this.loading = true;
       listTeachingTemplate(this.queryParams).then(response => {
-        this.teachingTemplateList = this.handleTree(response.data, "id", "parentId");
+        this.teachingTemplateList = this.handleTree(
+          response.data,
+          "id",
+          "parentId"
+        );
         this.loading = false;
       });
     },
@@ -252,11 +285,11 @@ export default {
         children: node.children
       };
     },
-	/** 查询教学计划模板下拉树结构 */
+    /** 查询教学计划模板下拉树结构 */
     getTreeselect() {
       listTeachingTemplate().then(response => {
         this.teachingTemplateOptions = [];
-        const data = { id: 0, jdmc: '顶级节点', children: [] };
+        const data = { id: 0, jdmc: "顶级节点", children: [] };
         data.children = this.handleTree(response.data, "id", "parentId");
         this.teachingTemplateOptions.push(data);
       });
@@ -276,7 +309,7 @@ export default {
     getMaterialTreeselect() {
       listTeachingMaterial().then(response => {
         this.teachingMaterialOptions = [];
-        const data = { id: 0, jcmc: '顶级节点', children: [] };
+        const data = { id: 0, jcmc: "顶级节点", children: [] };
         data.children = this.handleTree(response.data, "id", "parentId");
         this.teachingMaterialOptions.push(data);
       });
@@ -358,9 +391,9 @@ export default {
         this.title = "修改教学计划模板";
       });
     },
-    invokeTreeselect(){
+    invokeTreeselect() {
       this.getTreeselect();
-      this.getMaterialTreeselect()
+      this.getMaterialTreeselect();
     },
     /** 提交按钮 */
     submitForm() {
@@ -384,34 +417,37 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$confirm('是否确认删除选中数据?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
+      this.$confirm("是否确认删除选中数据?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(function() {
           return delTeachingTemplate(row.id);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        }).catch((e)=>{
+        })
+        .catch(e => {
           console.log(e);
-      })
+        });
     },
     // 选择层级类型触发
-    onCjlxChange(val){
-      let dict=this.cjlxOptions
-      for (let i = 0; i <dict.length ; i++) {
-        if(dict[i].dictValue==val){
-          this.jdmcRender=dict[i].dictLabel;
+    onCjlxChange(val) {
+      let dict = this.cjlxOptions;
+      for (let i = 0; i < dict.length; i++) {
+        if (dict[i].dictValue == val) {
+          this.jdmcRender = dict[i].dictLabel;
         }
       }
-      if("1"!==val){// 不是单元类型时显示
-        this.enableShow=true
-      }else{
-        this.enableShow=false
+      if ("1" !== val) {
+        // 不是单元类型时显示
+        this.enableShow = true;
+      } else {
+        this.enableShow = false;
       }
-
-    },
+    }
   }
 };
 </script>
