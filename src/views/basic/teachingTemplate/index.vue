@@ -42,6 +42,15 @@
       <el-form-item label="教材或册数" label-width="100px" prop="nodePath" >
         <treeselect v-model="queryParams.nodePath" style="width: 200px" :options="teachingMaterialOptions" @select="onChooseMaterial" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
       </el-form-item>
+      <el-form-item label="对应学期数" prop="dyxqs" label-width="100px">
+        <el-input
+          v-model="queryParams.dyxqs"
+          placeholder="学期数"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
 	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -77,7 +86,7 @@
       <el-table-column label="层级类型(单元/课程/课程任务)" align="center" prop="cjlx" :formatter="cjlxFormat" />
       <el-table-column label="预计所需课时" align="center" prop="yjsxks" />
       <el-table-column label="预计所需天数" align="center" prop="yjsxts" />
-      <el-table-column label="教学要求" align="center" prop="jxyq" />
+      <el-table-column label="教学要求" align="center" prop="jxyq" v-if="false"/>
       <el-table-column label="课程类型(新课、复习课)" align="center" prop="kclx" :formatter="kclxFormat" />
       <el-table-column label="对应学期数" align="center" prop="dyxqs" />
       <el-table-column label="主要内容" align="center" prop="zynr" />
@@ -138,8 +147,8 @@
         <el-form-item label="主要内容" prop="zynr" v-if="taskEnableShow">
           <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxLength="100" />
         </el-form-item>
-        <el-form-item label="教学参考" prop="jxyq" v-if="jxyqenableShow">
-          <el-input v-model="form.jxyq" type="textarea" placeholder="请输入教学要求" maxLength="200" />
+        <el-form-item label="教参内容" prop="jxyq" v-if="jxyqenableShow">
+          <editor v-model="form.jxyq" :min-height="130" />
         </el-form-item>
         <el-form-item label="课程类型" prop="kclx" v-if="jxyqenableShow">
           <el-select v-model="form.kclx" placeholder="新课、复习课">
@@ -155,7 +164,7 @@
           <el-input v-model="form.dyxqs" placeholder="请输入对应学期数" maxLength="5" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" maxLength="80" />
+          <editor v-model="form.remark" :min-height="130" />
         </el-form-item>
         <el-form-item label="预计所需课时" prop="yjsxks" v-if="enableShow">
           <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" :disabled="taskDisabled" maxLength="5" />
@@ -209,6 +218,7 @@ export default {
         kclx: null,
         cjlx: null,
         nodePath:null,
+        dyxqs:null,
       },
       // 表单参数
       form: {},
@@ -344,6 +354,10 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      if(!this.queryParams.nodePath){
+        this.msgError("请先选择教材或册数！")
+        return
+      }
       this.getList();
     },
     /** 重置按钮操作 */
