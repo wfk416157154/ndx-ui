@@ -239,7 +239,7 @@ export default {
     },
     getChart() {
       if (!this.query.xsbh) {
-        this.msgInfo("请输入学生姓名！");
+        // this.msgInfo("请输入学生姓名！");
         return;
       }
       let kslx = this.query.kslx;

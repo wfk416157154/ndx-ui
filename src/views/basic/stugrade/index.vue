@@ -145,7 +145,7 @@
         <span>共{{total}}条</span>
       </div>
     </div>
-    <lineChart v-if="iflineChart" :query="iflineChart" ref="chart1" />
+    <lineChart v-show="iflineChart" :query="iflineChart" ref="chart1" />
     <!-- 成绩分析 -->
     <chart ref="chart" v-if="allData" :query="queryParams" />
     <!-- 添加或修改学生成绩基础表对话框 -->
@@ -265,7 +265,7 @@ export default {
   data() {
     return {
       // 表格高度
-      tableHeight:this.$root.tableHeight+150,
+      tableHeight: this.$root.tableHeight + 150,
       // 所有数据详细数据切换
       allData: false,
       // 遮罩层
@@ -381,10 +381,11 @@ export default {
   methods: {
     // 当选择一个学生进行点击时，查看该学生的成绩分析
     chooseStudent(row) {
-      this.tableHeight=250
+      this.tableHeight = 250;
       this.queryParams.xsxm = row.xsxm;
+      this.queryParams.xsbh = row.xsbh;
+      this.iflineChart = row;
       this.$nextTick(() => {
-        this.iflineChart = row;
         this.$refs.chart1.getChart();
       });
       let json = {
