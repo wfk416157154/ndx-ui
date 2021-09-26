@@ -234,8 +234,8 @@ export default {
       dykcEnabled:true,
       // 教学参考，当选择 课程类型才显示,默认不显示
       jxyqenableShow:false,
-      // 层级类型、默认启用，编辑时禁用
-      cjlxDisabled:false
+      // 层级类型、默认禁用
+      cjlxDisabled:true
 
     };
   },
@@ -351,19 +351,38 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd(row) {
-      this.cjlxDisabled=false
       this.reset();
       this.invokeTreeselect();
       if (row != null && row.id) {
         this.form.parentId = row.id;
         this.form.glid=row.glid;
         this.glidEnabled=true;
+        this.switchCjlx(row.cjlx)
+        if("3"==row.cjlx){// 课程任务
+          this.msgError("课程任务下无法继续新增子节点！")
+          return
+        }
       } else {
+        this.form.cjlx="1"// 单元
         this.glidEnabled=false;
         this.form.parentId = 0;
       }
       this.open = true;
       this.title = "添加教学计划模板";
+      this.onCjlxChange(this.form.cjlx)
+    },
+    // 判断父对象的层级类型
+    switchCjlx(parentCjlx){
+      switch (parentCjlx) {
+          case "1":
+            this.form.cjlx="2"// 课程
+            break;
+          case "2":
+            this.form.cjlx="3"// 课程任务
+            break;
+          default:
+            break;
+      }
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -371,7 +390,6 @@ export default {
       this.invokeTreeselect();
       this.onCjlxChange(row.cjlx);
       this.glidEnabled=false;
-      this.cjlxDisabled=true
       if (row != null) {
         this.glidEnabled=true;
         this.form.parentId = row.id;
