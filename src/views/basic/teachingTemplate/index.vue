@@ -39,8 +39,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="教材或册数" label-width="100px" prop="glid" >
-        <treeselect v-model="queryParams.glid" style="width: 200px" :options="teachingMaterialOptions" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
+      <el-form-item label="教材或册数" label-width="100px" prop="nodePath" >
+        <treeselect v-model="queryParams.nodePath" style="width: 200px" :options="teachingMaterialOptions" @select="onChooseMaterial" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
       </el-form-item>
       <el-form-item>
 	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -208,6 +208,7 @@ export default {
         kcmc: null,
         kclx: null,
         cjlx: null,
+        nodePath:null,
       },
       // 表单参数
       form: {},
@@ -235,7 +236,7 @@ export default {
       // 教学参考，当选择 课程类型才显示,默认不显示
       jxyqenableShow:false,
       // 层级类型、默认禁用
-      cjlxDisabled:true
+      cjlxDisabled:true,
 
     };
   },
@@ -319,6 +320,7 @@ export default {
         parentId: null,
         jdmc: null,
         kcmc: null,
+        nodePath:null,
         yjsxks: null,
         yjsxts: null,
         jxyq: null,
@@ -363,9 +365,14 @@ export default {
           return
         }
       } else {
+        if(!this.queryParams.nodePath){
+          this.msgError("请先选择教材或册数！")
+          return
+        }
         this.form.cjlx="1"// 单元
         this.glidEnabled=false;
         this.form.parentId = 0;
+        this.form.glid=this.queryParams.nodePath
       }
       this.open = true;
       this.title = "添加教学计划模板";
@@ -475,7 +482,10 @@ export default {
       //console.log("node:",node,"-instanceId:",instanceId)
 
     },
-
+    onChooseMaterial(node,instanceId){
+      this.queryParams.nodePath=node.id
+      this.getList();
+    }
 
   }
 };
