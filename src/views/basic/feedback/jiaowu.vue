@@ -190,7 +190,7 @@
           <editor v-model="form.problemDescribe" :disabled="true" :min-height="192" />
         </el-form-item>
         <el-form-item label="资料上传" prop="wjid">
-          <el-input v-model="form.wjid" placeholder="请输入文件id" disabled />
+          <span>请在主页列表中点击文件进行下载</span>
         </el-form-item>
         <el-form-item label="解决方法" prop="solution">
           <editor v-model="form.solution" :min-height="192" />
