@@ -105,22 +105,28 @@
       <el-table-column label="老师" align="center" prop="lsxm" />
       <el-table-column label="第一周" align="center" prop="oneWeek" >
         <template slot-scope="scope">
-          <span v-for="item in scope.row.oneWeek.split(',')">
-            <dict-tag :options="oneWeekOptions" :value="item"/>
+          <span v-if="null!=scope.row.oneWeek">
+            <span v-for="item in scope.row.oneWeek.split(',')">
+              <dict-tag :options="oneWeekOptions" :value="item"/>
+            </span>
           </span>
         </template>
       </el-table-column>
       <el-table-column label="第二周" align="center" prop="twoWeek" >
         <template slot-scope="scope">
-          <span v-for="item in scope.row.twoWeek.split(',')">
-            <dict-tag :options="twoWeekOptions" :value="item"/>
+          <span v-if="null!=scope.row.twoWeek">
+            <span v-for="item in scope.row.twoWeek.split(',')">
+              <dict-tag :options="twoWeekOptions" :value="item"/>
+            </span>
           </span>
         </template>
       </el-table-column>
       <el-table-column label="第三四周" align="center" prop="threeWeek" >
         <template slot-scope="scope">
-          <span v-for="item in scope.row.threeWeek.split(',')">
-            <dict-tag :options="threeWeekOptions" :value="item"/>
+          <span v-if="null!=scope.row.threeWeek">
+            <span v-for="item in scope.row.threeWeek.split(',')">
+              <dict-tag :options="threeWeekOptions" :value="item"/>
+            </span>
           </span>
         </template>
       </el-table-column>
