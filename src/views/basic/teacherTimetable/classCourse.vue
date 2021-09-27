@@ -48,7 +48,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="老师" label-width="100px">
-        <el-select v-model="queryParams.lsid" placeholder="请选择课表类型" clearable size="small">
+        <el-select v-model="queryParams.lsid" placeholder="请选择老师" clearable size="small">
           <el-option
             v-for="item in teacherListOption"
             :key="item.id"
