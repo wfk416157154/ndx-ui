@@ -47,6 +47,16 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="老师" label-width="100px">
+        <el-select v-model="queryParams.lsid" placeholder="请选择老师" clearable size="small">
+          <el-option
+            v-for="item in teacherListOption"
+            :key="item.id"
+            :label="item.lsxm"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
       </el-form-item>
@@ -375,6 +385,7 @@
 
 <script>
 import { listBjclass } from "@/api/basic/bjclass";
+import { teacherList } from "@/api/basic/assignTeachers";
 import {
   listClassCourse,
   saveList,
@@ -496,7 +507,8 @@ export default {
       //选中班级的数据
       classData: {},
       $index: null,
-      ybjSelection: null
+      ybjSelection: null,
+      teacherListOption : []
     };
   },
   created() {
@@ -520,6 +532,9 @@ export default {
           : null;
         this.getSchoolListId();
       }
+    });
+    teacherList().then(response => {
+      this.teacherListOption = response.rows;
     });
   },
   methods: {
