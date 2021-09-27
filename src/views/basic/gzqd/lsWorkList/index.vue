@@ -62,7 +62,7 @@
                   style="display : flex;justify-content: space-between;align-items: center;"
                 >
                   <p>{{items.dictLabel}}</p>
-                  <div style="display : flex;justify-content: space-between;align-items: center;">
+                  <div style="display : flex;justify-content: space-between;align-items: center;"  v-if="showBtn">
                     <el-button
                       size="mini"
                       type="success"
@@ -78,14 +78,14 @@
                   </div>
                 </li>
               </ul>
-              <ul v-else-if="item.dictValue == 'twoWeek'" style="list-style : none">
+              <ul v-else-if="item.dictValue == 'twoWeek'" style="list-style : none"  >
                 <li
                   v-for="(items,index) in twoWeek"
                   :key="index"
                   style="display : flex;justify-content: space-between;align-items: center;"
                 >
                   <p>{{items.dictLabel}}</p>
-                  <div style="display : flex;justify-content: space-between;align-items: center;">
+                  <div style="display : flex;justify-content: space-between;align-items: center;" v-if="showBtn">
                     <el-button
                       size="mini"
                       type="success"
@@ -108,7 +108,7 @@
                   style="display : flex;justify-content: space-between;align-items: center;"
                 >
                   <p>{{items.dictLabel}}</p>
-                  <div style="display : flex;justify-content: space-between;align-items: center;">
+                  <div style="display : flex;justify-content: space-between;align-items: center;" v-if="showBtn" >
                     <el-button
                       size="mini"
                       type="success"
@@ -147,7 +147,9 @@ export default {
       oneWeekItem: "",
       twoWeekItem: "",
       threeWeekItem: "",
-      checked1: true
+      checked1: true,
+      // 是否显示按钮
+      showBtn:true,
     };
   },
   created() {
@@ -172,6 +174,10 @@ export default {
       listTeacherTasklist({ lsid: this.$store.state.user.glrid }).then(res => {
         if (res.code == 200 && res.rows.length != 0) {
           let result = res.rows[0];
+          if(0==result.sfkdj){
+            this.msgError("此清单只针对新开班级！如有疑问请联系管理员")
+            this.showBtn=false
+          }
           this.oneWeekItem = result.oneWeek || "";
           this.twoWeekItem = result.twoWeek || "";
           this.threeWeekItem = result.threeWeek || "";
