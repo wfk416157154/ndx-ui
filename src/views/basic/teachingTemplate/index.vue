@@ -97,8 +97,11 @@
       <el-table-column label="课程类型(新课、复习课)" align="center" prop="kclx" :formatter="kclxFormat" />
       <el-table-column label="对应学期数" align="center" prop="dyxqs" />
       <el-table-column label="主要内容" align="center" prop="zynr" />
-
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="备注" align="center" prop="remark"  >
+        <template slot-scope="scope">
+          <div v-html="scope.row.remark"></div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -177,7 +180,7 @@
           <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" :disabled="taskDisabled" maxLength="5" />
         </el-form-item>
         <el-form-item label="预计所需天数" prop="yjsxts" v-if="enableShow">
-          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" :disabled="taskDisabled" maxLength="5" />
+          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" :disabled="kcEnableShow" maxLength="5" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -260,7 +263,8 @@ export default {
       jxyqenableShow:false,
       // 层级类型、默认禁用
       cjlxDisabled:true,
-
+      // 预计所需天数
+      kcEnableShow:true,
     };
   },
   created() {
@@ -504,12 +508,14 @@ export default {
         this.jxyqenableShow=true
         this.dykcRender="课程"
         this.dykcPlaceholder="请输入课程名称,例如:第1课，第2课，第3课·····"
+        this.kcEnableShow=false
       }else{
         this.dykcEnabled=false
         this.enableShow=true
         this.taskEnableShow=true
         this.taskDisabled=false
         this.jxyqenableShow=false
+        this.kcEnableShow=true
       }
     },
     teachingMaterialSelect(node,instanceId){
