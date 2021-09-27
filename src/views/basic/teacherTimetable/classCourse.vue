@@ -507,7 +507,8 @@ export default {
       //选中班级的数据
       classData: {},
       $index: null,
-      ybjSelection: null
+      ybjSelection: null,
+      teacherListOption : []
     };
   },
   created() {
