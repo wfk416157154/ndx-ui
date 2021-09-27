@@ -52,19 +52,9 @@
       </el-form-item>
     </el-form>
     <div style="margin-bottom : 20px">
-      <el-form
-        :model="queryParams"
-        :inline="true"
-        label-width="68px"
-      >
-        <el-form-item label="老师">
-          <el-select
-            v-model="queryParams.lsid"
-            filterable
-            placeholder="请选择老师"
-            clearable
-            size="small"
-          >
+      <el-form :model="queryParams" :inline="true">
+        <el-form-item label="老师姓名" label-width="100px">
+          <el-select v-model="queryParams.lsid" filterable placeholder="请选择老师" clearable>
             <el-option
               v-for="item in teacherListOption"
               :key="item.id"
