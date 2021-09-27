@@ -17,7 +17,7 @@
           <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="日语班" prop="xqid" label-width="100px">
+      <el-form-item label="日语班" label-width="100px">
         <el-select v-model="queryParams.bjid" filterable placeholder="请选择班级名称">
           <el-option
             v-for="item in listBjclass"
@@ -47,25 +47,41 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="老师" label-width="100px">
-        <el-select v-model="queryParams.lsid" placeholder="请选择老师" clearable size="small">
-          <el-option
-            v-for="item in teacherListOption"
-            :key="item.id"
-            :label="item.lsxm"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
       </el-form-item>
     </el-form>
+    <div style="margin-bottom : 20px">
+      <el-form :model="queryParams" :inline="true">
+        <el-form-item label="老师姓名" label-width="100px">
+          <el-select v-model="queryParams.lsid" filterable placeholder="请选择老师" clearable>
+            <el-option
+              v-for="item in teacherListOption"
+              :key="item.id"
+              :label="item.lsxm"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+          <el-button
+            style="margin-left : 10px"
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="lsQuery"
+          >查询老师</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <el-row :gutter="20">
       <el-col :span="6" :xs="24">
         <el-card>
           <el-tabs v-model="activeTab" @tab-click="switchingClasses(activeTab)">
-            <el-tab-pane :label="classData.rybjmc" :name="classData.id">
+            <el-tab-pane
+              v-for="item in listBjclass"
+              :key="item.id"
+              :label="item.rybjmc"
+              :name="item.id"
+            >
               <div class="wrap-info" v-if="classData != {}">
                 <ul class="list-group list-group-striped">
                   <li style="padding-bottom : 10px; font-size : 14px">
@@ -508,7 +524,7 @@ export default {
       classData: {},
       $index: null,
       ybjSelection: null,
-      teacherListOption : []
+      teacherListOption: []
     };
   },
   created() {
@@ -599,10 +615,35 @@ export default {
         }
       });
     },
+    // 查询老师
+    lsQuery() {
+      let lsid = this.queryParams.lsid;
+      (this.queryParams = {
+        pageNum: 1,
+        pageSize: 100,
+        lsid: lsid,
+        kbType: null,
+        kzzd2: null,
+        bjid: null,
+        xqid: null
+      }),
+        listBjclass({ lsid }).then(res => {
+          if (res.rows.length == 0) {
+            this.listBjclass = [];
+            this.classCourseList = [];
+          }
+          this.listBjclass = res.rows;
+          this.listBjclass.length == 1
+            ? (this.queryParams.xqid = this.schoolList[0].id)
+            : null;
+        });
+    },
     // 切换班级课表
     switchingClasses(bjid, nd) {
+      console.log(bjid);
       this.queryParams.bjid = bjid;
       this.getClassCourseBasicList(bjid, nd);
+      this.getClassId(bjid);
     },
     // 拿到该班级的所有课表
     getClassCourseBasicList(rybjid, nd, $sfqy) {
