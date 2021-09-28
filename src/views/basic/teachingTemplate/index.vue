@@ -53,7 +53,6 @@
           v-model="queryParams.dyxqs"
           placeholder="学期数"
           clearable
-          size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
