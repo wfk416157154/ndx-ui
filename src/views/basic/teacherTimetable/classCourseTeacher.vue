@@ -87,6 +87,7 @@
                     placeholder="请选择年份"
                     clearable
                     size="small"
+                    @change="getCourse"
                   >
                     <el-option
                       v-for="(item, index) in bjkbStartDate"
@@ -101,6 +102,7 @@
                     placeholder="请选择课表类型"
                     clearable
                     size="small"
+                    @change="getCourse"
                   >
                     <el-option
                       v-for="dict in kbTypeOptionsEL"
@@ -130,6 +132,14 @@
                     :disabled="btnDisabled"
                     @click="deleteData"
                   >删除选中行</el-button>
+                  <el-form-item
+                    v-if="classCourseList.length > 0"
+                    label="有效课时"
+                    prop="kbType"
+                    label-width="100px"
+                  >
+                    <el-input v-model="yxsj" @change="submitTimetable" placeholder="请输入有效课时"></el-input>
+                  </el-form-item>
                 </el-form>
               </div>
 
@@ -461,7 +471,8 @@ export default {
       $index: null,
       ybjSelection: null,
       isAdd: true,
-      bjkbStartDate: []
+      bjkbStartDate: [],
+      yxsj: null
     };
   },
   created() {
@@ -567,6 +578,7 @@ export default {
           if (value.sfqy) {
             this.queryParams.kzzd2 = value.nd;
             this.queryParams.kbType = value.kbType;
+            this.yxsj = value.kzzd1;
             if (!$sfqy) {
               this.getCourse();
             }
@@ -593,9 +605,12 @@ export default {
       if (value) {
         this.queryParams.kzzd2 = value.nd;
         this.queryParams.kbType = value.kbType;
+        value.ifAddYxsj = "sfqy";
         this.submitTimetable(value);
       }
       if (value.sfqy) {
+        this.yxsj = value.kzzd1;
+        console.log(this.yxsj);
         this.getCourse();
         this.msgSuccess("启动成功");
       } else {
@@ -786,13 +801,17 @@ export default {
           return this.msgError("请选择课表类型！");
         }
       }
-      let result = await classCourseBasicSave({
+      let json = {
         bjid: this.queryParams.bjid,
         nd: this.queryParams.kzzd2,
         kbType: this.queryParams.kbType,
         sfqy: Number(value.sfqy),
         id: value.id
-      });
+      };
+      if (value.ifAddYxsj !== "sfqy") {
+        json.kzzd1 = this.yxsj;
+      }
+      let result = await classCourseBasicSave(json);
       if (result.code == 200) {
         this.getClassCourseBasicList(
           this.activeTab,
