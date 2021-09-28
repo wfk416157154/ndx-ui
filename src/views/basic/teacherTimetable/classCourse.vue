@@ -146,55 +146,67 @@
           <el-tabs v-model="tabsActiveTab">
             <el-tab-pane label="班级课表" name="kb">
               <div style="margin-bottom: 10px">
-                <el-select
-                  style="margin-right : 10px"
-                  v-model="queryParams.kzzd2"
-                  placeholder="请选择年份"
-                  clearable
-                  size="small"
-                >
-                  <el-option
-                    v-for="dict in yearList"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictLabel"
-                  />
-                </el-select>
-                <el-select
-                  style="margin-right : 10px"
-                  v-model="queryParams.kbType"
-                  placeholder="请选择课表类型"
-                  clearable
-                  size="small"
-                >
-                  <el-option
-                    v-for="dict in kbTypeOptionsEL"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
-                <el-button
-                  type="primary"
-                  icon="el-icon-plus"
-                  size="mini"
-                  @click="insertTimetable"
-                >新增课表</el-button>
-                <el-button
-                  type="success"
-                  icon="el-icon-check"
-                  size="mini"
-                  :disabled="btnDisabled"
-                  @click="submitTimetable"
-                >保存课表</el-button>
+                <el-form :inline="true">
+                  <el-select
+                    style="margin-right : 10px"
+                    v-model="queryParams.kzzd2"
+                    placeholder="请选择年份"
+                    clearable
+                    size="small"
+                    @change="getCourse"
+                  >
+                    <el-option
+                      v-for="dict in yearList"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictLabel"
+                    />
+                  </el-select>
+                  <el-select
+                    style="margin-right : 10px"
+                    v-model="queryParams.kbType"
+                    placeholder="请选择课表类型"
+                    clearable
+                    size="small"
+                    @change="getCourse"
+                  >
+                    <el-option
+                      v-for="dict in kbTypeOptionsEL"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+                  <el-button
+                    type="primary"
+                    icon="el-icon-plus"
+                    size="mini"
+                    @click="insertTimetable"
+                  >新增课表</el-button>
+                  <el-button
+                    type="success"
+                    icon="el-icon-check"
+                    size="mini"
+                    :disabled="btnDisabled"
+                    @click="submitTimetable"
+                  >保存课表</el-button>
 
-                <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  size="mini"
-                  :disabled="btnDisabled"
-                  @click="deleteData"
-                >删除选中行</el-button>
+                  <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    size="mini"
+                    :disabled="btnDisabled"
+                    @click="deleteData"
+                  >删除选中行</el-button>
+                  <el-form-item
+                    v-if="classCourseList.length > 0"
+                    label="有效课时"
+                    prop="kbType"
+                    label-width="100px"
+                  >
+                    <el-input v-model="yxsj" disabled placeholder="请输入有效课时"></el-input>
+                  </el-form-item>
+                </el-form>
               </div>
 
               <el-table
@@ -524,7 +536,8 @@ export default {
       classData: {},
       $index: null,
       ybjSelection: null,
-      teacherListOption: []
+      teacherListOption: [],
+      yxsj: null
     };
   },
   created() {
@@ -640,7 +653,6 @@ export default {
     },
     // 切换班级课表
     switchingClasses(bjid, nd) {
-      console.log(bjid);
       this.queryParams.bjid = bjid;
       this.getClassCourseBasicList(bjid, nd);
       this.getClassId(bjid);
@@ -672,6 +684,7 @@ export default {
           if (value.sfqy) {
             this.queryParams.kzzd2 = value.nd;
             this.queryParams.kbType = value.kbType;
+            this.yxsj = value.kzzd1;
             if (!$sfqy) {
               this.getCourse();
             }
