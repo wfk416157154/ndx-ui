@@ -59,9 +59,8 @@
       <el-table
         :data="listAll"
         border
-        :height="$root.tableHeight"
         :summary-method="getSummaries"
-        style="width: 100%"
+        style="width: 100%;font-size : 18px"
       >
         <el-table-column
           :fixed="item.fixed"
@@ -387,7 +386,7 @@ export default {
     // 当选择一个学生进行点击时，查看该学生的成绩分析
     chooseStudent(row) {
       let json = {
-        xsbh: row.xsbh,
+        xsbh: row.xsbh
       };
       // 学生基础数据表
       listStudent(json).then(res => {
