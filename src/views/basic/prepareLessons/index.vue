@@ -45,7 +45,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+<!--      <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -55,7 +55,7 @@
           v-hasPermi="['basic:prepareLessons:add']"
         >新增
         </el-button>
-      </el-col>
+      </el-col>-->
       <!--  <el-col :span="1.5">
           <el-button
             type="success"
@@ -145,7 +145,7 @@
     />
 
     <!-- 添加或修改备课对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="教材" prop="jcmc">
           <el-input v-model="form.jcmc" disabled/>
@@ -160,12 +160,26 @@
           <el-input v-model="form.kcrwmc" disabled/>
         </el-form-item>
         <el-form-item label="备课时间" prop="createTime">
-          <el-input v-model="form.createTime"/>
+          <el-input v-model="form.createTime" disabled/>
+        </el-form-item>
+        <el-form-item label="备课图片" >
+          <el-image
+            style="width: 100px; height: 100px;margin : 30px"
+            v-for="(item,index) in form.bkTpArr"
+            :key="index"
+            :src="item"
+            :preview-src-list="[item]"
+          ></el-image>
+        </el-form-item>
+        <el-form-item label="备课文件" >
+          <div v-for="(item, index) in form.bkWjArr">
+            <el-link :href="form.bkWjArr[index]" target="_blank" type="primary">下载备课文件</el-link>
+          </div>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+          <editor v-model="form.remark" :min-height="192" :disabled="true" />
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="审核">
           <el-select v-model="form.shzt" filterable >
             <el-option
               v-for="dict in preparelesoonsStatus"
@@ -412,7 +426,7 @@
         getPrepareLessons(id).then(response => {
           this.form = response.data;
           this.open = true;
-          this.title = "修改备课";
+          this.title = "";
         });
       },
       /** 提交按钮 */

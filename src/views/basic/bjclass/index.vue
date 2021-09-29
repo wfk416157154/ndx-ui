@@ -146,7 +146,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="集体照" align="center" prop="jtzArr" :width="flexColumnWidth('jtzArr',bjclassList)">
+      <el-table-column label="英语成绩确认签字" align="center" prop="jtzArr" :width="flexColumnWidth('jtzArr',bjclassList)">
         <template slot-scope="scope">
           <div class="block" style="display : flex; width : 100% ; height : 100%">
             <el-image
@@ -168,7 +168,7 @@
         </template>
       </el-table-column>
       <el-table-column label="校区名称" align="center" prop="xqmc"/>
-      <el-table-column label="日语班级名称" align="center" prop="rybjmc">
+      <el-table-column label="日语班级" align="center" prop="rybjmc">
         <template slot-scope="scope">
           <a href="#">
             <span
@@ -180,6 +180,7 @@
       </el-table-column>
       <el-table-column label="班级人数" align="center" prop="bjrs"/>
       <el-table-column label="老师姓名" align="center" prop="lsxm"/>
+      <el-table-column label="教材名称" align="center" prop="jcmc"/>
       <el-table-column label="开班学期" align="center" prop="nj">
         <template slot-scope="scope">
           <dict-tag :options="selectNj" :value="scope.row.nj"/>
@@ -248,6 +249,16 @@
         </el-form-item>
         <el-form-item label-width="110px" label="日语班级名称" prop="rybjmc">
           <el-input v-model="form.rybjmc" maxlength="30" placeholder="请输入日语班级名称"/>
+        </el-form-item>
+        <el-form-item label="教材" prop="uname">
+          <el-select v-model="form.uname" filterable placeholder="请选择教材">
+            <el-option
+              v-for="item in teachingMaterialList"
+              :key="item.id"
+              :label="item.jcmc"
+              :value="item.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="班级人数" prop="bjrs">
           <el-input v-model="form.bjrs" maxlength="5" placeholder="班级人数系统自动计算" readonly/>
@@ -335,7 +346,7 @@
             <img width="100%" :src="dialogImageUrl" alt/>
           </el-dialog>
         </el-form-item>
-        <el-form-item label-width="100px" label="集体照" prop="jtz">
+        <el-form-item label-width="100px" label="英语成绩确认签字" prop="jtz">
           <el-upload
             :action="upload.fileUrl"
             :headers="upload.headers"
@@ -409,6 +420,7 @@
   import {secretKey} from "@/utils/tools";
   import {listMarketer} from "@/api/basic/marketer";
   import moment from "moment";
+  import {listTeachingMaterial} from "@/api/basic/teachingMaterial";
 
   export default {
     name: "Bjclass",
@@ -499,9 +511,10 @@
         photoNum1: 0,
         photoNum2: 0,
         // 最大上传次数
-        maxPhotoNum: 5,
+        maxPhotoNum: 9,
         marketerList: [],
-        disableBysj: true
+        disableBysj: true,
+        teachingMaterialList: [],
       };
     },
     created() {
@@ -528,13 +541,19 @@
       listMarketer(this.queryParams).then(response => {
         this.marketerList = response.rows;
       });
+      listTeachingMaterial({parentId: 0}).then(response => {
+        this.teachingMaterialList = response.data;
+        for (let i = 0; i < this.teachingMaterialList.length; i++) {
+          this.teachingMaterialList[i].id = JSON.stringify(this.teachingMaterialList[i].id);
+        }
+      });
     },
     methods: {
       /** 查询班级基础信息列表 */
       getList() {
         this.loading = true;
         //默认查询 未毕业的日语班级
-        if (null == this.queryParams.status ) {
+        if (null == this.queryParams.status) {
           this.queryParams.statusArr = ["1", "3", "4"];
         } else {
           this.queryParams.statusArr = [];
@@ -554,6 +573,9 @@
       setXqmcId(obj) {
         this.form.xqmc = obj.xxmc;
         this.form.kzzd1 = obj.id;
+      },
+      changeMaterial(value) {
+        this.form.uname = value;
       },
       // 状态字典翻译
       statusFormat(row, column) {
@@ -642,6 +664,7 @@
         });*/
         getBjclass(id).then(response => {
           this.form = response.data;
+          this.form.uname=this.form.uname+"";
           this.open = true;
           this.title = "修改班级基础信息";
         });
