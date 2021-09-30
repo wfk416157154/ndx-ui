@@ -261,7 +261,6 @@ import chart from "./chart";
 import lineChart from "../student/lineChart";
 export default {
   name: "Stugrade",
-  components: {},
   data() {
     return {
       // 表格高度
