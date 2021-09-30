@@ -8,29 +8,22 @@
         <thead>
           <tr>
             <th>课程</th>
-            <th>第一课</th>
+            <th>{{paramsList.kcmc}}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>课程安排</td>
-            <td>第1课时 词汇讲解</td>
+            <td>{{paramsList.name}}</td>
           </tr>
           <tr>
             <td>课程教学参考</td>
-            <td>
-              教学目标
-              本课活动参考 教学设计（建议4-7课时完成教学任务）
-            </td>
+            <td>{{paramsList.kcjxck}}</td>
           </tr>
           <tr>
             <td>教参内容</td>
             <td style="text-align : left">
-              <p>第1课时 词汇讲解</p>
-              <p>一．开场白（2分钟）</p>
-              <p>与学生寒暄，带动气氛。</p>
-              <p>二．内容讲解（32分钟）</p>
-              <p>教师带读单词，教师读一遍，学生读三遍。</p>
+              <editor v-model="form.kzzd1" :min-height="192" />
             </td>
           </tr>
           <tr>
@@ -38,10 +31,12 @@
             <td style="text-align : left">
               <p>图片上传</p>
               <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
+                :action="upload.imgUrl"
+                :headers="upload.headers"
                 list-type="picture-card"
                 :on-preview="handlePictureCardPreview"
                 :on-remove="handleRemove"
+                :on-success="bkSuccess"
               >
                 <i class="el-icon-plus"></i>
               </el-upload>
@@ -50,24 +45,39 @@
               </el-dialog>
               <p>文件上传</p>
               <el-upload
-                class="upload-demo"
+                ref="upload"
+                :limit="1"
+                accept="*"
+                :headers="upload.headers"
+                :action="upload.imgUrl"
+                :disabled="upload.isUploading"
+                :before-upload="beforeAvatarUploadZIP"
+                :on-success="addFileSuccess"
+                :auto-upload="false"
                 drag
-                action="https://jsonplaceholder.typicode.com/posts/"
-                multiple
               >
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">
                   将文件拖到此处，或
                   <em>点击上传</em>
                 </div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                <div
+                  class="el-upload__tip"
+                  style="color:red"
+                  slot="tip"
+                >提示：仅允许导入"{{upload.type}}"格式文件！</div>
               </el-upload>
+              <br />
+              <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                <el-button @click="upload.open = false">取 消</el-button>
+              </div>
             </td>
           </tr>
           <tr>
             <td>备注</td>
             <td>
-               <editor v-model="form.name" :min-height="192" />
+              <editor v-model="form.remark" :min-height="192" />
             </td>
           </tr>
           <tr>
@@ -84,14 +94,13 @@
 
 <script>
 import { getToken } from "@/utils/auth";
-import { addXiuxue, updateXiuxue } from "@/api/basic/xiuxue.js";
 import { secretKey } from "@/utils/tools";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
+import { addPrepareLessons } from "@/api/basic/lessonPreparationHome";
 export default {
   data() {
     return {
-      form : {},
-      radio: "1",
+      form: {},
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
@@ -110,97 +119,27 @@ export default {
         // 上传图片地址
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
+      paramsList: null,
       dialogVisible: false,
-      files1: null,
-      dialogImageUrl: null,
-      getInfo: null,
-      lsid: null,
-      lsName: null,
-      xXform: {
-        id: ""
-      },
-      ifELE: true
+      dialogImageUrl: ""
     };
   },
   created() {
-    if (this.$route.query.query) {
-      this.ifELE = true;
-      this.getInfo = JSON.parse(this.$route.query.query);
-    } else {
-      this.ifELE = false;
-      this.getInfo = JSON.parse(this.$route.query.row);
-      this.getImg();
+    if (this.$route.query.list) {
+      this.paramsList = JSON.parse(this.$route.query.list);
     }
-    this.lsid = this.$store.state.user.glrid;
-    this.lsName = this.$store.state.user.nickName;
+  },
+  mounted() {
+    console.log(this.paramsList);
   },
   methods: {
-    // 获取图片
-    getImg() {
-      selectFileList({ kzzd1: this.getInfo.id }).then(res => {
-        this["files1"] = res.rows;
-      });
-    },
-    // 休学图片预览
-    handlePictureCardPreviewEdit(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
-    //休学图片删除
-    handleRemoveEdit(file) {
-      deleteImg(file.id).then(res => {
-        if (res.code == 200) {
-          this.$message({
-            message: "删除成功",
-            type: "success"
-          });
-        } else {
-          this.$message.error("删除失败");
-        }
-      });
-    },
-    // 休学成功回调
-    xxSuccessEdit(response, file) {
-      if (response.code == 500) {
-        this.msgError("错误 : 上传失败");
-        return;
-      }
-      let data = response.data;
-      data.kzzd1 = this.getInfo.id || secretKey();
-      this.getInfo.id = data.kzzd1;
-      addImg(data).then(res => {
-        file.id = res.data.id;
-      });
-    },
-    editupdateXiuxue() {
-      this.getImg();
-      if (!this.getInfo.sj) {
-        this.msgError("错误 : 请选择休学时间");
-        return;
-      }
-      if (!this.getInfo.xxyy) {
-        this.msgError("错误 : 请填写休学原因");
-        return;
-      }
-      if (this.files1.length == 0) {
-        this.msgError("错误 : 请上传休学申请资料");
-        return;
-      }
-      this.getInfo.shzt = 1;
-      updateXiuxue(this.getInfo).then(res => {
-        if (res.code == 200) {
-          this.msgSuccess("成功 : 修改成功");
-          this.$router.go(-1);
-        }
-      });
-    },
-    // 休学图片预览
+    // 图片预览 大图
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    //休学图片删除
-    handleRemove(file) {
+    //图片删除
+    handleRemove(file, fileList) {
       deleteImg(file.id).then(res => {
         if (res.code == 200) {
           this.$message({
@@ -212,45 +151,63 @@ export default {
         }
       });
     },
-    // 休学成功回调
-    xxSuccess(response, file) {
-      if (response.code == 500) {
-        this.msgError("错误 : 上传失败");
-        return;
-      }
+    // 学生表现图片上传成功回调
+    bkSuccess(response, file, fileList) {
       let data = response.data;
-      data.kzzd1 = this.xXform.id || secretKey();
-      this.xXform.id = data.kzzd1;
+      data.kzzd1 = this.form.bkTpid || secretKey();
+      this.form.bkTpid = data.kzzd1;
       addImg(data).then(res => {
-        file.id = res.data.id;
+        if (res.code == 200) {
+          this.msgSuccess("成功 : 上传成功");
+        } else {
+          this.msgError("错误 : 上传失败");
+        }
       });
     },
+    // 文件上传前验证
+    beforeAvatarUploadZIP(file) {
+      const isLt40M = file.size / 1024 / 1024 < 40;
+      if (!isLt40M) {
+        this.$message.error("上传文件大小不能超过 40MB!");
+      }
+      return isLt40M;
+    },
+    // 文件上传成功处理压缩包
+    addFileSuccess(response, file, fileList) {
+      if (response.code == 200) {
+        let data = response.data;
+        this.upload.open = false;
+        this.upload.isUploading = false;
+        this.$refs.upload.clearFiles();
+        data.kzzd1 = this.form.bkWjid || secretKey();
+        this.form.bkWjid = data.kzzd1;
+        // 保存文件上传地址
+        addFile(data).then(res => {
+          if (res.code == 200) {
+            this.msgSuccess("成功 : 上传成功");
+          } else {
+            this.msgError("错误 : 上传失败");
+          }
+        });
+      } else {
+        this.msgError("错误 : 上传失败");
+      }
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
+    },
+    //提交备课
     addSuspension() {
-      if (!this.xXform.sj) {
-        this.msgError("错误 : 请选择休学时间");
-        return;
-      }
-      if (!this.xXform.xxyy) {
-        this.msgError("错误 : 请填写休学原因");
-        return;
-      }
-      if (!this.xXform.id) {
-        this.msgError("错误 : 请上传休学申请资料");
-        return;
-      }
-      let jsonList = {
-        id: this.xXform.id || secretKey(),
-        lsid: this.lsid,
-        remark: this.xXform.remark,
-        rybjid: this.getInfo.ryb,
-        xsbh: this.getInfo.xsbh,
-        sj: this.xXform.sj,
-        xxyy: this.xXform.xxyy
-      };
-      addXiuxue(jsonList).then(res => {
+      this.form.lsid = this.paramsList.lsid;
+      this.form.rybjid = this.paramsList.bjid;
+      this.form.templateId = this.paramsList.id;
+      addPrepareLessons(this.form).then(res => {
         if (res.code == 200) {
-          this.msgSuccess("成功 : 操作成功");
+          this.msgSuccess("成功 : 备课成功");
           this.$router.go(-1);
+        } else {
+          this.msgError("错误 : 备课失败");
         }
       });
     }

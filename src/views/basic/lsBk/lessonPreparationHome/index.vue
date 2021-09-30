@@ -2,27 +2,42 @@
   <div class="lessonHome">
     <el-form ref="form" :model="form" :inline="true" label-width="80px">
       <el-form-item label="班级">
-        <el-select v-model="form.region" placeholder="请选择班级">
-          <el-option label="曾都二中21班" value="shanghai"></el-option>
+        <el-select v-model="form.bjid" placeholder="请选择日语班级" @change="rybjOnChange" filterable>
+          <el-option
+            v-for="item in bjclassList"
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="年份">
         <el-select v-model="form.region" placeholder="请选择年份">
-          <el-option label="2021" value="shanghai"></el-option>
+          <el-option
+            v-for="(item, index) in bjkbStartDate"
+            :label="item"
+            :value="item"
+            :key="index"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="月份">
         <el-select v-model="form.region" placeholder="请选择月份">
-          <el-option label="1" value="shanghai"></el-option>
+          <el-option v-for="(item,index) in 12" :key="index" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="学期">
         <el-select v-model="form.region" placeholder="请选择学期">
-          <el-option label="上学期" value="shanghai"></el-option>
+          <el-option
+            v-for="(item,index) in nianji"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+            :key="index"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="getList">查询</el-button>
       </el-form-item>
     </el-form>
 
@@ -134,10 +149,51 @@
       </div>
       <div class="outline-list">
         <ul style="list-style : none">
-          <li>1</li>
-          <li>2</li>
-          <li>3</li>
-          <li>4</li>
+          <li class="list">1</li>
+          <li class="list">
+            <h4>当前进度教学计划</h4>
+            <div class="wrap-item">
+              <div class="left">
+                <el-tree
+                  :data="treeListTeacherData"
+                  :props="defaultProps"
+                  @node-click="handleNodeClick"
+                ></el-tree>
+              </div>
+              <div class="right">
+                <ul style="list-style : none">
+                  <li
+                    class="right-item"
+                    v-for="(item,index) in templatetreeListTeacher"
+                    :key="index"
+                  >
+                    <template v-if="templatetreeListTeacher">
+                      <span
+                        style="color : #303133;margin : 0;padding : 0"
+                      >{{item.kcmc}} - {{item.name}}</span>
+                      <div>
+                        <el-tag
+                          style="width : 80px;text-align : center"
+                          type="success"
+                          effect="dark"
+                          v-if="item.sfbk == '1'"
+                        >已备课</el-tag>
+                        <el-button
+                          style="width : 80px;text-align : center"
+                          size="mini"
+                          v-else
+                          type="danger"
+                          @click="toEdit(item)"
+                        >去备课</el-button>
+                      </div>
+                    </template>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li class="list">3</li>
+          <li class="list">4</li>
         </ul>
       </div>
     </div>
@@ -145,18 +201,18 @@
 </template>
 
 <script>
+import { listBjclass } from "@/api/basic/bjclass";
+import {
+  treeListTeacher,
+  prepareLessons
+} from "@/api/basic/lessonPreparationHome";
 export default {
   data() {
     return {
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
+        lsid: this.$store.state.user.glrid,
+        bjid: null,
+        jcid: null
       },
       arr: [
         {
@@ -176,6 +232,11 @@ export default {
           name: "第四课"
         }
       ],
+      treeListTeacherData: [],
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
       arr1: [
         {
           num: 10,
@@ -193,15 +254,90 @@ export default {
           num: 100,
           name: "第四课"
         }
-      ]
+      ],
+      bjclassList: [],
+      bjkbStartDate: [],
+      nianji: [],
+      templatetreeListTeacher: null
     };
   },
+  created() {
+    this.getConfigKey("bjkbStartDate").then(res => {
+      let date = new Date().getFullYear() + 1;
+      for (let i = res.msg; i <= date; i++) {
+        this.bjkbStartDate.push(i);
+      }
+    });
+    this.getDicts("nianji").then(response => {
+      this.nianji = response.data;
+    });
+    listBjclass({ lsid: this.form.lsid }).then(response => {
+      this.bjclassList = response.rows;
+      if (response.rows.length == 1) {
+        this.form.bjid = response.rows[0].id;
+        this.form.jcid = response.rows[0].uname;
+        this.getList();
+      } else {
+        this.form.bjid = null;
+      }
+    });
+  },
+  mounted() {},
   methods: {
-    onSubmit() {
-      console.log("submit!");
+    getList() {
+      treeListTeacher(this.form).then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].children = res.data[i].treeTeachingTemplateList;
+          delete res.data[i].treeTeachingTemplateList;
+        }
+        this.treeListTeacherData = JSON.parse(JSON.stringify(res.data));
+        this.dataProcessing(this.treeListTeacherData);
+      });
+    },
+    dataProcessing(item) {
+      for (let i = 0; i < item.length; i++) {
+        item[i].label = item[i].name;
+        if (item[i].children && item[i].children.length > 0) {
+          if (item[i].weight == "2") {
+            item[i].ifChildren = item[i].children;
+            delete item[i].children;
+          } else {
+            this.dataProcessing(item[i].children);
+          }
+        } else {
+          item[i].xzid = item[i].id;
+        }
+      }
     },
     format(percentage) {
       return percentage === 100 ? "完成" : `${percentage}%`;
+    },
+    // 获取备课的详细信息
+    handleNodeClick(data) {
+      if (data.weight == "2") {
+        this.templatetreeListTeacher = data.ifChildren;
+      } else {
+        this.templatetreeListTeacher = null;
+      }
+    },
+    // 切换班级
+    rybjOnChange(id) {
+      this.bjclassList.forEach(value => {
+        if (value.id == id) {
+          this.form.bjid = value.id;
+          this.form.jcid = value.uname;
+          this.getList();
+        }
+      });
+    },
+    // 去备课
+    toEdit(item) {
+      item = Object.assign(item, this.form);
+      this.getConfigKey("lessonPreparationEdit").then(res => {
+        this.$router.push({
+          path: res.msg + `?list=${JSON.stringify(item)}`
+        });
+      });
     }
   }
 };
@@ -329,11 +465,39 @@ export default {
         flex-wrap: wrap;
         margin: 0;
         padding: 0;
-        li {
+        .list {
           width: 49%;
-          height: 400px;
-          background: coral;
+          // height: 400px;
+          // background: coral;
+          border: 2px solid #eee;
           margin-top: 30px;
+          padding: 20px;
+          box-sizing: border-box;
+          .wrap-item {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            border: 2px solid #ddd;
+            padding: 20px;
+            box-sizing: border-box;
+            .left {
+              width: 30%;
+            }
+            .right {
+              width: 68%;
+              // border: 2px solid #ddd;
+              ul {
+                width: 100%;
+                .right-item {
+                  width: 100%;
+                  display: flex;
+                  margin-bottom: 10px;
+                  justify-content: space-between;
+                  align-items: center;
+                }
+              }
+            }
+          }
         }
       }
     }
