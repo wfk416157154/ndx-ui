@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询生成教学计划列表
 export function listGenerate(query) {
   return request({
-    url: '/basic/generate/list',
+    url: '/basic/teachingGenerate/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listGenerate(query) {
 // 查询生成教学计划详细
 export function getGenerate(id) {
   return request({
-    url: '/basic/generate/' + id,
+    url: '/basic/teachingGenerate/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getGenerate(id) {
 // 新增生成教学计划
 export function addGenerate(data) {
   return request({
-    url: '/basic/generate',
+    url: '/basic/teachingGenerate',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addGenerate(data) {
 // 修改生成教学计划
 export function updateGenerate(data) {
   return request({
-    url: '/basic/generate',
+    url: '/basic/teachingGenerate',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateGenerate(data) {
 // 删除生成教学计划
 export function delGenerate(id) {
   return request({
-    url: '/basic/generate/' + id,
+    url: '/basic/teachingGenerate/' + id,
     method: 'delete'
   })
 }
