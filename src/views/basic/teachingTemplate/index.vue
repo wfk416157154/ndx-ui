@@ -136,7 +136,7 @@
           <treeselect v-model="form.glid" :options="teachingMaterialOptions" @select="teachingMaterialSelect"  :showCount="true"  :disabled="glidEnabled" :normalizer="normalizerMaterial" placeholder="请选择教材或册数" />
         </el-form-item>
         <el-form-item label="归属节点" prop="parentId">
-          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :disabled="glidEnabled" :showCount="true" :normalizer="normalizer" placeholder="请选择父节点" />
+          <treeselect v-model="form.parentId" :options="teachingTemplateOptions" :disabled="true" :showCount="true" :normalizer="normalizer" placeholder="请选择父节点" />
         </el-form-item>
         <el-form-item label="层级类型" prop="cjlx">
           <el-select v-model="form.cjlx" placeholder="单元/课程/课程任务" :disabled="cjlxDisabled" @change="onCjlxChange" >
