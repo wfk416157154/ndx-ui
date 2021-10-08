@@ -52,7 +52,7 @@
             />
             <div class="info-item">
               <h4 style="line-height : 30px;margin : 5px 0">正常进度</h4>
-              <Ul style="list-style : none">
+              <ul style="list-style : none">
                 <li>
                   <span>姓名:</span>
                   <span>吴珂</span>
@@ -61,7 +61,7 @@
                   <span>班级:</span>
                   <span>曾都二中21班</span>
                 </li>
-              </Ul>
+              </ul>
             </div>
           </div>
           <!-- <div>
@@ -302,14 +302,12 @@ export default {
     dataProcessing(item) {
       for (let i = 0; i < item.length; i++) {
         item[i].label = item[i].name;
-        if (item[i].id) {
-          this.defaultExpandedKeys.push(item[i].id);
-        }
         if (item[i].children && item[i].children.length > 0) {
           if (item[i].weight == "2") {
             if (item[i].isLastPrepare == "1") {
               this.$nextTick(() => {
                 this.$refs.tree.setCurrentKey(item[i].id);
+                this.defaultExpandedKeys.push(item[i].id);
               });
               this.templatetreeListTeacher = item[i].children;
             }
