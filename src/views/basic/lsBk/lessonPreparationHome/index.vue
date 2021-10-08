@@ -155,6 +155,10 @@
             <div class="wrap-item">
               <div class="left">
                 <el-tree
+                  node-key="id"
+                  ref="tree"
+                  :highlight-current="true"
+                  :default-expanded-keys="defaultExpandedKeys"
                   :data="treeListTeacherData"
                   :props="defaultProps"
                   @node-click="handleNodeClick"
@@ -258,6 +262,7 @@ export default {
       bjclassList: [],
       bjkbStartDate: [],
       nianji: [],
+      defaultExpandedKeys: [],
       templatetreeListTeacher: null
     };
   },
@@ -297,8 +302,17 @@ export default {
     dataProcessing(item) {
       for (let i = 0; i < item.length; i++) {
         item[i].label = item[i].name;
+        if (item[i].id) {
+          this.defaultExpandedKeys.push(item[i].id);
+        }
         if (item[i].children && item[i].children.length > 0) {
           if (item[i].weight == "2") {
+            if (item[i].isLastPrepare == "1") {
+              this.$nextTick(() => {
+                this.$refs.tree.setCurrentKey(item[i].id);
+              });
+              this.templatetreeListTeacher = item[i].children;
+            }
             item[i].ifChildren = item[i].children;
             delete item[i].children;
           } else {
@@ -308,12 +322,14 @@ export default {
           item[i].xzid = item[i].id;
         }
       }
+      // console.log(this.defaultExpandedKeys)
     },
     format(percentage) {
       return percentage === 100 ? "完成" : `${percentage}%`;
     },
     // 获取备课的详细信息
     handleNodeClick(data) {
+      // console.log(data);
       if (data.weight == "2") {
         this.templatetreeListTeacher = data.ifChildren;
       } else {

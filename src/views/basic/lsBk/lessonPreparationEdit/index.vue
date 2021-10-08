@@ -130,7 +130,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.paramsList);
+    // console.log(this.paramsList);
   },
   methods: {
     // 图片预览 大图
