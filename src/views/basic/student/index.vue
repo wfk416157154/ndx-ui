@@ -297,7 +297,7 @@
                 v-for="item in schoolList"
                 :key="item.id"
                 :label="item.xxmc"
-                :value="item.id"
+                :value="item.xxmc"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -427,7 +427,6 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="选择退班时间"
-              disabled="false"
             ></el-date-picker>
           </el-form-item>
         </el-col>
