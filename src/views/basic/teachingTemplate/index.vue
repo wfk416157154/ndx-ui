@@ -84,6 +84,7 @@
       row-key="id"
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      empty-text="请先选择教材，然后点击 搜索按钮"
     >
       <el-table-column label="关联教材表id" prop="glid" v-if="false" />
       <el-table-column label="父节点id" align="center" prop="parentId" v-if="false" />
@@ -175,11 +176,11 @@
         <el-form-item label="备注" prop="remark">
           <editor v-model="form.remark" :min-height="130" />
         </el-form-item>
-        <el-form-item label="预计所需课时" prop="yjsxks" v-if="enableShow">
-          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时" :disabled="taskDisabled" maxLength="5" />
+        <el-form-item label="预计所需课时" prop="yjsxks" v-if="kcEnableShow">
+          <el-input v-model="form.yjsxks" placeholder="请输入预计所需课时"  maxLength="5" />
         </el-form-item>
-        <el-form-item label="预计所需天数" prop="yjsxts" v-if="enableShow">
-          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数" :disabled="kcEnableShow" maxLength="5" />
+        <el-form-item label="预计所需天数" prop="yjsxts" v-if="taskDisabled">
+          <el-input v-model="form.yjsxts" placeholder="请输入预计所需天数"  maxLength="5" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -210,7 +211,7 @@ export default {
   data() {
     return {
       // 遮罩层
-      loading: true,
+      loading: false,
       // 显示搜索条件
       showSearch: true,
       // 教学计划模板表格数据
@@ -239,7 +240,53 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        kcmc:[
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur",
+          }
+        ],
+        jdmc:[
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur",
+          }
+        ],
+        zynr:[
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur",
+          }
+        ],
+        dyxqs:[
+          {
+            required: true,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        yjsxks: [
+          {
+            required: true,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+        yjsxts: [
+          {
+            required: true,
+            message: "格式不对,只能填写数字",
+            trigger: "blur",
+            pattern: /^[0-9]+$/
+          }
+        ],
+      },
       // 教材树选项
       teachingMaterialOptions: [],
       // 渲染:节点名称
@@ -250,8 +297,8 @@ export default {
       glidEnabled:false,
       // 启用显示
       taskEnableShow:false,
-      // 是否禁用
-      taskDisabled:true,
+      // 是否显示
+      taskDisabled:false,
       // 渲染:单元/课程
       dykcRender:"单元/课程",
       // 渲染:单元/课程 提示语
@@ -262,12 +309,12 @@ export default {
       jxyqenableShow:false,
       // 层级类型、默认禁用
       cjlxDisabled:true,
-      // 预计所需天数
+      // 预计所需课时
       kcEnableShow:true,
     };
   },
   created() {
-    this.getList();
+    //this.getList();
     this.getDicts("teachingCourseType").then(response => {
       this.kclxOptions = response.data;
     });
@@ -281,11 +328,7 @@ export default {
     getList() {
       this.loading = true;
       listTeachingTemplate(this.queryParams).then(response => {
-        this.teachingTemplateList = this.handleTree(
-          response.data,
-          "id",
-          "parentId"
-        );
+        this.teachingTemplateList = this.handleTree(response.data, "id", "parentId");
         this.loading = false;
       });
     },
@@ -354,7 +397,7 @@ export default {
         yjsxks: null,
         yjsxts: null,
         jxyq: null,
-        kclx: null,
+        kclx: "1",// 默认新课
         dyxqs: null,
         zynr: null,
         cjlx: null,
@@ -389,6 +432,8 @@ export default {
     handleAdd(row) {
       this.reset();
       this.invokeTreeselect();
+      this.kcEnableShow=false
+      this.taskDisabled=false
       if (row != null && row.id) {
         this.form.parentId = row.id;
         this.form.glid=row.glid;
@@ -400,7 +445,7 @@ export default {
         }
       } else {
         if(!this.queryParams.nodePath){
-          this.msgError("请先选择教材或册数！")
+          this.msgError("请先选择教材！")
           return
         }
         this.form.cjlx="1"// 单元
@@ -471,15 +516,12 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(function() {
+      }).then(function() {
           return delTeachingTemplate(row.id);
-        })
-        .then(() => {
+        }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
-        .catch(e => {
+        }).catch(e => {
           console.log(e);
         });
     },
@@ -495,19 +537,19 @@ export default {
         this.dykcEnabled=true
         this.taskEnableShow=false
         this.enableShow=false
-        this.taskDisabled=true
         this.jxyqenableShow=false
+        this.taskDisabled=false
+        this.kcEnableShow=false
         this.dykcRender="单元"
         this.dykcPlaceholder="请输入单元名称,例如:第1单元，第2单元，第3单元·····"
       }else if("2"==val){
         this.dykcEnabled=true
-        this.taskEnableShow=false
         this.enableShow=true
         this.taskDisabled=true
+        this.kcEnableShow=false
         this.jxyqenableShow=true
         this.dykcRender="课程"
         this.dykcPlaceholder="请输入课程名称,例如:第1课，第2课，第3课·····"
-        this.kcEnableShow=false
       }else{
         this.dykcEnabled=false
         this.enableShow=true
@@ -515,6 +557,7 @@ export default {
         this.taskDisabled=false
         this.jxyqenableShow=false
         this.kcEnableShow=true
+
       }
     },
     teachingMaterialSelect(node,instanceId){
