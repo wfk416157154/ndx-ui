@@ -154,7 +154,7 @@
         <el-form-item :label="jdmcRender" prop="jdmc">
           <el-input v-model="form.jdmc" placeholder="请输入" maxlength="100" />
         </el-form-item>
-        <el-form-item label="主要内容" prop="zynr" v-if="taskEnableShow">
+        <el-form-item label="主要内容" prop="zynr" v-if="kcEnableShow">
           <el-input v-model="form.zynr" type="textarea" placeholder="请输入主要内容" maxLength="100" />
         </el-form-item>
         <el-form-item label="教参内容" prop="jxyq" v-if="jxyqenableShow">
