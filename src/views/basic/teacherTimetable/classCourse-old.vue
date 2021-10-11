@@ -141,6 +141,7 @@
                 keep-source
                 ref="xTable"
                 max-height="700"
+                style="width: 100%;font-size : 18px"
                 @checkbox-change="onselectionchange"
                 :cell-style="renderColor"
                 :data="classCourseList"

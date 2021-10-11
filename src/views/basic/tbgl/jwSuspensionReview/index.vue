@@ -47,7 +47,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="offShiftListList" border style="width: 100%">
+    <el-table :data="offShiftListList" border style="width: 100%;font-size : 18px">
       <el-table-column prop="xxmc" label="学校" width="180"></el-table-column>
       <el-table-column prop="rybjmc" label="班级" width="180"></el-table-column>
       <el-table-column prop="lsxm" label="老师"></el-table-column>

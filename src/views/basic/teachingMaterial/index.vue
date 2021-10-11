@@ -45,6 +45,7 @@
       :data="teachingMaterialList"
       row-key="id"
       default-expand-all
+      style="width: 100%;font-size : 18px"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="教材名称" prop="jcmc" />

@@ -125,7 +125,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table  border v-loading="loading" :data="everytimeList" @selection-change="handleSelectionChange">
+    <el-table style="width: 100%;font-size : 18px" border v-loading="loading" :data="everytimeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="学生编号" align="center" prop="xsbh" />
@@ -155,7 +155,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"

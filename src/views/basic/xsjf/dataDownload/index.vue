@@ -13,7 +13,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="tableData" border style="width: 100%;font-size : 18px">
       <el-table-column type="index" width="50" />
       <el-table-column prop="date" label="标题"></el-table-column>
       <el-table-column prop="name" label="要求"></el-table-column>

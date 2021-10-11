@@ -23,7 +23,7 @@
           <tr>
             <td>教参内容</td>
             <td style="text-align : left">
-              <editor v-model="form.kzzd1" :min-height="192" />
+              <editor v-model="form.kzzd1" :disabled="true" :min-height="192" />
             </td>
           </tr>
           <tr>
@@ -130,7 +130,7 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.paramsList);
+    console.log(this.paramsList);
   },
   methods: {
     // 图片预览 大图

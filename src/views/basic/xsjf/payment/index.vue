@@ -4,7 +4,7 @@
       <h4>姓名 : {{paymentData.xsxm}} 班级 : {{paymentData.rybjmc}}</h4>
       <h5>总费用 : {{paymentData.zfy}}元 总期数 : {{paymentData.zqs}} 本学期应缴费 : {{paymentData.bxqyjf}}元 已缴费 : {{paymentData.yjzfy}}元 剩余费用 : {{paymentData.sywjzfy}}元</h5>
     </div>
-    <el-table :data="paymentData.dataList" :border="true" stripe style="width: 100%">
+    <el-table :data="paymentData.dataList" :border="true" stripe style="width: 100%;font-size : 18px">
       <el-table-column prop="xsxm" label="姓名" width="180"></el-table-column>
       <el-table-column prop="rybjmc" label="班级"></el-table-column>
       <el-table-column prop="bqyjf" label="本期应缴费金额"></el-table-column>

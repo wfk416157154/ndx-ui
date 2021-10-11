@@ -44,7 +44,7 @@
     </el-form>
 
     <template>
-      <el-table :data="jwTeaAttenDataItem" border style="width: 100%">
+      <el-table :data="jwTeaAttenDataItem" border style="width: 100%;font-size : 18px">
         <el-table-column
           :prop="item.prop"
           :label="item.label"

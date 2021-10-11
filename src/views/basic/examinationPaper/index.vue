@@ -44,6 +44,7 @@
       v-loading="loading"
       :data="examinationPaperList"
       @selection-change="handleSelectionChange"
+      style="width: 100%;font-size : 18px"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日语班级" align="center" prop="bjmc" />

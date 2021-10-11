@@ -15,7 +15,7 @@
       </el-form-item>
     </el-form>
     <firstTryForm @getList="getList" ref="firstTryForm" />
-    <el-table  border ref="singleTable" :data="tableData" highlight-current-row style="width: 100%">
+    <el-table  border ref="singleTable" :data="tableData" highlight-current-row style="width: 100%;font-size : 18px">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column property="xm" label="姓名" width="120"></el-table-column>
       <el-table-column property="xb" label="性别" :formatter="getSex" width="120"></el-table-column>

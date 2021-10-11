@@ -3,7 +3,7 @@
     <el-button icon="el-icon-plus" size="mini" type="primary" @click="addContentList">新增</el-button>
     <br />
     <br />
-    <el-table  border :data="contentList">
+    <el-table  border :data="contentList" style="width: 100%;font-size : 18px">
       <el-table-column label="选项名称" align="center" prop="xxmc" />
       <el-table-column label="组件名称" align="center" :formatter="getResult1" prop="zjmc" />
       <el-table-column label="是否默认选中" align="center" :formatter="getResult3" prop="sfmrxz" />

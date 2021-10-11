@@ -101,7 +101,7 @@
         border
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
-        style="width: 100%"
+       style="width: 100%;font-size : 18px"
       >
         <el-table-column
           :fixed="item.fixed"

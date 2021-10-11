@@ -20,7 +20,7 @@
     </el-form>
 
     <!-- 培训主页table -->
-    <el-table border :data="teacherList">
+    <el-table border :data="teacherList" style="width: 100%;font-size : 18px">
       <el-table-column label="参训人" align="center" prop="cxr" />
       <el-table-column label="培训时间" align="center" prop="pxsj" />
       <el-table-column label="实习班级" align="center" prop="sxbj" />

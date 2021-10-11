@@ -1,7 +1,7 @@
 <template>
   <div class="score-chart">
     <div>
-      <el-table :data="listAll" border style="width: 100%">
+      <el-table :data="listAll" border style="width: 100%;font-size : 18px">
         <el-table-column
           :fixed="item.fixed"
           :label="item.label"

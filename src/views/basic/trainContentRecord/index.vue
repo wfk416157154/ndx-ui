@@ -94,6 +94,7 @@
       v-loading="loading"
       :data="trainContentRecordList"
       @selection-change="handleSelectionChange"
+      style="width: 100%;font-size : 18px"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />

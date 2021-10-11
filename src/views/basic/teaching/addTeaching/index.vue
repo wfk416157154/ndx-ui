@@ -114,17 +114,25 @@
             </el-col>
           </el-row>
           <el-form-item>
-            <el-button type="primary" @click="dialogTableVisible = true">点击查看该班课表</el-button>
+            <el-button
+              type="primary"
+              @click="dialogTableVisible = true"
+              :disabled="!teachingForm.rybjid"
+            >点击查看该班课表</el-button>
             <el-button @click="resetForm('teachingForm')">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="right-tabel">
         <div>
-          <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
+          <el-button
+            type="primary"
+            @click="dialogFormVisible = true"
+            :disabled="!teachingForm.rybjid"
+          >添加</el-button>
         </div>
         <div>
-          <el-table border :data="itemSkiptime" style="width: 100%">
+          <el-table border :data="itemSkiptime" style="width: 100%;font-size : 18px">
             <el-table-column label="名称" width="120" prop="timeName"></el-table-column>
             <el-table-column label="开始日期" width="120" prop="kssj"></el-table-column>
             <el-table-column label="结束日期" width="120" prop="jssj"></el-table-column>
@@ -170,8 +178,13 @@
       </div>
     </div>
     <div style="width : 100%;text-align : center;margin: 20px 0px">
-      <el-button type="primary" @click="addTeaching" v-if="listGenerate.length == 0">生成教学计划</el-button>
-      <el-button type="info" @click="editTeaching" v-else>更新教学计划</el-button>
+      <el-button
+        type="primary"
+        @click="addTeaching"
+        v-if="listGenerate.length == 0"
+        :disabled="!teachingForm.rybjid"
+      >生成教学计划</el-button>
+      <el-button type="info" @click="editTeaching" v-else :disabled="!teachingForm.rybjid">更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -209,7 +222,6 @@
         <WholeView v-if="'WholeView' == ifContent" />
       </div>
     </div>
-
     <el-dialog title="课表" :visible.sync="dialogTableVisible" width="80%">
       <el-table
         ref="multipleTable"
@@ -311,6 +323,13 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+    <el-dialog title="注意" :visible.sync="centerDialogVisible" width="30%">
+      <h3>生成教学计划功能,需要选择校区班级后进行操作</h3>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -337,6 +356,7 @@ export default {
     return {
       dialogFormVisible: false,
       dialogTableVisible: false,
+      centerDialogVisible: true,
       teachingForm: {
         zfx: [],
         xqid: null,
@@ -472,6 +492,7 @@ export default {
     // 重置
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.itemSkiptime = [];
     },
     // 生成教学计划模板
     addTeaching() {

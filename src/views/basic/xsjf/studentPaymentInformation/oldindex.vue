@@ -26,7 +26,7 @@
       ref="multipleTable"
       :data="paymentStudentData"
       tooltip-effect="dark"
-      style="width: 100%"
+      style="width: 100%;font-size : 18px"
       :border="true"
       @selection-change="handleSelectionChange"
     >
@@ -517,13 +517,13 @@ export default {
       let obj = this.paymentAllList[0];
       listPaymentSpecial({ xsbh: obj.xsbh }).then(res => {
         if (res.rows.length > 0) {
-          if (res.rows[0].shzt == 0){
+          if (res.rows[0].shzt == 0) {
             this.msgError("错误 : 申请已被驳回,不可以再次申请");
-          }else  if (res.rows[0].shzt == 1){
+          } else if (res.rows[0].shzt == 1) {
             this.msgSuccess("申请已通过,不可以再次申请");
-          }else if (res.rows[0].shzt == 2){
+          } else if (res.rows[0].shzt == 2) {
             this.msgError("错误 : 申请还在审核中,不可以再次申请");
-          }else {
+          } else {
             this.msgError("错误 : 你已提交过减免申请,不可以再次申请");
           }
         } else {

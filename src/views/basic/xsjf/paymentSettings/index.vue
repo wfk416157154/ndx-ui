@@ -31,7 +31,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="paymentSettingsData" :border="true" stripe style="width: 100%">
+    <el-table :data="paymentSettingsData" :border="true" stripe style="width: 100%;font-size : 18px">
       <el-table-column prop="xqmc" label="学校"></el-table-column>
       <el-table-column prop="rybjmc" label="班级"></el-table-column>
       <el-table-column prop="lsxm" label="老师"></el-table-column>

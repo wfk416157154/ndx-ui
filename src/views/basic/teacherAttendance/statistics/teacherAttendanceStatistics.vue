@@ -39,7 +39,7 @@
 
     <div style="display : flex;justify-content : space-between">
       <div style="width : 50%">
-        <el-table :data="resultItem" border style="width: 100%">
+        <el-table :data="resultItem" border style="width: 100%;font-size : 18px">
           <el-table-column
             :prop="item.prop"
             :label="item.label"
@@ -51,7 +51,7 @@
       </div>
 
       <div style="margin-left:10px;">
-        <el-table :data="detailItem" border style="width: 100%" :height="$root.tableHeight">
+        <el-table :data="detailItem" border style="width: 100%;font-size : 18px" :height="$root.tableHeight">
           <el-table-column
             :prop="item.prop"
             :label="item.label"

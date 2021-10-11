@@ -9,7 +9,7 @@
       ref="multipleTable"
       :data="paymentStudentData"
       tooltip-effect="dark"
-      style="width: 100%"
+      style="width: 100%;font-size : 18px"
       :border="true"
     >
       <el-table-column type="index" width="55"></el-table-column>

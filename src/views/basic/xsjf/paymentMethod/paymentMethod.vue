@@ -42,6 +42,7 @@
       border
       :data="paymentIncomeList"
       @selection-change="handleSelectionChange"
+      style="width: 100%;font-size : 18px"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="进账名称" align="center" prop="jzmc" />

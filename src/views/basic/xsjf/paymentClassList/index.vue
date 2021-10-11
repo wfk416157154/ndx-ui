@@ -84,7 +84,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="paymentClassListData" :border="true" stripe style="width: 100%">
+    <el-table :data="paymentClassListData" :border="true" stripe style="width: 100%;font-size : 18px">
       <el-table-column prop="qyfzr" label="负责人"></el-table-column>
       <el-table-column prop="xxmc" label="学校"></el-table-column>
       <el-table-column prop="rybjmc" label="班级"></el-table-column>

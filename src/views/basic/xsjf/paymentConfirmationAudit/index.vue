@@ -77,7 +77,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="paymentConfirmationAuditData" :border="true" stripe style="width: 100%">
+    <el-table :data="paymentConfirmationAuditData" :border="true" stripe style="width: 100%;font-size : 18px">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column prop="xsxm" label="学生姓名"></el-table-column>
       <el-table-column prop="zzsj" label="转账时间"></el-table-column>

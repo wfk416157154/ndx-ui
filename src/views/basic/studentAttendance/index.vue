@@ -5,7 +5,7 @@
       @cell-click="toStudentAttendance"
       :data="tableData"
       border
-      style="width: 100%;"
+      style="width: 100%;font-size : 18px"
       :header-cell-style="{textAlign: 'center'}"
       :cell-style="{ textAlign: 'center' }"
     >

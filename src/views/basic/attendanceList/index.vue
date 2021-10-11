@@ -26,7 +26,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="attendanceList" border>
+    <el-table :data="attendanceList" border style="width: 100%;font-size : 18px">
       <el-table-column label="序号" type="index"></el-table-column>
       <el-table-column label="班级" prop="rybjmc" width="150px"></el-table-column>
       <el-table-column label="老师" prop="lsxm" width="100px"></el-table-column>

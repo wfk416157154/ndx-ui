@@ -148,7 +148,7 @@
                 ref="multipleTable"
                 :data="classCourseList"
                 tooltip-effect="dark"
-                style="width: 100%"
+                style="width: 100%;font-size : 18px"
                 border
                 @selection-change="handleSelectionChange"
                 :cell-style="tableStyle"

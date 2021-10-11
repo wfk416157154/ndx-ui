@@ -26,7 +26,7 @@
       ref="multipleTable"
       :data="paymentStudentData"
       tooltip-effect="dark"
-      style="width: 100%"
+      style="width: 100%;font-size : 18px"
       :border="true"
       @selection-change="handleSelectionChange"
     >

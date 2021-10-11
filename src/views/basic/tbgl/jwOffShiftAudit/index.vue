@@ -59,7 +59,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :height="$root.tableHeight" :data="stuTuibanList" border style="width: 100%">
+    <el-table v-loading="loading" :height="$root.tableHeight" :data="stuTuibanList" border style="width: 100%;font-size : 18px">
       <el-table-column prop="rybjmc" label="班级" align="center"></el-table-column>
       <el-table-column prop="lsxm" label="老师" align="center"></el-table-column>
       <el-table-column prop="xsxm" label="学生姓名" align="center"></el-table-column>

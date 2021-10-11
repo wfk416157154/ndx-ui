@@ -110,7 +110,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table  border v-loading="loading" :data="classroomList" @selection-change="handleSelectionChange">
+    <el-table style="width: 100%;font-size : 18px" border v-loading="loading" :data="classroomList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false" />
       <el-table-column label="校区名称" align="center" prop="xqmc" v-if="false" />
