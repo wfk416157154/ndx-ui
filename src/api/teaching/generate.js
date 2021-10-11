@@ -77,3 +77,12 @@ export function listSkiptime(query) {
     params: query
   })
 }
+
+// 手动生成教学计划
+export function generateTeachingHandle(data) {
+  return request({
+    url: '/basic/teachingGenerate/generateTeachingHandle',
+    method: 'post',
+    data: data
+  })
+}

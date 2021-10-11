@@ -348,7 +348,8 @@ import {
   addSkiptime,
   editSkiptime,
   deleteSkiptime,
-  listSkiptime
+  listSkiptime,
+  generateTeachingHandle
 } from "@/api/teaching/generate";
 import { listClassCourse } from "@/api/basic/classCourse";
 export default {
@@ -449,6 +450,7 @@ export default {
     // 选择班级锁定老师
     bjOnChange(bjid) {
       this.reset();
+      this.itemSkiptime = [];
       this.classList.forEach(value => {
         if (value.id === bjid) {
           this.teachingForm.lsid = value.lsxm;
@@ -500,7 +502,7 @@ export default {
       addGenerate(this.teachingForm).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 生成教学计划完成");
-          this.getListGenerate(this.teachingForm.rybjid);
+          this.generateTeachingHandle(this.teachingForm, 0);
         }
       });
     },
@@ -510,9 +512,18 @@ export default {
       updateGenerate(this.teachingForm).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 更新教学计划完成");
-          this.getListGenerate(this.teachingForm.rybjid);
+          this.generateTeachingHandle(this.teachingForm, 1);
         }
       });
+    },
+    // 手动生成教学计划
+    async generateTeachingHandle(teachingForm, generateAndUpdate) {
+      teachingForm.generateAndUpdate = generateAndUpdate;
+      let result = await generateTeachingHandle(teachingForm);
+      console.log(result);
+      if (result.code == 200) {
+        this.getListGenerate(teachingForm.rybjid);
+      }
     },
     // 数据重置
     reset() {

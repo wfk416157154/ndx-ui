@@ -41,7 +41,7 @@
       </el-form-item>
     </el-form>
 
-    <div class="Information-bar">
+    <div class="Information-bar" v-if="false">
       <div class="bar-top">
         <div class="bar-item">
           <div class="bar-info">

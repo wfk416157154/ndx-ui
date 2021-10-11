@@ -18,7 +18,9 @@
           </tr>
           <tr>
             <td>课程教学参考</td>
-            <td>{{paramsList.kcjxck}}</td>
+            <td>
+              <editor v-model="paramsList.kcjxck" :disabled="true" :min-height="192" />
+            </td>
           </tr>
           <tr>
             <td>教参内容</td>
