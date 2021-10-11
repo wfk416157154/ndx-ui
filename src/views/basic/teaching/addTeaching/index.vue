@@ -521,6 +521,8 @@ export default {
             this.getListGenerate(this.teachingForm.rybjid);
             this.msgSuccess("成功 : 生成教学计划完成");
             this.generateTeachingHandle(this.teachingForm, 0);
+            this.showGenerateBtn=false
+            this.showUpdateBtn=true
           }
         });
       }
