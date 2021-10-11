@@ -178,8 +178,12 @@
       </div>
     </div>
     <div style="width : 100%;text-align : center;margin: 20px 0px">
-      <el-button type="primary" @click="addTeaching" v-if="showGenerateBtn">生成教学计划</el-button>
-      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn">更新教学计划</el-button>
+      <el-button
+        type="primary"
+        @click="addTeaching"
+        v-if="!showUpdateBtn"
+      >生成教学计划</el-button>
+      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn" >更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -406,9 +410,7 @@ export default {
       listGenerate: [],
       itemSkiptime: [],
       // 是否显示 更新教学计划按钮
-      showUpdateBtn: false,
-      // 是否显示 生成教学计划按钮
-      showGenerateBtn: false
+      showUpdateBtn:false,
     };
   },
   components: {
@@ -470,13 +472,11 @@ export default {
         this.classCourseList = response.rows;
       });
       this.getListGenerate(bjid);
-      listClassPlan({ rybjid: bjid }).then(response => {
-        if (response.total > 0) {
-          this.showGenerateBtn = false;
-          this.showUpdateBtn = true;
-        } else {
-          this.showGenerateBtn = true;
-          this.showUpdateBtn = false;
+      listClassPlan({ rybjid:bjid }).then(response => {
+        if(response.total>0){
+          this.showUpdateBtn=true
+        }else{
+          this.showUpdateBtn=false
         }
       });
     },
@@ -486,10 +486,7 @@ export default {
         if (res.rows.length > 0) {
           this.listGenerate = res.rows;
           this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
-          this.teachingForm = Object.assign(
-            this.teachingForm,
-            this.listGenerate[0]
-          );
+          this.teachingForm = Object.assign(this.teachingForm, this.listGenerate[0]);
           this.teachingForm.kbsjStr = this.teachingForm.kbsj;
           this.listSkiptime(this.teachingForm.id);
         } else {
@@ -508,19 +505,20 @@ export default {
     },
     // 生成教学计划的表单数据添加
     addTeaching() {
+      if(!this.teachingForm.rybjid){
+        this.msgError("请先选择日语班级！");
+        return
+      }
       this.teachingForm.zfx = this.teachingForm.zfx.join();
-      if (this.listGenerate.length > 0 && this.showGenerateBtn) {
-        // 表示表单数据保存了，但是未生成教学计划
+      if(this.listGenerate.length>0&&!this.showUpdateBtn){// 表示表单数据保存了，但是未生成教学计划
         this.generateTeachingHandle(this.teachingForm, 0);
       } else {
         // 表单数据未保存，教学计划也未生成
         addGenerate(this.teachingForm).then(res => {
           if (res.code == 200) {
-            this.getListGenerate(this.teachingForm.rybjid);
             this.msgSuccess("成功 : 生成教学计划完成");
             this.generateTeachingHandle(this.teachingForm, 0);
-            this.showGenerateBtn = false;
-            this.showUpdateBtn = true;
+            this.showUpdateBtn=true
           }
         });
       }
@@ -537,13 +535,12 @@ export default {
     },
     // 手动生成教学计划
     async generateTeachingHandle(teachingForm, generateAndUpdate) {
-      console.log(this.teachingForm);
+      this.getListGenerate(this.teachingForm.rybjid);
       teachingForm.generateAndUpdate = generateAndUpdate;
       this.getListGenerate(teachingForm.rybjid);
       let result = await generateTeachingHandle(teachingForm);
-      console.log(result);
       if (result.code == 200) {
-        // this.getListGenerate(teachingForm.rybjid);
+        this.msgSuccess(result.msg);
       }
     },
     // 数据重置
