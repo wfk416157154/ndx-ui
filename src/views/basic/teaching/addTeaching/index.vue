@@ -181,10 +181,9 @@
       <el-button
         type="primary"
         @click="addTeaching"
-        v-if="listGenerate.length == 0"
-        :disabled="!teachingForm.rybjid"
+        v-if="showGenerateBtn"
       >生成教学计划</el-button>
-      <el-button type="info" @click="editTeaching" v-else :disabled="!teachingForm.rybjid">更新教学计划</el-button>
+      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn" >更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -352,6 +351,8 @@ import {
   generateTeachingHandle
 } from "@/api/teaching/generate";
 import { listClassCourse } from "@/api/basic/classCourse";
+import { listClassPlan } from "@/api/teaching/classPlan";
+
 export default {
   data() {
     return {
@@ -407,7 +408,11 @@ export default {
       classCourseList: [],
       kcType: [],
       listGenerate: [],
-      itemSkiptime: []
+      itemSkiptime: [],
+      // 是否显示 更新教学计划按钮
+      showUpdateBtn:false,
+      // 是否显示 生成教学计划按钮
+      showGenerateBtn:false,
     };
   },
   components: {
@@ -469,8 +474,17 @@ export default {
         this.classCourseList = response.rows;
       });
       this.getListGenerate(bjid);
+      listClassPlan({ rybjid:bjid }).then(response => {
+        if(response.total>0){
+          this.showGenerateBtn=false
+          this.showUpdateBtn=true
+        }else{
+          this.showGenerateBtn=true
+          this.showUpdateBtn=false
+        }
+      });
     },
-    // 查教学计划
+    // 查教学计划的表单数据
     getListGenerate(bjid) {
       listGenerate({ rybjid: bjid }).then(res => {
         if (res.rows.length > 0) {
@@ -496,17 +510,22 @@ export default {
       this.$refs[formName].resetFields();
       this.itemSkiptime = [];
     },
-    // 生成教学计划模板
+    // 生成教学计划的表单数据添加
     addTeaching() {
       this.teachingForm.zfx = this.teachingForm.zfx.join();
-      addGenerate(this.teachingForm).then(res => {
-        if (res.code == 200) {
-          this.msgSuccess("成功 : 生成教学计划完成");
-          this.generateTeachingHandle(this.teachingForm, 0);
-        }
-      });
+      if(this.listGenerate.length>0&&this.showGenerateBtn){// 表示表单数据保存了，但是未生成教学计划
+        this.generateTeachingHandle(this.teachingForm, 0);
+      }else{// 表单数据未保存，教学计划也未生成
+        addGenerate(this.teachingForm).then(res => {
+          if (res.code == 200) {
+            this.getListGenerate(this.teachingForm.rybjid);
+            this.msgSuccess("成功 : 生成教学计划完成");
+            this.generateTeachingHandle(this.teachingForm, 0);
+          }
+        });
+      }
     },
-    // 更新教学计划模板
+    // 更新教学计划的表单数据
     editTeaching() {
       this.teachingForm.zfx = this.teachingForm.zfx.join();
       updateGenerate(this.teachingForm).then(res => {
@@ -522,7 +541,7 @@ export default {
       let result = await generateTeachingHandle(teachingForm);
       console.log(result);
       if (result.code == 200) {
-        this.getListGenerate(teachingForm.rybjid);
+
       }
     },
     // 数据重置
