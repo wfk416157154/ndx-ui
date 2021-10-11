@@ -178,12 +178,8 @@
       </div>
     </div>
     <div style="width : 100%;text-align : center;margin: 20px 0px">
-      <el-button
-        type="primary"
-        @click="addTeaching"
-        v-if="showGenerateBtn"
-      >生成教学计划</el-button>
-      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn" >更新教学计划</el-button>
+      <el-button type="primary" @click="addTeaching" v-if="showGenerateBtn">生成教学计划</el-button>
+      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn">更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -410,9 +406,9 @@ export default {
       listGenerate: [],
       itemSkiptime: [],
       // 是否显示 更新教学计划按钮
-      showUpdateBtn:false,
+      showUpdateBtn: false,
       // 是否显示 生成教学计划按钮
-      showGenerateBtn:false,
+      showGenerateBtn: false
     };
   },
   components: {
@@ -474,13 +470,13 @@ export default {
         this.classCourseList = response.rows;
       });
       this.getListGenerate(bjid);
-      listClassPlan({ rybjid:bjid }).then(response => {
-        if(response.total>0){
-          this.showGenerateBtn=false
-          this.showUpdateBtn=true
-        }else{
-          this.showGenerateBtn=true
-          this.showUpdateBtn=false
+      listClassPlan({ rybjid: bjid }).then(response => {
+        if (response.total > 0) {
+          this.showGenerateBtn = false;
+          this.showUpdateBtn = true;
+        } else {
+          this.showGenerateBtn = true;
+          this.showUpdateBtn = false;
         }
       });
     },
@@ -513,16 +509,18 @@ export default {
     // 生成教学计划的表单数据添加
     addTeaching() {
       this.teachingForm.zfx = this.teachingForm.zfx.join();
-      if(this.listGenerate.length>0&&this.showGenerateBtn){// 表示表单数据保存了，但是未生成教学计划
+      if (this.listGenerate.length > 0 && this.showGenerateBtn) {
+        // 表示表单数据保存了，但是未生成教学计划
         this.generateTeachingHandle(this.teachingForm, 0);
-      }else{// 表单数据未保存，教学计划也未生成
+      } else {
+        // 表单数据未保存，教学计划也未生成
         addGenerate(this.teachingForm).then(res => {
           if (res.code == 200) {
             this.getListGenerate(this.teachingForm.rybjid);
             this.msgSuccess("成功 : 生成教学计划完成");
             this.generateTeachingHandle(this.teachingForm, 0);
-            this.showGenerateBtn=false
-            this.showUpdateBtn=true
+            this.showGenerateBtn = false;
+            this.showUpdateBtn = true;
           }
         });
       }
@@ -539,11 +537,13 @@ export default {
     },
     // 手动生成教学计划
     async generateTeachingHandle(teachingForm, generateAndUpdate) {
+      console.log(this.teachingForm);
       teachingForm.generateAndUpdate = generateAndUpdate;
+      this.getListGenerate(teachingForm.rybjid);
       let result = await generateTeachingHandle(teachingForm);
       console.log(result);
       if (result.code == 200) {
-
+        // this.getListGenerate(teachingForm.rybjid);
       }
     },
     // 数据重置
