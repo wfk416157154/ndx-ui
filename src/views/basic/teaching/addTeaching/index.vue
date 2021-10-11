@@ -3,80 +3,119 @@
     <div class="wrap-header">
       <div class="left-from">
         <el-form
-          :model="ruleForm"
+          :model="teachingForm"
+          ref="teachingForm"
           :rules="rules"
-          ref="ruleForm"
           label-width="100px"
-          class="demo-ruleForm"
+          class="demo-teachingForm"
         >
           <el-row>
             <el-col :span="11">
-              <el-form-item label="校区" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="开班时间" prop="name">
-                <el-date-picker v-model="ruleForm.value1" type="date" placeholder="选择日期"></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="日语班级" prop="name">
-                <el-select v-model="ruleForm.region" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+              <el-form-item label="校区" prop="xqid">
+                <el-select
+                  v-model="teachingForm.xqid"
+                  filterable
+                  @change="xqmcOnChange"
+                  placeholder="请选择校区"
+                >
+                  <el-option
+                    v-for="item in schoolList"
+                    :key="item.id"
+                    :label="item.xxmc"
+                    :value="item.id"
+                  ></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="高考时间" prop="name">
-                <el-date-picker v-model="ruleForm.value1" type="date" placeholder="选择日期"></el-date-picker>
+              <el-form-item label="开班时间" prop="kbsjStr">
+                <el-date-picker
+                  v-model="teachingForm.kbsjStr"
+                  type="date"
+                  value-format="yyyy-MM-dd"
+                  placeholder="选择日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="老师姓名" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
+              <el-form-item label="日语班级" prop="rybjid">
+                <el-select
+                  v-model="teachingForm.rybjid"
+                  @change="bjOnChange"
+                  filterable
+                  placeholder="请选择班级"
+                >
+                  <el-option
+                    :label="item.rybjmc"
+                    :value="item.id"
+                    v-for="(item,index) in classList"
+                    :key="index"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="班级人数" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
+              <el-form-item label="高考时间" prop="gksj">
+                <el-date-picker
+                  v-model="teachingForm.gksj"
+                  type="date"
+                  value-format="yyyy-MM-dd"
+                  placeholder="选择日期"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="原有效课时" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
+              <el-form-item label="老师姓名" prop="lsid">
+                <el-input v-model="teachingForm.lsid"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="现有效课时" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
+              <el-form-item label="班级人数" prop="bjrs">
+                <el-input v-model="teachingForm.bjrs"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="总复习" prop="name">
-                <el-checkbox v-model="checked">备选项</el-checkbox>
-                <el-checkbox v-model="checked">备选项</el-checkbox>
-                <el-checkbox v-model="checked">备选项</el-checkbox>
+              <el-form-item label="原有效课时" prop="yyxks">
+                <el-input v-model="teachingForm.yyxks" disabled></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="系数" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
+              <el-form-item label="现有效课时" prop="xyxks">
+                <el-input v-model="teachingForm.xyxks" @change="calculateClassHours"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="教学计划模板" prop="name">
-                <el-select v-model="ruleForm.region" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+              <el-form-item label="总复习" prop="zfx">
+                <el-checkbox-group v-model="teachingForm.zfx">
+                  <el-checkbox
+                    :label="item.dictValue"
+                    v-for="(item,index) in reviewList"
+                    :key="index"
+                  >{{item.dictLabel}}</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="日有效课时" prop="ryxks">
+                <el-input v-model="teachingForm.ryxks"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="教学计划模板" prop="jcid">
+                <el-select v-model="teachingForm.jcid" placeholder="请选择教学计划模板">
+                  <el-option
+                    v-for="(item,index) in listTeachingMaterial"
+                    :key="index"
+                    :label="item.jcmc"
+                    :value="item.id"
+                  ></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-form-item>
             <el-button type="primary" @click="dialogTableVisible = true">点击查看该班课表</el-button>
-            <el-button @click="resetForm('ruleForm')">重置</el-button>
+            <el-button @click="resetForm('teachingForm')">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -85,68 +124,54 @@
           <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
         </div>
         <div>
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column label="名称" width="120">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.date }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="开始日期" width="120">
-              <template slot-scope="scope">
-                <el-popover trigger="hover" placement="top">
-                  <p>姓名: {{ scope.row.name }}</p>
-                  <p>住址: {{ scope.row.address }}</p>
-                  <div slot="reference" class="name-wrapper">
-                    <el-tag size="medium">{{ scope.row.name }}</el-tag>
-                  </div>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column label="结束日期" width="120">
-              <template slot-scope="scope">
-                <el-popover trigger="hover" placement="top">
-                  <p>姓名: {{ scope.row.name }}</p>
-                  <p>住址: {{ scope.row.address }}</p>
-                  <div slot="reference" class="name-wrapper">
-                    <el-tag size="medium">{{ scope.row.name }}</el-tag>
-                  </div>
-                </el-popover>
-              </template>
-            </el-table-column>
+          <el-table border :data="itemSkiptime" style="width: 100%">
+            <el-table-column label="名称" width="120" prop="timeName"></el-table-column>
+            <el-table-column label="开始日期" width="120" prop="kssj"></el-table-column>
+            <el-table-column label="结束日期" width="120" prop="jssj"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini" @click="editSkiptime(scope.$index, scope.row)">编辑</el-button>
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)"
+                  @click="deleteSkiptime(scope.$index, scope.row)"
                 >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <el-dialog title="添加" :visible.sync="dialogFormVisible">
-          <el-form :model="form">
+          <el-form :model="skipDateForm">
             <el-form-item label="名称" label-width="120px">
-              <el-input v-model="form.name"></el-input>
+              <el-input v-model="skipDateForm.timeName"></el-input>
             </el-form-item>
             <el-form-item label="开始时间" label-width="120px">
-              <el-date-picker v-model="form.value1" type="date" placeholder="选择日期"></el-date-picker>
+              <el-date-picker
+                v-model="skipDateForm.kssj"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期"
+              ></el-date-picker>
             </el-form-item>
             <el-form-item label="结束时间" label-width="120px">
-              <el-date-picker v-model="form.value1" type="date" placeholder="选择日期"></el-date-picker>
+              <el-date-picker
+                v-model="skipDateForm.jssj"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期"
+              ></el-date-picker>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="saveSkiptime">确 定</el-button>
           </div>
         </el-dialog>
       </div>
     </div>
     <div style="width : 100%;text-align : center;margin: 20px 0px">
-      <el-button type="primary">生成教学计划</el-button>
-      <el-button type="info">更新教学计划</el-button>
+      <el-button type="primary" @click="addTeaching" v-if="listGenerate.length == 0">生成教学计划</el-button>
+      <el-button type="info" @click="editTeaching" v-else>更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -185,11 +210,105 @@
       </div>
     </div>
 
-    <el-dialog title="课表" :visible.sync="dialogTableVisible">
-      <el-table :data="gridData" border>
-        <el-table-column property="date" label="日期" width="150"></el-table-column>
-        <el-table-column property="name" label="姓名" width="200"></el-table-column>
-        <el-table-column property="address" label="地址"></el-table-column>
+    <el-dialog title="课表" :visible.sync="dialogTableVisible" width="80%">
+      <el-table
+        ref="multipleTable"
+        :data="classCourseList"
+        tooltip-effect="dark"
+        style="width: 100%"
+        border
+      >
+        <el-table-column label="开始时间" prop="kssj"></el-table-column>
+        <el-table-column label="结束时间" prop="jssj"></el-table-column>
+        <el-table-column label="课程类型" width="120">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.kcType" disabled placeholder="请选择">
+              <el-option
+                v-for="item in kcType"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              ></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column ref="demo" label="周一">
+          <template slot-scope="scope">
+            <div v-if="scope.row.mondayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.mondayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="周二">
+          <template slot-scope="scope">
+            <div v-if="scope.row.tuesdayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.tuesdayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="周三">
+          <template slot-scope="scope">
+            <div v-if="scope.row.wednesdayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.wednesdayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="周四">
+          <template slot-scope="scope">
+            <div v-if="scope.row.thursdayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.thursdayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="周五">
+          <template slot-scope="scope">
+            <div v-if="scope.row.fridayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.fridayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="周六">
+          <template slot-scope="scope">
+            <div v-if="scope.row.saturdayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.saturdayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="周日">
+          <template slot-scope="scope">
+            <div v-if="scope.row.sundayDetails.length > 0">
+              <div v-for="(item,index) in scope.row.sundayDetails" :key="index">
+                <span v-if="item.kzzd1 == 0">{{item.ybj}} : 共 {{item.yjskrs}} 人</span>
+                <span v-else>全部</span>
+              </div>
+            </div>
+            <span v-else>未添加</span>
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -199,67 +318,75 @@
 import SemesterView from "./components/semesterView";
 import MonthView from "./components/monthView";
 import WholeView from "./components/wholeView";
+import { listSchool } from "@/api/basic/school";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listClassCourseBasic } from "@/api/basic/classCourseBasic";
+import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
+import {
+  addGenerate,
+  listGenerate,
+  updateGenerate,
+  addSkiptime,
+  editSkiptime,
+  deleteSkiptime,
+  listSkiptime
+} from "@/api/teaching/generate";
+import { listClassCourse } from "@/api/basic/classCourse";
 export default {
   data() {
     return {
       dialogFormVisible: false,
       dialogTableVisible: false,
-      ruleForm: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
+      teachingForm: {
+        zfx: [],
+        xqid: null,
+        kbsjStr: null,
+        rybjid: null,
+        gksj: null,
+        lsid: null,
+        bjrs: null,
+        yyxks: null,
+        xyxks: null,
+        ryxks: null,
+        jcid: null
       },
-      form: {},
-      gridData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ],
-      ifContent: null
+      skipDateForm: {
+        timeName: null,
+        kssj: null,
+        jssj: null
+      },
+      rules: {
+        bjrs: [
+          { required: true, message: "请输入班级人数", trigger: "blur" },
+          {
+            pattern: /^[0-9][0-9]*[0-9]*$/g,
+            message: "格式错误,只能输入数字"
+          }
+        ],
+        xyxks: [
+          { required: true, message: "请输入现有效课时", trigger: "blur" },
+          {
+            pattern: /^[0-9][0-9]*[0-9]*$/g,
+            message: "格式错误,只能输入数字"
+          }
+        ],
+        ryxks: [
+          { required: true, message: "请输入日有效课时", trigger: "blur" },
+          {
+            pattern: /^[0-9][0-9]*[.]?[0-9]*$/g,
+            message: "格式错误,只能输入数字"
+          }
+        ]
+      },
+      ifContent: null,
+      reviewList: [],
+      schoolList: [],
+      classList: [],
+      listTeachingMaterial: [],
+      classCourseList: [],
+      kcType: [],
+      listGenerate: [],
+      itemSkiptime: []
     };
   },
   components: {
@@ -267,30 +394,190 @@ export default {
     MonthView,
     WholeView
   },
+  created() {
+    this.getDicts("review").then(response => {
+      this.reviewList = response.data;
+    });
+    listSchool().then(response => {
+      this.schoolList = response.rows;
+    });
+    listTeachingMaterial({ parentId: 0 }).then(res => {
+      this.listTeachingMaterial = res.data;
+    });
+    this.getDicts("kc_type").then(response => {
+      this.kcType = response.data;
+    });
+  },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.dialogFormVisible = true;
-    },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
     // 组件
     toComponent(value) {
       this.ifContent = value;
+    },
+    // 获取教学计划数据
+    getList() {},
+    // 获取班级
+    xqmcOnChange(xqid) {
+      if (!xqid) {
+        this.classList = [];
+        return;
+      }
+      this.teachingForm.rybjid = null;
+      listBjclass({ kzzd1: xqid }).then(res => {
+        this.classList = res.rows;
+      });
+    },
+    // 选择班级锁定老师
+    bjOnChange(bjid) {
+      this.reset();
+      this.classList.forEach(value => {
+        if (value.id === bjid) {
+          this.teachingForm.lsid = value.lsxm;
+          this.teachingForm.kbsjStr = value.kbsj;
+          this.teachingForm.bjrs = value.bjrs;
+        }
+      });
+      // 查课表
+      listClassCourseBasic({ bjid }).then(res => {
+        if (res.rows.length != 0) {
+          this.teachingForm.yyxks = res.rows[0].kzzd1;
+        }
+      });
+      // 查课表数据
+      listClassCourse({ bjid }).then(response => {
+        this.classCourseList = response.rows;
+      });
+      this.getListGenerate(bjid);
+    },
+    // 查教学计划
+    getListGenerate(bjid) {
+      listGenerate({ rybjid: bjid }).then(res => {
+        if (res.rows.length > 0) {
+          this.listGenerate = res.rows;
+          this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
+          this.teachingForm = Object.assign(
+            this.teachingForm,
+            this.listGenerate[0]
+          );
+          this.teachingForm.kbsjStr = this.teachingForm.kbsj;
+          this.listSkiptime(this.teachingForm.id);
+        } else {
+          this.listGenerate = [];
+        }
+      });
+    },
+    // 计算日有效课时
+    calculateClassHours(xyxks) {
+      this.teachingForm.ryxks = (xyxks / 7).toFixed(2);
+    },
+    // 重置
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    // 生成教学计划模板
+    addTeaching() {
+      this.teachingForm.zfx = this.teachingForm.zfx.join();
+      addGenerate(this.teachingForm).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("成功 : 生成教学计划完成");
+          this.getListGenerate(this.teachingForm.rybjid);
+        }
+      });
+    },
+    // 更新教学计划模板
+    editTeaching() {
+      this.teachingForm.zfx = this.teachingForm.zfx.join();
+      updateGenerate(this.teachingForm).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("成功 : 更新教学计划完成");
+          this.getListGenerate(this.teachingForm.rybjid);
+        }
+      });
+    },
+    // 数据重置
+    reset() {
+      let xqid = this.teachingForm.xqid;
+      let rybjid = this.teachingForm.rybjid;
+      this.teachingForm = {
+        zfx: [],
+        xqid,
+        kbsjStr: null,
+        rybjid,
+        gksj: null,
+        lsid: null,
+        bjrs: null,
+        yyxks: null,
+        xyxks: null,
+        ryxks: null,
+        jcid: null
+      };
+    },
+    // 数据重置
+    resetSkipDateForm() {
+      this.skipDateForm = {
+        timeName: null,
+        kssj: null,
+        jssj: null
+      };
+    },
+    // 查询跳过时间
+    listSkiptime(glid) {
+      listSkiptime({ glid }).then(res => {
+        this.itemSkiptime = res.rows;
+      });
+    },
+    // 保存跳过时间
+    saveSkiptime() {
+      if (this.skipDateForm.id) {
+        editSkiptime(this.skipDateForm).then(res => {
+          if (res.code == 200) {
+            this.dialogFormVisible = false;
+            this.resetSkipDateForm();
+            this.listSkiptime(this.teachingForm.id);
+            this.msgSuccess("成功 : 修改成功");
+          } else {
+            this.msgError("错误 : 修改失败");
+          }
+        });
+      } else {
+        this.skipDateForm.glid = this.teachingForm.id;
+        addSkiptime(this.skipDateForm).then(res => {
+          if (res.code == 200) {
+            this.listSkiptime(this.teachingForm.id);
+            this.dialogFormVisible = false;
+            this.msgSuccess("成功 : 新增成功");
+          }
+        });
+      }
+    },
+    // 编辑跳过时间
+    editSkiptime(index, row) {
+      this.skipDateForm = row;
+      this.dialogFormVisible = true;
+    },
+    // 删除跳过时间
+    deleteSkiptime(index, row) {
+      this.$confirm("是否删除该数据?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          deleteSkiptime(row.id).then(res => {
+            if (res.code == 200) {
+              this.listSkiptime(this.teachingForm.id);
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   }
 };

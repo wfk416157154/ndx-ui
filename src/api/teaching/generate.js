@@ -42,3 +42,38 @@ export function delGenerate(id) {
     method: 'delete'
   })
 }
+
+// 新增生成教学计划-跳过时间
+export function addSkiptime(data) {
+  return request({
+    url: '/basic/skiptime',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改生成教学计划-跳过时间
+export function editSkiptime(data) {
+  return request({
+    url: '/basic/skiptime',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除生成教学计划-跳过时间
+export function deleteSkiptime(id) {
+  return request({
+    url: '/basic/skiptime/' + id,
+    method: 'delete'
+  })
+}
+
+// 查询生成教学计划-跳过时间列表
+export function listSkiptime(query) {
+  return request({
+    url: '/basic/skiptime/list',
+    method: 'get',
+    params: query
+  })
+}
