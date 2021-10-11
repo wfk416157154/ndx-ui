@@ -172,9 +172,7 @@
                     :key="index"
                   >
                     <template v-if="templatetreeListTeacher">
-                      <span
-                        style="color : #303133;margin : 0;padding : 0"
-                      >{{item.kcmc}} - {{item.name}}</span>
+                      <span style="color : #303133;margin : 0;padding : 0">{{item.name}}</span>
                       <div>
                         <el-tag
                           style="width : 80px;text-align : center"
