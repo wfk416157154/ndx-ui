@@ -96,8 +96,8 @@
       <el-table-column label="教学要求" align="center" prop="jxyq" v-if="false"/>
       <el-table-column label="课程类型(新课、复习课)" align="center" prop="kclx" :formatter="kclxFormat" />
       <el-table-column label="对应学期数" align="center" prop="dyxqs" />
-      <el-table-column label="主要内容" align="center" prop="zynr" />
-      <el-table-column label="备注" align="center" prop="remark"  >
+      <el-table-column label="主要内容" align="center" prop="zynr" v-if="false" />
+      <el-table-column label="备注" align="center" prop="remark"  v-if="false" >
         <template slot-scope="scope">
           <div v-html="scope.row.remark"></div>
         </template>
