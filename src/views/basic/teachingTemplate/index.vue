@@ -160,7 +160,7 @@
         <el-form-item label="教参内容" prop="jxyq" v-if="jxyqenableShow">
           <editor v-model="form.jxyq" :min-height="130" />
         </el-form-item>
-        <el-form-item label="课程类型" prop="kclx" v-if="jxyqenableShow">
+        <el-form-item label="课程类型" prop="kclx" v-if="taskDisabled">
           <el-select v-model="form.kclx" placeholder="新课、复习课">
             <el-option
               v-for="dict in kclxOptions"
@@ -555,7 +555,7 @@ export default {
         this.enableShow=true
         this.taskEnableShow=true
         this.taskDisabled=false
-        this.jxyqenableShow=false
+        this.jxyqenableShow=true
         this.kcEnableShow=true
 
       }
