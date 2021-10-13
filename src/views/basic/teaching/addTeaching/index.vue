@@ -513,7 +513,8 @@ export default {
       this.teachingForm.zfx = this.teachingForm.zfx.join();
       if(this.listGenerate.length>0&&!this.showUpdateBtn){// 表示表单数据保存了，但是未生成教学计划
         this.generateTeachingHandle(this.teachingForm, 0);
-      }else{// 表单数据未保存，教学计划也未生成
+      } else {
+        // 表单数据未保存，教学计划也未生成
         addGenerate(this.teachingForm).then(res => {
           if (res.code == 200) {
             this.msgSuccess("成功 : 生成教学计划完成");
@@ -536,6 +537,7 @@ export default {
     async generateTeachingHandle(teachingForm, generateAndUpdate) {
       this.getListGenerate(this.teachingForm.rybjid);
       teachingForm.generateAndUpdate = generateAndUpdate;
+      this.getListGenerate(teachingForm.rybjid);
       let result = await generateTeachingHandle(teachingForm);
       if (result.code == 200) {
         this.showUpdateBtn=true

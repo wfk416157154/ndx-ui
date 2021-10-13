@@ -151,7 +151,7 @@
         <ul style="list-style : none">
           <li class="list">1</li>
           <li class="list">
-            <h4>当前进度教学计划</h4>
+            <h4>当前备课进度</h4>
             <div class="wrap-item">
               <div class="left">
                 <el-tree
