@@ -182,8 +182,9 @@
         type="primary"
         @click="addTeaching"
         v-if="!showUpdateBtn"
+        v-prevent-re-click
       >生成教学计划</el-button>
-      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn" >更新教学计划</el-button>
+      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn" v-prevent-re-click >更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -517,7 +518,6 @@ export default {
           if (res.code == 200) {
             this.msgSuccess("成功 : 生成教学计划完成");
             this.generateTeachingHandle(this.teachingForm, 0);
-            this.showUpdateBtn=true
           }
         });
       }
@@ -538,6 +538,7 @@ export default {
       teachingForm.generateAndUpdate = generateAndUpdate;
       let result = await generateTeachingHandle(teachingForm);
       if (result.code == 200) {
+        this.showUpdateBtn=true
         this.msgSuccess(result.msg);
       }
     },
