@@ -86,3 +86,12 @@ export function generateTeachingHandle(data) {
     data: data
   })
 }
+
+// 查询教学计划(全部)
+export function queryGenerateTeachingPlanData(data) {
+  return request({
+    url: '/basic/teachingGenerate/queryGenerateTeachingPlanData',
+    method: 'post',
+    data: data
+  })
+}

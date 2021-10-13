@@ -1,19 +1,48 @@
 <template>
   <div class="Whole-view">
-    <div class="Whole-right-item" v-for="(item,index) in 7" :key="index">
-      <div>
-        <h3>新标准日语</h3>
-        <h4>第一章节</h4>
-      </div>
-      <div class="wrap-Whole">
+    <div class="Whole-right-item">
+      <div class="wrap-Whole" v-for="(item,index) in WholeList.children" :key="index">
         <ul class="ksItem">
           <li>
-            <div>
-              <span>第一课</span>
-              <span style="margin-left : 10px;color : #67C23A">新课</span>
+            <div style="display :flex; align-items : center">
+              <i class="el-icon-d-arrow-left"></i>
+              <h3 style="margin :5px 5px">{{ WholeList.name}} {{item.name}}</h3>
+              <i class="el-icon-d-arrow-right"></i>
             </div>
-            <div>
-              <span>2021/9/12</span>
+            <br />
+            <div v-for="(list,index) in item.children" :key="index">
+              <h4
+                style="margin :5px 0px ;color : #67C23A; margin-left : 20px"
+              >{{++index}} ) {{list.name}}</h4>
+              <div
+                style="display: flex;justify-content: space-between;align-items: center"
+                v-for="(items,j) in list.children"
+                :key="j"
+              >
+                <div style="width : 98%;">
+                  <div
+                    style=" display: flex;justify-content: space-between;align-items: center;margin-left : 60px"
+                  >
+                    <div>
+                      <h4 style="margin : 10px 0px ;color : #E6A23C">{{items.name}}</h4>
+                    </div>
+                    <div>
+                      <h4
+                        style="margin : 10px 0px;color : #E6A23C"
+                      >{{formatTime(items.ksrq)}} - {{formatTime(items.jzrq)}}</h4>
+                    </div>
+                  </div>
+                  <div
+                    style="margin-left : 100px;line-height : 35px"
+                    v-for="(kcList,z) in items.children"
+                    :key="z"
+                  >
+                    <el-divider content-position="left">
+                      <span style="color : #F56C6C;font-size : 16px">{{kcList.name}}</span>
+                    </el-divider>
+                  </div>
+                </div>
+              </div>
             </div>
           </li>
         </ul>
@@ -23,35 +52,37 @@
 </template>
 
 <script>
+import { queryGenerateTeachingPlanData } from "@/api/teaching/generate";
 export default {
   data() {
     return {
-      arr: [
-        {
-          name: "高一上",
-          ifClass: false
-        },
-        {
-          name: "高二上",
-          ifClass: false
-        },
-        {
-          name: "高三上",
-          ifClass: false
-        }
-      ]
+      WholeList: {}
     };
   },
+  props: ["item"],
   methods: {
-    toGrade(item) {
-      console.log(item);
-      this.arr.forEach(value => {
-        if (value.name == item.name) {
-          value.ifClass = true;
-        } else {
-          value.ifClass = false;
-        }
-      });
+    toGrade() {
+      if (this.item && typeof this.item.zfx == "object") {
+        this.item.zfx = this.item.zfx.join(",");
+      }
+      if (this.item.rybjid) {
+        queryGenerateTeachingPlanData(this.item).then(res => {
+          if (res.code == 200 && res.data.allData.length > 0) {
+            this.WholeList = res.data.allData[0];
+          } else {
+            this.WholeList = [];
+          }
+        });
+      }
+    },
+    formatTime(time) {
+      time = new Date(time);
+      let F = time.getFullYear().toString();
+      let M = String(time.getMonth() + 1);
+      let D = time.getDate().toString();
+      M = M.length == 1 ? `0${M}` : M;
+      D = D.length == 1 ? `0${D}` : D;
+      return F + "-" + M + "-" + D;
     }
   }
 };
@@ -68,10 +99,12 @@ export default {
       .ksItem {
         width: 100%;
         list-style: none;
+        margin: 0;
+        padding: 0;
         li {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+          // display: flex;
+          // justify-content: space-between;
+          // align-items: center;
         }
       }
     }

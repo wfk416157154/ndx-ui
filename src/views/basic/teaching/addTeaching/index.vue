@@ -126,7 +126,7 @@
       </div>
       <div class="right-tabel">
         <div>
-          <el-button type="primary" @click="addSkiptime" :disabled="!teachingForm.rybjid">添加</el-button>
+          <el-button type="primary" @click="addSkiptime" :disabled="!teachingForm.id">添加</el-button>
         </div>
         <div>
           <el-table border :data="itemSkiptime" style="width: 100%;font-size : 18px">
@@ -179,16 +179,16 @@
         type="primary"
         @click="addTeaching"
         v-if="!showUpdateBtn"
-        :disabled="!teachingForm.rybjid"
+        :disabled="!teachingForm.id"
       >生成教学计划</el-button>
       <el-button
         type="info"
         @click="editTeaching"
         v-if="showUpdateBtn"
-        :disabled="!teachingForm.rybjid"
+        :disabled="!teachingForm.id"
       >更新教学计划</el-button>
     </div>
-    <div class="wrap-teaching-content">
+    <div class="wrap-teaching-content" v-if="showUpdateBtn">
       <div class="teaching-top-tar">
         <div>
           <h4>生成计划</h4>
@@ -219,9 +219,9 @@
         </div>
       </div>
       <div class="teaching-content-item">
-        <SemesterView v-if="'SemesterView' == ifContent" />
-        <MonthView v-if="'MonthView' == ifContent" />
-        <WholeView v-if="'WholeView' == ifContent" />
+        <SemesterView v-if="'SemesterView' == ifContent" ref="SemesterView" :item="teachingForm" />
+        <MonthView v-if="'MonthView' == ifContent" ref="MonthView" :item="teachingForm" />
+        <WholeView v-if="'WholeView' == ifContent" ref="WholeView" :item="teachingForm" />
       </div>
     </div>
     <el-dialog title="课表" :visible.sync="dialogTableVisible" width="80%">
@@ -326,7 +326,7 @@
       </el-table>
     </el-dialog>
     <el-dialog title="提示消息" :visible.sync="centerDialogVisible" width="30%">
-      <h3>注意 : 生成教学计划功能,需要选择 " 校区班级 " 后进行操作!</h3>
+      <h3>注意 : 生成教学计划功能和添加跳过时间功能,需要选择 " 校区班级 " 填写数据并保存后再进行操作!</h3>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
       </span>
@@ -400,7 +400,8 @@ export default {
             pattern: /^[0-9][0-9]*[.]?[0-9]*$/g,
             message: "格式错误,只能输入数字"
           }
-        ]
+        ],
+        gksj: [{ required: true, message: "请选择高考时间", trigger: "blur" }]
       },
       ifContent: null,
       reviewList: [],
@@ -420,6 +421,16 @@ export default {
     MonthView,
     WholeView
   },
+  watch: {
+    teachingForm: {
+      handler(value) {
+        if (value.id && this.showUpdateBtn) {
+            this.$refs[this.ifContent].toGrade();
+        }
+      },
+      deep: true
+    }
+  },
   created() {
     this.getDicts("review").then(response => {
       this.reviewList = response.data;
@@ -437,7 +448,18 @@ export default {
   methods: {
     // 组件
     toComponent(value) {
+      if (!this.teachingForm.rybjid) {
+        this.msgError("错误 : 请先选择校区班级!");
+        return;
+      }
+      if (!this.teachingForm.id) {
+        this.msgError("错误 : 请填写完整数据并保存!");
+        return;
+      }
       this.ifContent = value;
+      this.$nextTick(() => {
+        this.$refs[value].toGrade();
+      });
     },
     // 获取教学计划数据
     getList() {},
@@ -479,6 +501,7 @@ export default {
           this.showUpdateBtn = true;
         } else {
           this.showUpdateBtn = false;
+          this.ifContent = null;
         }
       });
       this.getListGenerate(bjid);
@@ -488,7 +511,9 @@ export default {
       listGenerate({ rybjid: bjid }).then(res => {
         if (res.rows.length > 0) {
           this.listGenerate = res.rows;
-          this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
+          if (this.listGenerate[0].zfx) {
+            this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
+          }
           this.teachingForm = Object.assign(
             this.teachingForm,
             this.listGenerate[0]
@@ -512,7 +537,9 @@ export default {
     },
     // 保存生成教学计划表单数据
     saveTeachingForm() {
-      this.teachingForm.zfx = this.teachingForm.zfx.join();
+      if (this.teachingForm.zfx.length > 0) {
+        this.teachingForm.zfx = this.teachingForm.zfx.join();
+      }
       if (this.teachingForm.id) {
         updateGenerate(this.teachingForm).then(res => {
           if (res.code == 200) {
@@ -539,12 +566,13 @@ export default {
     },
     // 手动生成教学计划
     async generateTeachingHandle(teachingForm, generateAndUpdate) {
-      if (generateAndUpdate) {
-        teachingForm.generateAndUpdate = generateAndUpdate;
-      }
+      teachingForm.generateAndUpdate = generateAndUpdate;
+      this.teachingForm.zfx = this.teachingForm.zfx.join();
       let result = await generateTeachingHandle(teachingForm);
       if (result.code == 200) {
         this.msgSuccess(result.msg);
+        this.showUpdateBtn = true;
+        this.getListGenerate(this.teachingForm.rybjid);
       }
     },
     // 数据重置
