@@ -120,16 +120,13 @@
               :disabled="!teachingForm.rybjid"
             >点击查看该班课表</el-button>
             <el-button @click="resetForm('teachingForm')">重置</el-button>
+            <el-button type="primary" :disabled="!teachingForm.rybjid" @click="saveTeachingForm">保存</el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="right-tabel">
         <div>
-          <el-button
-            type="primary"
-            @click="dialogFormVisible = true"
-            :disabled="!teachingForm.rybjid"
-          >添加</el-button>
+          <el-button type="primary" @click="addSkiptime" :disabled="!teachingForm.rybjid">添加</el-button>
         </div>
         <div>
           <el-table border :data="itemSkiptime" style="width: 100%;font-size : 18px">
@@ -182,8 +179,14 @@
         type="primary"
         @click="addTeaching"
         v-if="!showUpdateBtn"
+        :disabled="!teachingForm.rybjid"
       >生成教学计划</el-button>
-      <el-button type="info" @click="editTeaching" v-if="showUpdateBtn" >更新教学计划</el-button>
+      <el-button
+        type="info"
+        @click="editTeaching"
+        v-if="showUpdateBtn"
+        :disabled="!teachingForm.rybjid"
+      >更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content">
       <div class="teaching-top-tar">
@@ -322,10 +325,9 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <el-dialog title="注意" :visible.sync="centerDialogVisible" width="30%">
-      <h3>生成教学计划功能,需要选择校区班级后进行操作</h3>
+    <el-dialog title="提示消息" :visible.sync="centerDialogVisible" width="30%">
+      <h3>注意 : 生成教学计划功能,需要选择 " 校区班级 " 后进行操作!</h3>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
@@ -410,7 +412,7 @@ export default {
       listGenerate: [],
       itemSkiptime: [],
       // 是否显示 更新教学计划按钮
-      showUpdateBtn:false,
+      showUpdateBtn: false
     };
   },
   components: {
@@ -471,14 +473,15 @@ export default {
       listClassCourse({ bjid }).then(response => {
         this.classCourseList = response.rows;
       });
-      this.getListGenerate(bjid);
-      listClassPlan({ rybjid:bjid }).then(response => {
-        if(response.total>0){
-          this.showUpdateBtn=true
-        }else{
-          this.showUpdateBtn=false
+      // 是否生成教学计划
+      listClassPlan({ rybjid: bjid }).then(response => {
+        if (response.total > 0) {
+          this.showUpdateBtn = true;
+        } else {
+          this.showUpdateBtn = false;
         }
       });
+      this.getListGenerate(bjid);
     },
     // 查教学计划的表单数据
     getListGenerate(bjid) {
@@ -486,7 +489,10 @@ export default {
         if (res.rows.length > 0) {
           this.listGenerate = res.rows;
           this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
-          this.teachingForm = Object.assign(this.teachingForm, this.listGenerate[0]);
+          this.teachingForm = Object.assign(
+            this.teachingForm,
+            this.listGenerate[0]
+          );
           this.teachingForm.kbsjStr = this.teachingForm.kbsj;
           this.listSkiptime(this.teachingForm.id);
         } else {
@@ -502,42 +508,40 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.itemSkiptime = [];
+      this.showUpdateBtn = false;
     },
-    // 生成教学计划的表单数据添加
-    addTeaching() {
-      if(!this.teachingForm.rybjid){
-        this.msgError("请先选择日语班级！");
-        return
-      }
+    // 保存生成教学计划表单数据
+    saveTeachingForm() {
       this.teachingForm.zfx = this.teachingForm.zfx.join();
-      if(this.listGenerate.length>0&&!this.showUpdateBtn){// 表示表单数据保存了，但是未生成教学计划
-        this.generateTeachingHandle(this.teachingForm, 0);
+      if (this.teachingForm.id) {
+        updateGenerate(this.teachingForm).then(res => {
+          if (res.code == 200) {
+            this.msgSuccess("成功 : 更新教学计划基础数据完成");
+            this.getListGenerate(this.teachingForm.rybjid);
+          }
+        });
       } else {
-        // 表单数据未保存，教学计划也未生成
         addGenerate(this.teachingForm).then(res => {
           if (res.code == 200) {
-            this.msgSuccess("成功 : 生成教学计划完成");
-            this.generateTeachingHandle(this.teachingForm, 0);
-            this.showUpdateBtn=true
+            this.msgSuccess("成功 : 生成教学计划基础数据完成");
+            this.getListGenerate(this.teachingForm.rybjid);
           }
         });
       }
     },
-    // 更新教学计划的表单数据
+    // 生成教学计划数据
+    addTeaching() {
+      this.generateTeachingHandle(this.teachingForm, 0);
+    },
+    // 更新教学计划数据
     editTeaching() {
-      this.teachingForm.zfx = this.teachingForm.zfx.join();
-      updateGenerate(this.teachingForm).then(res => {
-        if (res.code == 200) {
-          this.msgSuccess("成功 : 更新教学计划完成");
-          this.generateTeachingHandle(this.teachingForm, 1);
-        }
-      });
+      this.generateTeachingHandle(this.teachingForm, 1);
     },
     // 手动生成教学计划
     async generateTeachingHandle(teachingForm, generateAndUpdate) {
-      this.getListGenerate(this.teachingForm.rybjid);
-      teachingForm.generateAndUpdate = generateAndUpdate;
-      this.getListGenerate(teachingForm.rybjid);
+      if (generateAndUpdate) {
+        teachingForm.generateAndUpdate = generateAndUpdate;
+      }
       let result = await generateTeachingHandle(teachingForm);
       if (result.code == 200) {
         this.msgSuccess(result.msg);
@@ -577,11 +581,16 @@ export default {
     },
     // 保存跳过时间
     saveSkiptime() {
+      let kssj = new Date(this.skipDateForm.kssj).getTime();
+      let jssj = new Date(this.skipDateForm.jssj).getTime();
+      if (kssj >= jssj) {
+        this.msgError("错误 : 开始时间不得大于等于结束时间！");
+        return;
+      }
       if (this.skipDateForm.id) {
         editSkiptime(this.skipDateForm).then(res => {
           if (res.code == 200) {
             this.dialogFormVisible = false;
-            this.resetSkipDateForm();
             this.listSkiptime(this.teachingForm.id);
             this.msgSuccess("成功 : 修改成功");
           } else {
@@ -598,6 +607,11 @@ export default {
           }
         });
       }
+    },
+    // 添加跳过时间
+    addSkiptime() {
+      this.resetSkipDateForm();
+      this.dialogFormVisible = true;
     },
     // 编辑跳过时间
     editSkiptime(index, row) {
