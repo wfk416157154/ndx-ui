@@ -102,7 +102,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="教学计划模板" prop="jcid">
-                <el-select v-model="teachingForm.jcid" placeholder="请选择教学计划模板">
+                <el-select v-model="teachingForm.jcid" :disabled="showUpdateBtn" placeholder="请选择教学计划模板">
                   <el-option
                     v-for="(item,index) in listTeachingMaterial"
                     :key="index"
