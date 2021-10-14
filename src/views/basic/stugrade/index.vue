@@ -101,7 +101,7 @@
         border
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
-       style="width: 100%;font-size : 18px"
+        style="width: 100%;font-size : 18px"
       >
         <el-table-column
           :fixed="item.fixed"
@@ -415,7 +415,6 @@ export default {
           // 当只查询到一条数据，则直接给这个选择框赋值
           this.queryParams.xqmc = response.rows[0].id;
           this.xqmcOnChange(this.queryParams.xqmc); // 给日语班级赋值
-          this.getList();
         }
       });
     },
@@ -478,9 +477,10 @@ export default {
     xqmcOnChange(id) {
       listBjclass({ kzzd1: id }).then(response => {
         this.bjclassList = response.rows;
-        if (response.rows.length == 1) {
+        if (response.rows.length >= 1) {
           // 当该老师只有一个日语班时，系统自动赋值
           this.queryParams.kzzd1 = response.rows[0].id;
+          this.getList();
           this.xsbhDisabled = false;
         } else {
           this.queryParams.kzzd1 = null;
