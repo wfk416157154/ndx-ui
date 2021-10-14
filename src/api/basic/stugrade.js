@@ -21,7 +21,7 @@ export function listAll(query) {
 export function syncKsmcToExaminationPaper(query) {
   return request({
     url: '/basic/stugrade/syncKsmcToExaminationPaper',
-    method: 'post',
+    method: 'get',
     params: query
   })
 }
