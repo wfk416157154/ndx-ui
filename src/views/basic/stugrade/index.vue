@@ -36,7 +36,7 @@
       </el-form-item>
       <el-form-item label="学生姓名" prop="xsbh">
         <el-select
-          v-model="queryParams.xsxm"
+          v-model="queryParams.xsbh"
           filterable
           remote
           reserve-keyword
@@ -355,7 +355,9 @@ export default {
       wlOption: [],
       importBtn: false,
       fullscreenLoading: false,
-      iflineChart: null
+      iflineChart: null,
+      // 日语班级名称
+      rybjmc: null,
     };
   },
   created() {
@@ -464,11 +466,11 @@ export default {
     },
     // 组件加载完毕成功后执行
     monitor() {
-      this.$nextTick(() => {
+      /*this.$nextTick(() => {
         if (this.$refs.chart) {
           this.$refs.chart.getChart();
         }
-      });
+      });*/
     },
     // 状态字典翻译
     statusFormat(row, column) {
@@ -490,6 +492,11 @@ export default {
     },
     rybjOnChange(id) {
       this.xsbhDisabled = false;
+      for (let i = 0; i <this.bjclassList.length ; i++) {
+        if(id==this.bjclassList[i].id){
+          this.rybjmc=this.bjclassList[i].rybjmc;
+        }
+      }
     },
     // 取消按钮
     cancel() {
@@ -521,6 +528,7 @@ export default {
         kzzd4: null,
         kzzd5: null
       };
+      this.rybjmc=null
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -647,8 +655,8 @@ export default {
     // 文件上传成功处理
     handleFileSuccess(res, file, fileList) {
       if (undefined != res.code && res.code == 200) {
+        this.rybjmc=res.data;
         this.notify();
-        this.getList();
         this.msgSuccess(res.msg);
       } else {
         this.notify();
@@ -734,7 +742,11 @@ export default {
     },
     // 同步学生每次考试的名称至考卷表
     tongbuData() {
-      syncKsmcToExaminationPaper().then(res => {
+      if(!this.rybjmc){
+        this.msgError("请选择日语班级再点击同步按钮！")
+        return
+      }
+      syncKsmcToExaminationPaper({rybjmc:this.rybjmc}).then(res => {
         if (undefined != res.code && res.code == 500) {
           this.msgError(res.msg);
         } else {

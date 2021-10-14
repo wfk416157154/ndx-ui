@@ -79,6 +79,9 @@ export default {
   },
   methods: {
     getChart(studentGradeType) {
+      if(null==this.query){
+        return
+      }
       this.option.yAxis[0].max = studentGradeType;
       this.lineChartForm.xsbh = this.query.xsbh;
       this.lineChartForm.bjid = this.query.ryb || this.query.kzzd1;
