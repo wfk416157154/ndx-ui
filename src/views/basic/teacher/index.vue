@@ -689,11 +689,20 @@ export default {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      this.$notify({
-        title: "成功",
-        message: response.msg,
-        type: "success"
-      });
+      if(response.code==200){
+        this.$notify({
+          title: "成功",
+          message: response.msg,
+          type: "success"
+        });
+      }else{
+        this.$notify({
+          title: "失败",
+          message: response.msg,
+          type: "danger"
+        });
+      }
+
       this.getList();
     },
     // 提交上传文件
