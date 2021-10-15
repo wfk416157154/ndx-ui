@@ -227,6 +227,12 @@ export default {
       getExaminationType: []
     };
   },
+  props:{
+     bjid : {
+       type : String,
+       default : null
+     }
+  },
   created() {
     this.getDicts("year-list").then(response => {
       this.getYear = response.data;
@@ -240,6 +246,10 @@ export default {
     this.getDicts("examination_type").then(response => {
       this.getExaminationType = response.data;
     });
+    if(this.bjid){
+      this.form.bjid = this.bjid;
+      this.getAchievement()
+    }
   },
   mounted() {
     this.getSchoolId();

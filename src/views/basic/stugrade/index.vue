@@ -55,8 +55,8 @@
       <el-form-item label="考试类型" prop="kslx">
         <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" multiple>
           <el-option
-            v-for="dict in getExaminationType"
-            :key="dict.dictValue"
+            v-for="(dict,index) in getExaminationType"
+            :key="index"
             :label="dict.dictLabel"
             :value="dict.dictValue"
           />
@@ -178,8 +178,8 @@
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
+              v-for="(dict,index) in statusOptions"
+              :key="index"
               :label="dict.dictValue"
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
@@ -357,7 +357,7 @@ export default {
       fullscreenLoading: false,
       iflineChart: null,
       // 日语班级名称
-      rybjmc: null,
+      rybjmc: null
     };
   },
   created() {
@@ -370,6 +370,11 @@ export default {
     this.getDicts("xkType").then(response => {
       this.wlOption = response.data;
     });
+    listBjclass({ id: this.$route.query.bjid }).then(res => {
+      this.queryParams.kzzd1 = this.$route.query.bjid;
+      this.queryParams.xqmc = res.rows[0].kzzd1;
+      this.getListSchool(this.queryParams.xqmc);
+    });
   },
   components: {
     chart,
@@ -377,7 +382,8 @@ export default {
   },
   mounted() {
     // this.getList();
-    this.getListSchool();
+    // console.log(this.$route.query.bjid)
+
   },
   methods: {
     // 当选择一个学生进行点击时，查看该学生的成绩分析
@@ -410,14 +416,14 @@ export default {
       return str;
     },
     // 获取校区
-    getListSchool() {
-      listSchool().then(response => {
+    getListSchool(xqid) {
+      listSchool({ id: xqid }).then(response => {
         this.selectXqmc = response.rows;
-        if (response.rows.length == 1) {
-          // 当只查询到一条数据，则直接给这个选择框赋值
-          this.queryParams.xqmc = response.rows[0].id;
-          this.xqmcOnChange(this.queryParams.xqmc); // 给日语班级赋值
-        }
+        // if (response.rows.length == 1) {
+        //   // 当只查询到一条数据，则直接给这个选择框赋值
+        //   // this.queryParams.xqmc = response.rows[0].id;
+        this.xqmcOnChange(); // 给日语班级赋值
+        // }
       });
     },
     /** 查询学生成绩基础表列表 */
@@ -476,25 +482,18 @@ export default {
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, row.status);
     },
-    xqmcOnChange(id) {
-      listBjclass({ kzzd1: id }).then(response => {
+    xqmcOnChange() {
+      listBjclass({ id: this.queryParams.kzzd1 }).then(response => {
         this.bjclassList = response.rows;
-        if (response.rows.length >= 1) {
-          // 当该老师只有一个日语班时，系统自动赋值
-          this.queryParams.kzzd1 = response.rows[0].id;
-          this.getList();
-          this.xsbhDisabled = false;
-        } else {
-          this.queryParams.kzzd1 = null;
-        }
+        this.getList();
       });
       this.rybjDisabled = false; // 启用日语班级选项
     },
     rybjOnChange(id) {
       this.xsbhDisabled = false;
-      for (let i = 0; i <this.bjclassList.length ; i++) {
-        if(id==this.bjclassList[i].id){
-          this.rybjmc=this.bjclassList[i].rybjmc;
+      for (let i = 0; i < this.bjclassList.length; i++) {
+        if (id == this.bjclassList[i].id) {
+          this.rybjmc = this.bjclassList[i].rybjmc;
         }
       }
     },
@@ -528,7 +527,7 @@ export default {
         kzzd4: null,
         kzzd5: null
       };
-      this.rybjmc=null
+      this.rybjmc = null;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -655,7 +654,7 @@ export default {
     // 文件上传成功处理
     handleFileSuccess(res, file, fileList) {
       if (undefined != res.code && res.code == 200) {
-        this.rybjmc=res.data;
+        this.rybjmc = res.data;
         this.notify();
         this.msgSuccess(res.msg);
       } else {
@@ -742,11 +741,11 @@ export default {
     },
     // 同步学生每次考试的名称至考卷表
     tongbuData() {
-      if(!this.rybjmc){
-        this.msgError("请选择日语班级再点击同步按钮！")
-        return
+      if (!this.rybjmc) {
+        this.msgError("请选择日语班级再点击同步按钮！");
+        return;
       }
-      syncKsmcToExaminationPaper({rybjmc:this.rybjmc}).then(res => {
+      syncKsmcToExaminationPaper({ rybjmc: this.rybjmc }).then(res => {
         if (undefined != res.code && res.code == 500) {
           this.msgError(res.msg);
         } else {

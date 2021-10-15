@@ -499,7 +499,7 @@ export default {
   methods: {
     // 班级列表基础信息
     getList() {
-      listBjclass().then(res => {
+      listBjclass({ id: this.$route.query.bjid }).then(res => {
         this.listBjclass = res.rows;
         if (res.rows.length == 1) {
           // 当该老师只有一个日语班

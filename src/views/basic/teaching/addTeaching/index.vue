@@ -30,6 +30,7 @@
             <el-col :span="11">
               <el-form-item label="开班时间" prop="kbsjStr">
                 <el-date-picker
+                  disabled
                   v-model="teachingForm.kbsjStr"
                   type="date"
                   value-format="yyyy-MM-dd"
@@ -66,7 +67,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="老师姓名" prop="lsid">
-                <el-input v-model="teachingForm.lsid"></el-input>
+                <el-input v-model="teachingForm.lsid" disabled></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -102,7 +103,11 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="教学计划模板" prop="jcid">
-                <el-select v-model="teachingForm.jcid" :disabled="showUpdateBtn" placeholder="请选择教学计划模板">
+                <el-select
+                  v-model="teachingForm.jcid"
+                  :disabled="showUpdateBtn"
+                  placeholder="请选择教学计划模板"
+                >
                   <el-option
                     v-for="(item,index) in listTeachingMaterial"
                     :key="index"
@@ -424,8 +429,8 @@ export default {
   watch: {
     teachingForm: {
       handler(value) {
-        if (value.id && this.showUpdateBtn) {
-            this.$refs[this.ifContent].toGrade();
+        if (value.id && this.showUpdateBtn && this.ifContent) {
+          this.$refs[this.ifContent].toGrade();
         }
       },
       deep: true

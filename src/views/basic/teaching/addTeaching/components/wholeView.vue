@@ -32,15 +32,6 @@
                       >{{formatTime(items.ksrq)}} - {{formatTime(items.jzrq)}}</h4>
                     </div>
                   </div>
-                  <div
-                    style="margin-left : 100px;line-height : 35px"
-                    v-for="(kcList,z) in items.children"
-                    :key="z"
-                  >
-                    <el-divider content-position="left">
-                      <span style="color : #F56C6C;font-size : 16px">{{kcList.name}}</span>
-                    </el-divider>
-                  </div>
                 </div>
               </div>
             </div>
