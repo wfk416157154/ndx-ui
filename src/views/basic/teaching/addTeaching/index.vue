@@ -466,8 +466,6 @@ export default {
         this.$refs[value].toGrade();
       });
     },
-    // 获取教学计划数据
-    getList() {},
     // 获取班级
     xqmcOnChange(xqid) {
       if (!xqid) {
