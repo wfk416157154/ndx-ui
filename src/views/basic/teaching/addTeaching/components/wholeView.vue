@@ -47,17 +47,19 @@ import { queryGenerateTeachingPlanData } from "@/api/teaching/generate";
 export default {
   data() {
     return {
-      WholeList: {}
+      WholeList: {},
+      itemForm: {}
     };
   },
   props: ["item"],
   methods: {
     toGrade() {
-      if (this.item && typeof this.item.zfx == "object") {
-        this.item.zfx = this.item.zfx.join(",");
+      this.itemForm = JSON.parse(JSON.stringify(this.item));
+      if (this.itemForm && typeof this.itemForm.zfx == "object") {
+        this.itemForm.zfx = this.itemForm.zfx.join(",");
       }
-      if (this.item.rybjid) {
-        queryGenerateTeachingPlanData(this.item).then(res => {
+      if (this.itemForm.rybjid) {
+        queryGenerateTeachingPlanData(this.itemForm).then(res => {
           if (res.code == 200 && res.data.allData.length > 0) {
             this.WholeList = res.data.allData[0];
           } else {
