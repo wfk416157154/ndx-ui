@@ -162,11 +162,7 @@
                       style="width : 100%"
                       placeholder="开始时间"
                       v-model="scope.row.kssj"
-                      :picker-options="{
-                      start: '05:40',
-                      step: '00:05',
-                      end: '23:00'
-                    }"
+                      :picker-options="chooseTimeObj"
                     ></el-time-select>
                   </template>
                 </el-table-column>
@@ -177,11 +173,7 @@
                       placeholder="结束时间"
                       v-model="scope.row.jssj"
                       @change="sjYZ(scope.row)"
-                      :picker-options="{
-                      start: '05:40',
-                      step: '00:05',
-                      end: '23:00'
-                    }"
+                      :picker-options="chooseTimeObj"
                     ></el-time-select>
                   </template>
                 </el-table-column>
@@ -472,7 +464,13 @@ export default {
       ybjSelection: null,
       isAdd: true,
       bjkbStartDate: [],
-      yxsj: null
+      yxsj: null,
+      // 选择时间-对象
+      chooseTimeObj:{
+        start: '05:40',
+        step: '00:05',
+        end: '23:00'
+      }
     };
   },
   created() {
@@ -908,6 +906,7 @@ export default {
       let date1 =
         date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
       let date2 = date1;
+      let nowTime=new Date(date1+"  "+rows.jssj);
       date1 = new Date(date1 + " " + rows.kssj).getTime();
       date2 = new Date(date2 + " " + rows.jssj).getTime();
       if (date1 > date2) {
@@ -915,8 +914,18 @@ export default {
         this.isAdd = false;
       } else {
         this.isAdd = true;
+        if(rows.jssj){
+          let str=this.addZero(nowTime.getHours())+":"+this.addZero(nowTime.getMinutes())
+          this.chooseTimeObj.start=str
+        }
       }
-    }
+    },
+    addZero(num){
+      if(num<10){
+        return "0"+num.toString();
+      }
+      return num;
+    },
   }
 };
 </script>
