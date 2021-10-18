@@ -65,17 +65,12 @@
                 :preview-src-list="[item.url]"
               ></el-image>
             </div>
-            <div>
-              <el-button
-                type="primary"
-                :disabled="logItem.ishg"
-                @click="jianYan(true,logItem.classroomId)"
-              >合格</el-button>
-              <el-button
-                type="primary"
-                :disabled="logItem.ishg"
-                @click="jianYan(false,logItem.classroomId)"
-              >不合格</el-button>
+            <div v-if="logItem.classroomId">
+              <el-radio v-model="logItem.ishg" label="1" @change="jianYan(true,logItem.classroomId)">合格</el-radio>
+              <el-radio v-model="logItem.ishg" label="0" @change="jianYan(false,logItem.classroomId)">不合格</el-radio>
+            </div>
+            <div v-if="!logItem.classroomId">
+              未上传图片
             </div>
           </td>
         </tr>
@@ -147,10 +142,10 @@ export default {
         `备课资料.${bkljlx}`
       );
     },
-    jianYan(bol, workLogId) {
+    jianYan(bol, classroomId) {
       let json = {
         status: "",
-        id: workLogId
+        id: classroomId
       };
       if (bol) {
         json.status = 1;
