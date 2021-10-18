@@ -135,7 +135,6 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column v-if="false" label="状态" align="center" prop="id" />
       <el-table-column
         label="开班照"
         align="center"
@@ -209,7 +208,7 @@
       </el-table-column>
       <el-table-column label="开班时间" align="center" prop="kbsj" />
       <el-table-column label="老师电话" align="center" prop="lsdh" />
-      <el-table-column label="信息管理" align="center" prop="status">
+      <el-table-column label="信息管理" align="center" prop="id">
         <template slot-scope="scope">
           <el-link
             type="primary"
