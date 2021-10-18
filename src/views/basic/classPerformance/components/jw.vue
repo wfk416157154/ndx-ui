@@ -88,7 +88,7 @@
             ></el-option>
           </el-select>
         </el-form-item>-->
-        <el-button type="primary" class="el-btn" plain @click="getAchievement()">查询</el-button>
+        <el-button type="primary" class="el-btn" plain @click="getAchievement">查询</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
         <el-form-item>
@@ -185,6 +185,7 @@ export default {
         xqid: null,
         lsxm: null,
         bjmc: null,
+        bjid: null,
         ksfw: null,
         maxfs: null,
         minfs: null,
@@ -261,6 +262,12 @@ export default {
       getExaminationType: []
     };
   },
+  props: {
+    bjid: {
+      type: String,
+      default: null
+    }
+  },
   created() {
     this.getDicts("year-list").then(response => {
       this.getYear = response.data;
@@ -274,11 +281,17 @@ export default {
     this.getDicts("examination_type").then(response => {
       this.getExaminationType = response.data;
     });
+    this.getList();
+    listBjclass({ id: this.bjid }).then(res => {
+      this.form.xqid = res.rows[0].kzzd1;
+      this.form.bjid = this.bjid;
+      this.getSchoolId(this.form.xqid);
+      this.getAchievement();
+    });
   },
   mounted() {
-    this.getList();
     /* 默认进入页面查询成绩*/
-    this.getListClassGrade();
+    // this.getListClassGrade();
   },
   methods: {
     // 获取校区
@@ -347,17 +360,17 @@ export default {
           obj[i].yAxis[0].max = this.form.studentGradeType;
           if (item[i].everyTimeGradeInfoQueries.length != 0) {
             for (let j = 0; j < item[i].everyTimeGradeInfoQueries.length; j++) {
-                obj[i].xAxis[0].data.push(
-                  item[i].everyTimeGradeInfoQueries[j].ksmc +
-                    this.ifGetExaminationType(
-                      item[i].everyTimeGradeInfoQueries[j].kslx
-                    )
-                );
-                obj[i].series[0].data.push(
-                  item[i].everyTimeGradeInfoQueries[j].pjfs
-                );
-                obj[i].series[0].name = `(${item[i].rybj})班平均分`;
-              }
+              obj[i].xAxis[0].data.push(
+                item[i].everyTimeGradeInfoQueries[j].ksmc +
+                  this.ifGetExaminationType(
+                    item[i].everyTimeGradeInfoQueries[j].kslx
+                  )
+              );
+              obj[i].series[0].data.push(
+                item[i].everyTimeGradeInfoQueries[j].pjfs
+              );
+              obj[i].series[0].name = `(${item[i].rybj})班平均分`;
+            }
           }
           obj[i] && obj[i + "a"].setOption(obj[i]);
         }
@@ -380,10 +393,9 @@ export default {
     },
     // 查询按钮
     getAchievement(fz) {
-      if (undefined != fz) {
+      if (typeof fz == "string") {
         this.form.studentGradeType = fz;
       }
-      //this.form.lsid = this.$store.state.user.glrid;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
     },

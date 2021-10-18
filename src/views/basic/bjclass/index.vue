@@ -213,7 +213,6 @@
           <el-link
             type="primary"
             @click="toPages('classPerformance',scope.row.id)"
-            v-if="dataRoleWeightId == 50"
           >班级成绩</el-link>
           <el-link type="primary" @click="toPages('stugrade',scope.row.id)">学生成绩</el-link>
           <el-link type="primary" @click="toPages('teacherTimetable',scope.row.id)">班级课表</el-link>
