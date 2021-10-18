@@ -539,7 +539,7 @@ export default {
       photoNum1: 0,
       photoNum2: 0,
       // 最大上传次数
-      maxPhotoNum: 9,
+      maxPhotoNum: 20,
       marketerList: [],
       disableBysj: true,
       teachingMaterialList: [],

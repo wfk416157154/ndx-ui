@@ -65,12 +65,10 @@
                 :preview-src-list="[item.url]"
               ></el-image>
             </div>
-            <div v-if="logItem.classroomId">
-              <el-radio v-model="logItem.ishg" label="1" @change="jianYan(true,logItem.classroomId)">合格</el-radio>
-              <el-radio v-model="logItem.ishg" label="0" @change="jianYan(false,logItem.classroomId)">不合格</el-radio>
-            </div>
-            <div v-if="!logItem.classroomId">
-              未上传图片
+            <div>
+              <div v-if="logItem.reason"> <el-input v-model="logItem.reason" placeholder="未上传原因" readonly></el-input>  </div>
+              <el-radio v-model="logItem.ishg" label="1" @change="jianYan(true,logItem)">合格</el-radio>
+              <el-radio v-model="logItem.ishg" label="0" @change="jianYan(false,logItem)">不合格</el-radio>
             </div>
           </td>
         </tr>
@@ -95,7 +93,8 @@
 
 <script>
 import { workLogQueryForEducational } from "@/api/basic/basicTeacherWorkLog";
-import { updateClassroom } from "@/api/basic/classroom";
+import { updateClassroom,addClassroom } from "@/api/basic/classroom";
+import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
@@ -142,22 +141,44 @@ export default {
         `备课资料.${bkljlx}`
       );
     },
-    jianYan(bol, classroomId) {
-      let json = {
-        status: "",
-        id: classroomId
-      };
-      if (bol) {
-        json.status = 1;
-      } else {
-        json.status = 0;
-      }
-      updateClassroom(json).then(res => {
-        if (res.code == 200) {
-          this.getList();
-          this.msgSuccess("操作成功");
+    jianYan(bol, logItem) {
+      if (!logItem.classroomId){
+        let jsonInsert = {
+          id: secretKey(),
+          ryb: logItem.bjid,
+          rylsxm: logItem.lsid,
+          kzzd1: logItem.workLogId,
+          status: "",
+        };
+        if (bol) {
+          jsonInsert.status = 1;
+        } else {
+          jsonInsert.status = 0;
         }
-      });
+        addClassroom(jsonInsert).then(res => {
+          if (res.code == 200) {
+            this.getList();
+            this.msgSuccess("操作成功");
+          }
+        });
+      }else {
+        let json = {
+          status: "",
+          id: logItem.classroomId
+        };
+        if (bol) {
+          json.status = 1;
+        } else {
+          json.status = 0;
+        }
+        updateClassroom(json).then(res => {
+          if (res.code == 200) {
+            this.getList();
+            this.msgSuccess("操作成功");
+          }
+        });
+      }
+
     }
   }
 };

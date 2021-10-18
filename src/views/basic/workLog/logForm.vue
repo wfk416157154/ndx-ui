@@ -249,6 +249,11 @@
                   <img width="100%" :src="dialogImageUrl" alt/>
                 </el-dialog>
               </el-form-item>
+              <div class="lsxm">
+                <el-form-item label="未上传原因">
+                  <el-input v-model="ruleForm.lsxm" placeholder="请输入原因"></el-input>
+                </el-form-item>
+              </div>
             </div>
             <div>
               <el-form-item label-width="100px" label="学生表现" prop="qtzs">
@@ -270,6 +275,7 @@
               </el-form-item>
             </div>
           </div>
+
           <!-- 备注 -->
           <div class="bz">
             <el-form-item label="备注">
@@ -400,7 +406,7 @@
         // 个人日志 考试类型
         getExaminationType: [],
         // 限制图片上传数量
-        maxPhotoNum: 5,
+        maxPhotoNum: 20,
         //图片列表
         files1: [],
         files2: [],
