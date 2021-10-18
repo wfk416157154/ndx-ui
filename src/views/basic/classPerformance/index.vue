@@ -1,7 +1,7 @@
 <template>
   <div id="statisticalChartTtem">
-    <jw v-if="dataRoleWeightId > 50" />
-    <ls v-if="dataRoleWeightId == 50" />
+    <jw v-if="dataRoleWeightId > 50" :bjid="bjid" />
+    <ls v-if="dataRoleWeightId == 50" :bjid="bjid" />
   </div>
 </template>
 
@@ -13,7 +13,8 @@ export default {
   data() {
     return {
       // 用户权重
-      dataRoleWeightId: ""
+      dataRoleWeightId: "",
+      bjid: this.$route.query.bjid
     };
   },
   components: {

@@ -188,7 +188,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="校区名称" align="center" prop="xqmc" />
+      <el-table-column label="校区名称" v-if="false" align="center" prop="xqmc" />
       <el-table-column label="日语班级" align="center" prop="rybjmc">
         <template slot-scope="scope">
           <a href="#">
@@ -209,13 +209,30 @@
       </el-table-column>
       <el-table-column label="开班时间" align="center" prop="kbsj" />
       <el-table-column label="老师电话" align="center" prop="lsdh" />
+      <el-table-column label="信息管理" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="toPages('classPerformance',scope.row.id)"
+            v-if="dataRoleWeightId == 50"
+          >班级成绩</el-link>
+          <el-link type="primary" @click="toPages('stugrade',scope.row.id)">学生成绩</el-link>
+          <el-link type="primary" @click="toPages('teacherTimetable',scope.row.id)">班级课表</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="毕业状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="statusOptions" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="毕业时间" align="center" prop="addOrUpdateTime" :formatter="dateFormat" />
+      <el-table-column
+        label="毕业时间"
+        align="center"
+        v-if="false"
+        prop="addOrUpdateTime"
+        :formatter="dateFormat"
+      />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -526,7 +543,8 @@ export default {
       maxPhotoNum: 9,
       marketerList: [],
       disableBysj: true,
-      teachingMaterialList: []
+      teachingMaterialList: [],
+      dataRoleWeightId: this.$store.state.user.dataRoleWeightId
     };
   },
   created() {
@@ -577,6 +595,14 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+    },
+    //跳转对应信息管理选项
+    toPages(path, bjid) {
+      this.getConfigKey(path).then(res => [
+        this.$router.push({
+          path: `${res.msg}?bjid=${bjid}`
+        })
+      ]);
     },
     xqmcOnChange(id) {
       pageListBjclass({ kzzd1: id }).then(response => {
