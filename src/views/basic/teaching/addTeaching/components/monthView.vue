@@ -11,10 +11,6 @@
       </ul>
     </div>
     <div class="wrap-right-item">
-      <!-- <div>
-        <h3>新标准日语</h3>
-        <h4>第一章节</h4>
-      </div>-->
       <div class="wrap-ksItem">
         <ul class="ksItem">
           <li style="margin : 10px 0px" v-for="(item,index) in monthitemTemplate" :key="index">
@@ -26,11 +22,13 @@
           justify-content: space-between;
           align-items: center; margin : 10px 0px;margin-left : 20px"
             >
-              <div>
+              <!-- <div>
                 <span :style="itemson.styles">{{itemson.jdmc}}</span>
-                <!-- <span style="margin-left : 10px;color : #67C23A">新课</span> -->
-              </div>
-              <div>
+              </div>-->
+              <el-divider content-position="left">
+                <span :style="itemson.styles">{{itemson.jdmc}}</span>
+              </el-divider>
+              <div style="width : 34%">
                 <span>{{itemson.ksrq}} - {{itemson.jzrq}}</span>
               </div>
             </div>
@@ -51,13 +49,6 @@ export default {
     };
   },
   props: ["item"],
-  computed: {
-    getComputed(cjlx) {
-      let styles = {};
-      console.log(cjlx);
-      return styles;
-    }
-  },
   methods: {
     toGrade() {
       this.itemForm = JSON.parse(JSON.stringify(this.item));
