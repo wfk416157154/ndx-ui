@@ -120,7 +120,7 @@ export default {
                     }
                   });
                   this.monthitemTemplate.push({
-                    title: `${name}  月`,
+                    title: `${name}`,
                     list: monthitem[key][name]
                   });
                 }

@@ -50,7 +50,7 @@
         </div>
       </div>
       <!-- 备课 -->
-      <div class="wrap-preparation clearfix">
+      <!-- <div class="wrap-preparation clearfix">
         <div class="preparation-title">
           <span>备课</span>
         </div>
@@ -114,7 +114,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 课中 -->
       <div class="in-class clearfix">
         <div class="in-class-title clearfix">
