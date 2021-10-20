@@ -56,16 +56,16 @@
       <el-table-column label="老师" align="center" prop="lsxm"/>
       <el-table-column label="教材" align="center" prop="jcmc"/>
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx"/>
-      <el-table-column label="考试范围" align="center" prop="ksfw"  >
-<!--        <template slot-scope="scope">
-          <span v-if="'1'==scope.row.kslx">
-            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
-          </span>
-          <span v-else>
-            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
-            <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
-          </span>
-        </template>-->
+      <el-table-column label="考试范围" align="center" prop="ksfw">
+        <!--        <template slot-scope="scope">
+                  <span v-if="'1'==scope.row.kslx">
+                    <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
+                  </span>
+                  <span v-else>
+                    <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
+                    <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
+                  </span>
+                </template>-->
       </el-table-column>
       <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
         <template slot-scope="scope">
@@ -139,14 +139,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-select v-model="form.jcid"  @change="getJcList" placeholder="请选择教材">
-            <el-option
-              v-for="(item,index) in jsList"
-              :key="index"
-              :label="item.jcmc"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+          <el-input v-model="form.jcmc" readonly/>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
           <el-select v-model="form.kslx" placeholder="请考试类型" @change="onKslxClick">
@@ -159,7 +152,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-select v-model="form.ksfw" v-if="showKsfw" >
+          <el-select v-model="form.ksfw" v-if="showKsfw">
             <el-option
               v-for="dict in sjglKsfwJsbfList"
               :key="dict.dictValue"
@@ -168,7 +161,7 @@
             ></el-option>
           </el-select>
 
-          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs" >
+          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
             <el-option
               v-for="dict in sjglKsfwKsbfList"
               :key="dict.dictValue"
@@ -326,14 +319,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-select v-model="formQt.jcid" @change="getJcList" placeholder="请选择教材">
-            <el-option
-              v-for="(item,index) in jsList"
-              :key="index"
-              :label="item.jcmc"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+          <el-input v-model="formQt.jcmc" readonly/>
         </el-form-item>
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
           <el-select v-model="formQt.kslx" plac输入eholder="请考试类型" @change="onKslxClick">
@@ -346,7 +332,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-select v-model="formQt.ksfw" v-if="showKsfw" >
+          <el-select v-model="formQt.ksfw" v-if="showKsfw">
             <el-option
               v-for="dict in sjglKsfwJsbfList"
               :key="dict.dictValue"
@@ -355,7 +341,7 @@
             ></el-option>
           </el-select>
 
-          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs" >
+          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
             <el-option
               v-for="dict in sjglKsfwKsbfList"
               :key="dict.dictValue"
@@ -363,7 +349,7 @@
               :value="dict.dictLabel"
             ></el-option>
           </el-select>
-<!--          <span v-if="showKsfwKsJs">&#45;&#45;&#45;&#45;</span>-->
+          <!--          <span v-if="showKsfwKsJs">&#45;&#45;&#45;&#45;</span>-->
           <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
             <el-option
               v-for="dict in sjglKsfwJsbfList"
@@ -487,8 +473,8 @@
             {required: true, message: '必填', trigger: 'blur'}
           ],
           ksfw_jsbf: [
-              {required: true, message: '必填', trigger: 'blur'}
-            ],
+            {required: true, message: '必填', trigger: 'blur'}
+          ],
           kskssj: [
             {required: true, message: '必填', trigger: 'blur'}
           ]
@@ -529,13 +515,13 @@
         // 教材名称
         jsList: [],
         // 是否显示考试范围
-        showKsfw:true,
+        showKsfw: true,
         // 是否显示考试范围-开始结束两个部分
-        showKsfwKsJs:false,
-        ksfw_ksbf:null,
-        ksfw_jsbf:null,
-        sjglKsfwKsbfList:[],
-        sjglKsfwJsbfList:[],
+        showKsfwKsJs: false,
+        ksfw_ksbf: null,
+        ksfw_jsbf: null,
+        sjglKsfwKsbfList: [],
+        sjglKsfwJsbfList: [],
       };
     },
     created() {
@@ -575,13 +561,13 @@
         });
       },
       // 选择考试类型后动态显示隐藏考试范围
-      onKslxClick(val){
-        if("1"===val){
-          this.showKsfw=true
-          this.showKsfwKsJs=false
-        }else{
-          this.showKsfw=false
-          this.showKsfwKsJs=true
+      onKslxClick(val) {
+        if ("1" === val) {
+          this.showKsfw = true
+          this.showKsfwKsJs = false
+        } else {
+          this.showKsfw = false
+          this.showKsfwKsJs = true
         }
       },
       // 获取老师所带班级
@@ -697,9 +683,10 @@
         this.form.lsxm = this.$store.state.user.nickName;
         this.form.lsid = this.$store.state.user.glrid;
         this.open = true;
-        this.ksfw_ksbf="五十音图" // 默认 0=五十音图
+        this.ksfw_ksbf = "五十音图" // 默认 0=五十音图
         if (this.classList.length == 1) {
           this.form.bjid = this.classList[0].id;
+          this.getJcList(this.classList[0].uname)
         }
         this.title = "添加考卷";
       },
@@ -709,9 +696,10 @@
         this.formQt.lsxm = this.$store.state.user.nickName;
         this.formQt.lsid = this.$store.state.user.glrid;
         this.openQt = true;
-        this.ksfw_ksbf="五十音图" // 默认 0=五十音图
+        this.ksfw_ksbf = "五十音图" // 默认 0=五十音图
         if (this.classList.length == 1) {
           this.formQt.bjid = this.classList[0].id;
+          this.getJcList(this.classList[0].uname)
         }
         this.title = "添加其他考卷";
       },
@@ -752,15 +740,15 @@
         });
       },
       // 根据考试类型判断是否需要进行拼接赋值
-      setFormKsfwValue(kslx,ksfw){
-        if(null!=kslx&&"1"!==kslx){ //考试类型不等于 1=课考，则进行赋值
-          ksfw=this.ksfw_ksbf+"-"+this.ksfw_jsbf;
+      setFormKsfwValue(kslx, ksfw) {
+        if (null != kslx && "1" !== kslx) { //考试类型不等于 1=课考，则进行赋值
+          ksfw = this.ksfw_ksbf + "-" + this.ksfw_jsbf;
         }
         return ksfw;
       },
       /** 提交按钮 */
       submitForm() {
-        this.form.ksfw=this.setFormKsfwValue(this.form.kslx,this.form.ksfw)
+        this.form.ksfw = this.setFormKsfwValue(this.form.kslx, this.form.ksfw)
         this.$refs.formState.validate(valid => {
           if (valid) {
             this.getClassList(this.form.bjid)
@@ -786,7 +774,7 @@
         this.formQt.lssjzt = "4";
         //教务试卷状态:默认已发送
         this.formQt.jwsjzt = "1";
-        this.formQt.ksfw=this.setFormKsfwValue(this.formQt.kslx,this.formQt.ksfw)
+        this.formQt.ksfw = this.setFormKsfwValue(this.formQt.kslx, this.formQt.ksfw)
         this.$refs.formState.validate(valid => {
           if (valid) {
             this.getClassList(this.formQt.bjid)
@@ -834,7 +822,7 @@
         this.cjsc.open = false;
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
-        if(response.code==200){
+        if (response.code == 200) {
           let json = {
             kzzd2: "3",
             id: this.cjscForm.id
@@ -847,7 +835,7 @@
             message: response.msg,
             type: "success"
           });
-        }else {
+        } else {
           this.$notify({
             message: response.msg,
             type: "error"
@@ -863,11 +851,12 @@
       //班级id 和 名称
       getClassList(value) {
         for (let i = 0; i < this.classList.length; i++) {
-          if (this.classList[i].id == value) {
+          if (this.classList[i].id === value) {
             this.form.bjid = value;
             this.form.bjmc = this.classList[i].rybjmc;
             this.formQt.bjid = value;
             this.formQt.bjmc = this.classList[i].rybjmc;
+            this.getJcList(this.classList[i].uname)
           }
         }
       },
