@@ -290,6 +290,7 @@
                 </el-dialog>
               </el-form-item>
             </div>
+
             <div>
               <el-form-item label-width="100px" label="学生表现" prop="qtzs">
                 <el-upload
@@ -486,7 +487,7 @@
         // 个人日志 考试类型
         getExaminationType: [],
         // 限制图片上传数量
-        maxPhotoNum: 5,
+        maxPhotoNum: 20,
         //图片列表
         files1: [],
         files2: [],
@@ -954,7 +955,7 @@
       ifPhotoLimit(num) {
         if (num >= this.maxPhotoNum) {
           this.$message({
-            message: "最多上传 5 张图片",
+            message: "最多上传 20 张图片",
             type: "warning"
           });
         } else {
