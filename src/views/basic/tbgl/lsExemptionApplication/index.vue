@@ -134,7 +134,7 @@
     </div>
   </div>
 </template>
-    
+
 <script>
 import { addMianze, updateMianze } from "@/api/basic/mianze";
 import { getToken } from "@/utils/auth";
@@ -235,7 +235,9 @@ export default {
       updateMianze(this.getInfo).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 修改成功");
-          this.$router.go(-1);
+          this.$router.push({
+            path: "/tbgl/lsExemptionList"
+          });
         }
       });
     },
@@ -290,7 +292,9 @@ export default {
       addMianze(jsonList).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 操作成功");
-          this.$router.go(-1);
+          this.$router.push({
+            path: "/tbgl/lsExemptionList"
+          });
         }
       });
     }

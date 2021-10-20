@@ -160,7 +160,7 @@
     </div>
   </div>
 </template>
-    
+
 <script>
 import { getToken } from "@/utils/auth";
 import { addXiuxue, updateXiuxue } from "@/api/basic/xiuxue.js";
@@ -268,7 +268,9 @@ export default {
       updateXiuxue(this.getInfo).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 修改成功");
-          this.$router.go(-1);
+          this.$router.push({
+            path: "/tbgl/lsSuspensionList"
+          });
         }
       });
     },
@@ -328,7 +330,9 @@ export default {
       addXiuxue(jsonList).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 操作成功");
-          this.$router.go(-1);
+          this.$router.push({
+            path: "/tbgl/lsSuspensionList"
+          });
         }
       });
     }
