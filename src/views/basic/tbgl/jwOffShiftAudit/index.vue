@@ -101,7 +101,7 @@
       </el-table-column>
       <el-table-column label="操作" width="260px" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="warning" icon="el-icon-s-custom" @click="chushenEditPage(scope.row)">审核</el-button>
+          <el-button size="mini" type="warning" icon="el-icon-s-custom" v-if="1!=scope.row.tblx" @click="chushenEditPage(scope.row)">审核</el-button>
           <el-button size="mini" type="success" icon="el-icon-s-flag" @click="jiesuanEdit(scope.row)">结算</el-button>
         </template>
       </el-table-column>
@@ -272,8 +272,14 @@
       },
       // 结算
       jiesuanEdit(row) {
-        if ("3" !== row.shzt) {// 学生同意
-          this.msgError("请选择审核状态为【学生同意】的数据！")
+        if("2"==row.tblx){// 如果退班规则是：退班退费
+          if ("3" !== row.shzt) {// 学生同意
+            this.msgError("请选择审核状态为【学生同意】的数据！")
+            return
+          }
+        }// 否则可直接结算
+        if ("6" == row.shzt) {
+          this.msgError("该学生已退班！请重新选择！")
           return
         }
         this.$confirm('确认同意?', "警告", {
@@ -305,17 +311,29 @@
       },
       // 初审提交
       chushenSubmit() {
+        let stuobj={
+          id:this.selectRowData.id,
+          shzt: "2",// 初审
+        }
         let obj = {
           glid: this.selectRowData.id,
           shzt: "2",// 初审
           thje: this.chushenForm.thje,// 退还金额
           thgz: this.chushenForm.thgz // 退还规则
         };
-        addStuTuibanLog(obj).then(response => {
-          this.msgSuccess("提交成功");
-          this.dialogVisible = false;
-          this.getList();
-        });
+        updateStuTuiban(stuobj).then((res) =>{
+          if(res.code == 200){
+            this.msgSuccess("提交成功");
+            addStuTuibanLog(obj).then(response => {
+              this.dialogVisible = false;
+              this.getList();
+            });
+          }else{
+            this.msgError("提交失败！请联系管理员！"+res.msg)
+          }
+        })
+
+
       },
       /** 下载文件操作 */
       downloadFileName(fileName) {
