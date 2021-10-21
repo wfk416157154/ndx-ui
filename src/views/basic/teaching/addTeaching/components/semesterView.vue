@@ -119,8 +119,6 @@ export default {
       if (count.length == 0) {
         this.msgError("提示 : 暂时没有数据");
       }
-      console.log(this.xueqiDict);
-      console.log(row);
     },
     getKclx(row, column) {
       return this.selectDictLabel(this.teachingCourseType, row.kclx);

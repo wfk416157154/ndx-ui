@@ -1,5 +1,6 @@
 <template>
   <div class="add-teaching">
+    <!-- <calendar @callback="demo" /> -->
     <div class="wrap-header">
       <div class="left-from">
         <el-form
@@ -451,6 +452,9 @@ export default {
     });
   },
   methods: {
+    // demo(e) {
+    //   console.log(e);
+    // },
     // 组件
     toComponent(value) {
       if (!this.teachingForm.rybjid) {
