@@ -250,7 +250,7 @@
       <el-table-column label="班主任电话" width="120px" align="center" prop="bzrdh"/>
       <!-- <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" /> -->
       <el-table-column label="备注" width="120px" align="center" prop="remark"/>
-      <el-table-column label="状态" width="120px" align="center" prop="status"/>
+      <el-table-column label="状态" width="120px" align="center" prop="status" :formatter="statusFormat"/>
       <el-table-column label="退班时间" align="center" prop="tbsj" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.tbsj, '{y}-{m}-{d}') }}</span>
@@ -902,13 +902,6 @@
         this.loading = true;
         listStudent(this.queryParams).then(response => {
           this.studentList = response.rows;
-          for (let i = 0; i < this.studentList.length; i++) {
-            for (let j = 0; j < this.statusOptions.length; j++) {
-              if (this.studentList[i].status === this.statusOptions[j].dictValue) {
-                this.studentList[i].status = this.statusOptions[j].dictLabel
-              }
-            }
-          }
           this.total = response.total;
           this.loading = false;
         });
