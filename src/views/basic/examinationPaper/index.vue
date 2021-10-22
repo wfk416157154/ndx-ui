@@ -381,14 +381,14 @@
         this.upload.open = false;
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
-        if (response.data.code == 200){
+        if (response.code === 200){
           this.submitForm(this.$row);
           data.kzzd1 = this.examinationInformationId;
           // 保存文件上传地址
           addFile(data).then(res => {
           });
         }else {
-          this.$message.error("上传失败");
+          this.msgError("上传失败");
         }
         this.getList();
       },
