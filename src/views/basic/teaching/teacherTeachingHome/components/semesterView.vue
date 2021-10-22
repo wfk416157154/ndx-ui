@@ -169,8 +169,8 @@ export default {
           }
         }
       }
-      console.log(this.typeNameArr)
-      console.log(this.typeNamePos)
+      console.log(this.typeNameArr);
+      console.log(this.typeNamePos);
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
@@ -182,7 +182,7 @@ export default {
           colspan: col1
         };
       }
-    },
+    }
   }
 };
 </script>
