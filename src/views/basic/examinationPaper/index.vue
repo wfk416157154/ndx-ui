@@ -19,8 +19,8 @@
       <el-form-item label="考试类型" prop="kslx">
         <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" clearable size="small">
           <el-option
-            v-for="dict in kslxOptions"
-            :key="dict.dictValue"
+            v-for="(dict,index) in kslxOptions"
+            :key="index"
             :label="dict.dictLabel"
             :value="dict.dictValue"
           />
@@ -51,7 +51,7 @@
       <el-table-column label="日语老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
       <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
-      <el-table-column label="考试范围" align="center" prop="ksfw" >
+      <el-table-column label="考试范围" align="center" prop="ksfw">
         <!--<template slot-scope="scope">
           <span v-if="'1'==scope.row.kslx">
             <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
@@ -78,7 +78,7 @@
           <span>{{ parseTime(scope.row.fssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -220,8 +220,8 @@ export default {
       getStatusList: [],
       // 考试信息id
       examinationInformationId: "",
-      sjglKsfwKsbfList:[],
-      sjglKsfwJsbfList:[],
+      sjglKsfwKsbfList: [],
+      sjglKsfwJsbfList: [],
       examinationInformationId: "",
       $row: null
     };
