@@ -407,7 +407,8 @@ export default {
             message: "格式错误,只能输入数字"
           }
         ],
-        gksj: [{ required: true, message: "请选择高考时间", trigger: "blur" }]
+        gksj: [{ required: true, message: "请选择高考时间", trigger: "blur" }],
+        jcid: [{ required: true, message: "请选择教学模板", trigger: "blur" }]
       },
       ifContent: null,
       reviewList: [],
@@ -518,7 +519,7 @@ export default {
       listGenerate({ rybjid: bjid }).then(res => {
         if (res.rows.length > 0) {
           this.listGenerate = res.rows;
-          if (this.listGenerate[0].zfx) {
+          if (typeof this.listGenerate[0].zfx == "string") {
             this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
           }
           this.teachingForm = Object.assign(
@@ -544,24 +545,31 @@ export default {
     },
     // 保存生成教学计划表单数据
     saveTeachingForm() {
-      if (this.teachingForm.zfx.length > 0) {
-        this.teachingForm.zfx = this.teachingForm.zfx.join();
-      }
-      if (this.teachingForm.id) {
-        updateGenerate(this.teachingForm).then(res => {
-          if (res.code == 200) {
-            this.msgSuccess("成功 : 更新教学计划基础数据完成");
-            this.getListGenerate(this.teachingForm.rybjid);
+      this.$refs["teachingForm"].validate(valid => {
+        if (valid) {
+          if (this.teachingForm.zfx.length >= 0) {
+            this.teachingForm.zfx = this.teachingForm.zfx.join();
           }
-        });
-      } else {
-        addGenerate(this.teachingForm).then(res => {
-          if (res.code == 200) {
-            this.msgSuccess("成功 : 生成教学计划基础数据完成");
-            this.getListGenerate(this.teachingForm.rybjid);
+          if (this.teachingForm.id) {
+            updateGenerate(this.teachingForm).then(res => {
+              if (res.code == 200) {
+                this.msgSuccess("成功 : 更新教学计划基础数据完成");
+                this.getListGenerate(this.teachingForm.rybjid);
+              }
+            });
+          } else {
+            addGenerate(this.teachingForm).then(res => {
+              if (res.code == 200) {
+                this.msgSuccess("成功 : 生成教学计划基础数据完成");
+                this.getListGenerate(this.teachingForm.rybjid);
+              }
+            });
           }
-        });
-      }
+        } else {
+          this.msgError("提示 : 请填写完整数据");
+          return false;
+        }
+      });
     },
     // 生成教学计划数据
     addTeaching() {
