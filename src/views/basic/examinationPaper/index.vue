@@ -34,8 +34,8 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" size="mini" @click="getList(1)">已发送</el-button>
-        <el-button type="primary" size="mini" @click="getList(0)">未发送</el-button>
+        <el-button type="primary" size="mini" @click="changeStatus(1)">已发送</el-button>
+        <el-button type="primary" size="mini" @click="changeStatus(0)">未发送</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -147,6 +147,7 @@ import {
 import { getToken } from "@/utils/auth";
 import { listBjclass } from "@/api/basic/bjclass";
 import { addFile } from "@/api/tool/common";
+
 export default {
   name: "ExaminationPaper",
   components: {},
@@ -246,10 +247,7 @@ export default {
   },
   methods: {
     /** 查询考卷列表 */
-    getList(value) {
-      if (undefined != value) {
-        this.queryParams.jwsjzt = value;
-      }
+    getList() {
       this.loading = true;
       listExaminationPaper(this.queryParams).then(response => {
         this.examinationPaperList = response.rows;
@@ -257,6 +255,12 @@ export default {
         this.loading = false;
       });
     },
+    changeStatus(value) {
+      this.queryParams.jwsjzt = value;
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+
     // 获取老师所带班级
     getListBjclass() {
       this.glrid = this.$store.state.user.glrid;
@@ -375,11 +379,14 @@ export default {
       this.upload.open = false;
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
-      this.submitForm(this.$row);
-      data.kzzd1 = this.examinationInformationId;
-
-      // 保存文件上传地址
-      addFile(data).then(res => {});
+      if (response.code === 200) {
+        this.submitForm(this.$row);
+        data.kzzd1 = this.examinationInformationId;
+        // 保存文件上传地址
+        addFile(data).then(res => {});
+      } else {
+        this.msgError("上传失败");
+      }
       this.getList();
     },
     // 提交上传文件
