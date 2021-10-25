@@ -138,7 +138,7 @@ export default {
     changeTime() {
       let endTime = new Date(this.sjForm.chooseEndDate).getTime();
       let startTime = new Date(this.sjForm.chooseStartDate).getTime();
-      if (endTime <= startTime && endTime - startTime < 1000 * 60 * 60 * 24) {
+      if (endTime - startTime < 1000 * 60 * 60 * 24) {
         this.msgError("提示 : 结束时间不能小于等于开始时间");
         this.sjForm.chooseEndDate = null;
       } else {
