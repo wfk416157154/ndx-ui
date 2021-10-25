@@ -71,7 +71,7 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
+        <el-button type="info" icon="el-icon-upload2" size="mini" v-has-role="['admin','academicAdministrator']" @click="handleImport">导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
