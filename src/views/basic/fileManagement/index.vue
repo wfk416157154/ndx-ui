@@ -95,7 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column label="文件id" align="center" prop="wjid" v-if="false" />
-      <el-table-column label="文件下载" align="center" prop="wjidArr" width="280px" >
+      <el-table-column label="文件下载" align="center" prop="wjidArr" width="280px" v-if="false" >
         <template slot-scope="scope">
           <el-button
             size="mini"
