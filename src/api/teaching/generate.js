@@ -95,3 +95,12 @@ export function queryGenerateTeachingPlanData(data) {
     data: data
   })
 }
+
+// 根据选择的时间范围调整教学计划
+export function adjustTeachingPlan(data) {
+  return request({
+    url: '/basic/teachingGenerate/adjustTeachingPlan',
+    method: 'post',
+    data: data
+  })
+}

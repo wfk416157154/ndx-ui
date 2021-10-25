@@ -27,9 +27,10 @@
                       <h4 style="margin : 10px 0px ;color : #E6A23C">{{items.name}}</h4>
                     </div>
                     <div>
-                      <h4
-                        style="margin : 10px 0px;color : #E6A23C"
-                      >{{formatTime(items.ksrq)}} - {{formatTime(items.jzrq)}}</h4>
+                      <el-link
+                        type="primary"
+                        @click="editSj(items)"
+                      >{{formatTime(items.ksrq)}} - {{formatTime(items.jzrq)}}</el-link>
                     </div>
                   </div>
                 </div>
@@ -39,6 +40,38 @@
         </ul>
       </div>
     </div>
+    <el-dialog title="编辑时间" :visible.sync="dialogFormVisible">
+      <el-form :model="sjForm" :rules="rules" ref="sjForm">
+        <el-form-item label="压缩后天数" label-width="100px" prop="yshts">
+          <el-input v-model="sjForm.yshts" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="开始日期" label-width="100px" prop="chooseStartDate">
+          <el-date-picker
+            v-model="sjForm.chooseStartDate"
+            value-format="yyyy-MM-dd"
+            type="date"
+            disabled
+            placeholder="选择日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束日期" label-width="100px" prop="chooseEndDate">
+          <el-date-picker
+            v-model="sjForm.chooseEndDate"
+            value-format="yyyy-MM-dd"
+            @change="changeTime"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="相差天数" label-width="100px">
+          <el-input v-model="difference" disabled autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editDateSubmit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -48,7 +81,25 @@ export default {
   data() {
     return {
       WholeList: {},
-      itemForm: {}
+      itemForm: {},
+      sjForm: {
+        chooseEndDate: null,
+        chooseStartDate: null,
+        yshts: null
+      },
+      dialogFormVisible: false,
+      difference: null,
+      rules: {
+        yshts: [
+          { required: true, message: "请输入压缩后天数", trigger: "blur" }
+        ],
+        chooseStartDate: [
+          { required: true, message: "请选择开始日期", trigger: "blur" }
+        ],
+        chooseEndDate: [
+          { required: true, message: "请选择结束日期", trigger: "blur" }
+        ]
+      }
     };
   },
   props: ["item"],
@@ -76,6 +127,42 @@ export default {
       M = M.length == 1 ? `0${M}` : M;
       D = D.length == 1 ? `0${D}` : D;
       return F + "-" + M + "-" + D;
+    },
+    editSj(row) {
+      this.sjForm.chooseStartDate = row.ksrq;
+      this.sjForm.chooseEndDate = row.jzrq;
+      this.sjForm.yshts = null;
+      this.changeTime();
+      this.dialogFormVisible = true;
+    },
+    changeTime() {
+      let endTime = new Date(this.sjForm.chooseEndDate).getTime();
+      let startTime = new Date(this.sjForm.chooseStartDate).getTime();
+      if (endTime <= startTime && endTime - startTime < 1000 * 60 * 60 * 24) {
+        this.msgError("提示 : 结束时间不能小于等于开始时间");
+        this.sjForm.chooseEndDate = null;
+      } else {
+        this.difference = (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
+      }
+    },
+    editDateSubmit() {
+      this.$refs["sjForm"].validate(valid => {
+        if (valid) {
+          let finalForm = Object.assign(this.itemForm, this.sjForm);
+          adjustTeachingPlan(finalForm).then(res => {
+            if (res.code == 200) {
+              this.msgSuccess("成功 : 数据修改成功");
+              this.dialogFormVisible = false;
+              this.toGrade();
+            } else {
+              this.msgError("提示 : 修改数据失败,请重新修改");
+            }
+          });
+        } else {
+          this.msgError("提示 : 请填写完整数据");
+          return false;
+        }
+      });
     }
   }
 };
