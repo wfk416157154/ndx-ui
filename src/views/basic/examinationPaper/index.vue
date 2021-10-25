@@ -183,7 +183,7 @@ export default {
         jcmc: null,
         jwsjzt: null,
         lssjzt: null,
-        status: "1", // 默认查询正常的数据
+        status: null,
         dataOrder: null,
         addOrUpdateTime: null,
         kzzd1: null,
@@ -342,11 +342,12 @@ export default {
       this.form = row;
       this.form.jwsjzt = "1";
       this.form.lssjzt = "2";
+      this.form.fssj = new Date();
       if (this.form.id != null) {
         this.form.fsrid = this.$store.state.user.glrid;
         this.form.fsrmc = this.$store.state.user.nickName;
         updateExaminationPaper(this.form).then(response => {
-          this.msgSuccess("上传并试卷成功");
+          this.msgSuccess("上传并发送试卷成功");
           this.open = false;
           this.getList();
         });

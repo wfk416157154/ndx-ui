@@ -101,8 +101,12 @@
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <span v-if="scope.row.lssjzt == '1'">暂无试卷</span>
-          <span v-if="scope.row.lssjzt == '4'">其他试卷</span>
+          <!--          <span v-if="scope.row.lssjzt == '1'">暂无试卷</span>
+                    <span v-if="scope.row.lssjzt == '4'">其他试卷</span>-->
+          <el-button type="danger" size="small" v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1'"
+                     slot="reference" @click="backout(scope.row.id)">撤回
+          </el-button>
+          <span v-if="scope.row.status == '2'">已撤回</span>
           <el-button
             size="mini"
             type="text"
@@ -195,7 +199,7 @@
             placeholder="选择考试开始时间"
           ></el-date-picker>
         </el-form-item>-->
-        <el-form-item label="备注" label-width="120px" prop="remark">
+        <el-form-item label="试卷说明" label-width="120px" prop="remark">
           <el-input v-model="form.remark" placeholder/>
         </el-form-item>
       </el-form>
@@ -375,7 +379,7 @@
             placeholder="选择考试开始时间"
           ></el-date-picker>
         </el-form-item>-->
-        <el-form-item label="备注" label-width="120px" prop="remark">
+        <el-form-item label="试卷说明" label-width="120px" prop="remark">
           <el-input v-model="formQt.remark" placeholder/>
         </el-form-item>
       </el-form>
@@ -441,7 +445,7 @@
           jcmc: null,
           jwsjzt: null,
           lssjzt: null,
-          status: "1",// 默认查询正常的数据
+          status: null,
           dataOrder: null,
           addOrUpdateTime: null,
           kzzd1: null,
@@ -595,6 +599,23 @@
       cancelQt() {
         this.openQt = false;
         this.resetQt();
+      },
+      backout(value) {
+        this.$confirm('确定撤回吗', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let json = {
+            id: value,
+            status: '2'
+          }
+          updateExaminationPaper(json).then(response => {
+            this.msgSuccess("修改成功");
+            this.open = false;
+            this.getList();
+          });
+        })
       },
       // 表单重置
       reset() {
@@ -825,7 +846,8 @@
         if (response.code == 200) {
           let json = {
             kzzd2: "3",
-            id: this.cjscForm.id
+            id: this.cjscForm.id,
+            kzzd1: new Date()
           };
           // 改变老师试卷状态
           updateExaminationPaper(json).then(res => {
