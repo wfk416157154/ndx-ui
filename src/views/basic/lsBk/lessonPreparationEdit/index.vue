@@ -25,7 +25,7 @@
           <tr>
             <td>教参内容</td>
             <td style="text-align : left">
-              <editor v-model="form.kzzd1" :disabled="true" :min-height="192" />
+              <editor v-model="paramsList.kcapjxck" :disabled="true" :min-height="192" />
             </td>
           </tr>
           <tr>
