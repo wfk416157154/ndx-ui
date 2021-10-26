@@ -35,7 +35,7 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="排序方式" prop="orderChoose">
-        <el-radio v-model="queryParams.orderChoose" label="0" border @change="getList" >升序</el-radio>
+        <el-radio v-model="queryParams.orderChoose" label="0" border @change="getList">升序</el-radio>
         <el-radio v-model="queryParams.orderChoose" label="1" border @change="getList">倒序</el-radio>
       </el-form-item>
 
@@ -84,7 +84,7 @@
                 <span>日期 :</span>
                 <span>{{item.date}}</span>
               </div>
-              <div class="log-header-right __float">
+              <div class="log-header-right __float" v-if="dataRoleWeightId > 50">
                 <el-tag type="success" v-if="item.isRead == '0'">未读</el-tag>
                 <el-tag type="info" v-if="item.isRead == '1'">已读</el-tag>
               </div>
@@ -152,16 +152,17 @@ export default {
     return {
       //是否显示校区
       xqIsShow: true,
+      dataRoleWeightId: null,
       // 查询条件
       queryParams: {
         pageNum: 1,
         pageSize: 50,
-        orderChoose:null,
-        isRead:null,
-        xqid:null,
-        rybid:null,
-        lsxm:null,
-        sj:[],
+        orderChoose: null,
+        isRead: null,
+        xqid: null,
+        rybid: null,
+        lsxm: null,
+        sj: []
       },
       // 总条数
       total: 0,
@@ -173,12 +174,12 @@ export default {
       //所有日志
       allLogs: [],
       // session键、保存的查询参数
-      sessionKey:"logHomePageQueryParams"
+      sessionKey: "logHomePageQueryParams"
     };
   },
-  created(){
+  created() {
     listBjclass().then(res => {
-      this.getBjClass = res.rows
+      this.getBjClass = res.rows;
       if (res.rows.length == 1) {
         this.queryParams.rybid = res.rows[0].id;
       }
@@ -186,9 +187,10 @@ export default {
   },
   mounted() {
     this.getSchool();
-    let obj=sessionStorage.getItem(this.sessionKey);
-    if(null!=obj){
-      this.queryParams=JSON.parse(obj)
+    this.dataRoleWeightId = this.$store.state.user.dataRoleWeightId;
+    let obj = sessionStorage.getItem(this.sessionKey);
+    if (null != obj) {
+      this.queryParams = JSON.parse(obj);
     }
     this.getList();
   },
@@ -200,23 +202,31 @@ export default {
     },
     // 获取校区
     getSchool() {
-      listSchool().then(res=>{
-        this.getListSchool =res.rows
+      listSchool().then(res => {
+        this.getListSchool = res.rows;
         if (res.code == 200 && res.rows.length == 1) {
           this.queryParams.xqid = res.rows[0].id;
           this.xqIsShow = false;
         }
-      })
+      });
     },
     // 查询日志
     getList() {
-      if (null!=this.queryParams.sj&&this.queryParams.sj.length==2) {
+      if (null != this.queryParams.sj && this.queryParams.sj.length == 2) {
         let dateArr = [];
         this.queryParams.sj.forEach(date => {
-          if(date.toString().indexOf("-")<0){// 如果是未格式化的时间则进行格式化
-            dateArr.push(date.getFullYear() + "-" + (this.addZero(date.getMonth()+ 1) ) + "-" + this.addZero(date.getDate()));
-          }else{// 如果是已格式化的日期则直接添加到字符串类型的日期数组中
-            dateArr.push(date)
+          if (date.toString().indexOf("-") < 0) {
+            // 如果是未格式化的时间则进行格式化
+            dateArr.push(
+              date.getFullYear() +
+                "-" +
+                this.addZero(date.getMonth() + 1) +
+                "-" +
+                this.addZero(date.getDate())
+            );
+          } else {
+            // 如果是已格式化的日期则直接添加到字符串类型的日期数组中
+            dateArr.push(date);
           }
         });
         this.queryParams.sj = dateArr;
@@ -241,17 +251,17 @@ export default {
       });
     },
     // 小于10则补0
-    addZero(num){
-      if(num<10){
-        return "0"+num;
+    addZero(num) {
+      if (num < 10) {
+        return "0" + num;
       }
       return num;
     },
     // 获取班级
     getSchoolId(schoolId) {
-      this.queryParams.rybid=null
+      this.queryParams.rybid = null;
       listBjclass({ kzzd1: schoolId }).then(res => {
-        this.getBjClass = res.rows
+        this.getBjClass = res.rows;
         if (res.rows.length == 1) {
           this.queryParams.rybid = res.rows[0].id;
         }
@@ -269,7 +279,7 @@ export default {
     },
     // 跳转到日志详情页面
     toDetails(id) {
-      sessionStorage.setItem(this.sessionKey,JSON.stringify(this.queryParams))
+      sessionStorage.setItem(this.sessionKey, JSON.stringify(this.queryParams));
       if (this.$store.state.user.dataRoleWeightId > 50) {
         if (
           this.$store.state.user.dataRoleWeightId == 80 ||
