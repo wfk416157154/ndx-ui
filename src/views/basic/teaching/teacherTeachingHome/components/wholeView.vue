@@ -11,10 +11,7 @@
         <el-table-column prop="remark" label="备注"></el-table-column>
         <el-table-column label="时间" width="200px">
           <template slot-scope="scope">
-            <el-link
-              type="primary"
-              @click="editSj(scope.row)"
-            >{{scope.row.ksrq}} - {{scope.row.jzrq}}</el-link>
+            <span>{{scope.row.ksrq}} - {{scope.row.jzrq}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -108,6 +105,13 @@ export default {
             this.dataProcessing(item[i].children, key, templates, trees);
           }
         }
+      }
+    },
+    handleNodeClick(data) {
+      if (data.weight == "1") {
+        this.templatetreeListTeacher = data.ifChildren;
+      } else {
+        this.templatetreeListTeacher = null;
       }
     },
     getKclx(row, column) {
