@@ -26,11 +26,11 @@
               <div v-if="logItem.bkXtrz" v-html="logItem.bkXtrz"></div>
               <div v-else>暂无系统日志</div>
             </div>
-            <div>
+            <!-- <div>
               <h4>备课内容</h4>
               <div v-if="logItem.bknr" v-html="logItem.bknr"></div>
               <div v-else>暂无备课内容</div>
-            </div>
+            </div> -->
             <div>
               <h4>补充日志</h4>
               <div v-if="logItem.bkBcrz" v-html="logItem.bkBcrz"></div>

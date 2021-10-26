@@ -391,7 +391,9 @@
                 v-for="item in stzcOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+                :disabled="item.disabled"
+              >
               </el-option>
             </el-select>
           </el-form-item>
@@ -834,13 +836,39 @@
         fullscreenLoading: false,
         paramsList: null,
         // 试听、正常
-        stzcOptions: [{
-          value: '5',
-          label: '试听'
-        }, {
-          value: '1',
-          label: '正常'
-        }]
+        stzcOptions:
+          [{
+            value: '1',
+            label: '正常'
+          },
+          {
+            value: '5',
+            label: '试听'
+          },
+          {
+            value: '7',
+            label: '集训'
+          },
+          {
+            value: '2',
+            label: '休学',
+            disabled: true
+          },
+          {
+            value: '3',
+            label: '免责',
+            disabled: true
+          },
+          {
+            value: '4',
+            label: '退班',
+            disabled: true
+          },
+          {
+            value: '6',
+            label: '毕业',
+            disabled: true
+          }]
       };
     },
     created() {

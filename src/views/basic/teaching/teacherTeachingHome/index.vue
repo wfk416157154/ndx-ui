@@ -2,12 +2,12 @@
   <div class="teacherTeachingHome">
     <el-form ref="form" :model="form" :inline="true" label-width="80px">
       <el-form-item label="班级">
-        <el-select v-model="form.bjid" placeholder="请选择日语班级" @change="rybjOnChange" filterable>
+        <el-select v-model="form.bjid" filterable placeholder="请选择班级">
           <el-option
-            v-for="item in bjclassList"
-            :key="item.id"
             :label="item.rybjmc"
             :value="item.id"
+            v-for="(item,index) in classList"
+            :key="index"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -15,102 +15,109 @@
         <el-button type="primary" @click="getList">查询</el-button>
       </el-form-item>
     </el-form>
-    <div class="wrap-header">
-      <h3 style="margin-right : 20px">教学计划</h3>
-      <h3
-        style="cursor: pointer;"
-        :class="['defaults' == ifContent ? 'active-color' : '']"
-        @click="toComponent('defaults')"
-      >默认</h3>
-      <el-divider direction="vertical"></el-divider>
-      <h3
-        style="cursor: pointer;"
-        :class="['SemesterView' == ifContent ? 'active-color' : '']"
-        @click="toComponent('SemesterView')"
-      >学期</h3>
-      <el-divider direction="vertical"></el-divider>
-      <h3
-        style="cursor: pointer;"
-        :class="['MonthView' == ifContent ? 'active-color' : '']"
-        @click="toComponent('MonthView')"
-      >月</h3>
-      <el-divider direction="vertical"></el-divider>
-      <h3
-        style="cursor: pointer;"
-        :class="['WholeView' == ifContent ? 'active-color' : '']"
-        @click="toComponent('WholeView')"
-      >总</h3>
-    </div>
-    <div class="wrap-information">
-      <div class="main-left">
-        <div class="class-name">
-          <h3>陇南扬名20级22届（高二上开班）</h3>
-        </div>
-        <div class="course-information">
-          <h3>当前课程 :</h3>
-          <h3>第三课</h3>
-          <h3 style="color : #67c23a">新课</h3>
-        </div>
-        <div class="time-frame">
-          <span>时间区间 :</span>
-          <span>2020-08-01至2022-06-07</span>
-        </div>
-        <div class="teacher-name">
-          <span>老师 :</span>
-          <span>吴珂</span>
-        </div>
-        <div class="teaching-progress">
-          <span>教学进度 :</span>
-          <span>超前</span>
-        </div>
-        <div class="adjustment-btn">
-          <el-button type="primary" size="mini">调整</el-button>
-        </div>
+    <div v-if="ifTemplate">
+      <div class="wrap-header">
+        <h3 style="margin-right : 20px">教学计划</h3>
+        <h3
+          style="cursor: pointer;"
+          :class="['defaults' == ifContent ? 'active-color' : '']"
+          @click="toComponent('defaults','1')"
+        >月</h3>
+        <el-divider direction="vertical"></el-divider>
+        <h3
+          style="cursor: pointer;"
+          :class="['SemesterView' == ifContent ? 'active-color' : '']"
+          @click="toComponent('SemesterView','2')"
+        >学期</h3>
+        <el-divider direction="vertical"></el-divider>
+        <h3
+          style="cursor: pointer;"
+          :class="['WholeView' == ifContent ? 'active-color' : '']"
+          @click="toComponent('WholeView','3')"
+        >总</h3>
       </div>
-      <div class="main-right">
-        <div class="normal-progress">
-          <h3>教学计划正常进度</h3>
-          <div class="Progress-item">
-            <div class="range-title">
-              <span :style="parentStyle" v-for="(item,index) in arr" :key="index">{{item.name}}</span>
-            </div>
-            <el-progress
-              :text-inside="true"
-              color="#67c23a"
-              :stroke-width="20"
-              :percentage="100"
-              status="success"
-            ></el-progress>
+      <div class="wrap-information">
+        <div class="main-left">
+          <div class="class-name">
+            <h3>{{progressData.teachingClassInfo.bjmc}}</h3>
+          </div>
+          <div class="course-information">
+            <h3 class="title">当前课程 :</h3>
+            <h3>{{progressData.teachingClassInfo.dqkc}}</h3>
+          </div>
+          <div class="time-frame">
+            <span>时间区间 :</span>
+            <span>{{progressData.teachingClassInfo.sjqj}}</span>
+          </div>
+          <div class="teacher-name">
+            <span>老师 :</span>
+            <span>{{progressData.teachingClassInfo.lsxm}}</span>
+          </div>
+          <div class="teaching-progress">
+            <span>教学进度 :</span>
+            <span>{{progressData.teachingClassInfo.jxjd}}</span>
+          </div>
+          <div class="adjustment-btn">
+            <!-- <el-button type="primary" size="mini">调整</el-button> -->
           </div>
         </div>
-        <div class="actual-progress">
-          <h3>教学计划当前进度</h3>
-          <div class="Progress-item">
-            <div class="range-title">
-              <span :style="parentStyle" v-for="(item,index) in arr" :key="index">{{item.name}}</span>
+        <div class="main-right">
+          <div class="normal-progress">
+            <h3>教学计划正常进度</h3>
+            <div class="Progress-item">
+              <div class="range-title">
+                <span
+                  :style="parentStyle"
+                  v-for="(item,index) in progressData.zcjd"
+                  :key="index"
+                >{{item.name}}</span>
+              </div>
+              <el-progress
+                :text-inside="true"
+                color="#67c23a"
+                :stroke-width="20"
+                :percentage="progressData.zcjdbfb"
+                status="success"
+              ></el-progress>
             </div>
-            <el-progress :text-inside="true" :stroke-width="20" :percentage="50" status="exception"></el-progress>
+          </div>
+          <div class="actual-progress">
+            <h3>教学计划当前进度</h3>
+            <div class="Progress-item">
+              <div class="range-title">
+                <span
+                  :style="parentStyle"
+                  v-for="(item,index) in progressData.dqjd"
+                  :key="index"
+                >{{item.name}}</span>
+              </div>
+              <el-progress
+                :text-inside="true"
+                :stroke-width="20"
+                :percentage="progressData.dqjdbfb"
+                status="exception"
+              ></el-progress>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="wrap-footer">
-      <el-card class="box-card">
-        <defaults :item="form" v-if="ifContent == 'defaults'" ref="defaults" />
-        <MonthView :item="form" v-if="ifContent == 'MonthView'" />
-        <SemesterView :item="form" v-if="ifContent == 'SemesterView'" />
-        <WholeView :item="form" v-if="ifContent == 'WholeView'" />
-      </el-card>
+      <div class="wrap-footer">
+        <el-card class="box-card">
+          <defaults :item="form" v-if="ifContent == 'defaults'" ref="defaults" />
+          <SemesterView :item="form" v-if="ifContent == 'SemesterView'" ref="SemesterView" />
+          <WholeView :item="form" v-if="ifContent == 'WholeView'" ref="WholeView" />
+        </el-card>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import defaults from "./components/default";
-import MonthView from "./components/monthView";
 import SemesterView from "./components/semesterView";
 import WholeView from "./components/wholeView";
 import { listBjclass } from "@/api/basic/bjclass";
+import { topHalfQuery, lowerHalf } from "@/api/teaching/generate";
 export default {
   data() {
     return {
@@ -134,11 +141,17 @@ export default {
         }
       ],
       form: {
-        lsid: this.$store.state.user.glrid,
         bjid: null,
-        jcid: null
+        lx: "1"
       },
-      bjclassList: []
+      bjclassList: [],
+      classList: [],
+      progressData: {
+        dqjd: [],
+        teachingClassInfo: {},
+        zcjd: []
+      },
+      ifTemplate: false
     };
   },
   computed: {
@@ -150,33 +163,42 @@ export default {
   },
   components: {
     defaults,
-    MonthView,
     SemesterView,
     WholeView
   },
   created() {
-    listBjclass({ lsid: this.form.lsid }).then(response => {
-      this.bjclassList = response.rows;
-      if (response.rows.length == 1) {
-        this.form.bjid = response.rows[0].id;
-        this.form.jcid = response.rows[0].uname;
-        this.getList();
-        this.$refs.defaults.getList();
-      } else {
-        this.form.bjid = null;
-      }
+    listBjclass().then(res => {
+      this.classList = res.rows;
     });
   },
   methods: {
     // 组件
-    toComponent(value) {
+    toComponent(value, lx) {
       this.ifContent = value;
+      this.form.lx = lx;
       this.$nextTick(() => {
-        this.$refs.defaults.getList();
+        this.$refs[value].getList();
       });
     },
     // 获取数据
-    getList() {},
+    getList() {
+      topHalfQuery(this.form).then(res => {
+        if (res.code == 200) {
+          this.progressData = res.data;
+          if (this.progressData) {
+            this.ifTemplate = true;
+            this.$nextTick(() => {
+              this.$refs[this.ifContent].getList();
+            });
+          } else {
+            this.ifTemplate = false;
+          }
+        } else {
+          this.ifTemplate = false;
+          this.msgError("提示 : 数据查询错误");
+        }
+      });
+    },
     // 切换班级
     rybjOnChange(id) {
       this.bjclassList.forEach(value => {
@@ -226,6 +248,9 @@ export default {
       .course-information {
         display: flex;
         margin-top: 8px;
+        .title {
+          width: 180px;
+        }
         h3 {
           margin: 0;
           padding: 0;
@@ -258,7 +283,7 @@ export default {
         .Progress-item {
           .range-title {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-evenly;
             margin-bottom: 10px;
             span {
               text-align: center;
@@ -274,7 +299,7 @@ export default {
         .Progress-item {
           .range-title {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-evenly;
             margin-bottom: 10px;
             span {
               text-align: center;

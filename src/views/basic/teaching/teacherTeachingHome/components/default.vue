@@ -2,37 +2,27 @@
   <div class="defaults">
     <ul>
       <li class="wrap-current-course-progress">
-        <h4>当前进度教学计划</h4>
+        <h4>正常进度教学计划</h4>
         <div class="current-course-progress">
           <div class="left">
             <el-tree
               node-key="id"
-              ref="tree"
+              ref="zctree"
               :highlight-current="true"
-              :default-expanded-keys="defaultExpandedKeys"
-              :data="treeListTeacherData"
-              :props="defaultProps"
-              @node-click="handleNodeClick"
+              :default-expanded-keys="zcdefaultExpandedKeys"
+              :data="zcTreeTeachingClassPlan"
+              :props="zcdefaultProps"
+              @node-click="handleNodeClick1"
             ></el-tree>
           </div>
           <div class="right">
-            <div class="right-main" v-for="(item,index) in templatetreeListTeacher" :key="index">
-              <template v-if="templatetreeListTeacher">
-                <span style="color : #303133;margin : 0;padding : 0">{{item.kcmc}} - {{item.name}}</span>
-                <div>
-                  <el-tag
-                    style="width : 80px;text-align : center"
-                    type="success"
-                    effect="dark"
-                    v-if="item.sfbk == '1'"
-                  >已备课</el-tag>
-                  <el-tag
-                    style="width : 80px;text-align : center"
-                    type="danger"
-                    effect="dark"
-                    v-else
-                  >未完成</el-tag>
-                </div>
+            <div class="right-main" v-for="(item,index) in zctemplatetreeListTeacher" :key="index">
+              <template v-if="zctemplatetreeListTeacher">
+                <span
+                  style="color :#67C23A;margin : 0;padding : 0"
+                  v-if="item.isLastkc == '1'"
+                >{{item.name}}</span>
+                <span style="color : #303133;margin : 0;padding : 0" v-else>{{item.name}}</span>
               </template>
             </div>
           </div>
@@ -44,7 +34,7 @@
           <div class="left">
             <el-tree
               node-key="id"
-              ref="tree"
+              ref="dqtree"
               :highlight-current="true"
               :default-expanded-keys="defaultExpandedKeys"
               :data="treeListTeacherData"
@@ -55,21 +45,11 @@
           <div class="right">
             <div class="right-main" v-for="(item,index) in templatetreeListTeacher" :key="index">
               <template v-if="templatetreeListTeacher">
-                <span style="color : #303133;margin : 0;padding : 0">{{item.kcmc}} - {{item.name}}</span>
-                <div>
-                  <el-tag
-                    style="width : 80px;text-align : center"
-                    type="success"
-                    effect="dark"
-                    v-if="item.sfbk == '1'"
-                  >已完成</el-tag>
-                  <el-tag
-                    style="width : 80px;text-align : center"
-                    type="danger"
-                    effect="dark"
-                    v-else
-                  >未完成</el-tag>
-                </div>
+                <span
+                  style="color :#67C23A;margin : 0;padding : 0"
+                  v-if="item.isLastkc == '1'"
+                >{{item.name}}</span>
+                <span style="color : #303133;margin : 0;padding : 0" v-else>{{item.name}}</span>
               </template>
             </div>
           </div>
@@ -112,16 +92,23 @@
 </template>
 
 <script>
-import { treeListTeacher } from "@/api/basic/lessonPreparationHome";
+import { topHalfQuery, lowerHalf } from "@/api/teaching/generate";
 export default {
   data() {
     return {
       defaultExpandedKeys: [],
+      zcdefaultExpandedKeys: [],
       treeListTeacherData: [],
       templatetreeListTeacher: null,
+      zctemplatetreeListTeacher: null,
+      zcTreeTeachingClassPlan: [],
       defaultProps: {
         children: "children",
-        label: "label"
+        label: "name"
+      },
+      zcdefaultProps: {
+        children: "children",
+        label: "name"
       },
       arr: [
         {
@@ -140,46 +127,61 @@ export default {
     };
   },
   props: ["item"],
-  created() {},
-  mounted() {},
   methods: {
     getList() {
-      treeListTeacher(this.item).then(res => {
-        for (let i = 0; i < res.data.length; i++) {
-          res.data[i].children = res.data[i].treeTeachingTemplateList;
-          delete res.data[i].treeTeachingTemplateList;
+      lowerHalf(this.item).then(res => {
+        if (res.code == 200) {
+          this.treeListTeacherData = JSON.parse(
+            JSON.stringify(res.data.dqTreeTeachingClassPlan)
+          );
+          this.zcTreeTeachingClassPlan = JSON.parse(
+            JSON.stringify(res.data.zcTreeTeachingClassPlan)
+          );
+          this.dataProcessing(
+            this.treeListTeacherData,
+            "defaultExpandedKeys",
+            "templatetreeListTeacher",
+            "dqtree"
+          );
+          this.dataProcessing(
+            this.zcTreeTeachingClassPlan,
+            "zcdefaultExpandedKeys",
+            "zctemplatetreeListTeacher",
+            "zctree"
+          );
         }
-        this.treeListTeacherData = JSON.parse(JSON.stringify(res.data));
-        this.dataProcessing(this.treeListTeacherData);
-        console.log(this.treeListTeacherData);
       });
     },
-    dataProcessing(item) {
+    dataProcessing(item, key, templates, trees) {
       for (let i = 0; i < item.length; i++) {
-        item[i].label = item[i].name;
         if (item[i].children && item[i].children.length > 0) {
-          if (item[i].weight == "2") {
-            if (item[i].isLastPrepare == "1") {
+          if (item[i].weight == "1") {
+            if (item[i].isLastdy == "1") {
               this.$nextTick(() => {
-                this.$refs.tree.setCurrentKey(item[i].id);
-                this.defaultExpandedKeys.push(item[i].id);
+                this.$refs[trees].setCurrentKey(item[i].id);
+                this[key].push(item[i].id);
               });
-              this.templatetreeListTeacher = item[i].children;
+              this[templates] = item[i].children;
             }
             item[i].ifChildren = item[i].children;
             delete item[i].children;
           } else {
-            this.dataProcessing(item[i].children);
+            this.dataProcessing(item[i].children, key, templates, trees);
           }
-        } else {
-          item[i].xzid = item[i].id;
         }
       }
     },
-    // 获取备课的详细信息
+    // 正常获取备课的详细信息
+    handleNodeClick1(data) {
+      if (data.weight == "1") {
+        this.zctemplatetreeListTeacher = data.ifChildren;
+      } else {
+        this.zctemplatetreeListTeacher = null;
+      }
+    },
+    // 当前获取备课的详细信息
     handleNodeClick(data) {
-      // console.log(data);
-      if (data.weight == "2") {
+      if (data.weight == "1") {
         this.templatetreeListTeacher = data.ifChildren;
       } else {
         this.templatetreeListTeacher = null;
