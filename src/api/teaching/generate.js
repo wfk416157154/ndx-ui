@@ -104,3 +104,22 @@ export function adjustTeachingPlan(data) {
     data: data
   })
 }
+
+
+// 老师教学计划上半部
+export function topHalfQuery(query) {
+  return request({
+    url: '/basic/teachingTeacher/topHalfQuery',
+    method: 'get',
+    params: query
+  })
+}
+
+// 老师教学计划下半部
+export function lowerHalf(query) {
+  return request({
+    url: '/basic/teachingTeacher/lowerHalf',
+    method: 'get',
+    params: query
+  })
+}
