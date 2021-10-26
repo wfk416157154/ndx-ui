@@ -185,11 +185,16 @@ export default {
       topHalfQuery(this.form).then(res => {
         if (res.code == 200) {
           this.progressData = res.data;
-          this.ifTemplate = true;
-          this.$nextTick(() => {
-            this.$refs[this.ifContent].getList();
-          });
+          if (this.progressData) {
+            this.ifTemplate = true;
+            this.$nextTick(() => {
+              this.$refs[this.ifContent].getList();
+            });
+          } else {
+            this.ifTemplate = false;
+          }
         } else {
+          this.ifTemplate = false;
           this.msgError("提示 : 数据查询错误");
         }
       });

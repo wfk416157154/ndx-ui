@@ -72,6 +72,7 @@ export default {
       monthMapValue: {},
       monthMapTemplate: [],
       defaultExpandedKeys: [],
+      treeListTeacherData: [],
       templatetreeListTeacher: null,
       defaultProps: {
         children: "children",

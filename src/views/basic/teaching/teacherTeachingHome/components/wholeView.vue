@@ -52,6 +52,7 @@ export default {
     return {
       typeNameArr: [],
       typeNamePos: 0,
+      treeListTeacherData: [],
       defaultExpandedKeys: [],
       xueqiMapMap: [],
       templatetreeListTeacher: null,
