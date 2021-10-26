@@ -703,6 +703,7 @@ export default {
         });*/
       getBjclass(id).then(response => {
         this.form = response.data;
+        this.form.kbsj=new Date(response.data.kbsj)
         this.form.uname = this.form.uname + "";
         this.open = true;
         this.title = "修改班级基础信息";
