@@ -452,7 +452,8 @@
           kzzd2: null,
           kzzd3: null,
           kzzd4: null,
-          kzzd5: null
+          kzzd5: null,
+          statusArr: ['1','2']   //默认查正常和撤回
         },
         // 表单参数
         form: {},
