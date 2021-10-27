@@ -139,7 +139,7 @@
         <div class="personal-log-list">
           <!-- 是否有考试 -->
           <div class="wrap-examination clearfix">
-            <div class="examination-text">
+<!--            <div class="examination-text">
               <el-form-item label="是否有考试" label-width="100px">
                 <el-radio-group
                   style="width: 200px"
@@ -151,7 +151,7 @@
                   <el-radio label="0">否</el-radio>
                 </el-radio-group>
               </el-form-item>
-            </div>
+            </div>-->
             <div v-if="ifExamination" class="examination-upload">
               <div style="width: 500px; display: inline-block">
                 <el-form-item label-width="100px" label="考试名称">
