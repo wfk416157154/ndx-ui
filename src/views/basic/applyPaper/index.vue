@@ -10,8 +10,8 @@
       <el-form-item label="日语班级" prop="bjid">
         <el-select v-model="queryParams.bjid" @change="getClassList" placeholder="请选择日语班级">
           <el-option
-            v-for="dict in classList"
-            :key="dict.id"
+            v-for="(dict,index) in classList"
+            :key="index"
             :label="dict.rybjmc"
             :value="dict.id"
           ></el-option>
@@ -20,8 +20,8 @@
       <el-form-item label="考试类型" prop="kslx">
         <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" clearable size="small">
           <el-option
-            v-for="dict in kslxOptions"
-            :key="dict.dictValue"
+            v-for="(dict,index) in kslxOptions"
+            :key="index"
             :label="dict.dictLabel"
             :value="dict.dictValue"
           />
@@ -135,8 +135,8 @@
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
           <el-select v-model="form.bjid" @change="getClassList" placeholder="请选择日语班级">
             <el-option
-              v-for="dict in classList"
-              :key="dict.id"
+              v-for="(dict,index) in classList"
+              :key="index"
               :label="dict.rybjmc"
               :value="dict.id"
             ></el-option>
@@ -148,8 +148,8 @@
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
           <el-select v-model="form.kslx" placeholder="请考试类型" @change="onKslxClick">
             <el-option
-              v-for="dict in kslxOptions"
-              :key="dict.dictValue"
+              v-for="(dict,index) in kslxOptions"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictValue"
             ></el-option>
@@ -158,8 +158,8 @@
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
           <el-select v-model="form.ksfw" v-if="showKsfw">
             <el-option
-              v-for="dict in sjglKsfwJsbfList"
-              :key="dict.dictValue"
+              v-for="(dict,index) in sjglKsfwJsbfList"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>
@@ -167,8 +167,8 @@
 
           <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
             <el-option
-              v-for="dict in sjglKsfwKsbfList"
-              :key="dict.dictValue"
+              v-for="(dict,index) in sjglKsfwKsbfList"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>
@@ -176,8 +176,8 @@
           <span v-if="showKsfwKsJs">----</span>
           <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
             <el-option
-              v-for="dict in sjglKsfwJsbfList"
-              :key="dict.dictValue"
+              v-for="(dict,index) in sjglKsfwJsbfList"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>
@@ -219,8 +219,8 @@
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
           <el-select v-model="cjscForm.bjid" disabled>
             <el-option
-              v-for="dict in classList"
-              :key="dict.id"
+              v-for="(dict,index) in classList"
+              :key="index"
               :label="dict.rybjmc"
               :value="dict.id"
             ></el-option>
@@ -232,8 +232,8 @@
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
           <el-select v-model="cjscForm.kslx" disabled>
             <el-option
-              v-for="dict in kslxOptions"
-              :key="dict.dictValue"
+              v-for="(dict,index) in kslxOptions"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictValue"
             ></el-option>
@@ -315,8 +315,8 @@
         <el-form-item label="日语班级" label-width="120px" prop="bjid">
           <el-select v-model="formQt.bjid" @change="getClassList" placeholder="请选择日语班级">
             <el-option
-              v-for="dict in classList"
-              :key="dict.id"
+              v-for="(dict,index) in classList"
+              :key="index"
               :label="dict.rybjmc"
               :value="dict.id"
             ></el-option>
@@ -328,8 +328,8 @@
         <el-form-item label="考试类型" label-width="120px" prop="kslx">
           <el-select v-model="formQt.kslx" plac输入eholder="请考试类型" @change="onKslxClick">
             <el-option
-              v-for="dict in kslxOptions"
-              :key="dict.dictValue"
+              v-for="(dict,index) in kslxOptions"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictValue"
             ></el-option>
@@ -338,8 +338,8 @@
         <el-form-item label="考试范围" label-width="120px" prop="ksfw">
           <el-select v-model="formQt.ksfw" v-if="showKsfw">
             <el-option
-              v-for="dict in sjglKsfwJsbfList"
-              :key="dict.dictValue"
+              v-for="(dict,index) in sjglKsfwJsbfList"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>
@@ -347,8 +347,8 @@
 
           <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
             <el-option
-              v-for="dict in sjglKsfwKsbfList"
-              :key="dict.dictValue"
+              v-for="(dict,index) in sjglKsfwKsbfList"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>
@@ -356,8 +356,8 @@
           <!--          <span v-if="showKsfwKsJs">&#45;&#45;&#45;&#45;</span>-->
           <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
             <el-option
-              v-for="dict in sjglKsfwJsbfList"
-              :key="dict.dictValue"
+              v-for="(dict,index) in sjglKsfwJsbfList"
+              :key="index"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>

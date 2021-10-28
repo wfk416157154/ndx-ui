@@ -192,6 +192,7 @@ export default {
             });
           } else {
             this.ifTemplate = false;
+            this.msgError("提示 : 本班级暂时没有教学计划数据");
           }
         } else {
           this.ifTemplate = false;

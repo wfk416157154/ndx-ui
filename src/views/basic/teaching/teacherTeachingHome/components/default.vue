@@ -222,11 +222,12 @@ export default {
     .wrap-current-course-progress {
       .current-course-progress {
         display: flex;
+        justify-content: space-between;
         .left {
           width: 30%;
         }
         .right {
-          width: 70%;
+          width: 68%;
           .right-main {
             display: flex;
             justify-content: space-between;
