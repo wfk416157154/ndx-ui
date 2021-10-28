@@ -29,7 +29,6 @@
               type="text"
               icon="el-icon-edit"
               @click="messageCheck(scope.row)"
-              v-hasPermi="['basic:message:edit']"
             >查看内容
             </el-button>
             <el-button
@@ -134,7 +133,7 @@ export default {
     this.getDicts("confirmStatus").then(response => {
       this.confirmOptions = response.data;
     });
-    this.getList()
+    this.getList();
   },
   methods: {
     goTarget(href) {
@@ -147,10 +146,36 @@ export default {
       listMessage({sfcxgr:"1"}).then(response => {
         this.messageList = response.rows;
         if(this.messageList.length>0){
-          this.dialogTableVisible=true
+          let num=0;
+          for (let i = 0; i < response.total; i++) {
+            // 如果有消息通知处于 0=待确认；3=待回复  的状态，则弹出提示框
+            if("0"==response.rows[i].messageStatus||"3"==response.rows[i].messageStatus){
+              num++;
+            }
+          }
+          if(num>0){// 如果有消息则弹出提示框
+            this.reminder(num);
+          }
         }
         this.loading = false;
       });
+    },
+    // 右下角的提示框
+    reminder(num){
+      this.$notify({
+        title: '消息通知',
+        dangerouslyUseHTMLString: true,
+        position: 'bottom-right',
+        message: "<a href='#'>"+"您有"+num+"条消息需要处理！请点击查看消息</a>",
+        duration: 0,
+        onClick(){
+          this.checkMessageNotify()
+        }
+      });
+    },
+    checkMessageNotify(){
+      console.log("---")
+      this.dialogTableVisible=true
     },
     // 消息查看
     messageCheck(row){
