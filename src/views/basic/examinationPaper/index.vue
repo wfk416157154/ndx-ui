@@ -26,6 +26,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="老师姓名" prop="bjmc">
+        <el-input
+          v-model="queryParams.lsxm"
+          placeholder="请输入老师姓名"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -190,7 +199,8 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
+        lsxm: null
       },
       // 表单参数
       form: {},

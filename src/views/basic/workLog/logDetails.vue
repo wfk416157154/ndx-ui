@@ -94,7 +94,6 @@
 <script>
 import { workLogQueryForEducational } from "@/api/basic/basicTeacherWorkLog";
 import { updateClassroom,addClassroom } from "@/api/basic/classroom";
-import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
@@ -144,7 +143,6 @@ export default {
     jianYan(bol, logItem) {
       if (!logItem.classroomId){
         let jsonInsert = {
-          id: secretKey(),
           ryb: logItem.bjid,
           rylsxm: logItem.lsid,
           kzzd1: logItem.workLogId,
