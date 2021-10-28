@@ -191,7 +191,7 @@ export default {
         kslx: null,
         ksnr: null,
         jcmc: null,
-        jwsjzt: null,
+        jwsjzt: '0', // 默认查未发送的
         lssjzt: null,
         status: null,
         dataOrder: null,
