@@ -8,13 +8,14 @@
       label-width="68px"
     >
       <el-form-item label="日语班级" prop="bjmc">
-        <el-input
-          v-model="queryParams.bjmc"
-          placeholder="请输入日语班级名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.bjid" filterable @change="getClassList" placeholder="请选择日语班级">
+          <el-option
+            v-for="(dict,index) in classList"
+            :key="index"
+            :label="dict.rybjmc"
+            :value="dict.id"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="考试类型" prop="kslx">
         <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" clearable size="small">
@@ -239,7 +240,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getListBjclass();
+    //this.getListBjclass();
     this.getDicts("examination_type").then(response => {
       this.kslxOptions = response.data;
     });
@@ -264,13 +265,15 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+      listBjclass().then(res => {
+        this.classList = res.rows;
+      });
     },
     changeStatus(value) {
       this.queryParams.jwsjzt = value;
       this.queryParams.pageNum = 1;
       this.getList();
     },
-
     // 获取老师所带班级
     getListBjclass() {
       this.glrid = this.$store.state.user.glrid;
