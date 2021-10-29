@@ -24,6 +24,8 @@ import Pagination from "@/components/Pagination";
 import RightToolbar from "@/components/RightToolbar"
 // 富文本组件
 import Editor from "@/components/Editor"
+// 进度条
+import Progress from "@/components/progress"
 import calendar from "@/components/calendar"
 // 文件上传组件
 import FileUpload from "@/components/FileUpload"
@@ -70,6 +72,7 @@ Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
 Vue.component('DictTag', DictTag)
 Vue.component('Editor', Editor)
+Vue.component('Progress', Progress)
 Vue.component('calendar', calendar)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
