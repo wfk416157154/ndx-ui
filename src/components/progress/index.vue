@@ -1,25 +1,36 @@
 <template>
   <div>
-    <div :style="getstyle" name="wrap-box" v-if="visibleSync" @click="eventvisibleSync($event)">
-      <div style="text-align : center;color : #fff;margin-top : 16%">
-        <h1>{{progressData.filename}}</h1>
-      </div>
-      <br />
-      <div style="width : 75%;height : 23px;margin: 20px auto;">
-        <div style="width : 100%">
-          <div style="width :88%;display:inline-block">
-            <el-progress
-              :text-inside="true"
-              :stroke-width="20"
-              :percentage="loading"
-              status="success"
-            ></el-progress>
+    <div :style="getstyle" id="wrap-box" v-if="visibleSync" @click="eventvisibleSync($event)">
+      <div class="center_zs fl">
+        <div class="data-box1 box1-back" style="position : relative">
+          <i class="topL"></i>
+          <i class="topR"></i>
+          <i class="bottomL"></i>
+          <i class="bottomR"></i>
+          <div class="data-title">
+            <span>[ {{progressData.filename}} ]</span>
           </div>
-          <div
-            style="width : 10%;display:inline-block;margin-left : 12px"
-            ref="loadingTitle"
-            v-html="loadingTitle"
-          ></div>
+          <div>
+            <!-- <div style="text-align : center;color : #fff;margin-top : 16%">
+              <h1>{{progressData.filename}}</h1>
+            </div>
+            <br />-->
+            <div style="width : 75%;height : 23px;margin: 20px auto;margin-top : 100px">
+              <div style="width : 100%">
+                <div style="width :88%;display:inline-block">
+                  <el-progress :text-inside="true" :stroke-width="20" :percentage="loading"></el-progress>
+                </div>
+                <div
+                  style="width : 10%;display:inline-block;margin-left : 12px"
+                  ref="loadingTitle"
+                  v-html="loadingTitle"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div style="position : absolute; right : 20px;bottom : 60px" v-if="ifBtn">
+            <div class="btn" @click="ifVisibleSync">确定</div>
+          </div>
         </div>
       </div>
     </div>
@@ -36,7 +47,10 @@ export default {
       loadingTitle: null,
       IFTEMPLATE: false,
       getstyle: {},
-      visibleSync: false
+      visibleSync: false,
+      loadedData: null,
+      totalData: null,
+      ifBtn: false
     };
   },
   props: {
@@ -94,11 +108,12 @@ export default {
       e.returnValue = false;
     },
     download() {
+      this.loading = 0;
       this.visibleSync = true;
       this.loadingTitle = "<span style='color:#fff'>下载中</span>";
-      this.loading = 0;
       let { url, params, filename } = this.progressData;
       let timer;
+      let timerTem;
       let _that = this;
       this.$nextTick(() => {
         if (!this.IFTEMPLATE) {
@@ -116,18 +131,28 @@ export default {
               timeout: 1000 * 60 * 10,
               responseType: "blob",
               onDownloadProgress: function(e) {
-                _that.loading = (e.loaded / e.total).toFixed() * 100;
+                _that.loadedData = e.loaded;
+                _that.totalData = e.total;
+                _that.loading =
+                  (_that.loadedData / _that.totalData).toFixed() * 100;
                 if (_that.loading === 100) {
-                  _that.loadingTitle =
-                    "<span style='color:#fff'>下载完成</span>";
-                  timer = setTimeout(() => {
-                    _that.visibleSync = false;
-                    clearTimeout(timer);
-                  }, 3000);
+                  _that.$nextTick(() => {
+                    _that.loadingTitle =
+                      "<span style='color:#fff'>下载完成</span>";
+                  });
+                  _that.ifBtn = true;
                 }
               }
             })
             .then(fileData => {
+              _that.IFTEMPLATE = false;
+              if (_that.loadedData != _that.totalData) {
+                _that.visibleSync = false;
+                _that.$emit("data-callback", false);
+                _that.msgError("提示 : 文件下载失败,请稍后再操作或联系管理员");
+                return;
+              }
+              _that.$emit("data-callback", true);
               const CONTENT = fileData;
               const BlOB_LIST = new Blob([CONTENT]);
               if ("download" in document.createElement("a")) {
@@ -139,7 +164,6 @@ export default {
                 ELINKDOM.click();
                 URL.revokeObjectURL(ELINKDOM.href);
                 document.body.removeChild(ELINKDOM);
-                _that.IFTEMPLATE = false;
               } else {
                 navigator.msSaveBlob(BlOB_LIST, filename);
               }
@@ -149,6 +173,10 @@ export default {
             });
         }
       });
+    },
+    ifVisibleSync() {
+      this.visibleSync = false;
+      this.ifBtn = false;
     }
   }
 };
@@ -159,5 +187,138 @@ export default {
   height: 100%;
   background: #67c23a;
   border-radius: 10px;
+}
+.center_zs {
+  width: 80%;
+  margin: 10%;
+}
+.topL {
+  width: 20px;
+  height: 20px;
+  border-top-width: 2px;
+  border-top-color: #26c6f0;
+  border-top-style: solid;
+  border-left-width: 2px;
+  border-left-color: #26c6f0;
+  border-left-style: solid;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+.topR {
+  width: 20px;
+  height: 20px;
+  border-top-width: 2px;
+  border-top-color: #26c6f0;
+  border-top-style: solid;
+  border-right-width: 2px;
+  border-right-color: #26c6f0;
+  border-right-style: solid;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+.bottomL {
+  width: 20px;
+  height: 20px;
+  border-bottom-width: 2px;
+  border-bottom-color: #26c6f0;
+  border-bottom-style: solid;
+  border-left-width: 2px;
+  border-left-color: #26c6f0;
+  border-left-style: solid;
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+}
+.bottomR {
+  width: 20px;
+  height: 20px;
+  border-bottom-width: 2px;
+  border-bottom-color: #26c6f0;
+  border-bottom-style: solid;
+  border-right-width: 2px;
+  border-right-color: #26c6f0;
+  border-right-style: solid;
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+}
+.data-title {
+  text-align: center;
+  color: #fff;
+  font-size: 20px;
+  span {
+    background-color: #000c3b;
+    padding: 10px;
+  }
+}
+.data-box1 {
+  height: 300px;
+  border: 2px solid #032d60;
+  -webkit-box-shadow: #07417a 0 0 10px;
+  -moz-box-shadow: #07417a 0 0 10px;
+  box-shadow: inset 0 0 30px #07417a;
+  position: relative;
+}
+
+.btn {
+  position: relative;
+  padding: 10px 30px;
+  margin: 0 45px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 20px;
+  text-transform: uppercase;
+  transition: 0.5s;
+  cursor: pointer;
+  font-weight: 800;
+  overflow: hidden;
+  -webkit-box-reflect: below 1px linear-gradient(transparent, #0003);
+}
+
+.btn:hover {
+  background: #409eff;
+  color: #111;
+  box-shadow: 0 0 50px #409eff;
+  transition-delay: 0.5s;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #409eff;
+  border-left: 2px solid #409eff;
+  transition: 0.5s;
+  transition-delay: 0.5s;
+}
+
+.btn:hover::before {
+  width: 100%;
+  height: 100%;
+  transition-delay: 0s;
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #409eff;
+  border-right: 2px solid #409eff;
+  transition: 0.5s;
+  transition-delay: 0.5s;
+}
+
+.btn:hover::after {
+  width: 100%;
+  height: 100%;
+  transition-delay: 0s;
 }
 </style>

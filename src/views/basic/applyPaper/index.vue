@@ -8,7 +8,12 @@
       label-width="68px"
     >
       <el-form-item label="日语班级" prop="bjid">
-        <el-select v-model="queryParams.bjid" filterable @change="getClassList" placeholder="请选择日语班级">
+        <el-select
+          v-model="queryParams.bjid"
+          filterable
+          @change="getClassList"
+          placeholder="请选择日语班级"
+        >
           <el-option
             v-for="(dict,index) in classList"
             :key="index"
@@ -386,7 +391,7 @@
         <el-button @click="cancelQt">取 消</el-button>
       </div>
     </el-dialog>
-    <Progress :progress-data="datas" ref="progress" />
+    <Progress :progress-data="datas" @data-callback="callBack" ref="progress" />
   </div>
 </template>
 
@@ -819,6 +824,9 @@ export default {
       });
       // // 修改老师试卷状态
       // this.submitForm("3"); by 2021/9/8可多次下载不改状态
+    },
+    callBack(data) {
+      console.log(data);
     },
     /** 成绩导入按钮操作 */
     handleCjImport() {
