@@ -131,10 +131,12 @@ export default {
               timeout: 1000 * 60 * 10,
               responseType: "blob",
               onDownloadProgress: function(e) {
+                let num;
                 _that.loadedData = e.loaded;
                 _that.totalData = e.total;
-                _that.loading =
-                  (_that.loadedData / _that.totalData).toFixed() * 100;
+                num = _that.loadedData / _that.totalData;
+                num = num.toFixed(2);
+                _that.loading = Math.round(num * 100);
                 if (_that.loading === 100) {
                   _that.$nextTick(() => {
                     _that.loadingTitle =
