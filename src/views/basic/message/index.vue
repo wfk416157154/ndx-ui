@@ -240,7 +240,7 @@
             <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传50M以内的文件！</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="消息确认">
+        <el-form-item label="消息确认" prop="xxqrfs">
           <el-radio-group v-model="form.xxqrlx">
             <el-radio
               v-for="dict in xxqrlxOptions"
@@ -352,7 +352,12 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {},
+        rules: {
+          xxlx: [{ required: true, message: "必填项", trigger: "change" }],
+          xxbt: [{ required: true, message: "必填项", trigger: "blur" }],
+          sfqbfs: [{ required: true, message: "必填项", trigger: "change" }],
+          xxqrfs: [{ required: true, message: "必填项", trigger: "change" }],
+        },
         // 上传参数
         upload: {
           // 是否显示弹出层

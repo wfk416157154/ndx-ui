@@ -14,7 +14,7 @@
           <td style="padding : 20px;box-sizing : border-box; text-align : center">课程</td>
           <td style="padding : 20px;box-sizing : border-box; ">{{logItem.kczj}}</td>
         </tr>
-        <tr>
+<!--        <tr>
           <td style="padding : 20px;box-sizing : border-box; text-align : center">备课</td>
           <td style="padding : 20px;box-sizing : border-box;">
             <div>
@@ -26,18 +26,18 @@
               <div v-if="logItem.bkXtrz" v-html="logItem.bkXtrz"></div>
               <div v-else>暂无系统日志</div>
             </div>
-            <!-- <div>
+            &lt;!&ndash; <div>
               <h4>备课内容</h4>
               <div v-if="logItem.bknr" v-html="logItem.bknr"></div>
               <div v-else>暂无备课内容</div>
-            </div> -->
+            </div> &ndash;&gt;
             <div>
               <h4>补充日志</h4>
               <div v-if="logItem.bkBcrz" v-html="logItem.bkBcrz"></div>
               <div v-else>暂无补充日志</div>
             </div>
           </td>
-        </tr>
+        </tr>-->
         <tr>
           <td style="padding : 20px;box-sizing : border-box; text-align : center">课中</td>
           <td style="padding : 20px;box-sizing : border-box;">

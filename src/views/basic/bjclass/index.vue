@@ -542,7 +542,9 @@ export default {
       marketerList: [],
       disableBysj: true,
       teachingMaterialList: [],
-      dataRoleWeightId: this.$store.state.user.dataRoleWeightId
+      dataRoleWeightId: this.$store.state.user.dataRoleWeightId,
+      // session键、保存的查询参数
+      sessionKey: "bjclassPageQueryParams"
     };
   },
   created() {
@@ -551,7 +553,6 @@ export default {
         this.queryBjclassList = response.rows;
       });
     }
-    this.getList();
     this.getDicts("graduateStatus").then(response => {
       this.statusOptions = response.data;
     });
@@ -578,6 +579,16 @@ export default {
       }
     });
   },
+  mounted(){
+    let obj = sessionStorage.getItem(this.sessionKey);
+    if (null != obj) {
+      this.queryParams = JSON.parse(obj);
+    }
+    if(this.queryParams.kzzd1){
+      this.xqmcOnChange(this.queryParams.kzzd1)
+    }
+    this.getList();
+  },
   methods: {
     /** 查询班级基础信息列表 */
     getList() {
@@ -596,6 +607,7 @@ export default {
     },
     //跳转对应信息管理选项
     toPages(path, bjid) {
+      sessionStorage.setItem(this.sessionKey, JSON.stringify(this.queryParams));
       this.getConfigKey(path).then(res => [
         this.$router.push({
           path: `${res.msg}?bjid=${bjid}`
@@ -892,6 +904,7 @@ export default {
     },
     // 展示学生界面
     showStudentPage(row) {
+      sessionStorage.setItem(this.sessionKey, JSON.stringify(this.queryParams));
       // 获取页面中参数配置的路由
       this.getConfigKey("studentMainPage").then(resp => {
         this.router = resp.msg;

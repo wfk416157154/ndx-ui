@@ -283,6 +283,19 @@
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label-width="180px" label="是否在职" prop="kzzd4">
+          <el-select
+            v-model="form.kzzd4"
+            placeholder="请选择是否在职"
+          >
+            <el-option
+              v-for="dict in zaizhiStatusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-col>
 
       <el-form-item label-width="180px" label="备注" prop="remark">
@@ -435,7 +448,10 @@ export default {
       // 日语班级
       bjclassList: [],
       // 开启班级选项
-      iFclassList: true
+      iFclassList: true,
+      // 在职状态
+      zaizhiStatusOptions: [],
+
     };
   },
   created() {
@@ -447,6 +463,9 @@ export default {
     });
     this.getDicts("basic_status").then(response => {
       this.statusOptions = response.data;
+    });
+    this.getDicts("zaizhiStatus").then(response => {
+      this.zaizhiStatusOptions = response.data;
     });
   },
   mounted() {

@@ -8,7 +8,7 @@
       label-width="68px"
     >
       <el-form-item label="日语班级" prop="bjid">
-        <el-select v-model="queryParams.bjid" @change="getClassList" placeholder="请选择日语班级">
+        <el-select v-model="queryParams.bjid" filterable @change="getClassList" placeholder="请选择日语班级">
           <el-option
             v-for="(dict,index) in classList"
             :key="index"
