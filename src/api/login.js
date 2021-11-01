@@ -9,6 +9,16 @@ export function login(username, password, code, uuid) {
   })
 }
 
+// 登录方法
+export function getSystemUpdateStatus() {
+  return request({
+    url: '/auth/getSystemUpdateStatus',
+    method: 'post',
+    data: {}
+  })
+}
+
+
 // 刷新方法
 export function refreshToken() {
   return request({
