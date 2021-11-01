@@ -176,6 +176,7 @@
             :headers="upload.headers"
             :action="upload.url"
             :disabled="upload.isUploading"
+            :on-remove="handleRemove"
             :on-progress="handleFileUploadProgress"
             :on-success="handleFileSuccess"
             :auto-upload="true"
@@ -202,7 +203,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <Progress :progress-data="progressData" ref="progress" />
+    <Progress :progress-data="progressData" @data-callback="callBack" ref="progress" />
   </div>
 
 
@@ -463,6 +464,10 @@
           this.$refs.progress.download();
         });
       },
+      callBack(data){
+        console.log("data:",data)
+      },
+
 
 
     }
