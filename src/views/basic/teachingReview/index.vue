@@ -171,7 +171,7 @@
     },
     created() {
       this.getList();
-      this.getDicts(" review_level").then(response => {
+      this.getDicts("review_level").then(response => {
         this.cjlxOptions = response.data;
       });
     },
