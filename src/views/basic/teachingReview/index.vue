@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="节点路径" prop="nodePath">
+<!--      <el-form-item label="节点路径" prop="nodePath">
         <el-input
           v-model="queryParams.nodePath"
           placeholder="请输入节点路径"
@@ -9,7 +9,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="节点名称" prop="jdmc">
         <el-input
           v-model="queryParams.jdmc"
@@ -111,6 +111,57 @@
         <el-form-item label="节点名称" prop="jdmc">
           <el-input v-model="form.jdmc" placeholder="请输入节点名称"/>
         </el-form-item>
+        <el-form-item label="选项类型" prop="jdmc">
+          <el-select v-model="form.kzzd1" placeholder="请选择选项类型">
+            <el-option
+              v-for="dict in optionTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+
+    <!-- 添加或修改教学计划总复习对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="归属节点" prop="parentId">
+          <treeselect v-model="form.parentId" :disabled="true" :options="teachingReviewOptions" :normalizer="normalizer"
+                      placeholder="请选择父节点id"/>
+        </el-form-item>
+        <el-form-item label="层级类型" prop="cjlx">
+          <el-select v-model="form.cjlx" placeholder="请选择层级类型">
+            <el-option
+              v-for="dict in addCjlxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="节点名称" prop="jdmc">
+          <el-input v-model="form.jdmc" placeholder="请输入节点名称"/>
+        </el-form-item>
+        <el-form-item label="选项类型" prop="jdmc">
+          <el-select v-model="form.kzzd1" placeholder="非必选">
+            <el-option
+              v-for="dict in optionTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
@@ -157,6 +208,7 @@
         // 层级类型(复习资料名称/章/节/知识点)字典
         cjlxOptions: [],
         addCjlxOptions: [], //新增修改时取下级
+        optionTypeOptions: [], //选项类型
         // 查询参数
         queryParams: {
           nodePath: null,
@@ -173,6 +225,9 @@
       this.getList();
       this.getDicts("review_level").then(response => {
         this.cjlxOptions = response.data;
+      });
+      this.getDicts("option_type").then(response => {
+        this.optionTypeOptions = response.data;
       });
     },
     methods: {
@@ -249,18 +304,19 @@
       handleAdd(row) {
         this.reset();
         this.getTreeselect();
-        if (row != null && row.id) {
-          this.form.parentId = row.id;
-          this.form.nodePath = row.nodePath;
-        } else {
-          this.form.parentId = 0;
-        }
         this.addCjlxOptions = JSON.parse(JSON.stringify(this.cjlxOptions));
         for (let i = this.addCjlxOptions.length - 1; i >= 0; i--) {
           if (this.addCjlxOptions[i].dictValue <= row.cjlx) {
             this.addCjlxOptions.splice(i, 1);
           }
         }
+        if (row != null && row.id) {
+          this.form.parentId = row.id;
+          this.form.nodePath = row.nodePath;
+        } else {
+          this.form.parentId = 0;
+        }
+
         this.open = true;
         this.title = "添加教学计划总复习";
       },
@@ -268,15 +324,16 @@
       handleUpdate(row) {
         this.reset();
         this.getTreeselect();
-        if (row != null) {
-          this.form.parentId = row.id;
-        }
         this.addCjlxOptions = JSON.parse(JSON.stringify(this.cjlxOptions));
         for (let i = this.addCjlxOptions.length - 1; i >= 0; i--) {
           if (this.addCjlxOptions[i].dictValue < row.cjlx) {
             this.addCjlxOptions.splice(i, 1);
           }
         }
+        if (row != null) {
+          this.form.parentId = row.id;
+        }
+
         getTeachingReview(row.id).then(response => {
           this.form = response.data;
           this.open = true;
