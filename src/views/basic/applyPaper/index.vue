@@ -447,7 +447,7 @@ export default {
         jcmc: null,
         jwsjzt: null,
         lssjzt: null,
-        status: null,
+        status: "1",//默认只查正常
         dataOrder: null,
         addOrUpdateTime: null,
         kzzd1: null,
@@ -455,7 +455,7 @@ export default {
         kzzd3: null,
         kzzd4: null,
         kzzd5: null,
-        statusArr: ["1", "2"] //默认查正常和撤回
+        statusArr: []
       },
       // 表单参数
       form: {},
