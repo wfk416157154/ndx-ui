@@ -281,6 +281,8 @@
         // 最多上传的文件数量
         maxUploadNum:3,
         progressData: {},
+        // 文件所属模块
+        filessmk:"教辅资料"
       };
     },
     created() {
@@ -349,6 +351,7 @@
       },
       /** 新增按钮操作 */
       handleAdd() {
+        this.wjidFile=[]
         this.reset();
         this.open = true;
         this.title = "添加教辅资料";
@@ -456,6 +459,7 @@
         this.progressData = {
           url: "file/filetable/download",
           params: {
+            ssmk:this.filessmk,
             wjmc: fileName
           },
           filename:fileName

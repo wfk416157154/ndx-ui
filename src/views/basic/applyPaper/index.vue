@@ -518,7 +518,9 @@ export default {
       sjglKsfwKsbfList: [],
       sjglKsfwJsbfList: [],
       datas: {},
-      ifProgress: false
+      ifProgress: false,
+      // 文件所属模块
+      filessmk:"试卷管理"
     };
   },
   created() {
@@ -815,6 +817,7 @@ export default {
       this.datas = {
         url: "file/filetable/download",
         params: {
+          ssmk:this.filessmk,
           kzzd1: row.id
         },
         filename: `考卷-${row.bjmc}-${row.ksfw}.zip`

@@ -270,7 +270,9 @@
         // 文件id数组
         wjidFile:[],
         // 最多上传的图片数量
-        maxPhotoNum:3
+        maxPhotoNum:3,
+        // 文件所属模块
+        filessmk:"试卷管理"
       };
     },
     created() {
@@ -395,6 +397,7 @@
       downloadFileName(fileName,title) {
         title=title+fileName.substring(fileName.indexOf("."),fileName.length);
         this.download('file/filetable/download', {
+          ssmk:this.filessmk,
           wjmc:fileName
         }, title)
       },
