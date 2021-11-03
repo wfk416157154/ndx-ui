@@ -172,8 +172,18 @@
                     :key="index"
                   >
                     <template v-if="templatetreeListTeacher">
-                      <span style="color : #303133;margin : 0;padding : 0">{{item.name}}</span>
-                      <div>
+                      <div style="width : 55%">
+                        <span style="color : #303133;margin : 0;padding : 0">{{item.name}}</span>
+                      </div>
+                      <div style=" display : flex; justify-content : space-between;width : 180px">
+                        <el-button
+                          style="width : 80px;text-align : center"
+                          type="info"
+                          size="mini"
+                          effect="dark"
+                          v-if="item.sfbk == '1'"
+                          @click="toEdit(item,'lessonPreparationIndex')"
+                        >查看</el-button>
                         <el-tag
                           style="width : 80px;text-align : center"
                           type="success"
@@ -185,7 +195,7 @@
                           size="mini"
                           v-else
                           type="danger"
-                          @click="toEdit(item)"
+                          @click="toEdit(item,'lessonPreparationEdit')"
                         >去备课</el-button>
                       </div>
                     </template>
@@ -318,14 +328,12 @@ export default {
           item[i].xzid = item[i].id;
         }
       }
-      // console.log(this.defaultExpandedKeys)
     },
     format(percentage) {
       return percentage === 100 ? "完成" : `${percentage}%`;
     },
     // 获取备课的详细信息
     handleNodeClick(data) {
-      // console.log(data);
       if (data.weight == "2") {
         this.templatetreeListTeacher = data.ifChildren;
       } else {
@@ -343,9 +351,9 @@ export default {
       });
     },
     // 去备课
-    toEdit(item) {
+    toEdit(item, path) {
       item = Object.assign(item, this.form);
-      this.getConfigKey("lessonPreparationEdit").then(res => {
+      this.getConfigKey(path).then(res => {
         this.$router.push({
           path: res.msg + `?list=${JSON.stringify(item)}`
         });
@@ -493,11 +501,10 @@ export default {
             padding: 20px;
             box-sizing: border-box;
             .left {
-              width: 30%;
+              width: 40%;
             }
             .right {
-              width: 68%;
-              // border: 2px solid #ddd;
+              width: 58%;
               ul {
                 width: 100%;
                 .right-item {

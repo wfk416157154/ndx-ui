@@ -35,6 +35,7 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="success" size="mini" @click="seeHistorical">查看下载历史</el-button>
       </el-form-item>
     </el-form>
 
@@ -392,6 +393,15 @@
       </div>
     </el-dialog>
     <Progress :progress-data="datas" @data-callback="callBack" ref="progress" />
+    <el-dialog title="下载历史" :visible.sync="dialogFormVisible" width="80%">
+      <div>
+        <historical-records :ssmk="filessmk" />
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -415,6 +425,7 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      dialogFormVisible: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -447,7 +458,7 @@ export default {
         jcmc: null,
         jwsjzt: null,
         lssjzt: null,
-        status: "1",//默认只查正常
+        status: "1", //默认只查正常
         dataOrder: null,
         addOrUpdateTime: null,
         kzzd1: null,
@@ -520,7 +531,7 @@ export default {
       datas: {},
       ifProgress: false,
       // 文件所属模块
-      filessmk:"试卷管理"
+      filessmk: "试卷管理"
     };
   },
   created() {
@@ -558,6 +569,10 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+    },
+    //查看历史
+    seeHistorical(){
+        this.dialogFormVisible = true
     },
     // 选择考试类型后动态显示隐藏考试范围
     onKslxClick(val) {
@@ -817,7 +832,7 @@ export default {
       this.datas = {
         url: "file/filetable/download",
         params: {
-          ssmk:this.filessmk,
+          ssmk: this.filessmk,
           kzzd1: row.id
         },
         filename: `考卷-${row.bjmc}-${row.ksfw}.zip`
