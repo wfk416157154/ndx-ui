@@ -105,6 +105,15 @@ export function adjustTeachingPlan(data) {
   })
 }
 
+// 单独修改某一个课程的教学计划
+export function aloneUpdateTeachingPlan(data) {
+  return request({
+    url: '/basic/teachingGenerate/aloneUpdateTeachingPlan',
+    method: 'post',
+    data: data
+  })
+}
+
 
 // 老师教学计划上半部
 export function topHalfQuery(query) {
