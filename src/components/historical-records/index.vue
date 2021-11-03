@@ -16,7 +16,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="下载人手机号" prop="xzrsjh" label-width="200px">
+      <el-form-item label="下载人手机号" prop="xzrsjh" label-width="100px">
         <el-input
           v-model="queryParams.xzrsjh"
           placeholder="请输入下载人手机号"
@@ -25,7 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="下载人名称" prop="xzrmc" label-width="200px">
+      <el-form-item label="下载人名称" prop="xzrmc" label-width="100px">
         <el-input
           v-model="queryParams.xzrmc"
           placeholder="请输入下载人名称"
@@ -43,20 +43,16 @@
       v-loading="loading"
       border
       :data="downloadHistoryList"
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="文件表id" align="center" prop="wjbid" />
+      <el-table-column label="主键" align="center" prop="id" v-if="false" />
+      <el-table-column label="文件表id" align="center" prop="wjbid" v-if="false" />
       <el-table-column label="文件名称" align="center" prop="wjmc" />
       <el-table-column label="文件大小" align="center" prop="wjdx" />
       <el-table-column label="所属模块" align="center" prop="ssmk" />
-      <el-table-column label="下载人id" align="center" prop="xzrid" />
+      <el-table-column label="下载人id" align="center" prop="xzrid" v-if="false" />
       <el-table-column label="下载人手机号" align="center" prop="xzrsjh" />
       <el-table-column label="下载人名称" align="center" prop="xzrmc" />
       <el-table-column label="下载时间" align="center" prop="downloadTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.downloadTime, '{y}-{m}-{d}') }}</span>
-        </template>
       </el-table-column>
     </el-table>
     <pagination
