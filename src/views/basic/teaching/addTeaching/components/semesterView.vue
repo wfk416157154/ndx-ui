@@ -20,7 +20,7 @@
     </div>
     <el-dialog title="编辑时间" :visible.sync="dialogFormVisible">
       <el-form :model="sjForm" :rules="rules" ref="sjForm">
-        <el-form-item label="压缩后天数" label-width="100px" prop="yshts">
+        <el-form-item label="变更天数" label-width="100px" prop="yshts">
           <el-input v-model="sjForm.yshts" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="开始日期" label-width="100px" prop="chooseStartDate">
@@ -75,7 +75,7 @@ export default {
       difference: null,
       rules: {
         yshts: [
-          { required: true, message: "请输入压缩后天数", trigger: "blur" }
+          { required: true, message: "请输入变更天数", trigger: "blur" }
         ],
         chooseStartDate: [
           { required: true, message: "请选择开始日期", trigger: "blur" }

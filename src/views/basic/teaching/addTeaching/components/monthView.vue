@@ -141,7 +141,7 @@ export default {
       difference: null,
       rules: {
         yshts: [
-          { required: true, message: "请输入压缩后天数", trigger: "blur" }
+          { required: true, message: "请输入变更天数", trigger: "blur" }
         ],
         chooseStartDate: [
           { required: true, message: "请选择开始日期", trigger: "blur" }
