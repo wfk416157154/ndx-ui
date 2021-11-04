@@ -22,19 +22,15 @@
           justify-content: space-between;
           align-items: center; margin : 10px 0px;margin-left : 20px"
             >
-              <!-- <div>
-                <span :style="itemson.styles">{{itemson.jdmc}}</span>
-              </div>-->
               <el-divider content-position="left">
-                <span :style="itemson.styles" v-if="itemson.cjlx == '2'">
-                  <el-button
-                    size="mini"
-                    type="text"
-                    :style="itemson.styles"
-                    @click="showUpdatePage(itemson)"
-                  >{{itemson.jdmc}}</el-button>
-                </span>
-                <span :style="itemson.styles" v-else>{{itemson.jdmc}}</span>
+                <div v-if="itemson.cjlx == '2'">
+                  <el-link type="danger">
+                    <span :style="itemson.styles" @click="showUpdatePage(itemson)">{{itemson.jdmc}}</span>
+                  </el-link>
+                </div>
+                <div v-else>
+                  <span :style="itemson.styles" @click="showUpdatePage(itemson)">{{itemson.jdmc}}</span>
+                </div>
               </el-divider>
               <div style="width : 34%">
                 <el-link
@@ -81,7 +77,7 @@
           <el-date-picker
             v-model="sjForm.chooseEndDate"
             value-format="yyyy-MM-dd"
-            @change="changeTime"
+            @change="changeTime(sjForm)"
             type="date"
             placeholder="选择日期"
           ></el-date-picker>
@@ -111,7 +107,7 @@
           <el-date-picker
             v-model="courseForm.chooseEndDate"
             value-format="yyyy-MM-dd"
-            @change="courseChangeTime"
+            @change="changeTime(courseForm)"
             type="date"
             placeholder="选择日期"
           ></el-date-picker>
@@ -122,7 +118,6 @@
         <el-button type="primary" @click="editCourseDateSubmit">确 定</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -156,19 +151,19 @@ export default {
         ]
       },
       // 单独课程的弹出框
-      dialogCourseFormVisible:false,
+      dialogCourseFormVisible: false,
       courseForm: {
-        jdid:null,
+        jdid: null,
         chooseEndDate: null,
-        chooseStartDate: null,
-      },
+        chooseStartDate: null
+      }
     };
   },
   props: ["item"],
   methods: {
-    showUpdatePage(item){
-      this.dialogCourseFormVisible=true
-      this.courseForm.jdid=item.id
+    showUpdatePage(item) {
+      this.dialogCourseFormVisible = true;
+      this.courseForm.jdid = item.id;
       this.courseForm.chooseStartDate = item.ksrq;
       this.courseForm.chooseEndDate = item.jzrq;
     },
@@ -268,25 +263,15 @@ export default {
       this.sjForm.chooseStartDate = row.ksrq;
       this.sjForm.chooseEndDate = row.jzrq;
       this.sjForm.yshts = null;
-      this.changeTime();
+      this.changeTime(this.sjForm);
       this.dialogFormVisible = true;
     },
-    changeTime() {
-      let endTime = new Date(this.sjForm.chooseEndDate).getTime();
-      let startTime = new Date(this.sjForm.chooseStartDate).getTime();
+    changeTime(times) {
+      let endTime = new Date(times.chooseEndDate).getTime();
+      let startTime = new Date(times.chooseStartDate).getTime();
       if (endTime - startTime < 1000 * 60 * 60 * 24) {
         this.msgError("提示 : 结束时间不能小于等于开始时间");
-        this.sjForm.chooseEndDate = null;
-      } else {
-        this.difference = (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
-      }
-    },
-    courseChangeTime() {
-      let endTime = new Date(this.courseForm.chooseEndDate).getTime();
-      let startTime = new Date(this.courseForm.chooseStartDate).getTime();
-      if (endTime - startTime < 1000 * 60 * 60 * 24) {
-        this.msgError("提示 : 结束时间不能小于等于开始时间");
-        this.courseForm.chooseEndDate = null;
+        times.chooseEndDate = null;
       } else {
         this.difference = (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
       }
@@ -310,7 +295,7 @@ export default {
         }
       });
     },
-    editCourseDateSubmit(){
+    editCourseDateSubmit() {
       this.$refs["refCourseForm"].validate(valid => {
         if (valid) {
           let finalForm = Object.assign(this.itemForm, this.courseForm);
@@ -329,7 +314,6 @@ export default {
         }
       });
     }
-
   }
 };
 </script>
