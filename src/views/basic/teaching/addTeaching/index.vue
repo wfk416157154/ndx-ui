@@ -90,10 +90,10 @@
               <el-form-item label="总复习" prop="zfx">
                 <el-checkbox-group v-model="teachingForm.zfx">
                   <el-checkbox
-                    :label="item.dictValue"
                     v-for="(item,index) in reviewList"
+                    :label="item.jdid"
                     :key="index"
-                  >{{item.dictLabel}}</el-checkbox>
+                  >{{item.jdmc}}</el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </el-col>
@@ -360,7 +360,7 @@ import {
 } from "@/api/teaching/generate";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { listClassPlan } from "@/api/teaching/classPlan";
-
+import {listTeachingReview} from "@/api/basic/teachingReview";
 export default {
   data() {
     return {
@@ -439,23 +439,20 @@ export default {
     }
   },
   created() {
-    this.getDicts("review").then(response => {
-      this.reviewList = response.data;
-    });
     listSchool().then(response => {
       this.schoolList = response.rows;
     });
     listTeachingMaterial({ parentId: 0 }).then(res => {
       this.listTeachingMaterial = res.data;
     });
+    listTeachingReview({parentId: 0}).then(res=>{
+      this.reviewList = res.data;
+    });
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
     });
   },
   methods: {
-    // demo(e) {
-    //   console.log(e);
-    // },
     // 组件
     toComponent(value) {
       if (!this.teachingForm.rybjid) {
@@ -519,13 +516,13 @@ export default {
       listGenerate({ rybjid: bjid }).then(res => {
         if (res.rows.length > 0) {
           this.listGenerate = res.rows;
-          if (typeof this.listGenerate[0].zfx == "string") {
-            this.listGenerate[0].zfx = this.listGenerate[0].zfx.split(",");
-          }
           this.teachingForm = Object.assign(
             this.teachingForm,
             this.listGenerate[0]
           );
+          if(null!=this.listGenerate[0].zfx&&""!=this.listGenerate[0].zfx){
+            this.teachingForm.zfx = this.listGenerate[0].zfx.split(",");
+          }
           this.teachingForm.kbsjStr = this.teachingForm.kbsj;
           this.listSkiptime(this.teachingForm.id);
         } else {
@@ -547,7 +544,7 @@ export default {
     saveTeachingForm() {
       this.$refs["teachingForm"].validate(valid => {
         if (valid) {
-          if (this.teachingForm.zfx.length >= 0) {
+          if (this.teachingForm.zfx.length > 0) {
             this.teachingForm.zfx = this.teachingForm.zfx.join();
           }
           if (this.teachingForm.id) {
