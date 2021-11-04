@@ -47,6 +47,15 @@
     </div>
     <el-dialog title="编辑时间" :visible.sync="dialogFormVisible">
       <el-form :model="sjForm" :rules="rules" ref="sjForm">
+        <el-form-item label="变更日期" label-width="100px" prop="biangengDate">
+          <el-date-picker
+            v-model="biangengDate"
+            value-format="yyyy-MM-dd"
+            @change="onCalcBgts"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item label="变更天数" label-width="100px" prop="yshts">
           <el-input v-model="sjForm.yshts" autocomplete="off"></el-input>
         </el-form-item>
@@ -140,11 +149,23 @@ export default {
         jdid: null,
         chooseEndDate: null,
         chooseStartDate: null
-      }
+      },
+      // 变更日期
+      biangengDate:null
     };
   },
   props: ["item"],
   methods: {
+    onCalcBgts(date){
+      let startTime = new Date(this.sjForm.chooseStartDate).getTime();
+      let endTime = new Date(date).getTime();
+      if (endTime - startTime < 1000 * 60 * 60 * 24) {
+        this.msgError("提示 : 变更时间不能小于等于开始时间");
+        this.biangengDate = null;
+      } else {
+        this.sjForm.yshts = ((endTime - startTime) / (1000 * 60 * 60 * 24) + 1).toFixed(0);
+      }
+    },
     showUpdatePage(item) {
       this.dialogCourseFormVisible = true;
       this.courseForm.jdid = item.id;
@@ -176,6 +197,7 @@ export default {
       return F + "-" + M + "-" + D;
     },
     editSj(row) {
+      this.biangengDate = null;
       this.sjForm.chooseStartDate = row.ksrq;
       this.sjForm.chooseEndDate = row.jzrq;
       this.sjForm.yshts = null;
@@ -189,7 +211,7 @@ export default {
         this.msgError("提示 : 结束时间不能小于等于开始时间");
         times.chooseEndDate = null;
       } else {
-        this.difference = (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
+        this.difference = ((endTime - startTime) / (1000 * 60 * 60 * 24) + 1).toFixed(0);
       }
     },
     editDateSubmit() {

@@ -18,8 +18,18 @@
         </el-table-column>
       </el-table>
     </div>
+
     <el-dialog title="编辑时间" :visible.sync="dialogFormVisible">
       <el-form :model="sjForm" :rules="rules" ref="sjForm">
+        <el-form-item label="变更日期" label-width="100px" prop="biangengDate">
+          <el-date-picker
+            v-model="biangengDate"
+            value-format="yyyy-MM-dd"
+            @change="onCalcBgts"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item label="变更天数" label-width="100px" prop="yshts">
           <el-input v-model="sjForm.yshts" autocomplete="off"></el-input>
         </el-form-item>
@@ -83,7 +93,9 @@ export default {
         chooseEndDate: [
           { required: true, message: "请选择结束日期", trigger: "blur" }
         ]
-      }
+      },
+      // 变更日期
+      biangengDate:null
     };
   },
   props: ["item"],
@@ -93,6 +105,16 @@ export default {
     });
   },
   methods: {
+    onCalcBgts(date){
+      let startTime = new Date(this.sjForm.chooseStartDate).getTime();
+      let endTime = new Date(date).getTime();
+      if (endTime - startTime < 1000 * 60 * 60 * 24) {
+        this.msgError("提示 : 变更时间不能小于等于开始时间");
+        this.biangengDate = null;
+      } else {
+        this.sjForm.yshts = (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
+      }
+    },
     toGrade() {
       this.xueqiMap = [];
       this.itemForm = JSON.parse(JSON.stringify(this.item));
@@ -140,6 +162,7 @@ export default {
       }
     },
     editSj(row) {
+      this.biangengDate = null;
       this.sjForm.chooseStartDate = row.ksrq;
       this.sjForm.chooseEndDate = row.jzrq;
       this.sjForm.yshts = null;
