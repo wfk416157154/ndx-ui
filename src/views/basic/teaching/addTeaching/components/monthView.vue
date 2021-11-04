@@ -29,7 +29,7 @@
                   </el-link>
                 </div>
                 <div v-else>
-                  <span :style="itemson.styles" @click="showUpdatePage(itemson)">{{itemson.jdmc}}</span>
+                  <span :style="itemson.styles" >{{itemson.jdmc}}</span>
                 </div>
               </el-divider>
               <div style="width : 34%">
