@@ -9,6 +9,15 @@ export function treeListTeacher(query) {
   })
 }
 
+// 备课首页-备课首页-老师复习树结构
+export function fxTreeListTeacher(query) {
+  return request({
+    url: '/basic//teachingReview/treeListTeacher',
+    method: 'get',
+    params: query
+  })
+}
+
 // 获取备课的详细信息
 export function prepareLessons(id) {
   return request({
