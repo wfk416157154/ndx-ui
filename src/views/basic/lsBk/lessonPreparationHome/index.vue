@@ -156,7 +156,7 @@
               <div class="left">
                 <el-tree
                   node-key="id"
-                  ref="tree"
+                  ref="bktree"
                   :highlight-current="true"
                   :default-expanded-keys="defaultExpandedKeys"
                   :data="treeListTeacherData"
@@ -205,7 +205,37 @@
             </div>
           </li>
           <li class="list">3</li>
-          <li class="list">4</li>
+          <li class="list">
+            <h4>当前复习进度</h4>
+            <div class="wrap-item">
+              <div class="left">
+                <el-tree
+                  node-key="id"
+                  ref="fxtree"
+                  :highlight-current="true"
+                  :default-expanded-keys="fxDefaultExpandedKeys"
+                  :data="fxTreeListTeacherData"
+                  :props="fxDefaultProps"
+                  @node-click="fxHandleNodeClick"
+                ></el-tree>
+              </div>
+              <div class="right">
+                <ul style="list-style : none">
+                  <li
+                    class="right-item"
+                    v-for="(item,index) in fxTemplatetreeListTeacher"
+                    :key="index"
+                  >
+                    <template v-if="fxTemplatetreeListTeacher">
+                      <div style="width : 100%">
+                        <span style="color : #303133;margin : 0;padding : 0">{{item.name}}</span>
+                      </div>
+                    </template>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -216,7 +246,8 @@
 import { listBjclass } from "@/api/basic/bjclass";
 import {
   treeListTeacher,
-  prepareLessons
+  prepareLessons,
+  fxTreeListTeacher
 } from "@/api/basic/lessonPreparationHome";
 export default {
   data() {
@@ -245,9 +276,14 @@ export default {
         }
       ],
       treeListTeacherData: [],
+      fxTreeListTeacherData: [],
       defaultProps: {
         children: "children",
         label: "label"
+      },
+      fxDefaultProps: {
+        children: "children",
+        label: "name"
       },
       arr1: [
         {
@@ -271,7 +307,9 @@ export default {
       bjkbStartDate: [],
       nianji: [],
       defaultExpandedKeys: [],
-      templatetreeListTeacher: null
+      fxDefaultExpandedKeys: [],
+      templatetreeListTeacher: null,
+      fxTemplatetreeListTeacher: null
     };
   },
   created() {
@@ -306,6 +344,10 @@ export default {
         this.treeListTeacherData = JSON.parse(JSON.stringify(res.data));
         this.dataProcessing(this.treeListTeacherData);
       });
+      fxTreeListTeacher(this.form).then(res => {
+        this.fxTreeListTeacherData = res.data.treeReview;
+        this.fxDataProcessing(this.fxTreeListTeacherData);
+      });
     },
     dataProcessing(item) {
       for (let i = 0; i < item.length; i++) {
@@ -314,7 +356,7 @@ export default {
           if (item[i].weight == "2") {
             if (item[i].isLastPrepare == "1") {
               this.$nextTick(() => {
-                this.$refs.tree.setCurrentKey(item[i].id);
+                this.$refs.bktree.setCurrentKey(item[i].id);
                 this.defaultExpandedKeys.push(item[i].id);
               });
               this.templatetreeListTeacher = item[i].children;
@@ -323,6 +365,28 @@ export default {
             delete item[i].children;
           } else {
             this.dataProcessing(item[i].children);
+          }
+        } else {
+          item[i].xzid = item[i].id;
+        }
+      }
+    },
+    fxDataProcessing(item) {
+      for (let i = 0; i < item.length; i++) {
+        item[i].label = item[i].name;
+        if (item[i].children && item[i].children.length > 0) {
+          if (item[i].weight == "2") {
+            if (item[i].isLastPrepare == "1") {
+              this.$nextTick(() => {
+                this.$refs.fxtree.setCurrentKey(item[i].id);
+                this.fxDefaultExpandedKeys.push(item[i].id);
+              });
+              this.fxTemplatetreeListTeacher = item[i].children;
+            }
+            item[i].ifChildren = item[i].children;
+            delete item[i].children;
+          } else {
+            this.fxDataProcessing(item[i].children);
           }
         } else {
           item[i].xzid = item[i].id;
@@ -338,6 +402,14 @@ export default {
         this.templatetreeListTeacher = data.ifChildren;
       } else {
         this.templatetreeListTeacher = null;
+      }
+    },
+    // 复习
+    fxHandleNodeClick(data) {
+      if (data.weight == "2") {
+        this.fxTemplatetreeListTeacher = data.ifChildren;
+      } else {
+        this.fxTemplatetreeListTeacher = null;
       }
     },
     // 切换班级

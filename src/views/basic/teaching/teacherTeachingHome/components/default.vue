@@ -57,33 +57,48 @@
       </li>
       <li class="review-progress">
         <h4>正常复习进度</h4>
-        <div class="wrap-review">
-          <div class="review-left-main">
-            <div
-              v-for="(item,index) in arr"
-              @click="toGrade(item)"
-              :class="{ 'back': item.ifClass}"
-              :key="index"
-            >{{item.name}}</div>
-          </div>
-          <div class="review-right-main">
-            <div>复习语法1</div>
+        <div>
+          <div
+            v-for="(item,index) in zcReview"
+            :key="index"
+            style="display : flex;justify-content : space-between;align-items : center"
+          >
+            <!-- <p></p> -->
+            <el-divider content-position="left">
+              <span style="font-size : 16px">{{++index}} ) {{item.name}} :</span>
+            </el-divider>
+            <p style="width : 260px">{{item.sjfw}}</p>
           </div>
         </div>
       </li>
       <li class="review-progress">
-        <h4>当前复习进度</h4>
-        <div class="wrap-review">
-          <div class="review-left-main">
-            <div
-              v-for="(item,index) in arr"
-              @click="toGrade(item)"
-              :class="{ 'back': item.ifClass}"
-              :key="index"
-            >{{item.name}}</div>
+        <h4>当前复习进度 {{jdbfb}}%</h4>
+        <div class="wrap-item">
+          <div class="left">
+            <el-tree
+              node-key="id"
+              ref="fxtree"
+              :highlight-current="true"
+              :default-expanded-keys="fxDefaultExpandedKeys"
+              :data="fxTreeListTeacherData"
+              :props="fxDefaultProps"
+              @node-click="fxHandleNodeClick"
+            ></el-tree>
           </div>
-          <div class="review-right-main">
-            <div>复习语法1</div>
+          <div class="right">
+            <!-- <ul style="list-style : none"> -->
+            <!-- <li class="right-item" style="border : none;padding : 0" v-for="(item,index) in fxTemplatetreeListTeacher" :key="index">
+                <template v-if="fxTemplatetreeListTeacher">
+            <div style="width : 100%">-->
+            <span
+              style="color : #F56C6C;margin : 0;padding : 0;line-height : 20px;display:inline-block;width : 30%; margin: 10px 4px"
+              v-for="(item,index) in fxTemplatetreeListTeacher"
+              :key="index"
+            >{{++index}}), {{item.name}}</span>
+            <!-- </div>
+            </template>-->
+            <!-- </li>
+            </ul>-->
           </div>
         </div>
       </li>
@@ -93,6 +108,7 @@
 
 <script>
 import { topHalfQuery, lowerHalf } from "@/api/teaching/generate";
+import { fxTreeListTeacher } from "@/api/basic/lessonPreparationHome";
 export default {
   data() {
     return {
@@ -102,6 +118,13 @@ export default {
       templatetreeListTeacher: null,
       zctemplatetreeListTeacher: null,
       zcTreeTeachingClassPlan: [],
+      fxTemplatetreeListTeacher: null,
+      fxDefaultExpandedKeys: [],
+      fxTreeListTeacherData: [],
+      fxDefaultProps: {
+        children: "children",
+        label: "name"
+      },
       defaultProps: {
         children: "children",
         label: "name"
@@ -110,20 +133,8 @@ export default {
         children: "children",
         label: "name"
       },
-      arr: [
-        {
-          name: "复习1",
-          ifClass: false
-        },
-        {
-          name: "复习2",
-          ifClass: false
-        },
-        {
-          name: "复习3",
-          ifClass: false
-        }
-      ]
+      zcReview: null,
+      jdbfb: null
     };
   },
   props: ["item"],
@@ -151,6 +162,42 @@ export default {
           );
         }
       });
+      fxTreeListTeacher(this.item).then(res => {
+        this.fxTreeListTeacherData = res.data.treeReview;
+        this.jdbfb = res.data.jdbfb;
+        this.zcReview = res.data.zcReview;
+        this.fxDataProcessing(this.fxTreeListTeacherData);
+      });
+    },
+    fxDataProcessing(item) {
+      for (let i = 0; i < item.length; i++) {
+        item[i].label = item[i].name;
+        if (item[i].children && item[i].children.length > 0) {
+          if (item[i].weight == "2") {
+            if (item[i].isLastPrepare == "1") {
+              this.$nextTick(() => {
+                this.$refs.fxtree.setCurrentKey(item[i].id);
+                this.fxDefaultExpandedKeys.push(item[i].id);
+              });
+              this.fxTemplatetreeListTeacher = item[i].children;
+            }
+            item[i].ifChildren = item[i].children;
+            delete item[i].children;
+          } else {
+            this.fxDataProcessing(item[i].children);
+          }
+        } else {
+          item[i].xzid = item[i].id;
+        }
+      }
+    },
+    // 复习
+    fxHandleNodeClick(data) {
+      if (data.weight == "2") {
+        this.fxTemplatetreeListTeacher = data.ifChildren;
+      } else {
+        this.fxTemplatetreeListTeacher = null;
+      }
     },
     dataProcessing(item, key, templates, trees) {
       for (let i = 0; i < item.length; i++) {
@@ -237,6 +284,30 @@ export default {
       }
     }
     .review-progress {
+      .wrap-item {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        border: 2px solid #ddd;
+        padding: 20px;
+        box-sizing: border-box;
+        .left {
+          width: 40%;
+        }
+        .right {
+          width: 58%;
+          ul {
+            width: 100%;
+            .right-item {
+              width: 100%;
+              display: flex;
+              margin-bottom: 10px;
+              justify-content: space-between;
+              align-items: center;
+            }
+          }
+        }
+      }
       .wrap-review {
         width: 100%;
         display: flex;
