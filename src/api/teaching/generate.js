@@ -69,6 +69,23 @@ export function deleteSkiptime(id) {
   })
 }
 
+// 新增生成教学计划-学期数据
+export function addOrUpdateQueryTermList(data) {
+  return request({
+    url: '/basic/queryTerm/addOrUpdateDataList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 删除学期数据
+export function deleteQueryTermData(id) {
+  return request({
+    url: '/basic/queryTerm/' + id,
+    method: 'delete'
+  })
+}
+
 // 查询生成教学计划-跳过时间列表
 export function listSkiptime(query) {
   return request({
@@ -77,6 +94,15 @@ export function listSkiptime(query) {
     params: query
   })
 }
+
+//添加或更新学期配置表的数据
+export function saveOrUpdateTermsTeachingPlan(rybjid) {
+  return request({
+    url: '/basic/teachingGenerate/saveOrUpdateTermsTeachingPlan/'+rybjid,
+    method: 'get',
+  })
+}
+
 
 // 手动生成教学计划
 export function generateTeachingHandle(data) {
