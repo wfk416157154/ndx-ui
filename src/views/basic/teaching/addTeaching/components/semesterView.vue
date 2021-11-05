@@ -44,7 +44,7 @@
             <el-link
               type="primary"
               @click="editSj(scope.row)"
-              v-if="scope.row.id!=null"
+              v-if="scope.row.id!=null&&scope.row.kclx=='1'"
             >{{scope.row.ksrq}} - {{scope.row.jzrq}}
             </el-link>
           </template>
