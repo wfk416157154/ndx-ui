@@ -598,14 +598,14 @@ export default {
           if (this.teachingForm.id) {
             updateGenerate(this.teachingForm).then(res => {
               if (res.code == 200) {
-                this.msgSuccess("成功 : 更新教学计划基础数据完成");
+                this.msgSuccess("成功 : 更新基础数据完成");
                 this.getListGenerate(this.teachingForm.rybjid);
               }
             });
           } else {
             addGenerate(this.teachingForm).then(res => {
               if (res.code == 200) {
-                this.msgSuccess("成功 : 生成教学计划基础数据完成");
+                this.msgSuccess("成功 : 保存基础数据完成");
                 this.getListGenerate(this.teachingForm.rybjid);
               }
             });
