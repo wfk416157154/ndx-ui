@@ -29,6 +29,7 @@
           <el-radio label="0">否</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-button type="primary" size="mini" :disabled="!ruleForm.id" @click="selectZfx">总复习</el-button>
     </el-form>
     <el-form
       :model="ruleForm"
@@ -121,6 +122,7 @@
           </div>
         </div>
       </div>-->
+      <!-- 是否辅导 -->
       <div class="in-class clearfix" v-if=" ruleForm.kc && bkBcrz == '0'">
         <div class="in-class-title clearfix">
           <span>{{ruleForm.kc.sxmc}}</span>
@@ -198,7 +200,7 @@
         <div class="personal-log-list">
           <!-- 是否有考试 -->
           <div class="wrap-examination clearfix">
-<!--            <div class="examination-text">
+            <!--            <div class="examination-text">
               <el-form-item label="是否有考试" label-width="100px">
                 <el-radio-group
                   style="width: 200px"
@@ -373,6 +375,14 @@
         <el-button type="primary" @click.once="addKscjfxzj">确 定</el-button>
       </span>
     </el-dialog>
+    
+    <el-dialog title="添加复习" :visible.sync="sffx">
+      <fx-form :rzid="ruleForm.id" :bjid="bjNameId" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="sffx = false">取 消</el-button>
+        <el-button type="primary" @click="saveSbmit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -395,6 +405,7 @@ import { listBjclass } from "@/api/basic/bjclass";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { addExamSummary } from "@/api/basic/examSummary";
 import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
+import FxForm from "./fxForm";
 export default {
   data() {
     return {
@@ -482,8 +493,13 @@ export default {
       //是否上传文件
       getselectFileList: [],
       // 是否辅导
-      bkBcrz: "0"
+      bkBcrz: "0",
+      // 是否复习
+      sffx: false
     };
+  },
+  components: {
+    FxForm
   },
   created() {
     let dataRoleId = this.$store.state.user.dataRoleWeightId;
@@ -510,6 +526,12 @@ export default {
     this.initGetListExaminationPaper();
   },
   methods: {
+    selectZfx() {
+      this.sffx = true;
+    },
+    saveSbmit() {
+      this.sffx = false;
+    },
     initBjClassList() {
       // 获取班级信息
       listBjclass().then(res => {
@@ -543,6 +565,7 @@ export default {
     },
     onLogTime(val) {
       this.getWorkLogTemplateQuery();
+      this.rzid = null;
     },
     // 获取课中课表信息
     getList($false) {
@@ -599,7 +622,8 @@ export default {
     getWorkLogStatusQuery() {
       this.getselectFileList = [];
       let json = {
-        bjid: this.bjNameId
+        bjid: this.bjNameId,
+        lsid: this.$store.state.user.glrid
       };
       for (let i = 0; i < this.getListBjclass.length; i++) {
         if (this.getListBjclass[i].id === this.bjNameId) {
@@ -610,7 +634,7 @@ export default {
       if (this.logTiem) {
         json.date = this.logTiem;
       } else {
-        json.date = new Date();
+        // json.date = new Date();
       }
       workLogStatusQuery(json).then(res => {
         switch (res.data) {
@@ -627,7 +651,7 @@ export default {
                 this.skipToLogHomePage();
               })
               .catch(() => {
-                this.getWorkLogListQuery(this.bjNameId, json.date); // 查询已填写未发送的日志
+                this.getWorkLogListQuery(this.bjNameId, this.logTiem); // 查询已填写未发送的日志
               });
             break;
           case 3:
@@ -657,7 +681,11 @@ export default {
     // 查询课中的课表模板
     findTemplateQuery(date) {
       this.rzid = null;
-      workLogTemplateQuery({ bjid: this.bjNameId, date }).then(res => {
+      workLogTemplateQuery({
+        bjid: this.bjNameId,
+        date,
+        lsid: this.$store.state.user.glrid
+      }).then(res => {
         if (res.data.length != 0) {
           this.ifForm = true;
           this.ruleForm = res.data;
@@ -688,71 +716,117 @@ export default {
     },
     // 查询某一班级日志
     async getWorkLogListQuery(bjid, date) {
-      if (!bjid || !date) {
-        this.$notify({
-          message: "请选择班级和日期",
-          type: "warning"
-        });
-        return;
-      }
-      this.ifForm = true;
-      let json = {
-        lsid: this.$store.state.user.glrid, // 老师id
-        kzzd1: bjid, // 班级 id
-        date: date // 时间
-      };
-      if (typeof json.date != "string") {
-        json.date =
-          json.date.getFullYear() +
-          "-" +
-          (date.getMonth() + 1) +
-          "-" +
-          date.getDate();
-      }
-      this.ruleForm = json;
-      workLogListQuery(json).then(res => {
-        // 获取日志信息
-        if (res.data.length != 0) {
-          this.rzid = res.data[0].id;
-          this.ruleForm.id = this.rzid;
-          selectFileList({ kzzd1: this.rzid }).then(res => {
-            if (200 == res.code) {
-              this.getselectFileList = res.rows;
-            }
+      if (!this.rzid) {
+        if (!bjid) {
+          this.$notify({
+            message: "请选择班级和日期",
+            type: "warning"
           });
-          if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
-            this.ksmcdisable = true; //如果已保存考试信息并且上传则禁用下拉框
-          } else {
-            this.ksmcdisable = false;
-          }
-          this.ruleForm = res.data[0];
-          this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
-            for (let i = 0; i < this.kcType.length; i++) {
-              if (this.kcType[i].dictValue == value.courseType) {
-                value.courseTypeName = this.kcType[i].dictLabel;
-                this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+          return;
+        }
+        this.ifForm = true;
+        let json = {
+          lsid: this.$store.state.user.glrid, // 老师id
+          kzzd1: bjid, // 班级 id
+          date: date // 时间
+        };
+        if (typeof json.date != "string" && json.date) {
+          json.date =
+            json.date.getFullYear() +
+            "-" +
+            (date.getMonth() + 1) +
+            "-" +
+            date.getDate();
+        }
+        this.ruleForm = json;
+        workLogListQuery(json).then(res => {
+          // 获取日志信息
+          if (res.data.length != 0) {
+            this.rzid = res.data[0].id;
+            this.ruleForm.id = this.rzid;
+            selectFileList({ kzzd1: this.rzid }).then(res => {
+              if (200 == res.code) {
+                this.getselectFileList = res.rows;
               }
+            });
+            if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
+              this.ksmcdisable = true; //如果已保存考试信息并且上传则禁用下拉框
+            } else {
+              this.ksmcdisable = false;
             }
-          });
-          this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
-          // 教室卫生照片回显
-          this.selectPhotoList(
-            (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
-            "files1"
-          );
-          // 学生表现照片回显
-          this.selectPhotoList(
-            (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
-            "files2"
-          );
-        }
-        if (
-          this.ruleForm.basicTeacherWorkLogLessonList &&
-          this.ruleForm.basicTeacherWorkLogLessonList.length == 0
-        ) {
-          this.ruleForm.basicTeacherWorkLogLessonList = [];
-        }
-      });
+            this.ruleForm = res.data[0];
+            this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+              for (let i = 0; i < this.kcType.length; i++) {
+                if (this.kcType[i].dictValue == value.courseType) {
+                  value.courseTypeName = this.kcType[i].dictLabel;
+                  this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+                }
+              }
+            });
+            this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+            // 教室卫生照片回显
+            this.selectPhotoList(
+              (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+              "files1"
+            );
+            // 学生表现照片回显
+            this.selectPhotoList(
+              (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+              "files2"
+            );
+          }
+          if (
+            this.ruleForm.basicTeacherWorkLogLessonList &&
+            this.ruleForm.basicTeacherWorkLogLessonList.length == 0
+          ) {
+            this.ruleForm.basicTeacherWorkLogLessonList = [];
+          }
+        });
+      } else {
+        workLogListQuery({ id: this.rzid }).then(res => {
+          // 获取日志信息
+          if (res.data.length != 0) {
+            this.rzid = res.data[0].id;
+            this.ruleForm.id = this.rzid;
+            selectFileList({ kzzd1: this.rzid }).then(res => {
+              if (200 == res.code) {
+                this.getselectFileList = res.rows;
+              }
+            });
+            if (res.data[0].kzzd4 != null && res.data[0].kzzd2 === "3") {
+              this.ksmcdisable = true; //如果已保存考试信息并且上传则禁用下拉框
+            } else {
+              this.ksmcdisable = false;
+            }
+            this.ruleForm = res.data[0];
+            this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
+              for (let i = 0; i < this.kcType.length; i++) {
+                if (this.kcType[i].dictValue == value.courseType) {
+                  value.courseTypeName = this.kcType[i].dictLabel;
+                  this.ruleForm.basicTeacherWorkLogLessonList[index] = value;
+                }
+              }
+            });
+            this.ifExamination = this.ruleForm.isExam == "1" ? true : false;
+            // 教室卫生照片回显
+            this.selectPhotoList(
+              (this.ruleForm.jswsFile = this.ruleForm.jswsFile || secretKey()),
+              "files1"
+            );
+            // 学生表现照片回显
+            this.selectPhotoList(
+              (this.ruleForm.xsbxFile = this.ruleForm.xsbxFile || secretKey()),
+              "files2"
+            );
+          }
+          if (
+            this.ruleForm.basicTeacherWorkLogLessonList &&
+            this.ruleForm.basicTeacherWorkLogLessonList.length == 0
+          ) {
+            this.ruleForm.basicTeacherWorkLogLessonList = [];
+          }
+        });
+      }
     },
     /** 导入按钮操作 */
     handleImport() {
@@ -921,7 +995,7 @@ export default {
       }
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          this.ruleForm.bkBcrz = this.bkBcrz
+          this.ruleForm.bkBcrz = this.bkBcrz;
           this.addWorkLog($if);
         } else {
           this.$notify({ message: "请先填写日志内容", type: "error" });
@@ -938,9 +1012,9 @@ export default {
       addSave(this.ruleForm).then(async res => {
         this.rzid = res.data.id;
         this.ruleForm.id = this.rzid;
-        if (!this.logTiem) {
-          this.logTiem = new Date();
-        }
+        // if (!this.logTiem) {
+        //   this.logTiem = new Date();
+        // }
         this.getWorkLogListQuery(this.bjNameId, this.logTiem);
         if (res.code == 200) {
           this.ifsfyks = false;

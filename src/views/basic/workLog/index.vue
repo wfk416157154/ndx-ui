@@ -1332,6 +1332,7 @@
 
         .send-out {
           margin: 10px;
+          
         }
       }
     }

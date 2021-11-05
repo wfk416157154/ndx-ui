@@ -45,6 +45,24 @@ export function homePageQuery(query) {
   })
 }
 
+// 查询教学计划总复习列表
+export function teachingReview(query) {
+  return request({
+    url: '/basic/teachingReview/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 日志查询复习下级列表
+export function subListForWogLog(query) {
+  return request({
+    url: '/basic/teachingReview/subListForWogLog',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师工作日志详细
 export function getBasicTeacherWorkLog(id) {
   return request({
@@ -58,6 +76,15 @@ export function workLogQueryForEducational(id) {
   return request({
     url: '/basic/basicTeacherWorkLog/workLogQueryForEducational/' + id,
     method: 'get'
+  })
+}
+
+// 批量保存知识点
+export function batchSaveReviewProgress(data) {
+  return request({
+    url: '/basic//teachingReview/batchSaveReviewProgress',
+    method: 'post',
+    data: data
   })
 }
 
