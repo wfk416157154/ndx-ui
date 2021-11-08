@@ -22,7 +22,6 @@ export default {
     notice() {
       let son = window.innerWidth;
       let timer;
-      this.$refs.title.style.right = -this.$refs.title.offsetWidth + "px";
       clearInterval(timer);
       timer = setInterval(() => {
         son -= 2;
