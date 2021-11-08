@@ -238,15 +238,22 @@
           this.msgError("请选择一条数据！")
           return
         }
-        let ids = []
-        for (let i = 0; i < checkboxRecords.length; i++) {
-          ids.push(checkboxRecords[i].id)
-        }
         this.$confirm("是否删除选中数据?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
+          let ids = []
+          for (let i = 0; i < checkboxRecords.length; i++) {
+            if(checkboxRecords[i].id){// 如果id有值，则表示是已保存的数据
+              ids.push(checkboxRecords[i].id)
+            }else{// 刚添加的数据，未保存的
+              $table.removeCheckboxRow()
+            }
+          }
+          if(ids.length<1){
+            return
+          }
           this.loading = true
           deleteQueryTermData(ids).then(res => {
             if (res.code == 200) {
@@ -280,6 +287,11 @@
         if(!this.jzrqValid){
           this.msgError("请检查截止日期是否大于开始日期，并且小于高考日期！")
           return
+        }
+        let upObj;
+        for (let i = 0; i < updateRecords.length; i++) {
+          upObj=updateRecords[i]
+          upObj.ssxq=upObj.xqmc
         }
         this.loading = true
         let obj = {
