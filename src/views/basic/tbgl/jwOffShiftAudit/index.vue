@@ -102,7 +102,7 @@
       <el-table-column label="操作" width="260px" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="warning" icon="el-icon-s-custom" v-if="1!=scope.row.tblx" @click="chushenEditPage(scope.row)">审核</el-button>
-          <el-button size="mini" type="success" icon="el-icon-s-flag" @click="jiesuanEdit(scope.row)">结算</el-button>
+          <el-button size="mini" type="success" icon="el-icon-s-flag" v-if="6!=scope.row.shzt" @click="jiesuanEdit(scope.row)">结算</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -231,7 +231,7 @@
       this.getDicts("tbgzlx").then(response => {
         this.tbgzlxOption = response.data;
       });
-      this.getList()
+      this.queryShenpi("1") // 默认查询未退班的
     },
     methods: {
       // 选择校区触发
