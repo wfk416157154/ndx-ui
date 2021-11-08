@@ -53,7 +53,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-zoom-in" @click="handleQuery">查询</el-button>
-        <el-button type="danger" @click="queryShenpi('1')">未审批</el-button>
+        <el-button type="danger" @click="queryShenpi('1,3')">未审批</el-button>
         <el-button type="success" @click="queryShenpi('2,3,4,5,6')">已审批</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -101,7 +101,7 @@
       </el-table-column>
       <el-table-column label="操作" width="260px" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="warning" icon="el-icon-s-custom" v-if="1!=scope.row.tblx" @click="chushenEditPage(scope.row)">审核</el-button>
+          <el-button size="mini" type="warning" icon="el-icon-s-custom" v-if="1!=scope.row.tblx&&1==scope.row.shzt" @click="chushenEditPage(scope.row)">审核</el-button>
           <el-button size="mini" type="success" icon="el-icon-s-flag" v-if="6!=scope.row.shzt" @click="jiesuanEdit(scope.row)">结算</el-button>
         </template>
       </el-table-column>
@@ -231,7 +231,7 @@
       this.getDicts("tbgzlx").then(response => {
         this.tbgzlxOption = response.data;
       });
-      this.queryShenpi("1") // 默认查询未退班的
+      this.queryShenpi("1,3") // 默认查询 1=已申请-待初审，3=学生同意
     },
     methods: {
       // 选择校区触发
