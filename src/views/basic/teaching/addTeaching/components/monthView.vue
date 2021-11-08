@@ -4,7 +4,7 @@
       <ul>
         <li
           v-for="(item,index) in MonthList.xueqiDict"
-          :class="{ 'back': item.ifClass}"
+          :class="[item.flag == '1' ? 'back' : '']"
           :key="index"
           @click="dataWwitching(item)"
         >{{item.dictLabel}}</li>
@@ -25,33 +25,36 @@
               <el-divider content-position="left">
                 <div v-if="itemson.cjlx == '2'">
                   <el-link type="danger">
-                    <span :style="itemson.styles" @click="showUpdatePage(itemson)">{{itemson.jdmc}}</span>
+                    <span
+                      :style="itemson.styles"
+                      @click="showUpdatePage(itemson,index)"
+                    >{{itemson.jdmc}}</span>
                   </el-link>
                 </div>
                 <div v-else>
-                  <span :style="itemson.styles" >{{itemson.jdmc}}</span>
+                  <span :style="itemson.styles">{{itemson.jdmc}}</span>
                 </div>
               </el-divider>
               <div style="width : 34%">
                 <el-link
                   type="primary"
                   v-if="itemson.cjlx == '100'"
-                  @click="editSj(itemson)"
+                  @click="editSj(itemson,index)"
                 >{{itemson.ksrq}} - {{itemson.jzrq}}</el-link>
                 <el-link
                   type="success"
                   v-if="itemson.cjlx == '101'"
-                  @click="editSj(itemson)"
+                  @click="editSj(itemson,index)"
                 >{{itemson.ksrq}} - {{itemson.jzrq}}</el-link>
                 <el-link
                   type="warning"
                   v-if="itemson.cjlx == '1'"
-                  @click="editSj(itemson)"
+                  @click="editSj(itemson,index)"
                 >{{itemson.ksrq}} - {{itemson.jzrq}}</el-link>
                 <el-link
                   type="danger"
                   v-if="itemson.cjlx == '2'"
-                  @click="editSj(itemson)"
+                  @click="editSj(itemson,index)"
                 >{{itemson.ksrq}} - {{itemson.jzrq}}</el-link>
               </div>
             </div>
@@ -101,7 +104,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="编辑时间" :visible.sync="dialogCourseFormVisible">
+    <el-dialog title="单节编辑时间" :visible.sync="dialogCourseFormVisible">
       <el-form :model="courseForm" :rules="rules" ref="refCourseForm">
         <el-form-item label="开始日期" label-width="100px" prop="chooseStartDate">
           <el-date-picker
@@ -149,9 +152,7 @@ export default {
       dialogFormVisible: false,
       difference: null,
       rules: {
-        yshts: [
-          { required: true, message: "请输入变更天数", trigger: "blur" }
-        ],
+        yshts: [{ required: true, message: "请输入变更天数", trigger: "blur" }],
         chooseStartDate: [
           { required: true, message: "请选择开始日期", trigger: "blur" }
         ],
@@ -167,12 +168,13 @@ export default {
         chooseStartDate: null
       },
       // 变更日期
-      biangengDate:null
+      biangengDate: null,
+      chooseTerm: null
     };
   },
   props: ["item"],
   methods: {
-    onCalcBgts(date){
+    onCalcBgts(date) {
       let startTime = new Date(this.sjForm.chooseStartDate).getTime();
       let endTime = new Date(date).getTime();
       if (endTime - startTime < 1000 * 60 * 60 * 24) {
@@ -182,11 +184,12 @@ export default {
         this.sjForm.yshts = (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
       }
     },
-    showUpdatePage(item) {
+    showUpdatePage(item, index) {
       this.dialogCourseFormVisible = true;
       this.courseForm.jdid = item.id;
       this.courseForm.chooseStartDate = item.ksrq;
       this.courseForm.chooseEndDate = item.jzrq;
+      this.chooseTerm = this.monthitemTemplate[index].dictValue;
     },
     toGrade() {
       this.itemForm = JSON.parse(JSON.stringify(this.item));
@@ -194,10 +197,15 @@ export default {
         this.itemForm.zfx = this.itemForm.zfx.join(",");
       }
       if (this.itemForm.rybjid) {
+        this.itemForm.chooseTerm = this.chooseTerm;
         queryGenerateTeachingPlanData(this.itemForm).then(res => {
           if (res.code == 200 && res.data.allData.length > 0) {
             this.MonthList = res.data.monthMap;
-            this.dataWwitching(this.MonthList.xueqiDict[0]);
+            this.MonthList.xueqiDict.forEach(value => {
+              if (value.flag == "1") {
+                this.dataWwitching(value);
+              }
+            });
           } else {
             this.MonthList = [];
           }
@@ -205,12 +213,13 @@ export default {
       }
     },
     dataWwitching(row) {
+      let dic = row.dictValue;
       let monthitem = this.MonthList.monthList;
       this.MonthList.xueqiDict.forEach(value => {
         if (value.dictValue === row.dictValue) {
-          value.ifClass = true;
+          value.flag = "1";
         } else {
-          value.ifClass = false;
+          value.flag = "0";
         }
       });
       this.$nextTick(() => {
@@ -258,6 +267,7 @@ export default {
                     }
                   });
                   this.monthitemTemplate.push({
+                    dictValue: dic,
                     title: `${name}`,
                     list: monthitem[key][name]
                   });
@@ -280,11 +290,12 @@ export default {
       D = D.length == 1 ? `0${D}` : D;
       return F + "-" + M + "-" + D;
     },
-    editSj(row) {
+    editSj(row, index) {
       this.biangengDate = null;
       this.sjForm.chooseStartDate = row.ksrq;
       this.sjForm.chooseEndDate = row.jzrq;
       this.sjForm.yshts = null;
+      this.chooseTerm = this.monthitemTemplate[index].dictValue;
       this.changeTime(this.sjForm);
       this.dialogFormVisible = true;
     },
