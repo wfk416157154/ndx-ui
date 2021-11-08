@@ -1,5 +1,6 @@
 <template>
   <div class="login" ref="clcheight">
+    <y-notice-bar :switchNotice="true" :title="title"></y-notice-bar>
     <div id="app">
       <vue-particles
         class="login-bg"
@@ -72,7 +73,7 @@
 </template>
 
 <script>
-import { getCodeImg,getSystemUpdateStatus } from "@/api/login";
+import { getCodeImg, getSystemUpdateStatus } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from "@/utils/jsencrypt";
 
@@ -89,6 +90,7 @@ export default {
         code: "",
         uuid: ""
       },
+      title: "系统更新中,请稍后再登入",
       loginRules: {
         username: [
           { required: true, trigger: "blur", message: "用户名不能为空" }
@@ -101,7 +103,7 @@ export default {
       loading: false,
       redirect: undefined,
       // 是否在更新系统
-      isUpdateSystem:false
+      isUpdateSystem: false
     };
   },
   watch: {
@@ -118,11 +120,11 @@ export default {
   },
   mounted() {
     this.$refs.clcheight.style.height = `${document.documentElement.clientHeight}px`;
-    getSystemUpdateStatus().then(res=>{
-      if("true"==res.data){
-        this.isUpdateSystem=true
-      }else{
-        this.isUpdateSystem=false
+    getSystemUpdateStatus().then(res => {
+      if ("true" == res.data) {
+        this.isUpdateSystem = true;
+      } else {
+        this.isUpdateSystem = false;
       }
     });
   },
