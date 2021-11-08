@@ -211,14 +211,15 @@
         });
       },
       // 点击总复习-新增一行
-      async insertEvent(chooseId,row) {
+      async insertEvent(vo,row) {
         const $table = this.$refs.xTable
         let nowDate = new Date()
         const record = {
           rybjid: this.itemForm.rybjid,
           kclx: '2',// 复习=2
           ksrq: nowDate,
-          kzzd1:chooseId
+          kzzd1:vo.chooseId, // 复习id
+          jincheng:vo.chooseFxmc // 复习名称
         }
         if (this.lastTermDateObj) {
           // 学期数据的最大的截至日期作为这个开始日期

@@ -484,8 +484,25 @@ export default {
       }
       let chooseId=this.rtnChooseId(chooseZfxArr)
       if(chooseId){// 当勾选有值了
-        obj.insertEvent(chooseId,-1);
+        let vo={
+          chooseId:chooseId,
+          chooseFxmc:this.rtnChooseFxmc(chooseId)
+        }
+        obj.insertEvent(vo,-1);
       }
+    },
+    rtnChooseFxmc(chooseId){
+      let arr=this.reviewList
+      let obj
+      let chooseFxmc=""
+      for (let i = 0; i < arr.length; i++) {
+        obj=arr[i]
+        if(chooseId==obj.jdid){
+          chooseFxmc=obj.jdmc
+          break
+        }
+      }
+      return chooseFxmc
     },
     // 返回当前勾选的id
     rtnChooseId(chooseZfxArr){
