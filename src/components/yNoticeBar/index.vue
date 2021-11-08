@@ -51,6 +51,7 @@ export default {
   z-index: 10000;
   color: #f56c6c;
   overflow: hidden;
+  font-weight: 800;
   .content {
     width: 100%;
     height: 100%;

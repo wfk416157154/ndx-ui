@@ -1,5 +1,6 @@
 <template>
   <div :class="classObj" class="app-wrapper" :style="{'--current-color': theme}">
+    <y-notice-bar :switchNotice="isUpdateSystem" :title="title"></y-notice-bar>
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar
       class="sidebar-container"
@@ -24,7 +25,7 @@ import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 import { mapState } from "vuex";
 import variables from "@/assets/styles/variables.scss";
-
+import { getSystemUpdateStatus } from "@/api/login";
 export default {
   name: "Layout",
   components: {
@@ -34,6 +35,12 @@ export default {
     Settings,
     Sidebar,
     TagsView
+  },
+  data() {
+    return {
+      title: "系统正在更新，请等待3-10分钟",
+      isUpdateSystem: false
+    };
   },
   mixins: [ResizeMixin],
   computed: {
@@ -57,6 +64,15 @@ export default {
     variables() {
       return variables;
     }
+  },
+  mounted() {
+    getSystemUpdateStatus().then(res => {
+      if ("true" == res.data) {
+        this.isUpdateSystem = true;
+      } else {
+        this.isUpdateSystem = false;
+      }
+    });
   },
   methods: {
     handleClickOutside() {
