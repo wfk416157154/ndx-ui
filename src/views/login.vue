@@ -1,6 +1,5 @@
 <template>
   <div class="login" ref="clcheight">
-    <y-notice-bar :switchNotice="true" :title="title"></y-notice-bar>
     <div id="app">
       <vue-particles
         class="login-bg"
@@ -64,11 +63,11 @@
               @click="handleLogin('loginForm')"
               v-if="!isUpdateSystem"
             >登&nbsp;&nbsp;录</el-button>
-            <span style="color: red" v-if="isUpdateSystem">系统正在更新，请等待3-10分钟！</span>
           </el-form-item>
         </el-form>
       </div>
     </div>
+    <y-notice-bar :switchNotice="isUpdateSystem" :title="title"></y-notice-bar>
   </div>
 </template>
 
@@ -90,7 +89,7 @@ export default {
         code: "",
         uuid: ""
       },
-      title: "系统更新中,请稍后再登入",
+      title: "系统正在更新，请等待3-10分钟！再登入",
       loginRules: {
         username: [
           { required: true, trigger: "blur", message: "用户名不能为空" }

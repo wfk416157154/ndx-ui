@@ -2,7 +2,7 @@
   <div class="wrap-notice-bar" v-if="switchNotice">
     <div class="content">
       <div
-        style="width : 30px;background : rgb(255, 251, 232);height : 30px;position : fixed;z-index : 10000;left : 0;"
+        style="width : 30px;background : rgb(255, 251, 232);height : 30px;position : fixed;z-index : 10000;"
       ></div>
       <span class="wrap-title" ref="title">{{title}}</span>
       <div
@@ -46,6 +46,8 @@ export default {
   background-color: rgb(255, 251, 232);
   position: fixed;
   top: 0;
+  // left: 0;
+  // right: 0;
   z-index: 10000;
   color: rgb(242, 146, 73);
   overflow: hidden;
