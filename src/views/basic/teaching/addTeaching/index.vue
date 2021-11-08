@@ -126,7 +126,7 @@
               :disabled="!teachingForm.rybjid"
             >点击查看该班课表</el-button>
             <el-button @click="resetForm('teachingForm')">重置</el-button>
-            <el-button type="primary" :disabled="!teachingForm.rybjid" @click="saveTeachingForm">保存</el-button>
+            <el-button type="primary" :disabled="!teachingForm.rybjid" v-prevent-re-click @click="saveTeachingForm">保存</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -151,7 +151,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <el-dialog title="添加" :visible.sync="dialogFormVisible">
+        <el-dialog title="添加跳过时间" :visible.sync="dialogFormVisible">
           <el-form :model="skipDateForm">
             <el-form-item label="名称" label-width="120px">
               <el-input v-model="skipDateForm.timeName"></el-input>
@@ -175,7 +175,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="saveSkiptime">确 定</el-button>
+            <el-button type="primary" v-prevent-re-click @click="saveSkiptime">确 定</el-button>
           </div>
         </el-dialog>
       </div>
@@ -186,12 +186,14 @@
         @click="addTeaching"
         v-if="!showUpdateBtn"
         :disabled="!teachingForm.id"
+        v-prevent-re-click
       >生成教学计划</el-button>
       <el-button
         type="info"
         @click="editTeaching"
         v-if="showUpdateBtn"
         :disabled="!teachingForm.id"
+        v-prevent-re-click
       >更新教学计划</el-button>
     </div>
     <div class="wrap-teaching-content" v-if="showUpdateBtn">

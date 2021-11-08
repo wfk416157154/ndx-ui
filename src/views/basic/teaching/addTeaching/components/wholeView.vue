@@ -83,7 +83,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editDateSubmit">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="editDateSubmit">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="编辑时间" :visible.sync="dialogCourseFormVisible">
@@ -109,7 +109,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogCourseFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editCourseDateSubmit">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="editCourseDateSubmit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
