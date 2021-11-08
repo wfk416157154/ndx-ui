@@ -49,7 +49,7 @@ export default {
   // left: 0;
   // right: 0;
   z-index: 10000;
-  color: rgb(242, 146, 73);
+  color: #f56c6c;
   overflow: hidden;
   .content {
     width: 100%;
