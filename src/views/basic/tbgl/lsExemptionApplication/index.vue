@@ -290,11 +290,17 @@ export default {
         mzyy: this.mzform.mzyy
       };
       addMianze(jsonList).then(res => {
-        if (res.code == 200) {
-          this.msgSuccess("成功 : 操作成功");
-          this.$router.push({
-            path: "/tbgl/lsExemptionList"
+        if(res.code=200){
+          // 获取页面中参数配置的路由
+          this.getConfigKey("mzlb").then(resp => {
+            this.router = resp.msg;
+            this.$router.push({
+              path: this.router
+            });
           });
+          this.msgSuccess("提交成功");
+        }else{
+          this.msgError("提交失败！请联系管理员")
         }
       });
     }

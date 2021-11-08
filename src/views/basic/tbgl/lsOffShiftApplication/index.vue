@@ -377,10 +377,19 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           addStuTuiban(this.form).then(response => {
-            this.msgSuccess("新增成功");
-            this.$router.push({
-              path: "/tbgl/lsOffShiftList"
-            });
+            if(response.code=200){
+              // 获取页面中参数配置的路由
+              this.getConfigKey("tblb").then(resp => {
+                this.router = resp.msg;
+                this.$router.push({
+                  path: this.router
+                });
+              });
+              this.msgSuccess("提交成功");
+            }else{
+              this.msgError("提交失败！请联系管理员")
+            }
+
           });
         }
       });
