@@ -27,6 +27,7 @@ import Editor from "@/components/Editor"
 // 进度条
 import Progress from "@/components/progress"
 import calendar from "@/components/calendar"
+import yNoticeBar from "@/components/yNoticeBar"
 import historicalRecords from "@/components/historical-records"
 // 文件上传组件
 import FileUpload from "@/components/FileUpload"
@@ -75,6 +76,7 @@ Vue.component('DictTag', DictTag)
 Vue.component('Editor', Editor)
 Vue.component('Progress', Progress)
 Vue.component('historical-records', historicalRecords)
+Vue.component('y-notice-bar', yNoticeBar)
 Vue.component('calendar', calendar)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)

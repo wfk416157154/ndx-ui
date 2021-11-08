@@ -63,16 +63,16 @@
               @click="handleLogin('loginForm')"
               v-if="!isUpdateSystem"
             >登&nbsp;&nbsp;录</el-button>
-            <span style="color: red" v-if="isUpdateSystem">系统正在更新，请等待3-10分钟！</span>
           </el-form-item>
         </el-form>
       </div>
     </div>
+    <y-notice-bar :switchNotice="isUpdateSystem" :title="title"></y-notice-bar>
   </div>
 </template>
 
 <script>
-import { getCodeImg,getSystemUpdateStatus } from "@/api/login";
+import { getCodeImg, getSystemUpdateStatus } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from "@/utils/jsencrypt";
 
@@ -89,6 +89,7 @@ export default {
         code: "",
         uuid: ""
       },
+      title: "系统正在更新，请等待3-10分钟！再登入",
       loginRules: {
         username: [
           { required: true, trigger: "blur", message: "用户名不能为空" }
@@ -101,7 +102,7 @@ export default {
       loading: false,
       redirect: undefined,
       // 是否在更新系统
-      isUpdateSystem:false
+      isUpdateSystem: false
     };
   },
   watch: {
@@ -118,11 +119,11 @@ export default {
   },
   mounted() {
     this.$refs.clcheight.style.height = `${document.documentElement.clientHeight}px`;
-    getSystemUpdateStatus().then(res=>{
-      if("true"==res.data){
-        this.isUpdateSystem=true
-      }else{
-        this.isUpdateSystem=false
+    getSystemUpdateStatus().then(res => {
+      if ("true" == res.data) {
+        this.isUpdateSystem = true;
+      } else {
+        this.isUpdateSystem = false;
       }
     });
   },

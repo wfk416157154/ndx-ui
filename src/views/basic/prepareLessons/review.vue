@@ -21,13 +21,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="教材" label-width="100px" prop="materialId">
-        <treeselect v-model="queryParams.materialId" style="width: 200px" :options="teachingMaterialList"
-                    :normalizer="normalizerMaterial" placeholder="请选择教材"/>
-      </el-form-item>
-      <el-form-item label="教学模板" label-width="100px" prop="templateId">
-        <treeselect v-model="queryParams.templateId" style="width: 200px" :options="teachingTemplateList"
-                    :normalizer="normalizerTemplate" placeholder="请选择教学模板"/>
+
+      <el-form-item label="复习资料" label-width="100px" prop="templateId">
+        <treeselect v-model="queryParams.reviewId" style="width: 200px" :options="teachingReviewList"
+                    :normalizer="normalizerTemplate" placeholder="请选择知识点"/>
       </el-form-item>
       <!--      <el-form-item label="审核状态(合格，优秀，不合格)" prop="shzt">-->
       <!--        <el-input-->
@@ -45,17 +42,17 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-<!--      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['basic:prepareLessons:add']"
-        >新增
-        </el-button>
-      </el-col>-->
+      <!--      <el-col :span="1.5">
+              <el-button
+                type="primary"
+                plain
+                icon="el-icon-plus"
+                size="mini"
+                @click="handleAdd"
+                v-hasPermi="['basic:prepareLessons:add']"
+              >新增
+              </el-button>
+            </el-col>-->
       <!--  <el-col :span="1.5">
           <el-button
             type="success"
@@ -99,15 +96,16 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table style="width: 100%;font-size : 18px" v-loading="loading" :height="$root.tableHeight" border :data="prepareLessonsList"
+    <el-table style="width: 100%;font-size : 18px" v-loading="loading" :height="$root.tableHeight" border
+              :data="prepareLessonsList"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="班级" align="center" prop="rybjmc"/>
       <el-table-column label="老师" align="center" prop="lsxm"/>
-      <el-table-column label="教材" align="center" prop="jcmc"/>
-      <el-table-column label="单元" align="center" prop="dymc"/>
-      <el-table-column label="课程" align="center" prop="kcmc"/>
-      <el-table-column label="课程安排" align="center" prop="kcrwmc"/>
+      <el-table-column label="复习资料" align="center" prop="fxzlmc"/>
+      <el-table-column label="章" align="center" prop="zmc"/>
+      <el-table-column label="节" align="center" prop="jmc"/>
+      <el-table-column label="知识点" align="center" prop="zsdmc"/>
       <!--      <el-table-column label="备注" align="center" prop="remark" />-->
       <!--      <el-table-column label="审核状态(合格，优秀，不合格)" align="center" prop="shzt" />-->
       <el-table-column label="备课时间" align="center" prop="createTime" width="180">
@@ -147,22 +145,22 @@
     <!-- 添加或修改备课对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="教材" prop="jcmc">
-          <el-input v-model="form.jcmc" disabled/>
+        <el-form-item label="复习资料" prop="fxzlmc">
+          <el-input v-model="form.fxzlmc" disabled/>
         </el-form-item>
-        <el-form-item label="单元" prop="dymc">
-          <el-input v-model="form.dymc" disabled/>
+        <el-form-item label="章" prop="zmc">
+          <el-input v-model="form.zmc" disabled/>
         </el-form-item>
-        <el-form-item label="课程名称" prop="kcmc">
-          <el-input v-model="form.kcmc" disabled/>
+        <el-form-item label="节" prop="jmc">
+          <el-input v-model="form.jmc" disabled/>
         </el-form-item>
-        <el-form-item label="课程安排" prop="kcrwmc">
-          <el-input v-model="form.kcrwmc" disabled/>
+        <el-form-item label="知识点" prop="zsdmc">
+          <el-input v-model="form.zsdmc" disabled/>
         </el-form-item>
         <el-form-item label="备课时间" prop="createTime">
           <el-input v-model="form.createTime" disabled/>
         </el-form-item>
-        <el-form-item label="备课图片" >
+        <el-form-item label="备课图片">
           <el-image
             style="width: 100px; height: 100px;margin : 30px"
             v-for="(item,index) in form.bkTpArr"
@@ -171,16 +169,16 @@
             :preview-src-list="[item]"
           ></el-image>
         </el-form-item>
-        <el-form-item label="备课文件" >
+        <el-form-item label="备课文件">
           <div v-for="(item, index) in form.bkWjArr">
             <el-link :href="form.bkWjArr[index]" target="_blank" type="primary">下载备课文件</el-link>
           </div>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <editor v-model="form.remark" :min-height="192" :disabled="true" />
+          <editor v-model="form.remark" :min-height="192" :disabled="true"/>
         </el-form-item>
         <el-form-item label="审核">
-          <el-select v-model="form.shzt" filterable >
+          <el-select v-model="form.shzt" filterable>
             <el-option
               v-for="dict in preparelesoonsStatus"
               :key="dict.dictValue"
@@ -190,10 +188,10 @@
           </el-select>
         </el-form-item>
       </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
-              <el-button @click="cancel">取 消</el-button>
-            </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
     </el-dialog>
 
     <!-- 导入对话框 -->
@@ -253,6 +251,10 @@
   import {listTeachingMaterial} from "@/api/basic/teachingMaterial";
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+  import {
+    listTeachingReview
+  } from "@/api/basic/teachingReview";
+
   export default {
     name: "prepareLessons",
     components: {
@@ -288,7 +290,7 @@
           rybjid: null,
           templatePath: null,
           materialId: null,
-          kclx: "1"
+          kclx: "2"
           // shzt: null,
         },
         // 表单参数
@@ -314,9 +316,9 @@
         classList: [],
         // 老师信息数据
         teacherListOption: [],
-        teachingTemplateList: [],
-        teachingMaterialList: [],
         preparelesoonsStatus: [],
+        // 教学计划总复习表格数据
+        teachingReviewList: [],
       };
     },
     created() {
@@ -330,11 +332,9 @@
       teacherList().then(response => {
         this.teacherListOption = response.rows;
       });
-      listTeachingTemplate().then(response => {
-        this.teachingTemplateList = this.handleTree(response.data, "id", "parentId");
-      });
-      listTeachingMaterial().then(response => {
-        this.teachingMaterialList = this.handleTree(response.data, "id", "parentId");
+      listTeachingReview(this.queryParams).then(response => {
+        this.teachingReviewList = this.handleTree(response.data, "id", "parentId");
+        this.loading = false;
       });
     },
     methods: {
