@@ -138,7 +138,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false" />
-      <el-table-column label="老师头像" align="center" prop="lstx" >
+      <el-table-column label="老师头像" align="center" width="150px" prop="lstx" >
         <template slot-scope="scope">
           <div class="block" style="display : flex; width : 100% ; height : 100%">
             <el-image v-if="scope.row.lstx!=null&&scope.row.lstx!=''"
