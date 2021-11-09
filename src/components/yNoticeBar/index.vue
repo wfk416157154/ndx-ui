@@ -20,20 +20,22 @@ export default {
   },
   methods: {
     notice() {
-      let son = window.innerWidth;
-      let timer;
-      clearInterval(timer);
-      timer = setInterval(() => {
-        son -= 2;
-        this.$refs.title.style.marginLeft = son + "px";
-        if (
-          this.$refs.title.offsetLeft <= -(this.$refs.title.offsetWidth - 30)
-        ) {
-          this.$refs.title.style.marginRight =
-            window.innerWidth + this.$refs.title.offsetWidth - 30;
-          son = window.innerWidth;
-        }
-      }, 50);
+      if (this.switchNotice) {
+        let son = window.innerWidth;
+        let timer;
+        clearInterval(timer);
+        timer = setInterval(() => {
+          son -= 2;
+          this.$refs.title.style.marginLeft = son + "px";
+          if (
+            this.$refs.title.offsetLeft <= -(this.$refs.title.offsetWidth - 30)
+          ) {
+            this.$refs.title.style.marginRight =
+              window.innerWidth + this.$refs.title.offsetWidth - 30;
+            son = window.innerWidth;
+          }
+        }, 50);
+      }
     }
   }
 };

@@ -226,9 +226,32 @@
                     v-for="(item,index) in fxTemplatetreeListTeacher"
                     :key="index"
                   >
-                    <template v-if="fxTemplatetreeListTeacher">
-                      <div style="width : 100%">
+                    <template v-if="templatetreeListTeacher">
+                      <div style="width : 55%">
                         <span style="color : #303133;margin : 0;padding : 0">{{item.name}}</span>
+                      </div>
+                      <div style=" display : flex; justify-content : space-between;width : 180px">
+                        <el-button
+                          style="width : 80px;text-align : center"
+                          type="info"
+                          size="mini"
+                          effect="dark"
+                          v-if="item.sfbk == '1'"
+                          @click="toEdit(item,'fx-lessonPreparation-index')"
+                        >查看</el-button>
+                        <el-tag
+                          style="width : 80px;text-align : center"
+                          type="success"
+                          effect="dark"
+                          v-if="item.sfbk == '1'"
+                        >已备课</el-tag>
+                        <el-button
+                          style="width : 80px;text-align : center"
+                          size="mini"
+                          v-else
+                          type="danger"
+                          @click="toEdit(item,'fx-lessonPreparation-edit')"
+                        >去备课</el-button>
                       </div>
                     </template>
                   </li>
@@ -247,7 +270,8 @@ import { listBjclass } from "@/api/basic/bjclass";
 import {
   treeListTeacher,
   prepareLessons,
-  fxTreeListTeacher
+  fxTreeListTeacher,
+  treeListTeacherForReview
 } from "@/api/basic/lessonPreparationHome";
 export default {
   data() {
@@ -344,8 +368,12 @@ export default {
         this.treeListTeacherData = JSON.parse(JSON.stringify(res.data));
         this.dataProcessing(this.treeListTeacherData);
       });
-      fxTreeListTeacher(this.form).then(res => {
-        this.fxTreeListTeacherData = res.data.treeReview;
+      // fxTreeListTeacher(this.form).then(res => {
+      //   this.fxTreeListTeacherData = res.data.treeReview;
+      //   this.fxDataProcessing(this.fxTreeListTeacherData);
+      // });
+      treeListTeacherForReview(this.form).then(res => {
+        this.fxTreeListTeacherData = res.data;
         this.fxDataProcessing(this.fxTreeListTeacherData);
       });
     },

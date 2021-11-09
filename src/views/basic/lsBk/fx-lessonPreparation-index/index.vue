@@ -8,25 +8,13 @@
         <thead>
           <tr>
             <th>课程</th>
-            <th>{{paramsList.kcmc}}</th>
+            <th>{{title.fxzlmc}} / {{title.zmc}} / {{title.jmc}} / {{title.zsdmc}}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>课程安排</td>
             <td>{{paramsList.name}}</td>
-          </tr>
-          <tr>
-            <td>课程教学参考</td>
-            <td>
-              <editor v-model="paramsList.kcjxck" :disabled="true" :min-height="192" />
-            </td>
-          </tr>
-          <tr>
-            <td>教参内容</td>
-            <td style="text-align : left">
-              <editor v-model="paramsList.kcapjxck" :disabled="true" :min-height="192" />
-            </td>
           </tr>
           <tr>
             <td>备课</td>
@@ -62,18 +50,22 @@
 </template>
 
 <script>
-import { prepareLessons } from "@/api/basic/lessonPreparationHome";
+import { fxlxVOQuery, prepareLessons } from "@/api/basic/lessonPreparationHome";
 export default {
   data() {
     return {
       form: {},
       paramsList: null,
-      itemResult: {}
+      itemResult: {},
+      title: {}
     };
   },
   created() {
     if (this.$route.query.list) {
       this.paramsList = JSON.parse(this.$route.query.list);
+      fxlxVOQuery({ id: this.paramsList.id }).then(res => {
+        this.title = res.data;
+      });
     }
   },
   mounted() {
