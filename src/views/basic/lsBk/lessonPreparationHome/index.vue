@@ -368,13 +368,14 @@ export default {
         this.treeListTeacherData = JSON.parse(JSON.stringify(res.data));
         this.dataProcessing(this.treeListTeacherData);
       });
-      // fxTreeListTeacher(this.form).then(res => {
-      //   this.fxTreeListTeacherData = res.data.treeReview;
-      //   this.fxDataProcessing(this.fxTreeListTeacherData);
-      // });
       treeListTeacherForReview(this.form).then(res => {
-        this.fxTreeListTeacherData = res.data;
-        this.fxDataProcessing(this.fxTreeListTeacherData);
+        if (res.code == 200 && res.data.length > 0) {
+          this.fxTreeListTeacherData = res.data;
+          this.fxDataProcessing(this.fxTreeListTeacherData);
+        } else {
+          this.fxTreeListTeacherData = [];
+          this.fxTemplatetreeListTeacher = null;
+        }
       });
     },
     dataProcessing(item) {
