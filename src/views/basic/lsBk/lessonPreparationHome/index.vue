@@ -226,7 +226,7 @@
                     v-for="(item,index) in fxTemplatetreeListTeacher"
                     :key="index"
                   >
-                    <template v-if="templatetreeListTeacher">
+                    <template v-if="fxTemplatetreeListTeacher">
                       <div style="width : 55%">
                         <span style="color : #303133;margin : 0;padding : 0">{{item.name}}</span>
                       </div>
