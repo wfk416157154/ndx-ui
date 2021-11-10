@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
-      <el-form-item label="角色名称" prop="roleName">
+    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true" >
+      <el-form-item label="角色名称" prop="roleName" >
         <el-input
           v-model="queryParams.roleName"
           placeholder="请输入角色名称"
@@ -287,15 +287,33 @@
 
 
     <el-dialog :title="title" :visible.sync="openUserPage" width="800px" append-to-body>
-
+      <el-form :model="userqueryParams" ref="userForm" label-width="80px" :inline="true">
+        <el-form-item label="用户名称" prop="nickName">
+            <el-input v-model="userqueryParams.nickName" placeholder="请输入用户名称" />
+        </el-form-item>
+        <el-form-item label="用户账号" prop="userName">
+          <el-input v-model="userqueryParams.userName" placeholder="请输入用户账号(手机号)" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleUserQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetUserQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
       <el-table v-loading="userloading" :data="userList" @selection-change="handleSelectionUserChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId"  />
+          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="false" />
           <el-table-column label="用户账号" align="center" key="userName" prop="userName"  />
           <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName"  />
-          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName"  />
+          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="false" />
           <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber"  width="120" />
         </el-table>
+      <pagination
+        v-show="usertotal>0"
+        :total="usertotal"
+        :page.sync="userqueryParams.pageNum"
+        :limit.sync="userqueryParams.pageSize"
+        @pagination="pageNumInvoke"
+      />
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-if="delButton" @click="delRoleUser">删除该角色的用户</el-button>
@@ -396,6 +414,8 @@ export default {
       },
       // 查询参数
       userqueryParams: {
+        nickName:null,
+        userName:null,
         pageNum: 1,
         pageSize: 10,
       },
@@ -418,7 +438,8 @@ export default {
         roleSort: [
           { required: true, message: "角色顺序不能为空", trigger: "blur" }
         ]
-      }
+      },
+
     };
   },
   created() {
@@ -616,32 +637,67 @@ export default {
         this.title = "修改角色";
       });
     },
+    // 用户查询
+    handleUserQuery(){
+      this.userqueryParams.pageNum = 1;
+      if(this.addButton){ // 如果是查询未分配角色的用户
+        this.selectNotIn()
+      }else{
+        this.selectUser()
+      }
+    },
+    resetUserQuery(){
+      this.resetForm("userForm");
+      if(this.addButton){ // 如果是查询未分配角色的用户
+        this.selectNotIn()
+      }else{
+        this.selectUser()
+      }
+      this.selectUser();
+    },
+    pageNumInvoke(){
+      if(this.addButton){ // 如果是查询未分配角色的用户
+        this.selectNotIn()
+      }else{
+        this.selectUser()
+      }
+    },
     // 角色分配用户（查询未分配该角色的用户）
     handleDistributionUser(row){
+      this.resetForm("userForm");
       this.delButton=false;
       this.addButton=true;
       this.title="查询未分配该角色的用户";
       this.openUserPage=true;
       this.userloading = true;
       this.rowRoleId=row.roleId;
-      selectNotInRoleUser({roleId:row.roleId}).then(response => {
-          this.userList = response.rows;
-          this.total = response.total;
-          this.userloading = false;
-        }
-      );
+      this.userqueryParams.roleId=row.roleId
+      this.selectNotIn()
     },
     //查询已分配该角色的用户
     handleInRoleUser(row){
+      this.resetForm("userForm");
       this.delButton=true;
       this.addButton=false;
       this.title="查询已分配该角色的用户";
       this.userloading = true;
       this.openUserPage=true;
       this.rowRoleId=row.roleId;
-      selectInRoleUser({roleId:row.roleId}).then(response => {
+      this.userqueryParams.roleId=row.roleId
+      this.selectUser()
+    },
+    selectUser(){
+      selectInRoleUser(this.userqueryParams).then(response => {
           this.userList = response.rows;
-          this.total = response.total;
+          this.usertotal = response.total;
+          this.userloading = false;
+        }
+      );
+    },
+    selectNotIn(){
+      selectNotInRoleUser(this.userqueryParams).then(response => {
+          this.userList = response.rows;
+          this.usertotal = response.total;
           this.userloading = false;
         }
       );
