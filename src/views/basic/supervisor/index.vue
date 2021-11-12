@@ -1,6 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="日期" prop="dateArr">
+        <el-date-picker
+          v-model="dateArr"
+          type="daterange"
+          align="right"
+          @change="dateOnchange"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions">
+        </el-date-picker>
+      </el-form-item>
       <el-form-item label="组长名称" prop="zzid">
         <el-select v-model="queryParams.zzid" filterable placeholder="请选择组长" style="width: 100%" >
           <el-option
@@ -144,11 +157,41 @@
 <script>
   import {listSupervisor, getSupervisor, delSupervisor, addSupervisor, updateSupervisor,getLoginUnderGroup,listUser,listDept} from "@/api/basic/supervisor";
   import {getToken} from "@/utils/auth";
+  import {parseTime} from "../../../utils/ruoyi";
   export default {
     name: "Supervisor",
     components: {},
     data() {
       return {
+        dateArr:[],
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+
         // 遮罩层
         loading: true,
         // 选中数组
@@ -171,6 +214,8 @@
           zzbmid: null,
           sjrid: null,
           sjrbmid: null,
+          ksrqStr:null,
+          jzrqStr:null
         },
         userListOption:[],
         deptListOption:[],
@@ -245,10 +290,14 @@
         }).catch((e) => {
           console.log(e);
         })
-
       },
-
-
+      // 日期范围选择后触发
+      dateOnchange(date){
+        if(date){
+          this.queryParams.ksrqStr=parseTime(date[0],'{y}-{m}-{d}')
+          this.queryParams.jzrqStr=parseTime(date[1],'{y}-{m}-{d}')
+        }
+      },
     }
   };
 </script>

@@ -198,7 +198,6 @@
       addInvokeMethod(){
         this.reset()
         getLoginUnderGroup().then(res=>{
-          console.log("res:",res)
           if(res.code==200){
             let vo=res.data
             this.ddzTitle=vo.zzbmmc // 组长部门名称
