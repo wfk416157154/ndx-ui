@@ -1,37 +1,40 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="组长id" prop="zzid">
-        <el-input
-          v-model="queryParams.zzid"
-          placeholder="请输入组长id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="组长名称" prop="zzid">
+        <el-select v-model="queryParams.zzid" filterable placeholder="请选择组长" style="width: 100%" >
+          <el-option
+            v-for="item in userListOption"
+            :key="item.id"
+            :label="item.nickName"
+            :value="item.glrid"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="组长部门id" prop="zzbmid">
-        <el-input
-          v-model="queryParams.zzbmid"
-          placeholder="请输入组长部门id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="部门名称" prop="zzbmid">
+        <el-select v-model="queryParams.zzbmid" filterable placeholder="请选择部门" style="width: 100%" >
+          <el-option
+            v-for="item in deptListOption"
+            :key="item.id"
+            :label="item.deptName"
+            :value="item.deptId"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="试讲人id" prop="sjrid">
-        <el-input
-          v-model="queryParams.sjrid"
-          placeholder="请输入试讲人id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="试讲人" prop="sjrid">
+        <el-select v-model="queryParams.sjrid" filterable placeholder="请选择试讲人" style="width: 100%" >
+          <el-option
+            v-for="item in userListOption"
+            :key="item.id"
+            :label="item.nickName"
+            :value="item.glrid"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="试讲人部门id" prop="sjrbmid">
+      <el-form-item label="试讲内容" prop="sjnr">
         <el-input
-          v-model="queryParams.sjrbmid"
-          placeholder="请输入试讲人部门id"
+          v-model="queryParams.sjnr"
+          placeholder="请输入试讲内容"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -85,17 +88,25 @@
     <el-table v-loading="loading" :height="$root.tableHeight" border :data="supervisorList"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="主键" align="center" prop="id"/>
-      <el-table-column label="组长id" align="center" prop="zzid"/>
-      <el-table-column label="组长部门id" align="center" prop="zzbmid"/>
-      <el-table-column label="试讲人id" align="center" prop="sjrid"/>
-      <el-table-column label="试讲人部门id" align="center" prop="sjrbmid"/>
+      <el-table-column label="主键" align="center" prop="id" v-if="false" />
+      <el-table-column label="组长id" align="center" prop="zzid" v-if="false"/>
+      <el-table-column label="时间" align="center" prop="ksrq" >
+        <template slot-scope="scope">
+          <span>{{parseTime(scope.row.ksrq,'{y}-{m}-{d}')}}至{{parseTime(scope.row.jzrq,'{y}-{m}-{d}')}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="组长名称" align="center" prop="zzmc" />
+      <el-table-column label="组长部门id" align="center" prop="zzbmid" v-if="false"/>
+      <el-table-column label="部门名称" align="center" prop="zzbmmc" />
+      <el-table-column label="试讲人id" align="center" prop="sjrid" v-if="false"/>
+      <el-table-column label="试讲人" align="center" prop="sjrmc" />
+      <el-table-column label="试讲人部门id" align="center" prop="sjrbmid" v-if="false"/>
       <el-table-column label="试讲用时" align="center" prop="sjys"/>
       <el-table-column label="试讲内容" align="center" prop="sjnr"/>
-      <el-table-column label="试讲评价" align="center" prop="sjpj"/>
-      <el-table-column label="班级管理" align="center" prop="bjgl"/>
-      <el-table-column label="问题解答" align="center" prop="wtjd"/>
-      <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="试讲评价" align="center" prop="sjpj" v-if="false"/>
+      <el-table-column label="班级管理" align="center" prop="bjgl" v-if="false"/>
+      <el-table-column label="问题解答" align="center" prop="wtjd" v-if="false"/>
+      <el-table-column label="备注" align="center" prop="remark" v-if="false"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -131,7 +142,7 @@
 </template>
 
 <script>
-  import {listSupervisor, getSupervisor, delSupervisor, addSupervisor, updateSupervisor,getLoginUnderGroup} from "@/api/basic/supervisor";
+  import {listSupervisor, getSupervisor, delSupervisor, addSupervisor, updateSupervisor,getLoginUnderGroup,listUser,listDept} from "@/api/basic/supervisor";
   import {getToken} from "@/utils/auth";
   export default {
     name: "Supervisor",
@@ -152,10 +163,6 @@
         total: 0,
         // 督导会议记录表格数据
         supervisorList: [],
-        // 弹出层标题
-        title: "",
-        // 是否显示弹出层
-        open: false,
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -165,22 +172,20 @@
           sjrid: null,
           sjrbmid: null,
         },
-        // 表单参数
-        form: {},
-        // 表单校验
-        rules: {},
+        userListOption:[],
+        deptListOption:[],
       };
     },
     created() {
       this.getList();
-
-    },
-    mounted() {
-
-
+      listUser().then(data=>{
+        this.userListOption=data
+      });
+      listDept().then(data=>{
+        this.deptListOption=data
+      });
     },
     methods: {
-
       /** 查询督导会议记录列表 */
       getList() {
         this.loading = true;
@@ -189,40 +194,6 @@
           this.total = response.total;
           this.loading = false;
         });
-      },
-      // 取消按钮
-      cancel() {
-        this.open = false;
-        this.reset();
-      },
-      // 表单重置
-      reset() {
-        this.form = {
-          id: null,
-          ksrq:null,
-          jzrq:null,
-          zzid: null,
-          zzbmid: null,
-          sjrid: null,
-          sjrbmid: null,
-          sjys: null,
-          sjnr: null,
-          sjpj: null,
-          bjgl: null,
-          wtjd: null,
-          status: "0",
-          remark: null,
-          userId: null,
-          dataOrder: null,
-          createTime: null,
-          updateTime: null,
-          kzzd1: null,
-          kzzd2: null,
-          kzzd3: null,
-          kzzd4: null,
-          kzzd5: null
-        };
-        this.resetForm("form");
       },
       /** 搜索按钮操作 */
       handleQuery() {
@@ -242,43 +213,21 @@
       },
       /** 新增按钮操作 */
       handleAdd() {
-        //this.getConfigKey(key).then(resp => {
-          //this.router = resp.msg;
+        this.getConfigKey("supervisorForm").then(resp => {
           this.$router.push({
-            path: "/ddz/supervisorForm",
+            path: resp.msg,
             query:{pageType:"add"}
           });
-        //});
-        this.title = "添加督导会议记录";
+        });
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
-        this.reset();
         const id = row.id || this.ids
-        getSupervisor(id).then(response => {
-          this.form = response.data;
-          this.open = true;
-          this.title = "修改督导会议记录";
-        });
-      },
-      /** 提交按钮 */
-      submitForm() {
-        this.$refs["form"].validate(valid => {
-          if (valid) {
-            if (this.form.id != null) {
-              updateSupervisor(this.form).then(response => {
-                this.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
-            } else {
-              addSupervisor(this.form).then(response => {
-                this.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
-            }
-          }
+        this.getConfigKey("supervisorForm").then(resp => {
+          this.$router.push({
+            path: resp.msg,
+            query:{pageType:"update",id:id}
+          });
         });
       },
       /** 删除按钮操作 */
@@ -303,13 +252,3 @@
     }
   };
 </script>
-<style lang="scss" scoped>
-  th,
-  td {
-    padding: 15px;
-    box-sizing: border-box;
-    font-size: 30px;
-  }
-
-
-</style>

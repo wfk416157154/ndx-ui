@@ -38,7 +38,7 @@
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="试讲用时" prop="sjys">
-                      <el-input v-model="form.sjys" placeholder="请输入试讲用时"/>
+                      <el-input v-model="form.sjys" placeholder="请输入试讲用时(分钟)"/>
                     </el-form-item>
                   </el-col>
                   <el-col :span="24">
@@ -57,9 +57,6 @@
                 <td>会议讨论</td>
                 <td>
                   <vxe-grid ref="xGrid" v-bind="gridOptions1">
-                    <template #toolbar_buttons>
-                      <el-button @click="saveEditTableData" type="success" icon="el-icon-circle-check">点击保存数据</el-button>
-                    </template>
                   </vxe-grid>
                 </td>
               </tr>
@@ -69,7 +66,6 @@
                   <el-form-item label="班级管理" prop="bjgl">
                     <editor v-model="form.bjgl" :min-height="150"/>
                   </el-form-item>
-
                 </td>
               </tr>
               <tr>
@@ -98,6 +94,7 @@
                     icon="el-icon-check"
                     v-prevent-re-click
                     @click="submitForm"
+                    :disabled="disabledSubmitBtn"
                   >提交
                   </el-button>
                 </td>
@@ -111,7 +108,7 @@
 </template>
 
 <script>
-  import {listSupervisor, getSupervisor, delSupervisor, addSupervisor, updateSupervisor,getLoginUnderGroup} from "@/api/basic/supervisor";
+  import {listSupervisor, getSupervisor,getLoginUnderGroup,addOrUpdateSupervisor} from "@/api/basic/supervisor";
   import {getToken} from "@/utils/auth";
   import {teacherList} from "@/api/basic/assignTeachers";
   import {parseTime} from "@/utils/ruoyi";
@@ -126,12 +123,6 @@
           resizable: true,
           showOverflow: true,
           align: 'center',
-          toolbarConfig: {
-            slots: {
-              // 自定义工具栏模板
-              buttons: 'toolbar_buttons'
-            }
-          },
           editConfig: {
             trigger: 'click',
             mode: 'row',
@@ -139,12 +130,11 @@
           },
           columns: [
             { type: 'seq',title:"序号", width: 50 },
+            { field: 'zyid',title:"组员id",visible:false},
+            { field: 'bmid',title:"部门id",visible:false},
             { field: 'zymc',title:"组员名称"},
           ],
-          data: [
-            { zlzd: "0", gdxszw: '1', kqzlzs: '1', kzxs: '0', txxs: '0', remark:"0"},
-            { zlzd: "1", gdxszw: '0', kqzlzs: '0', kzxs: '1', txxs: '1', remark: "1" },
-          ]
+          data: []
         },
 
         // 父页面传递过来的参数
@@ -154,7 +144,15 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {},
+        rules: {
+          sjrid: [{ required: true, message: "必填项", trigger: "change" }],
+          sjys: [{ required: true, message: "必填项", trigger: "blur" }],
+          sjnr: [{ required: true, message: "必填项", trigger: "blur" }],
+          sjpj: [{ required: true, message: "必填项", trigger: "blur" }],
+          bjgl: [{ required: true, message: "必填项", trigger: "blur" }],
+          wtjd: [{ required: true, message: "必填项", trigger: "blur" }],
+          remark: [{ required: true, message: "必填项", trigger: "blur" }],
+        },
         // 老师列表
         teacherListOption:[],
         // 会议讨论的项目选项
@@ -167,75 +165,118 @@
         ddzDateScope:"",
         // 督导组-组员
         ddzZyStr:"",
+        // 是否禁用提交按钮
+        disabledSubmitBtn:false
       };
     },
     created() {
       this.loadDictData()
       this.parentParams=this.$route.query
       this.getTeacherList()
-      this.addInvokeMethod()
     },
     mounted() {
 
     },
     methods: {
+      // 加载码表
       loadDictData(){
         this.getDicts("supervisorProjectOption").then(res=>{
           this.projectOptions=res.data
+          // 嵌套调用的目的必须要按顺序加载
           this.getDicts("isOrNot").then(res=>{
             this.isOrNotOption=this.renderDict(res.data)
+            this.renderTableColumn()
             if(this.parentParams.pageType=="add"){
-              this.renderTableColumn()
+              this.addInvokeMethod()
+            }else{
+              this.updateInvokeMethod()
             }
           });
         });
-
       },
-      saveEditTableData(){
-        console.log("saveEditTableData")
-      },
+      // 父页面点击添加按钮跳转过来要执行的方法
       addInvokeMethod(){
+        this.reset()
         getLoginUnderGroup().then(res=>{
+          console.log("res:",res)
           if(res.code==200){
-            let vo=res.data.supervisorVO
-            this.ddzTitle=vo.zzbmmc
-            this.form.zzid=vo.zzid
-            this.form.zzbmid=vo.zzbmid
-            this.form.zzmc=vo.zzmc
-            this.form.ksrq=vo.ksrq
-            this.form.jzrq=vo.jzrq
+            let vo=res.data
+            this.ddzTitle=vo.zzbmmc // 组长部门名称
+            this.form.zzid=vo.zzid // 组长id
+            this.form.zzbmid=vo.zzbmid // 组长部门id
+            this.form.zzmc=vo.zzmc // 组长名称
+            this.form.ksrq=vo.ksrq // 开始日期
+            this.form.jzrq=vo.jzrq //截止日期
             this.ddzDateScope=parseTime(vo.ksrq,"{y}-{m}-{d}")+"至"+parseTime(vo.jzrq,"{y}-{m}-{d}")
-            let zyList=res.data.zyList
-            let zyStr=""
-            for (let i = 0; i <zyList.length; i++) {
-              zyStr+=zyList[i].nick_name+"-"+zyList[i].user_name+","
-            }
-            this.ddzZyStr=zyStr.substring(0,zyStr.length-1)
-
-            let obj
-            let dict
-            let dataArr=[]
-            for (let i = 0; i <zyList.length; i++) {
-              obj={}
-              obj.zymc=zyList[i].nick_name
-              for (let j = 0; j < this.projectOptions.length; j++) {
-                dict=this.projectOptions[j]
-                obj[dict.dictValue]="0"
-              }
-              dataArr.push(obj)
-            }
-            this.gridOptions1.data=dataArr
+            this.rtnZyStr(vo.zyList)
+            this.renderTableData(vo.zyList)
+            this.disabledSubmitBtn=false
+          }else{
+            this.disabledSubmitBtn=true
+            this.skipIndex()
           }
         });
       },
+      // 父页面点击修改按钮跳转过来要执行的方法
+      updateInvokeMethod(){
+        this.reset()
+        getSupervisor(this.parentParams.id).then(response => {
+          let vo=response.data
+          this.form=vo
+          this.ddzTitle=vo.zzbmmc
+          this.form.zzmc=vo.zzmc
+          this.ddzDateScope=parseTime(vo.ksrq,"{y}-{m}-{d}")+"至"+parseTime(vo.jzrq,"{y}-{m}-{d}")
+          this.rtnZyStr(vo.zyList)
+          this.renderTableData(vo.zyList)
+        });
+      },
+      // 返回组员名称的拼接
+      rtnZyStr(zyList){
+        let zyStr=""// 组员-账号拼接
+        for (let i = 0; i <zyList.length; i++) {
+          zyStr+=zyList[i].zymc+","
+        }
+        this.ddzZyStr=zyStr.substring(0,zyStr.length-1)
+      },
+      // 动态渲染表格表头
       renderTableColumn(){
         let dict;
         let obj
         for (let i = 0; i <this.projectOptions.length ; i++) {
           dict=this.projectOptions[i]
-          obj={ field: dict.dictValue, title: dict.dictLabel ,editRender: { name: '$select', options:this.isOrNotOption }}
+          if("remark"==dict.dictValue){
+            obj={ field: dict.dictValue, title: dict.dictLabel ,editRender: { name: 'input'}}
+          }else{
+            obj={ field: dict.dictValue, title: dict.dictLabel ,editRender: { name: '$select', options:this.isOrNotOption }}
+          }
           this.gridOptions1.columns.push(obj)
         }
+      },
+      // 动态渲染表格数据
+      renderTableData(zyList){
+        let obj
+        let dict
+        let dataArr=[]
+        for (let i = 0; i <zyList.length; i++) {
+          obj={}
+          obj.zyid=zyList[i].zyid // 组员id(老师id)
+          obj.zymc=zyList[i].zymc // 组员名称
+          obj.bmid=zyList[i].bmid // 部门id
+          for (let j = 0; j < this.projectOptions.length; j++) {
+            dict=this.projectOptions[j]
+            if(zyList[i][dict.dictValue]){// 如果该字段有值
+              obj[dict.dictValue]=zyList[i][dict.dictValue]
+            }else{ // 默认值
+              if("remark"==dict.dictValue){
+                obj[dict.dictValue]="" // 默认：空
+              }else{
+                obj[dict.dictValue]="1" // 默认：是=1
+              }
+            }
+          }
+          dataArr.push(obj)
+        }
+        this.gridOptions1.data=dataArr
       },
       // 获取老师列表
       getTeacherList() {
@@ -245,8 +286,8 @@
       },
       // 取消按钮
       cancel() {
-        this.open = false;
         this.reset();
+        this.skipIndex()
       },
       // 表单重置
       reset() {
@@ -281,22 +322,34 @@
       submitForm() {
         this.$refs["form"].validate(valid => {
           if (valid) {
-            if (this.form.id != null) {
-              updateSupervisor(this.form).then(response => {
-                this.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
-            } else {
-              addSupervisor(this.form).then(response => {
-                this.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
+            let tableDataArr
+            // 保存编辑表格的数据
+            const $grid = this.$refs.xGrid
+            // 如果是添加
+            if("add"===this.parentParams.pageType){
+              tableDataArr=$grid.getTableData().tableData
+            }else{
+              tableDataArr=$grid.getUpdateRecords();
             }
+            this.form.tableListDataJson=JSON.stringify(tableDataArr)
+            addOrUpdateSupervisor(this.form).then(res => {
+              if(res.code==200){
+                this.skipIndex()
+                this.msgSuccess(res.msg);
+              }else{
+                this.msgError(res.msg)
+              }
+            });
           }
         });
       },
+      skipIndex(){
+        this.getConfigKey("supervisorIndex").then(resp => {
+          this.$router.push({
+            path: resp.msg,
+          });
+        });
+      }
 
 
     }

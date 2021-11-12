@@ -9,6 +9,24 @@ export function listSupervisor(query) {
   })
 }
 
+// 查询用户集合
+export function listUser(query) {
+  return request({
+    url: '/basic/supervisor/getUserList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询部门集合
+export function listDept(query) {
+  return request({
+    url: '/basic/supervisor/getDeptList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询督导会议记录详细
 export function getSupervisor(id) {
   return request({
@@ -25,6 +43,15 @@ export function getLoginUnderGroup() {
   })
 }
 
+
+// 新增或修改督导会议记录
+export function addOrUpdateSupervisor(data) {
+  return request({
+    url: '/basic/supervisor/addOrUpdate',
+    method: 'post',
+    data: data
+  })
+}
 
 // 新增督导会议记录
 export function addSupervisor(data) {
