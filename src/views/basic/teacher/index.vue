@@ -699,7 +699,7 @@ export default {
         this.$notify({
           title: "失败",
           message: response.msg,
-          type: "danger"
+          type: "error"
         });
       }
 
