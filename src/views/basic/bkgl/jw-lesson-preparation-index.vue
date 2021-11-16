@@ -82,7 +82,7 @@
       />
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="success" size="mini" @click="viewRowData(scope.row)">查看</el-button>
+          <el-button type="success" size="mini" @click="viewRowData(scope.row)">审 核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -151,13 +151,32 @@
                   <editor v-model="form.remark" :disabled="true" :min-height="192" />
                 </td>
               </tr>
+              <tr>
+                <td>审核</td>
+                <td style="padding : 40px;text-align : left">
+                  <el-select
+                    v-model="form.shzt"
+                    placeholder="请选择教案状态"
+                    :disabled="form.shzt != '1'"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="dict in preparelesoonsStatus"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="viewDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="viewDialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="editSubmit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -170,7 +189,8 @@ import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 import {
   listAcdemicDean,
   prepareLessonsDetails,
-  getSubLeaderIds
+  getSubLeaderIds,
+  editPrepareLessons
 } from "@/api/basic/bkgl";
 export default {
   name: "prepareLessons",
@@ -199,7 +219,9 @@ export default {
       prepareLessonAuditStatus: [],
       // 查看编辑
       viewDialogFormVisible: false,
-      assignorList: []
+      assignorList: [],
+      // 审核状态
+      shzt: ""
     };
   },
   created() {
@@ -260,6 +282,16 @@ export default {
       } else {
         return false;
       }
+    },
+    // 审核
+    editSubmit() {
+      let { shzt, id } = this.form;
+      editPrepareLessons({ shzt, id }).then(res => {
+        if (res.code == 200) {
+          this.viewDialogFormVisible = false;
+          this.getList();
+        }
+      });
     }
   }
 };

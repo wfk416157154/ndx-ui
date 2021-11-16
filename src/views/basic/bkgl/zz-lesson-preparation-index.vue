@@ -8,8 +8,8 @@
       label-width="68px"
     >
       <el-form-item>
-        <el-button type="success" size="mini">已审核</el-button>
-        <el-button type="danger" size="mini">未审核</el-button>
+        <el-button type="success" size="mini" @click="getStatus([3])">已审核</el-button>
+        <el-button type="danger" size="mini" @click="getStatus([1,2])">未审核</el-button>
       </el-form-item>
     </el-form>
 
@@ -19,22 +19,29 @@
 
     <el-table
       style="width: 100%;font-size : 18px"
-      v-loading="loading"
       :height="$root.tableHeight"
       border
-      :data="prepareLessonsList"
-      @selection-change="handleSelectionChange"
+      :data="lessonPreparationDataList"
     >
       <el-table-column label="班级" align="center" prop="rybjmc" />
       <el-table-column label="老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
-      <el-table-column label="课程安排" align="center" prop="dymc" />
-      <el-table-column label="状态" align="center" prop="kcrwmc" />
-      <el-table-column label="教案状态" align="center" prop="kcrwmc" />
+      <el-table-column label="教程安排" align="center" prop="kcrwmc" />
+      <el-table-column
+        label="教案审核状态"
+        align="center"
+        prop="jashzt"
+        :formatter="getPrepareLessonAuditStatus"
+      />
+      <el-table-column
+        label="教案状态"
+        align="center"
+        prop="shzt"
+        :formatter="getPreparelesoonsStatus"
+      />
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="success" size="mini">通过</el-button>
-          <el-button type="danger" size="mini">不通过</el-button>
+          <el-button type="success" size="mini" @click="viewSecondaryMenu(scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -46,298 +53,176 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+    <el-dialog title="查看备课信息" :visible.sync="viewDialogFormVisible">
+      <div
+        style="width : 100%;height : 100%;padding : 40px; box-sizing : border-box;text-align : center"
+      >
+        <div>
+          <table style="width : 100%;" border="1" cellspacing="0">
+            <thead>
+              <tr>
+                <th>课程</th>
+                <th>{{form.kcmc}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>课程安排</td>
+                <td>{{form.name}}</td>
+              </tr>
+              <tr v-if="form.kzzd2 == '1'">
+                <td>课程教学参考</td>
+                <td>
+                  <editor v-model="form.kcjxck" :disabled="true" :min-height="192" />
+                </td>
+              </tr>
+              <tr v-if="form.kzzd2 == '1'">
+                <td>教参内容</td>
+                <td style="text-align : left">
+                  <editor v-model="form.kcapjxck" :disabled="true" :min-height="192" />
+                </td>
+              </tr>
+              <tr>
+                <td>备课</td>
+                <td style="text-align : left">
+                  <h3>已上传的图片</h3>
+                  <div class="clearfix">
+                    <div
+                      v-for="(item,index) in form.bkTpArr"
+                      :key="index"
+                      style="float : left;margin-right : 10px"
+                    >
+                      <img style="width : 200px" :src="item" alt />
+                    </div>
+                  </div>
+                  <h3>已上传的文件</h3>
+                  <div class="clearfix">
+                    <div v-for="(item,index) in form.bkWjArr" :key="index">
+                      <a :href="item" style="color : #409EFF">{{++index}} ) {{item}}</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>备注</td>
+                <td>
+                  <editor v-model="form.remark" :disabled="true" :min-height="192" />
+                </td>
+              </tr>
+              <tr>
+                <td>审核</td>
+                <td style="padding : 40px;text-align : left">
+                  <el-select
+                    v-model="form.shzt"
+                    placeholder="请选择教案状态"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="dict in preparelesoonsStatus"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="viewDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editSubmit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
+
 <script>
-import {
-  listPrepareLessons,
-  getPrepareLessons,
-  delPrepareLessons,
-  addPrepareLessons,
-  updatePrepareLessons,
-  listAcdemicDean
-} from "@/api/basic/prepareLessons";
-import { getToken } from "@/utils/auth";
-import { listBjclass } from "@/api/basic/bjclass";
-import { teacherList } from "@/api/basic/assignTeachers";
-import { listTeachingTemplate } from "@/api/basic/teachingTemplate";
-import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { listAcdemicDean, editPrepareLessons } from "@/api/basic/bkgl";
 export default {
   name: "prepareLessons",
-  components: {
-    Treeselect
-  },
   data() {
     return {
       // 遮罩层
       loading: true,
-      importBtn: false,
-      fullscreenLoading: false,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
       // 显示搜索条件
       showSearch: true,
       // 总条数
       total: 0,
-      // 备课表格数据
-      prepareLessonsList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
+      // 查询列表数据
+      lessonPreparationDataList: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        lsid: null,
-        rybjid: null,
-        templatePath: null,
-        materialId: null,
-        kclx: "1"
-        // shzt: null,
+        fplsid: this.$store.state.user.glrid
       },
-      // 表单参数
       form: {},
-      // 表单校验
-      rules: {},
-      // 导入参数
-      upload: {
-        // 是否显示弹出层
-        open: false,
-        // 弹出层标题
-        title: "导入备课数据",
-        // 是否禁用上传
-        isUploading: false,
-        // 是否更新已经存在的数据
-        updateSupport: 0,
-        // 设置上传的请求头部
-        headers: { Authorization: "Bearer " + getToken() },
-        // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/prepareLessons/importData"
-      },
-      // 班级基础信息数据
-      classList: [],
-      // 老师信息数据
-      teacherListOption: [],
-      teachingTemplateList: [],
-      teachingMaterialList: [],
-      preparelesoonsStatus: []
+      // 查看编辑
+      viewDialogFormVisible: false,
+      assignorList: [],
+      // 教案状态
+      preparelesoonsStatus: [],
+      // 教案审核状态
+      prepareLessonAuditStatus: []
     };
   },
   created() {
     this.getList();
+    // 教案状态
     this.getDicts("preparelesoons_status").then(response => {
       this.preparelesoonsStatus = response.data;
     });
-    listBjclass().then(res => {
-      this.classList = res.rows;
-    });
-    teacherList().then(response => {
-      this.teacherListOption = response.rows;
-    });
-    listTeachingTemplate().then(response => {
-      this.teachingTemplateList = this.handleTree(
-        response.data,
-        "id",
-        "parentId"
-      );
-    });
-    listTeachingMaterial().then(response => {
-      this.teachingMaterialList = this.handleTree(
-        response.data,
-        "id",
-        "parentId"
-      );
+
+    // 教案审核状态
+    this.getDicts("prepareLessonAuditStatus").then(response => {
+      this.prepareLessonAuditStatus = response.data;
     });
   },
   methods: {
-    /** 转换教材数据结构 */
-    normalizerMaterial(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
-      }
-      return {
-        id: node.id,
-        label: node.jcmc,
-        children: node.children
-      };
-    },
-    /** 转换教学模板数据结构 */
-    normalizerTemplate(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
-      }
-      return {
-        id: node.id,
-        label: node.jdmc,
-        children: node.children
-      };
-    },
     /** 查询备课列表 */
     getList() {
-      this.loading = true;
       listAcdemicDean(this.queryParams).then(response => {
-        this.prepareLessonsList = response.rows;
+        this.lessonPreparationDataList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
     },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        rybjid: null,
-        templateId: null,
-        lsid: null,
-        bkTpid: null,
-        bkWjid: null,
-        remark: null,
-        userId: null,
-        // shzt: null,
-        userName: null,
-        dataOrder: null,
-        createTime: null,
-        updateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null
-      };
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
+    // 状态
+    getStatus(zt) {
+      this.queryParams.jashztArr = zt;
       this.getList();
+    },
+    // 教案审核状态字典翻译
+    getPrepareLessonAuditStatus(row, column) {
+      return this.selectDictLabel(this.prepareLessonAuditStatus, row.jashzt);
+    },
+    // 教案状态字典翻译
+    getPreparelesoonsStatus(row, column) {
+      return this.selectDictLabel(this.preparelesoonsStatus, row.shzt);
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+    // 查看
+    viewSecondaryMenu(row) {
+      this.form = row;
+      this.viewDialogFormVisible = true;
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加备课";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getPrepareLessons(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updatePrepareLessons(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addPrepareLessons(this.form).then(response => {
-              this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
+    // 保存审核
+    editSubmit() {
+      let { shzt, id } = this.form;
+      editPrepareLessons({ shzt, id }).then(res => {
+        if (res.code == 200) {
+          this.viewDialogFormVisible = false;
+          this.getList();
         }
       });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm("是否确认删除选中的数据?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(function() {
-          return delPrepareLessons(ids);
-        })
-        .then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "basic/prepareLessons/export",
-        {
-          ...this.queryParams
-        },
-        `备课-${new Date().getTime()}.xlsx`
-      );
-    },
-
-    /** 导入按钮操作 */
-    handleImport() {
-      this.importBtn = false;
-      this.upload.title = "备课数据导入";
-      this.upload.open = true;
-      this.$nextTick(() => {
-        // 页面元素加载完成后执行该方法
-        this.$refs.upload.clearFiles();
-      });
-    },
-    /** 下载模板操作 */
-    importTemplate() {
-      this.download(
-        "basic/prepareLessons/importTemplate",
-        {
-          ...this.queryParams
-        },
-        `备课-导入模板-${new Date().getTime()}.xlsx`
-      );
-    },
-    // 文件上传中处理
-    handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true;
-    },
-    // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
-      this.fullscreenLoading = false;
-      this.upload.open = false;
-      this.upload.isUploading = false;
-      this.$refs.upload.clearFiles();
-      this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
-      this.getList();
-    },
-    // 提交上传文件
-    submitFileForm() {
-      this.importBtn = true;
-      this.fullscreenLoading = true;
-      this.$refs.upload.submit();
     }
   }
 };

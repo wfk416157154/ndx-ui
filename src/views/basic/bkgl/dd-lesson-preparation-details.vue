@@ -29,7 +29,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="success" size="mini" @click="getStatus('1')">已完成</el-button>
-        <el-button type="danger" size="mini" @click="getStatus('2')">未完成</el-button>
+        <el-button type="danger" size="mini" @click="getStatus('0')">未完成</el-button>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -58,10 +58,10 @@
           <div>{{scope.row.hgs}} / {{scope.row.zs}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="kcrwmc" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="状态" align="center" prop="zt" />
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="success" size="mini" @click="viewRowData(scope.row)">查看</el-button>
+          <el-button type="success" size="mini" @click="viewSecondaryMenu(scope.row)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -212,20 +212,16 @@ export default {
       this.handleQuery();
     },
     // 查看
-    viewRowData(row) {
-      this.viewDetailsData(row.id)
-        ? (this.viewDialogFormVisible = true)
-        : (this.viewDialogFormVisible = false);
-    },
-    // 详细数据
-    async viewDetailsData(id) {
-      let result = await prepareLessonsDetails(id);
-      if (result.code == 200) {
-        this.form = result.data;
-        return true;
-      } else {
-        return false;
-      }
+    viewSecondaryMenu(row) {
+      this.getConfigKey("dd-zz-lesson-preparation-index").then(res => {
+        this.router = res.msg;
+        this.$router.push({
+          path: this.router,
+          query: {
+            list: row
+          }
+        });
+      });
     }
   }
 };
