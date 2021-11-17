@@ -68,16 +68,16 @@ service.interceptors.response.use(res => {
       }).catch(() => {});
       return Promise.reject('error')
     } else if (code === 500) {
-      /*Message({
+      Message({
         message: msg,
         type: 'error'
-      })*/
-      this.msgError(msg)
+      })
+      return Promise.reject(msg)
     } else if (code !== 200) {
-      /*Notification.error({
+      Notification.error({
         title: msg
-      })*/
-      this.msgError(msg)
+      })
+      return Promise.reject('error')
     }
     return res.data
   },
