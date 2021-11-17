@@ -434,8 +434,13 @@
           type: "warning"
         }).then(function() {
           return runJob(row.jobId, row.jobGroup);
-        }).then(() => {
-          this.msgSuccess("执行成功");
+        }).then((res) => {
+          if(200==res.code){
+            this.getList();
+            this.msgSuccess(res.msg);
+          }else{
+            this.msgError(res.msg);
+          }
         }).catch(() => {});
       },
       /** 任务详细信息 */
