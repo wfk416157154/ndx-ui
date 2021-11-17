@@ -59,7 +59,12 @@
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button type="success" size="mini" @click="viewRowData(scope.row)">查看</el-button>
-          <el-button type="danger" size="mini" @click="editRowData(scope.row)">修改</el-button>
+          <el-button
+            type="danger"
+            size="mini"
+            v-if="['1','4'].includes(scope.row.shzt)"
+            @click="editRowData(scope.row)"
+          >修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -81,13 +86,16 @@
             <thead>
               <tr>
                 <th>课程</th>
-                <th>{{form.kcmc}}</th>
+                <th v-if="form.kzzd2 == '1'">{{form.kcmc}}</th>
+                <th>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>课程安排</td>
-                <td>{{form.name}}</td>
+                <td v-if="form.kzzd2 == '1'">课程安排</td>
+                <td v-else>知识点</td>
+                <td v-if="form.kzzd2 == '1'">{{form.kcrwmc}}</td>
+                <td>{{form.zsdmc}}</td>
               </tr>
               <tr v-if="form.kzzd2 == '1'">
                 <td>课程教学参考</td>
@@ -146,13 +154,16 @@
             <thead>
               <tr>
                 <th>课程</th>
-                <th>{{form.kcmc}}</th>
+                <th v-if="form.kzzd2 == '1'">{{form.kcmc}}</th>
+                <th>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>课程安排</td>
-                <td>{{form.name}}</td>
+                <td v-if="form.kzzd2 == '1'">课程安排</td>
+                <td v-else>知识点</td>
+                <td v-if="form.kzzd2 == '1'">{{form.kcrwmc}}</td>
+                <td>{{form.zsdmc}}</td>
               </tr>
               <tr v-if="form.kzzd2 == '1'">
                 <td>课程教学参考</td>
@@ -345,8 +356,17 @@ export default {
       let result = await prepareLessonsDetails(id);
       if (result.code == 200) {
         this.form = result.data;
-        this.getSelectFileList({ kzzd1: this.form.bkTpid }, "getImages");
-        this.getSelectFileList({ kzzd1: this.form.bkWjid }, "getFiles");
+        if (this.form.bkTpid) {
+          this.getSelectFileList({ kzzd1: this.form.bkTpid }, "getImages");
+        } else {
+          this.dialogImageUrl = null;
+          this.getImages = [];
+        }
+        if (this.form.bkWjid) {
+          this.getSelectFileList({ kzzd1: this.form.bkWjid }, "getFiles");
+        } else {
+          this.getFiles = [];
+        }
         return true;
       } else {
         return false;
@@ -442,6 +462,7 @@ export default {
       editPrepareLessons({ bkTpid, bkWjid, remark, id }).then(res => {
         if (res.code == 200) {
           this.dialogFormVisible = false;
+          this.msgSuccess("成功 : 保存成功");
         }
       });
     }

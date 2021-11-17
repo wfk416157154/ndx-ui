@@ -28,13 +28,14 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="success" size="mini" @click="getStatus('1')">已完成</el-button>
-        <el-button type="danger" size="mini" @click="getStatus('0')">未完成</el-button>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
+    <div>
+      <el-button type="success" size="mini" @click="getStatus('1')">已完成</el-button>
+      <el-button type="danger" size="mini" @click="getStatus('0')">未完成</el-button>
+    </div>
     <el-row :gutter="10" class="mb8">
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -58,7 +59,12 @@
           <div>{{scope.row.hgs}} / {{scope.row.zs}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="zt" />
+      <el-table-column label="状态" align="center" prop="zt">
+        <template slot-scope="scope">
+          <p v-if="scope.row.zt == 0">未完成</p>
+          <p v-else>已完成</p>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button type="success" size="mini" @click="viewSecondaryMenu(scope.row)">查看</el-button>
@@ -164,8 +170,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        fplsid: "",
-        zt: "",
+        fplsid: null,
+        zt: null,
         fpzsjqj: []
       },
       form: {},
@@ -177,11 +183,13 @@ export default {
   created() {
     this.getList();
     // 分配人
-    getSubLeaderIds({}).then(res => {
-      if (res.code == 200) {
-        this.assignorList = res.data;
+    getSubLeaderIds({ leaderName: this.$store.state.user.nickName }).then(
+      res => {
+        if (res.code == 200) {
+          this.assignorList = res.data;
+        }
       }
-    });
+    );
   },
   methods: {
     /** 查询备课列表 */
@@ -195,8 +203,10 @@ export default {
     },
     // 状态
     getStatus(zt) {
-      this.queryParams.zt = zt;
-      this.getList();
+      prepareSupervisorData({ zt }).then(response => {
+        this.lessonPreparationDataList = response.rows;
+        this.total = response.total;
+      });
     },
     // 教案审核状态字典翻译
     getPrepareLessonAuditStatus(row, column) {

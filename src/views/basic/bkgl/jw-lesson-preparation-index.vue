@@ -157,7 +157,6 @@
                   <el-select
                     v-model="form.shzt"
                     placeholder="请选择教案状态"
-                    :disabled="form.shzt != '1'"
                     clearable
                     size="small"
                   >

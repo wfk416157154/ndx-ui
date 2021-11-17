@@ -17,7 +17,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="老师姓名" prop="lsxm">
+      <el-form-item label="老师姓名" prop="lsxm" v-if="this.$store.state.user.dataRoleWeightId != 50">
         <el-input
           v-model="queryParams.lsxm"
           placeholder="请输入老师姓名(可模糊查询)"
@@ -121,17 +121,31 @@
         </template>
       </el-table-column>
       <el-table-column label="作业主题" align="center" prop="zyzt" />
-      <el-table-column label="作业内容" align="center" prop="zynr" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="作业内容" align="center" prop="zynr">
+        <template slot-scope="scope">
+          <div v-html="scope.row.zynr"></div>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          <div v-html="scope.row.remark"></div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            @click="handleAdd(scope.row)"
             v-hasPermi="['basic:homework:edit']"
           >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleDetails(scope.row)"
+          >查看</el-button>
           <el-button
             size="mini"
             type="text"
@@ -265,7 +279,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         bjid: null,
-        lsid: null,
+        lsid: this.$store.state.user.glrid,
         lsxm: null,
         zylx: null,
         zyzt: null,
@@ -292,7 +306,6 @@ export default {
     };
   },
   created() {
-    this.getList();
     this.getDicts("homework_type").then(response => {
       this.zylxOptions = response.data;
     });
@@ -305,6 +318,7 @@ export default {
         }
       }
     });
+    this.getList();
   },
   methods: {
     changeDataArr(date) {
@@ -366,10 +380,25 @@ export default {
       this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加作业日志";
+    handleAdd(row) {
+      // this.reset();
+      // this.open = true;
+      // this.title = "添加作业日志";
+      this.getConfigKey("task-log-edi").then(res => {
+        this.router = res.msg;
+        this.$router.push({
+          path: this.router,
+          query: row
+        });
+      });
+    },
+    handleDetails(row) {
+      this.getConfigKey("task-log-details").then(res => {
+        this.$router.push({
+          path: res.msg,
+          query: row
+        });
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
