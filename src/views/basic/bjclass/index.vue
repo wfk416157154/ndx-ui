@@ -452,6 +452,7 @@ import { secretKey } from "@/utils/tools";
 import { listMarketer } from "@/api/basic/marketer";
 import moment from "moment";
 import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
+import {parseTime} from "../../../utils/ruoyi";
 
 export default {
   name: "Bjclass",
@@ -805,6 +806,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
+            this.form.kbsj=parseTime(this.form.kbsj,'{y}-{m}-{d}')
             updateBjclass(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
