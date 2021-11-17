@@ -140,6 +140,15 @@ export function aloneUpdateTeachingPlan(data) {
   })
 }
 
+// 设置教学计划进度
+export function setJxjd(data) {
+  return request({
+    url: '/basic/planProgress/batchSavePlanProgress',
+    method: 'post',
+    data: data
+  })
+}
+
 
 // 老师教学计划上半部
 export function topHalfQuery(query) {

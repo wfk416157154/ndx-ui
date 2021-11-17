@@ -33,6 +33,12 @@
                     </div>
                     <div>
                       <el-link
+                        style="margin-right: 10px"
+                        type="danger"
+                        @click="settingJxjd(items.id)"
+                      >设置进度</el-link>
+
+                      <el-link
                         type="primary"
                         @click="editSj(items)"
                       >{{formatTime(items.ksrq)}} - {{formatTime(items.jzrq)}}</el-link>
@@ -119,7 +125,8 @@
 import {
   queryGenerateTeachingPlanData,
   adjustTeachingPlan,
-  aloneUpdateTeachingPlan
+  aloneUpdateTeachingPlan,
+  setJxjd
 } from "@/api/teaching/generate";
 export default {
   data() {
@@ -156,6 +163,21 @@ export default {
   },
   props: ["item"],
   methods: {
+    // 设置进度
+    settingJxjd(kcid){
+      let obj={
+        rybjid:this.itemForm.rybjid,
+        classPlanKcid:kcid
+      }
+      setJxjd(obj).then(res=>{
+        if(200==res.code){
+          this.msgSuccess(res.msg)
+        }else{
+          this.msgError(res.msg)
+        }
+      });
+    },
+    // 计算变更时间
     onCalcBgts(date){
       let startTime = new Date(this.sjForm.chooseStartDate).getTime();
       let endTime = new Date(date).getTime();
