@@ -122,7 +122,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleAdd(scope.row)"
+            @click="handleUpdate(scope.row)"
             v-hasPermi="['basic:excellentTraining:edit']"
           >修改</el-button>
           <el-button
@@ -340,30 +340,25 @@ export default {
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
-    /** 新增按钮操作 */
-    // handleAdd() {
-    //   this.reset();
-    //   this.open = true;
-    //   this.title = "添加培优补差";
-    // },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getExcellentTraining(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改培优补差";
-      });
-    },
-
-    /** 新增按钮操作 */
-    handleAdd(row) {
+      let obj=row
+      obj.pageType="update"
       this.getConfigKey("pybc-edit").then(res => {
         this.router = res.msg;
         this.$router.push({
           path: this.router,
-          query: row
+          query:obj
+        });
+      });
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.getConfigKey("pybc-edit").then(res => {
+        this.router = res.msg;
+        this.$router.push({
+          path: this.router,
+          query:{pageType:"add"}
         });
       });
     },

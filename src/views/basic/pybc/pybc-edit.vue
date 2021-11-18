@@ -10,6 +10,7 @@
               @change="getListStudentData"
               filterable
               placeholder="请选择班级"
+              :disabled="queryParams.id != null"
             >
               <el-option
                 v-for="item in bjclassList "
@@ -39,15 +40,14 @@
         <tr>
           <td class="td-left-box">针对学生</td>
           <td>
-            <el-radio
-              @change="addStudentInfo(item)"
-              v-for="(item,index) in getListStudent"
-              :key="index"
-              :label="item.xsbh"
-            >
-              <span v-if="!queryParams.id">{{item.xsxm}}</span>
-              <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
-            </el-radio>
+            <el-checkbox-group v-model="zdxsArr" @change="chooseStudent"  >
+              <el-checkbox
+                v-for="(item,index) in getListStudent"
+                :label="item.xsbh"
+                :key="index">
+                {{item.xsxm}}
+              </el-checkbox>
+            </el-checkbox-group>
           </td>
         </tr>
         <tr>
@@ -82,7 +82,7 @@
       <el-button type="primary" @click="submitForm">提交</el-button>
     </div>
 
-    <el-dialog title="培优" :visible.sync="dialogFormVisible">
+    <el-dialog title="培优" :visible.sync="dialogFormVisible" @close="closePybcDialog" >
       <el-form>
         <el-form-item label="图片上传" label-width="120px">
           <el-upload
@@ -104,7 +104,7 @@
           <editor v-model="form.remark" :min-height="200" />
         </el-form-item>
         <el-form-item label="操作" label-width="120px" v-if="form.id">
-          <el-button type="danger" @click="xsDeleteSubmit(form)">删 除</el-button>
+          <el-button type="danger" @click="xsDelete(form.id)">删 除</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -148,10 +148,6 @@ export default {
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
-        // 上传考试成绩地址
-        fileUrl:
-          process.env.VUE_APP_BASE_API +
-          "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
@@ -175,25 +171,108 @@ export default {
       bjclassList: [],
       getListStudent: [],
       getImages: [],
-      // 正对学生
-      zdxsGetImage: []
+      // 针对学生
+      zdxsGetImage: [],
+      // 针对学生选择的数组
+      zdxsArr:[],
+      // 上次勾选的数组
+      lastDataArr:[],
+      // 针对学生-表单是否提交
+      isZdxsSubmit:false,
     };
   },
   created() {
     listBjclass().then(response => {
       this.bjclassList = response.rows;
     });
-    if (this.$route.query && this.$route.query.id) {
+    // 从父页面点击编辑按钮进入
+    if (this.$route.query.pageType=="update") {
       this.queryParams = this.$route.query;
-      this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+      // 图片集合赋值
+      this.getImages=this.ifNullToArr(this.queryParams.tpObjList)
+      // 查询该班级下的学生
       this.getListStudentData();
     }
   },
   methods: {
-    // 获取班级
+    // 当关闭弹窗触发的事件
+    closePybcDialog(){
+      // 当关闭弹窗时判断是否需要取消勾选
+      if(!this.isZdxsSubmit){
+        this.zdxsArr.pop()
+      }
+    },
+    // 给针对学生的集合进行勾选
+    setChooseStudent(zdxsObjList){
+      this.zdxsArr=[]
+      if(null!=zdxsObjList){
+        let obj
+        for (let i = 0; i <zdxsObjList.length ; i++) {
+          obj=zdxsObjList[i]
+          this.zdxsArr.push(obj.xsbh)
+        }
+        this.lastDataArr=this.zdxsArr
+      }
+    },
+    // 当勾选学生时触发
+    chooseStudent(chooseArr){
+      let chooseXsbh=this.rtnChooseId(chooseArr)
+      let stu=this.getStudentObject(chooseXsbh)
+      if(chooseXsbh){// 不为空时，当勾选后触发弹窗，取消勾选不触发
+        this.addStudentInfo(stu)
+      }
+    },
+    /* 根据学生编号获取该学生的对象信息 */
+    getStudentObject(xsbh){
+      let obj=null;
+      for (let i = 0; i <this.getListStudent.length ; i++) {
+        obj=this.getListStudent[i]
+        if(xsbh===obj.xsbh){
+          break
+        }
+      }
+      return obj
+    },
+    // 返回当前勾选的id
+    rtnChooseId(chooseArr){
+      let id;
+      let lastId;
+      let chooseId=null;
+      if(chooseArr.length>this.lastDataArr.length){// 当勾选的数据大于上次勾选的数据选项，则可以认定该操作是勾选的操作；反之是取消勾选的操作
+        if(chooseArr.length>1){// 当勾选一个时
+          // 当前选择的数据选项
+          for (let i = 0; i <chooseArr.length ; i++) {
+            id=chooseArr[i]
+            // 上一次选择的数据选项
+            for (let j = 0; j < this.lastDataArr.length; j++) {
+              lastId=this.lastDataArr[j]
+              if(id!=lastId){
+                chooseId=id;
+                break;
+              }
+            }
+          }
+        }else if(chooseArr.length==1){
+          chooseId=chooseArr[0]
+        }
+      }
+      this.lastDataArr=chooseArr
+      return chooseId
+    },
+    // 如果传入的参数是null则转成空数组
+    ifNullToArr(obj){
+      if(null==obj){
+        return []
+      }else{
+        return obj
+      }
+    },
+
+    // 获取班级下的学生信息
     getListStudentData() {
       listStudent({ ryb: this.queryParams.bjid }).then(res => {
         this.getListStudent = res.rows;
+        this.setChooseStudent(this.queryParams.zdxsObjList)
       });
     },
     // 查询图片
@@ -222,7 +301,7 @@ export default {
         }
       });
     },
-    // 学生表现图片上传成功回调
+    // 图片上传成功回调
     zyrzSuccess(response, file, fileList) {
       let data = response.data;
       data.kzzd1 = this.queryParams.tpid || secretKey();
@@ -253,7 +332,7 @@ export default {
         }
       });
     },
-    // 学生表现图片上传成功回调(学生)
+    // 图片上传成功回调(学生)
     xsZyrzSuccess(response, file, fileList) {
       let data = response.data;
       data.kzzd1 = this.form.tpid || secretKey();
@@ -280,31 +359,32 @@ export default {
         });
       }
     },
-    // 针对学生
+    // 勾选学生后触发的方法-针对学生数据
     addStudentInfo(item) {
+      this.isZdxsSubmit=false // 初始化为：未提交=false
       this.dialogFormVisible = true;
-      this.form.xsbh = item.xsbh;
-      this.form.xsxm = item.xsxm;
-      if (!this.queryParams.zdxsid) {
+      if (!this.queryParams.zdxsid) {// 如果是添加，可能该针对学生id为空，则生成
         this.queryParams.zdxsid = secretKey();
       }
-    },
-    // 获取针对学生数据
-    getStudentLog(item) {
-      let { zdxsid } = this.queryParams;
-      let { xsbh } = item;
-      this.form = {};
+      this.form = {};// 初始化
+      this.form.xsbh = item.xsbh;
+      this.form.xsxm = item.xsxm;
       this.zdxsGetImage = [];
-      listExcellentTrainingStudent({ glid: zdxsid, xsbh }).then(res => {
+      listExcellentTrainingStudent({ glid: this.queryParams.zdxsid, xsbh:item.xsbh }).then(res => {
         if (res.code == 200 && res.rows.length > 0) {
+          this.isZdxsSubmit=true // 如果查询到有数据，则修改为 已提交=true
           this.form = res.rows[0];
-          this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+          if(this.form.tpid){
+            this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+          }
         }
       });
     },
     // 针对学生提交
     xsSubmit() {
-      if (this.queryParams.zdxsid) {
+      // 设置为已提交=true
+      this.isZdxsSubmit=true // 当点击提交按钮，则修改为 已提交=true
+      if (this.queryParams.zdxsid) {// 关联id赋值
         this.form.glid = this.queryParams.zdxsid;
       }
       if (this.form.id != null) {
@@ -320,9 +400,10 @@ export default {
       }
     },
     //针对学生 删除
-    xsDeleteSubmit(item) {
-      delExcellentTrainingStudent(item.id).then(res => {
+    xsDelete(id) {
+      delExcellentTrainingStudent(id).then(res => {
         if (res.code == 200) {
+          this.isZdxsSubmit=true // 如果删除数据，则修改为 已提交=true
           this.msgSuccess("成功 : 删除成功");
           this.dialogFormVisible = false;
         }
