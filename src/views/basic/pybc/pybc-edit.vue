@@ -5,38 +5,49 @@
         <tr>
           <td class="td-left-box">班级</td>
           <td>
-            <el-select v-model="value" placeholder="请选择">
+            <el-select
+              v-model="queryParams.bjid"
+              @change="getListStudentData"
+              filterable
+              placeholder="请选择班级"
+            >
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in bjclassList "
+                :key="item.id"
+                :label="item.rybjmc"
+                :value="item.id"
               ></el-option>
             </el-select>
           </td>
         </tr>
         <tr>
           <td class="td-left-box">老师</td>
-          <td style="text-align : center">吴珂</td>
+          <td style="text-align : center">{{queryParams.lsxm}}</td>
         </tr>
         <tr>
-          <td class="td-left-box">主题</td>
+          <td class="td-left-box">培优主题</td>
           <td>
-            <el-input v-model="input" placeholder="请输入内容"></el-input>
+            <el-input v-model="queryParams.theme" placeholder="请输入内容"></el-input>
           </td>
         </tr>
         <tr>
           <td class="td-left-box">内容</td>
           <td>
-            <editor v-model="value1" :min-height="200" />
+            <editor v-model="queryParams.content" :min-height="200" />
           </td>
         </tr>
         <tr>
           <td class="td-left-box">针对学生</td>
           <td>
-            <el-radio v-model="radio" label="1">备选项</el-radio>
-            <el-radio v-model="radio" label="2">备选项</el-radio>
-            <el-radio v-model="radio" label="3">备选项</el-radio>
+            <el-radio
+              @change="addStudentInfo(item)"
+              v-for="(item,index) in getListStudent"
+              :key="index"
+              :label="item.xsbh"
+            >
+              <span v-if="!queryParams.id">{{item.xsxm}}</span>
+              <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
+            </el-radio>
           </td>
         </tr>
         <tr>
@@ -49,69 +60,39 @@
               list-type="picture-card"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove"
-              :on-success="bkSuccess"
+              :on-success="zyrzSuccess"
+              :file-list="getImages"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt />
             </el-dialog>
-            <p>文件上传</p>
-            <el-upload
-              ref="upload"
-              :limit="1"
-              accept="*"
-              :headers="upload.headers"
-              :action="upload.imgUrl"
-              :disabled="upload.isUploading"
-              :before-upload="beforeAvatarUploadZIP"
-              :on-success="addFileSuccess"
-              :auto-upload="false"
-              drag
-            >
-              <i class="el-icon-upload"></i>
-              <div class="el-upload__text">
-                将文件拖到此处，或
-                <em>点击上传</em>
-              </div>
-              <div
-                class="el-upload__tip"
-                style="color:red"
-                slot="tip"
-              >提示：仅允许导入"{{upload.type}}"格式文件！</div>
-            </el-upload>
-            <br />
-            <div slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="submitFileForm">确 定</el-button>
-              <el-button @click="upload.open = false">取 消</el-button>
-            </div>
           </td>
         </tr>
         <tr>
           <td class="td-left-box">备注</td>
           <td>
-            <editor v-model="value1" :min-height="200" />
+            <editor v-model="queryParams.remark" :min-height="200" />
           </td>
         </tr>
       </tbody>
     </table>
     <div style="margin-top :20px;text-align: center;">
-      <el-button type="primary">提交</el-button>
+      <el-button type="primary" @click="submitForm">提交</el-button>
     </div>
 
-    <el-dialog title="张倩" :visible.sync="dialogFormVisible">
+    <el-dialog title="培优" :visible.sync="dialogFormVisible">
       <el-form>
-        <el-form-item label="主题" label-width="120px">
-          <span>xxxx主题</span>
-        </el-form-item>
         <el-form-item label="图片上传" label-width="120px">
           <el-upload
             :action="upload.imgUrl"
             :headers="upload.headers"
             list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-success="bkSuccess"
+            :on-preview="xsHandlePictureCardPreview"
+            :on-remove="xsHandleRemove"
+            :on-success="xsZyrzSuccess"
+            :file-list="zdxsGetImage"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -120,12 +101,15 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="内容" label-width="120px">
-          <editor v-model="value1" :min-height="200" />
+          <editor v-model="form.remark" :min-height="200" />
+        </el-form-item>
+        <el-form-item label="操作" label-width="120px" v-if="form.id">
+          <el-button type="danger" @click="xsDeleteSubmit(form)">删 除</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="xsSubmit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -133,38 +117,26 @@
 
 
 <script>
+import {
+  listExcellentTraining,
+  getExcellentTraining,
+  delExcellentTraining,
+  addExcellentTraining,
+  updateExcellentTraining,
+  listExcellentTrainingStudent,
+  getExcellentTrainingStudent,
+  addExcellentTrainingStudent,
+  updateExcellentTrainingStudent,
+  delExcellentTrainingStudent
+} from "@/api/basic/excellentTraining";
 import { getToken } from "@/utils/auth";
 import { secretKey } from "@/utils/tools";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listStudent } from "@/api/basic/student";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 export default {
   data() {
     return {
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      value: "",
-      value1: "",
-      input: "",
-      radio: "",
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
@@ -186,11 +158,52 @@ export default {
       dialogVisible: false,
       dialogImageUrl: "",
       dialogVisibleForm: false,
-      dialogFormVisible: true,
-      dialogImageFormUrl: ""
+      dialogFormVisible: false,
+      dialogImageFormUrl: "",
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        bjid: null,
+        lsid: this.$store.state.user.glrid,
+        lsxm: this.$store.state.user.nickName,
+        theme: null,
+        ksrq: null,
+        jzrq: null
+      },
+      form: {},
+      bjclassList: [],
+      getListStudent: [],
+      getImages: [],
+      // 正对学生
+      zdxsGetImage: []
     };
   },
+  created() {
+    listBjclass().then(response => {
+      this.bjclassList = response.rows;
+    });
+    if (this.$route.query && this.$route.query.id) {
+      this.queryParams = this.$route.query;
+      this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+      this.getListStudentData();
+    }
+  },
   methods: {
+    // 获取班级
+    getListStudentData() {
+      listStudent({ ryb: this.queryParams.bjid }).then(res => {
+        this.getListStudent = res.rows;
+      });
+    },
+    // 查询图片
+    getSelectFileList(id, templateName) {
+      selectFileList(id).then(res => {
+        if (res.code == 200) {
+          this[templateName] = res.rows;
+        }
+      });
+    },
     // 图片预览 大图
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
@@ -210,10 +223,10 @@ export default {
       });
     },
     // 学生表现图片上传成功回调
-    bkSuccess(response, file, fileList) {
+    zyrzSuccess(response, file, fileList) {
       let data = response.data;
-      data.kzzd1 = this.form.bkTpid || secretKey();
-      this.form.bkTpid = data.kzzd1;
+      data.kzzd1 = this.queryParams.tpid || secretKey();
+      this.queryParams.tpid = data.kzzd1;
       addImg(data).then(res => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 上传成功");
@@ -222,38 +235,98 @@ export default {
         }
       });
     },
-    // 文件上传前验证
-    beforeAvatarUploadZIP(file) {
-      const isLt40M = file.size / 1024 / 1024 < 40;
-      if (!isLt40M) {
-        this.$message.error("上传文件大小不能超过 40MB!");
-      }
-      return isLt40M;
+    // 图片预览 大图(学生)
+    xsHandlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
-    // 文件上传成功处理压缩包
-    addFileSuccess(response, file, fileList) {
-      if (response.code == 200) {
-        let data = response.data;
-        this.upload.open = false;
-        this.upload.isUploading = false;
-        this.$refs.upload.clearFiles();
-        data.kzzd1 = this.form.bkWjid || secretKey();
-        this.form.bkWjid = data.kzzd1;
-        // 保存文件上传地址
-        addFile(data).then(res => {
-          if (res.code == 200) {
-            this.msgSuccess("成功 : 上传成功");
-          } else {
-            this.msgError("错误 : 上传失败");
-          }
+    //图片删除(学生)
+    xsHandleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    // 学生表现图片上传成功回调(学生)
+    xsZyrzSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.form.tpid || secretKey();
+      this.form.tpid = data.kzzd1;
+      addImg(data).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("成功 : 上传成功");
+        } else {
+          this.msgError("错误 : 上传失败");
+        }
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      if (this.queryParams.id != null) {
+        updateExcellentTraining(this.queryParams).then(response => {
+          this.msgSuccess("修改成功");
+          this.$router.go(-1);
         });
       } else {
-        this.msgError("错误 : 上传失败");
+        addExcellentTraining(this.queryParams).then(response => {
+          this.msgSuccess("新增成功");
+          this.$router.go(-1);
+        });
       }
     },
-    // 提交上传文件
-    submitFileForm() {
-      this.$refs.upload.submit();
+    // 针对学生
+    addStudentInfo(item) {
+      this.dialogFormVisible = true;
+      this.form.xsbh = item.xsbh;
+      this.form.xsxm = item.xsxm;
+      if (!this.queryParams.zdxsid) {
+        this.queryParams.zdxsid = secretKey();
+      }
+    },
+    // 获取针对学生数据
+    getStudentLog(item) {
+      let { zdxsid } = this.queryParams;
+      let { xsbh } = item;
+      this.form = {};
+      this.zdxsGetImage = [];
+      listExcellentTrainingStudent({ glid: zdxsid, xsbh }).then(res => {
+        if (res.code == 200 && res.rows.length > 0) {
+          this.form = res.rows[0];
+          this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+        }
+      });
+    },
+    // 针对学生提交
+    xsSubmit() {
+      if (this.queryParams.zdxsid) {
+        this.form.glid = this.queryParams.zdxsid;
+      }
+      if (this.form.id != null) {
+        updateExcellentTrainingStudent(this.form).then(response => {
+          this.msgSuccess("修改成功");
+          this.dialogFormVisible = false;
+        });
+      } else {
+        addExcellentTrainingStudent(this.form).then(response => {
+          this.msgSuccess("新增成功");
+          this.dialogFormVisible = false;
+        });
+      }
+    },
+    //针对学生 删除
+    xsDeleteSubmit(item) {
+      delExcellentTrainingStudent(item.id).then(res => {
+        if (res.code == 200) {
+          this.msgSuccess("成功 : 删除成功");
+          this.dialogFormVisible = false;
+        }
+      });
     }
   }
 };
