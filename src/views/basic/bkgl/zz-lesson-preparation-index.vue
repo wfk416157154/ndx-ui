@@ -26,7 +26,18 @@
       <el-table-column label="班级" align="center" prop="rybjmc" />
       <el-table-column label="老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
-      <el-table-column label="教程安排" align="center" prop="kcrwmc" />
+      <el-table-column label="课程" align="center" prop="kcrwmc">
+        <template slot-scope="scope">
+          <span>{{scope.row.kcmc}}</span>
+          <span>{{scope.row.zmc}}</span>
+          <span v-if="!scope.row.zsdmc">{{scope.row.jmc}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="课程安排 / 知识点" align="center" prop="kcrwmc">
+        <template slot-scope="scope">
+          <span>{{scope.row.kcrwmc}} {{scope.row.zsdmc}}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="教案审核状态"
         align="center"
@@ -62,25 +73,16 @@
             <thead>
               <tr>
                 <th>课程</th>
-                <th>{{form.kcmc}}</th>
+                <th v-if="form.kzzd2 == '1'">{{form.kcmc}}</th>
+                <th v-else>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>课程安排</td>
-                <td>{{form.name}}</td>
-              </tr>
-              <tr v-if="form.kzzd2 == '1'">
-                <td>课程教学参考</td>
-                <td>
-                  <editor v-model="form.kcjxck" :disabled="true" :min-height="192" />
-                </td>
-              </tr>
-              <tr v-if="form.kzzd2 == '1'">
-                <td>教参内容</td>
-                <td style="text-align : left">
-                  <editor v-model="form.kcapjxck" :disabled="true" :min-height="192" />
-                </td>
+                <td v-if="form.kzzd2 == '1'">课程安排</td>
+                <td v-else>知识点</td>
+                <td v-if="form.kzzd2 == '1'">{{form.kcrwmc}}</td>
+                <td>{{form.zsdmc}}</td>
               </tr>
               <tr>
                 <td>备课</td>
@@ -92,7 +94,11 @@
                       :key="index"
                       style="float : left;margin-right : 10px"
                     >
-                      <img style="width : 200px" :src="item" alt />
+                      <el-image
+                        style="width: 100px; height: 100px"
+                        :src="item"
+                        :preview-src-list="[item]"
+                      ></el-image>
                     </div>
                   </div>
                   <h3>已上传的文件</h3>
@@ -112,12 +118,7 @@
               <tr>
                 <td>审核</td>
                 <td style="padding : 40px;text-align : left">
-                  <el-select
-                    v-model="form.shzt"
-                    placeholder="请选择教案状态"
-                    clearable
-                    size="small"
-                  >
+                  <el-select v-model="form.shzt" placeholder="请选择教案状态" clearable size="small">
                     <el-option
                       v-for="dict in preparelesoonsStatus"
                       :key="dict.dictValue"
@@ -141,7 +142,11 @@
 
 
 <script>
-import { listAcdemicDean, editPrepareLessons } from "@/api/basic/bkgl";
+import {
+  listAcdemicDean,
+  editPrepareLessons,
+  prepareLessonsDetails
+} from "@/api/basic/bkgl";
 export default {
   name: "prepareLessons",
   data() {
@@ -211,8 +216,19 @@ export default {
     },
     // 查看
     viewSecondaryMenu(row) {
-      this.form = row;
-      this.viewDialogFormVisible = true;
+      this.viewDetailsData(row.id)
+        ? (this.viewDialogFormVisible = true)
+        : (this.viewDialogFormVisible = false);
+    },
+    // 详细数据
+    async viewDetailsData(id) {
+      let result = await prepareLessonsDetails(id);
+      if (result.code == 200) {
+        this.form = result.data;
+        return true;
+      } else {
+        return false;
+      }
     },
     // 保存审核
     editSubmit() {
