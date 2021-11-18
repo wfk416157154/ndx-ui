@@ -187,11 +187,13 @@ export default {
     });
     // 从父页面点击编辑按钮进入
     if (this.$route.query.pageType=="update") {
-      this.queryParams = this.$route.query;
-      // 图片集合赋值
-      this.getImages=this.ifNullToArr(this.queryParams.tpObjList)
-      // 查询该班级下的学生
-      this.getListStudentData();
+      getExcellentTraining(this.$route.query.id).then(res=>{
+        this.queryParams = res.data
+        // 图片集合赋值
+        this.getImages=this.ifNullToArr(this.queryParams.tpObjList)
+        // 查询该班级下的学生
+        this.getListStudentData();
+      });
     }
   },
   methods: {

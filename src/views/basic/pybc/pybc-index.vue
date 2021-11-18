@@ -342,8 +342,10 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      let obj=row
-      obj.pageType="update"
+      let obj= {
+        pageType:"update",
+        id:row.id
+      }
       this.getConfigKey("pybc-edit").then(res => {
         this.router = res.msg;
         this.$router.push({
