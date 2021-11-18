@@ -77,7 +77,7 @@
           v-hasPermi="['basic:homework:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -98,7 +98,7 @@
           @click="handleDelete"
           v-hasPermi="['basic:homework:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -109,7 +109,7 @@
       :data="homeworkList"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="主键" align="center" prop="id" />
       <el-table-column label="班级id" align="center" prop="bjid" v-if="false" />
       <el-table-column label="老师id" align="center" prop="lsid" v-if="false" />
@@ -166,7 +166,7 @@
     />
 
     <!-- 添加或修改作业日志对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="班级id" prop="bjid">
           <el-input v-model="form.bjid" placeholder="请输入班级id" />
@@ -388,7 +388,7 @@ export default {
         this.router = res.msg;
         this.$router.push({
           path: this.router,
-          query: row
+          query: { list: JSON.stringify(row) }
         });
       });
     },

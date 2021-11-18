@@ -52,15 +52,31 @@
         <tr>
           <td class="td-left-box">针对学生</td>
           <td>
-            <el-radio
-              @change="addStudentInfo(item)"
-              v-for="(item,index) in getListStudent"
-              :key="index"
-              :label="item.xsbh"
-            >
-              <span v-if="!queryParams.id">{{item.xsxm}}</span>
-              <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
-            </el-radio>
+            <template v-if="queryParams.id">
+              <el-checkbox
+                :ref="'c' + index"
+                @change="addStudentInfo(item,index)"
+                v-for="(item,index) in getListStudent"
+                :key="index"
+                :label="item.xsbh"
+                :checked="queryParams.xsList.includes(item.xsbh)"
+              >
+                <span v-if="!queryParams.id">{{item.xsxm}}</span>
+                <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
+              </el-checkbox>
+            </template>
+            <template v-else>
+              <el-checkbox
+                v-model="cForm[index]"
+                @change="addStudentInfo(item,index)"
+                v-for="(item,index) in getListStudent"
+                :key="index"
+                :label="item.xsbh"
+              >
+                <span v-if="!queryParams.id">{{item.xsxm}}</span>
+                <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
+              </el-checkbox>
+            </template>
           </td>
         </tr>
         <tr>
@@ -95,7 +111,8 @@
       <el-button type="primary" @click="submitForm">提交</el-button>
     </div>
 
-    <el-dialog title="张倩" :visible.sync="dialogFormVisible">
+    <el-dialog title="张倩" :visible.sync="dialogFormVisible" :before-close="cancel">
+      >
       <el-form>
         <el-form-item label="图片上传" label-width="120px">
           <el-upload
@@ -121,7 +138,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="xsSubmit">确 定</el-button>
       </div>
     </el-dialog>
@@ -150,6 +167,7 @@ import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 export default {
   data() {
     return {
+      cForm: {},
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
@@ -178,6 +196,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         zdxsid: null,
+        xsList: [],
         bjid: null,
         lsid: this.$store.state.user.glrid,
         lsxm: null,
@@ -193,7 +212,8 @@ export default {
       zylxOptions: [],
       getImages: [],
       // 正对学生
-      zdxsGetImage: []
+      zdxsGetImage: [],
+      cancelIndex: null
     };
   },
   created() {
@@ -203,10 +223,16 @@ export default {
     listBjclass().then(response => {
       this.bjclassList = response.rows;
     });
-    if (this.$route.query && this.$route.query.id) {
-      this.queryParams = this.$route.query;
-      this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
-      this.getListStudentData();
+    if (JSON.parse(this.$route.query.list).id) {
+      this.queryParams = JSON.parse(this.$route.query.list);
+      if (this.queryParams && this.queryParams.id) {
+        this.queryParams.xsList = [];
+        this.queryParams.homeworkLogStudentList.forEach(value => {
+          this.queryParams.xsList.push(value.xsbh);
+        });
+        this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+        this.getListStudentData();
+      }
     }
   },
   methods: {
@@ -301,12 +327,31 @@ export default {
       }
     },
     // 针对学生
-    addStudentInfo(item) {
-      this.dialogFormVisible = true;
+    addStudentInfo(item, index) {
+      if (this.queryParams.id) {
+        this.dialogFormVisible = true;
+      } else {
+        if (this.cForm[index]) {
+          this.dialogFormVisible = true;
+        }
+      }
+      this.cancelIndex = index;
+      this.zdxsGetImage = [];
+      this.form = {};
       this.form.xsbh = item.xsbh;
       this.form.xsxm = item.xsxm;
       if (!this.queryParams.zdxsid) {
         this.queryParams.zdxsid = secretKey();
+      }
+      this.form.zdxsglid = this.queryParams.zdxsid;
+
+      if (typeof index == "number") {
+        listHomeworkLogStudent(this.form).then(res => {
+          if (res.rows.length > 0) {
+            this.form = res.rows[0];
+            this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+          }
+        });
       }
     },
     // 获取针对学生数据
@@ -321,6 +366,17 @@ export default {
           this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
         }
       });
+    },
+    // 取消
+    cancel() {
+      this.dialogFormVisible = false;
+      if (this.queryParams.id) {
+        this.getListStudent = [];
+        this.getListStudentData();
+      }
+      if (!this.form.id) {
+        this.cForm[this.cancelIndex] = false;
+      }
     },
     // 针对学生提交
     xsSubmit() {
