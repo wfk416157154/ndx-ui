@@ -89,15 +89,18 @@
             <thead>
               <tr>
                 <th>课程</th>
-                <th>{{form.kcmc}}</th>
+                <th v-if="form.kzzd2 == '1'">{{form.kcmc}}</th>
+                <th v-else>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>课程安排</td>
-                <td>{{form.name}}</td>
+                <td v-if="form.kzzd2 == '1'">课程安排</td>
+                <td v-else>知识点</td>
+                <td v-if="form.kzzd2 == '1'">{{form.kcrwmc}}</td>
+                <td>{{form.zsdmc}}</td>
               </tr>
-              <tr v-if="form.kzzd2 == '1'">
+              <!-- <tr v-if="form.kzzd2 == '1'">
                 <td>课程教学参考</td>
                 <td>
                   <editor v-model="form.kcjxck" :disabled="true" :min-height="192" />
@@ -108,7 +111,7 @@
                 <td style="text-align : left">
                   <editor v-model="form.kcapjxck" :disabled="true" :min-height="192" />
                 </td>
-              </tr>
+              </tr>-->
               <tr>
                 <td>备课</td>
                 <td style="text-align : left">

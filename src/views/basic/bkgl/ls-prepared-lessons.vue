@@ -39,6 +39,18 @@
       <el-table-column label="班级" align="center" prop="rybjmc" />
       <el-table-column label="老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
+      <el-table-column label="课程" align="center" prop="kcrwmc">
+        <template slot-scope="scope">
+          <span>{{scope.row.kcmc}}</span>
+          <span>{{scope.row.zmc}}</span>
+          <span v-if="!scope.row.zsdmc">{{scope.row.jmc}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="课程安排 / 知识点" align="center" prop="kcrwmc">
+        <template slot-scope="scope">
+          <span>{{scope.row.kcrwmc}} {{scope.row.zsdmc}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="课程安排 / 知识点" align="center" prop="kcrwmc">
         <template slot-scope="scope">
           <span>{{scope.row.kcrwmc}} {{scope.row.zsdmc}}</span>
@@ -97,7 +109,7 @@
                 <td v-if="form.kzzd2 == '1'">{{form.kcrwmc}}</td>
                 <td>{{form.zsdmc}}</td>
               </tr>
-              <tr v-if="form.kzzd2 == '1'">
+              <!-- <tr v-if="form.kzzd2 == '1'">
                 <td>课程教学参考</td>
                 <td>
                   <editor v-model="form.kcjxck" :disabled="true" :min-height="192" />
@@ -108,7 +120,7 @@
                 <td style="text-align : left">
                   <editor v-model="form.kcapjxck" :disabled="true" :min-height="192" />
                 </td>
-              </tr>
+              </tr>-->
               <tr>
                 <td>备课</td>
                 <td style="text-align : left">
@@ -155,7 +167,7 @@
               <tr>
                 <th>课程</th>
                 <th v-if="form.kzzd2 == '1'">{{form.kcmc}}</th>
-                <th>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
+                <th v-else>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
               </tr>
             </thead>
             <tbody>
