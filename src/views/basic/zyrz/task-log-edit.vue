@@ -226,9 +226,11 @@ export default {
       this.queryParams = JSON.parse(this.$route.query.list);
       if (this.queryParams && this.queryParams.id) {
         this.queryParams.xsList = [];
-        this.queryParams.homeworkLogStudentList.forEach(value => {
-          this.queryParams.xsList.push(value.xsbh);
-        });
+        if(this.queryParams.homeworkLogStudentList){// 当该学生-作业日志对象集合不为空
+          this.queryParams.homeworkLogStudentList.forEach(value => {
+            this.queryParams.xsList.push(value.xsbh);
+          });
+        }
         if(this.queryParams.tpid){// 如果没上传过图片，则不去查询图片列表
           this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
         }
