@@ -124,6 +124,13 @@
                     :disabled="btnDisabled"
                     @click="submitTimetable"
                   >保存课表</el-button>
+                  <el-button
+                    type="warning"
+                    plain
+                    icon="el-icon-download"
+                    size="mini"
+                    @click="handleExport"
+                  >导出</el-button>
 
                   <el-button
                     type="danger"
@@ -466,10 +473,10 @@ export default {
       bjkbStartDate: [],
       yxsj: null,
       // 选择时间-对象
-      chooseTimeObj:{
-        start: '05:40',
-        step: '00:05',
-        end: '23:00'
+      chooseTimeObj: {
+        start: "05:40",
+        step: "00:05",
+        end: "23:00"
       }
     };
   },
@@ -495,6 +502,22 @@ export default {
     this.getList();
   },
   methods: {
+    // 导出
+    handleExport() {
+      let { bjid, kbType, kzzd2 } = this.queryParams;
+      this.download(
+        "basic/classCourse/exportClassCourse",
+        {
+          bjid,
+          kbType,
+          nd: kzzd2
+        },
+        `${kzzd2}-${this.selectDictLabel(
+          this.kbTypeOptionsEL,
+          kbType
+        )}-课表.xlsx`
+      );
+    },
     // 班级列表基础信息
     getList() {
       listBjclass({ id: this.$route.query.bjid }).then(res => {
@@ -906,7 +929,7 @@ export default {
       let date1 =
         date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
       let date2 = date1;
-      let nowTime=new Date(date1+"  "+rows.jssj);
+      let nowTime = new Date(date1 + "  " + rows.jssj);
       date1 = new Date(date1 + " " + rows.kssj).getTime();
       date2 = new Date(date2 + " " + rows.jssj).getTime();
       if (date1 > date2) {
@@ -914,18 +937,21 @@ export default {
         this.isAdd = false;
       } else {
         this.isAdd = true;
-        if(rows.jssj){
-          let str=this.addZero(nowTime.getHours())+":"+this.addZero(nowTime.getMinutes())
-          this.chooseTimeObj.start=str
+        if (rows.jssj) {
+          let str =
+            this.addZero(nowTime.getHours()) +
+            ":" +
+            this.addZero(nowTime.getMinutes());
+          this.chooseTimeObj.start = str;
         }
       }
     },
-    addZero(num){
-      if(num<10){
-        return "0"+num.toString();
+    addZero(num) {
+      if (num < 10) {
+        return "0" + num.toString();
       }
       return num;
-    },
+    }
   }
 };
 </script>

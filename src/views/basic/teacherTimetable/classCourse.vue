@@ -190,7 +190,13 @@
                     :disabled="btnDisabled"
                     @click="submitTimetable"
                   >保存课表</el-button>
-
+                  <el-button
+                    type="warning"
+                    plain
+                    icon="el-icon-download"
+                    size="mini"
+                    @click="handleExport"
+                  >导出</el-button>
                   <el-button
                     type="danger"
                     icon="el-icon-delete"
@@ -567,6 +573,22 @@ export default {
     });
   },
   methods: {
+    // 导出
+    handleExport() {
+      let { bjid, kbType, kzzd2 } = this.queryParams;
+      this.download(
+        "basic/classCourse/exportClassCourse",
+        {
+          bjid,
+          kbType,
+          nd: kzzd2
+        },
+        `${kzzd2}-${this.selectDictLabel(
+          this.kbTypeOptionsEL,
+          kbType
+        )}-课表.xlsx`
+      );
+    },
     // 班级列表基础信息
     getList() {
       // let obj = {
