@@ -165,43 +165,6 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改作业日志对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="班级id" prop="bjid">
-          <el-input v-model="form.bjid" placeholder="请输入班级id" />
-        </el-form-item>
-        <el-form-item label="老师id" prop="lsid">
-          <el-input v-model="form.lsid" placeholder="请输入老师id" />
-        </el-form-item>
-        <el-form-item label="作业类型" prop="zylx">
-          <el-select v-model="form.zylx" placeholder="请选择作业类型">
-            <el-option
-              v-for="dict in zylxOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="作业主题" prop="zyzt">
-          <el-input v-model="form.zyzt" placeholder="请输入作业主题" />
-        </el-form-item>
-        <el-form-item label="作业内容">
-          <editor v-model="form.zynr" :min-height="192" />
-        </el-form-item>
-        <el-form-item label="图片id">
-          <imageUpload v-model="form.tpid" />
-        </el-form-item>
-        <el-form-item label="备注">
-          <editor v-model="form.remark" :min-height="192" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -279,7 +242,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         bjid: null,
-        lsid: this.$store.state.user.glrid,
+        lsid: null,
         lsxm: null,
         zylx: null,
         zyzt: null,
@@ -381,10 +344,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd(row) {
-      // this.reset();
-      // this.open = true;
-      // this.title = "添加作业日志";
-      this.getConfigKey("task-log-edi").then(res => {
+      this.getConfigKey("task-log-edit").then(res => {
         this.router = res.msg;
         this.$router.push({
           path: this.router,
@@ -408,26 +368,6 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改作业日志";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateHomework(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addHomework(this.form).then(response => {
-              this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
       });
     },
     /** 删除按钮操作 */
