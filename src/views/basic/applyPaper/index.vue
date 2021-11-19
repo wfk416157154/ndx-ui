@@ -119,7 +119,7 @@
             size="mini"
             type="text"
             @click="handleExport(scope.row)"
-            v-if="scope.row.lssjzt == '2' || scope.row.lssjzt == '3' "
+            v-if="(scope.row.lssjzt == '2' || scope.row.lssjzt == '3')&&scope.row.kzzd2 !== '3' "
           >下载</el-button>
         </template>
       </el-table-column>
