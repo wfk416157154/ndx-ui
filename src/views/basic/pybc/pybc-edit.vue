@@ -189,8 +189,10 @@ export default {
     if (this.$route.query.pageType=="update") {
       getExcellentTraining(this.$route.query.id).then(res=>{
         this.queryParams = res.data
-        // 图片集合赋值
-        this.getImages=this.ifNullToArr(this.queryParams.tpObjList)
+        if(this.queryParams.tpid){
+          // 图片集合赋值
+          this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+        }
         // 查询该班级下的学生
         this.getListStudentData();
       });
