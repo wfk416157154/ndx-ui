@@ -111,8 +111,7 @@
       <el-button type="primary" @click="submitForm">提交</el-button>
     </div>
 
-    <el-dialog title="张倩" :visible.sync="dialogFormVisible" :before-close="cancel">
-      >
+    <el-dialog title="作业日志" :visible.sync="dialogFormVisible" :before-close="cancel">
       <el-form>
         <el-form-item label="图片上传" label-width="120px">
           <el-upload
@@ -230,7 +229,9 @@ export default {
         this.queryParams.homeworkLogStudentList.forEach(value => {
           this.queryParams.xsList.push(value.xsbh);
         });
-        this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+        if(this.queryParams.tpid){// 如果没上传过图片，则不去查询图片列表
+          this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+        }
         this.getListStudentData();
       }
     }
@@ -349,7 +350,9 @@ export default {
         listHomeworkLogStudent(this.form).then(res => {
           if (res.rows.length > 0) {
             this.form = res.rows[0];
-            this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+            if(this.form.tpid){// 如果没上传过图片，则不去查询图片列表
+              this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+            }
           }
         });
       }
@@ -363,7 +366,9 @@ export default {
       listHomeworkLogStudent({ zdxsglid: zdxsid, xsbh }).then(res => {
         if (res.code == 200 && res.rows.length > 0) {
           this.form = res.rows[0];
-          this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+          if(this.form.tpid){// 如果没上传过图片，则不去查询图片列表
+            this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
+          }
         }
       });
     },
