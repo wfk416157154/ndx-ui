@@ -51,11 +51,6 @@
           <span>{{scope.row.kcrwmc}} {{scope.row.zsdmc}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="课程安排 / 知识点" align="center" prop="kcrwmc">
-        <template slot-scope="scope">
-          <span>{{scope.row.kcrwmc}} {{scope.row.zsdmc}}</span>
-        </template>
-      </el-table-column>
       <el-table-column
         label="教案审核状态"
         align="center"
