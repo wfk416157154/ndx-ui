@@ -179,14 +179,14 @@ export default {
       lastDataArr:[],
       // 针对学生-表单是否提交
       isZdxsSubmit:false,
+      // 页面类型:add|update
+      pageType:null,
     };
   },
   created() {
-    listBjclass().then(response => {
-      this.bjclassList = response.rows;
-    });
+    this.pageType=this.$route.query.pageType
     // 从父页面点击编辑按钮进入
-    if (this.$route.query.pageType=="update") {
+    if (this.pageType=="update") {
       getExcellentTraining(this.$route.query.id).then(res=>{
         this.queryParams = res.data
         if(this.queryParams.tpid){
@@ -197,6 +197,14 @@ export default {
         this.getListStudentData();
       });
     }
+    listBjclass().then(response => {
+      this.bjclassList = response.rows;
+      // 当从父页面点击新增按钮时,且只有一个班级时
+      if("add"==this.pageType&&response.total==1){
+        this.queryParams.bjid=response.rows[0].id
+        this.getListStudentData()
+      }
+    });
   },
   methods: {
     // 当关闭弹窗触发的事件
@@ -262,14 +270,6 @@ export default {
       }
       this.lastDataArr=chooseArr
       return chooseId
-    },
-    // 如果传入的参数是null则转成空数组
-    ifNullToArr(obj){
-      if(null==obj){
-        return []
-      }else{
-        return obj
-      }
     },
 
     // 获取班级下的学生信息

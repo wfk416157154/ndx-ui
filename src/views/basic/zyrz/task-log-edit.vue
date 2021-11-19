@@ -178,10 +178,6 @@ export default {
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
-        // 上传考试成绩地址
-        fileUrl:
-          process.env.VUE_APP_BASE_API +
-          "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
@@ -198,7 +194,7 @@ export default {
         xsList: [],
         bjid: null,
         lsid: this.$store.state.user.glrid,
-        lsxm: null,
+        lsxm: this.$store.state.user.nickName,
         zylx: null,
         zyzt: null,
         zynr: null,
@@ -219,9 +215,6 @@ export default {
     this.getDicts("homework_type").then(response => {
       this.zylxOptions = response.data;
     });
-    listBjclass().then(response => {
-      this.bjclassList = response.rows;
-    });
     if (JSON.parse(this.$route.query.list).id) {
       this.queryParams = JSON.parse(this.$route.query.list);
       if (this.queryParams && this.queryParams.id) {
@@ -237,6 +230,15 @@ export default {
         this.getListStudentData();
       }
     }
+    listBjclass().then(response => {
+      this.bjclassList = response.rows;
+      // 当id为空,且只有一个班级时
+      if(!this.queryParams.id&&response.total==1){
+        this.queryParams.bjid=response.rows[0].id
+        this.getListStudentData()
+      }
+    });
+
   },
   methods: {
     // 获取班级
