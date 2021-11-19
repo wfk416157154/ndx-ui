@@ -72,7 +72,7 @@
           </span>
         </template>-->
       </el-table-column>
-      <el-table-column label="考试时间" align="center" prop="kskssj" width="180">
+      <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
         </template>
@@ -88,6 +88,7 @@
           <span>{{ parseTime(scope.row.fssj, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="考试试卷名称" align="center" prop="kzzd4" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -351,12 +352,13 @@ export default {
       this.upload.open = true;
     },
     // 考卷发送
-    submitForm(row) {
+    submitForm(row,file) {
       this.form = row;
       this.form.jwsjzt = "1";
       this.form.lssjzt = "2";
       this.form.fssj = new Date();
       if (this.form.id != null) {
+        this.form.kzzd4 = file.name.split(".")[0];
         this.form.fsrid = this.$store.state.user.glrid;
         this.form.fsrmc = this.$store.state.user.nickName;
         updateExaminationPaper(this.form).then(response => {
@@ -394,7 +396,7 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       if (response.code === 200) {
-        this.submitForm(this.$row);
+        this.submitForm(this.$row,file);
         data.kzzd1 = this.examinationInformationId;
         // 保存文件上传地址
         addFile(data).then(res => {});
