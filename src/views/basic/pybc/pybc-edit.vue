@@ -189,11 +189,13 @@ export default {
       }
     });
     // 从父页面点击编辑按钮进入
-    if (this.$route.query.pageType == "update") {
-      getExcellentTraining(this.$route.query.id).then(res => {
-        this.queryParams = res.data;
-        // 图片集合赋值
-        this.getImages = this.ifNullToArr(this.queryParams.tpObjList);
+    if (this.$route.query.pageType=="update") {
+      getExcellentTraining(this.$route.query.id).then(res=>{
+        this.queryParams = res.data
+        if(this.queryParams.tpid){
+          // 图片集合赋值
+          this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
+        }
         // 查询该班级下的学生
         this.getListStudentData();
       });
