@@ -177,7 +177,7 @@ export default {
       this.ifContent = value;
       this.form.lx = lx;
       this.$nextTick(() => {
-        this.getList()
+        this.getList();
         this.$refs[value].getList();
       });
     },

@@ -40,13 +40,12 @@
         <tr>
           <td class="td-left-box">针对学生</td>
           <td>
-            <el-checkbox-group v-model="zdxsArr" @change="chooseStudent"  >
+            <el-checkbox-group v-model="zdxsArr" @change="chooseStudent">
               <el-checkbox
                 v-for="(item,index) in getListStudent"
                 :label="item.xsbh"
-                :key="index">
-                {{item.xsxm}}
-              </el-checkbox>
+                :key="index"
+              >{{item.xsxm}}</el-checkbox>
             </el-checkbox-group>
           </td>
         </tr>
@@ -82,7 +81,7 @@
       <el-button type="primary" @click="submitForm">提交</el-button>
     </div>
 
-    <el-dialog title="培优" :visible.sync="dialogFormVisible" @close="closePybcDialog" >
+    <el-dialog title="培优" :visible.sync="dialogFormVisible" @close="closePybcDialog">
       <el-form>
         <el-form-item label="图片上传" label-width="120px">
           <el-upload
@@ -174,23 +173,27 @@ export default {
       // 针对学生
       zdxsGetImage: [],
       // 针对学生选择的数组
-      zdxsArr:[],
+      zdxsArr: [],
       // 上次勾选的数组
-      lastDataArr:[],
+      lastDataArr: [],
       // 针对学生-表单是否提交
-      isZdxsSubmit:false,
+      isZdxsSubmit: false
     };
   },
   created() {
     listBjclass().then(response => {
       this.bjclassList = response.rows;
+      if (response.rows.length == 1) {
+        this.queryParams.bjid = response.rows[0].id;
+        this.getListStudentData();
+      }
     });
     // 从父页面点击编辑按钮进入
-    if (this.$route.query.pageType=="update") {
-      getExcellentTraining(this.$route.query.id).then(res=>{
-        this.queryParams = res.data
+    if (this.$route.query.pageType == "update") {
+      getExcellentTraining(this.$route.query.id).then(res => {
+        this.queryParams = res.data;
         // 图片集合赋值
-        this.getImages=this.ifNullToArr(this.queryParams.tpObjList)
+        this.getImages = this.ifNullToArr(this.queryParams.tpObjList);
         // 查询该班级下的学生
         this.getListStudentData();
       });
@@ -198,75 +201,78 @@ export default {
   },
   methods: {
     // 当关闭弹窗触发的事件
-    closePybcDialog(){
+    closePybcDialog() {
       // 当关闭弹窗时判断是否需要取消勾选
-      if(!this.isZdxsSubmit){
-        this.zdxsArr.pop()
+      if (!this.isZdxsSubmit) {
+        this.zdxsArr.pop();
       }
     },
     // 给针对学生的集合进行勾选
-    setChooseStudent(zdxsObjList){
-      this.zdxsArr=[]
-      if(null!=zdxsObjList){
-        let obj
-        for (let i = 0; i <zdxsObjList.length ; i++) {
-          obj=zdxsObjList[i]
-          this.zdxsArr.push(obj.xsbh)
+    setChooseStudent(zdxsObjList) {
+      this.zdxsArr = [];
+      if (null != zdxsObjList) {
+        let obj;
+        for (let i = 0; i < zdxsObjList.length; i++) {
+          obj = zdxsObjList[i];
+          this.zdxsArr.push(obj.xsbh);
         }
-        this.lastDataArr=this.zdxsArr
+        this.lastDataArr = this.zdxsArr;
       }
     },
     // 当勾选学生时触发
-    chooseStudent(chooseArr){
-      let chooseXsbh=this.rtnChooseId(chooseArr)
-      let stu=this.getStudentObject(chooseXsbh)
-      if(chooseXsbh){// 不为空时，当勾选后触发弹窗，取消勾选不触发
-        this.addStudentInfo(stu)
+    chooseStudent(chooseArr) {
+      let chooseXsbh = this.rtnChooseId(chooseArr);
+      let stu = this.getStudentObject(chooseXsbh);
+      if (chooseXsbh) {
+        // 不为空时，当勾选后触发弹窗，取消勾选不触发
+        this.addStudentInfo(stu);
       }
     },
     /* 根据学生编号获取该学生的对象信息 */
-    getStudentObject(xsbh){
-      let obj=null;
-      for (let i = 0; i <this.getListStudent.length ; i++) {
-        obj=this.getListStudent[i]
-        if(xsbh===obj.xsbh){
-          break
+    getStudentObject(xsbh) {
+      let obj = null;
+      for (let i = 0; i < this.getListStudent.length; i++) {
+        obj = this.getListStudent[i];
+        if (xsbh === obj.xsbh) {
+          break;
         }
       }
-      return obj
+      return obj;
     },
     // 返回当前勾选的id
-    rtnChooseId(chooseArr){
+    rtnChooseId(chooseArr) {
       let id;
       let lastId;
-      let chooseId=null;
-      if(chooseArr.length>this.lastDataArr.length){// 当勾选的数据大于上次勾选的数据选项，则可以认定该操作是勾选的操作；反之是取消勾选的操作
-        if(chooseArr.length>1){// 当勾选一个时
+      let chooseId = null;
+      if (chooseArr.length > this.lastDataArr.length) {
+        // 当勾选的数据大于上次勾选的数据选项，则可以认定该操作是勾选的操作；反之是取消勾选的操作
+        if (chooseArr.length > 1) {
+          // 当勾选一个时
           // 当前选择的数据选项
-          for (let i = 0; i <chooseArr.length ; i++) {
-            id=chooseArr[i]
+          for (let i = 0; i < chooseArr.length; i++) {
+            id = chooseArr[i];
             // 上一次选择的数据选项
             for (let j = 0; j < this.lastDataArr.length; j++) {
-              lastId=this.lastDataArr[j]
-              if(id!=lastId){
-                chooseId=id;
+              lastId = this.lastDataArr[j];
+              if (id != lastId) {
+                chooseId = id;
                 break;
               }
             }
           }
-        }else if(chooseArr.length==1){
-          chooseId=chooseArr[0]
+        } else if (chooseArr.length == 1) {
+          chooseId = chooseArr[0];
         }
       }
-      this.lastDataArr=chooseArr
-      return chooseId
+      this.lastDataArr = chooseArr;
+      return chooseId;
     },
     // 如果传入的参数是null则转成空数组
-    ifNullToArr(obj){
-      if(null==obj){
-        return []
-      }else{
-        return obj
+    ifNullToArr(obj) {
+      if (null == obj) {
+        return [];
+      } else {
+        return obj;
       }
     },
 
@@ -274,7 +280,7 @@ export default {
     getListStudentData() {
       listStudent({ ryb: this.queryParams.bjid }).then(res => {
         this.getListStudent = res.rows;
-        this.setChooseStudent(this.queryParams.zdxsObjList)
+        this.setChooseStudent(this.queryParams.zdxsObjList);
       });
     },
     // 查询图片
@@ -363,20 +369,24 @@ export default {
     },
     // 勾选学生后触发的方法-针对学生数据
     addStudentInfo(item) {
-      this.isZdxsSubmit=false // 初始化为：未提交=false
+      this.isZdxsSubmit = false; // 初始化为：未提交=false
       this.dialogFormVisible = true;
-      if (!this.queryParams.zdxsid) {// 如果是添加，可能该针对学生id为空，则生成
+      if (!this.queryParams.zdxsid) {
+        // 如果是添加，可能该针对学生id为空，则生成
         this.queryParams.zdxsid = secretKey();
       }
-      this.form = {};// 初始化
+      this.form = {}; // 初始化
       this.form.xsbh = item.xsbh;
       this.form.xsxm = item.xsxm;
       this.zdxsGetImage = [];
-      listExcellentTrainingStudent({ glid: this.queryParams.zdxsid, xsbh:item.xsbh }).then(res => {
+      listExcellentTrainingStudent({
+        glid: this.queryParams.zdxsid,
+        xsbh: item.xsbh
+      }).then(res => {
         if (res.code == 200 && res.rows.length > 0) {
-          this.isZdxsSubmit=true // 如果查询到有数据，则修改为 已提交=true
+          this.isZdxsSubmit = true; // 如果查询到有数据，则修改为 已提交=true
           this.form = res.rows[0];
-          if(this.form.tpid){
+          if (this.form.tpid) {
             this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
           }
         }
@@ -385,8 +395,9 @@ export default {
     // 针对学生提交
     xsSubmit() {
       // 设置为已提交=true
-      this.isZdxsSubmit=true // 当点击提交按钮，则修改为 已提交=true
-      if (this.queryParams.zdxsid) {// 关联id赋值
+      this.isZdxsSubmit = true; // 当点击提交按钮，则修改为 已提交=true
+      if (this.queryParams.zdxsid) {
+        // 关联id赋值
         this.form.glid = this.queryParams.zdxsid;
       }
       if (this.form.id != null) {
@@ -405,7 +416,7 @@ export default {
     xsDelete(id) {
       delExcellentTrainingStudent(id).then(res => {
         if (res.code == 200) {
-          this.isZdxsSubmit=true // 如果删除数据，则修改为 已提交=true
+          this.isZdxsSubmit = true; // 如果删除数据，则修改为 已提交=true
           this.msgSuccess("成功 : 删除成功");
           this.dialogFormVisible = false;
         }

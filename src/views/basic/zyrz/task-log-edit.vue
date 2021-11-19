@@ -222,6 +222,10 @@ export default {
     });
     listBjclass().then(response => {
       this.bjclassList = response.rows;
+      if (response.rows.length == 1) {
+        this.queryParams.bjid = response.rows[0].id;
+        this.getListStudentData();
+      }
     });
     if (JSON.parse(this.$route.query.list).id) {
       this.queryParams = JSON.parse(this.$route.query.list);
