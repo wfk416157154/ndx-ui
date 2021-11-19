@@ -109,6 +109,61 @@
         </div>
       </el-dialog>
     </el-dialog>
+
+    <el-dialog width="80%" :title="innerTitle" :visible.sync="aloneVisible" >
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="消息类型" prop="xxlx">
+          <el-select v-model="form.xxlx" placeholder="请选择消息类型">
+            <el-option
+              v-for="dict in xxlxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="消息标题" prop="xxbt">
+          <el-input v-model="form.xxbt" maxlength="100" placeholder="请输入消息标题"/>
+        </el-form-item>
+        <el-form-item label="消息内容" prop="xxnr">
+          <div v-html="form.xxnr" style="padding: 10px;"></div>
+        </el-form-item>
+        <el-form-item label="文件下载" prop="wjidFile">
+          <el-button
+            size="mini"
+            type="text"
+            v-for="(item,index) in wjidFile"
+            :key="index"
+            @click="downloadFileName(item.wjmc)"
+          >{{item.wjmc}}
+          </el-button>
+        </el-form-item>
+        <el-form-item
+          label="回复内容"
+          prop="messageHfnr"
+          v-if="messageConfirmStatus=='3'||messageConfirmStatus=='2'"
+        >
+          <el-input
+            type="textarea"
+            v-model="form.messageHfnr"
+            :disabled="messageConfirmStatus=='2'"
+            maxlength="400"
+            placeholder="请输入"
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          v-prevent-re-click
+          @click="submitFormAlone"
+          v-if="messageConfirmStatus=='3'"
+        >回复
+        </el-button>
+        <el-button @click="cancelAlone">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -144,6 +199,7 @@
         dialogTableVisible: false,
         // 内层弹窗
         innerVisible: false,
+        aloneVisible:false,
         // 内层弹窗标题
         innerTitle: "",
         // 文件数组
@@ -184,6 +240,7 @@
               }
             }
             if (num > 0) {
+              this.messageAloneCheck(this.messageList[0])// 默认取第一条
               // 如果有消息则弹出提示框
               this.reminder(num);
             }
@@ -214,6 +271,16 @@
         this.innerTitle = "查看消息详情";
         this.innerVisible = true;
         getMessage(row.id).then(response => {
+          this.form = response.data;
+          this.wjidFile = this.ifNullToNewArray(response.data.fileArr);
+        });
+      },
+
+      messageAloneCheck(row) {
+        this.messageConfirmStatus = row.messageStatus;
+        this.innerTitle = "查看消息详情";
+        getMessage(row.id).then(response => {
+          this.aloneVisible = true;
           this.form = response.data;
           this.wjidFile = this.ifNullToNewArray(response.data.fileArr);
         });
@@ -267,6 +334,10 @@
         this.innerVisible = false;
         this.reset();
       },
+      cancelAlone(){
+        this.aloneVisible = false;
+        this.reset();
+      },
       submitForm() {
         if (!this.form.messageHfnr) {
           this.msgError("请填写回复内容！");
@@ -282,6 +353,27 @@
             this.msgSuccess("操作成功！");
             this.getList();
             this.innerVisible = false;
+          } else {
+            this.msgError("操作失败！请联系管理员！");
+          }
+          this.messageHfnr = null;
+        });
+      },
+      submitFormAlone() {
+        if (!this.form.messageHfnr) {
+          this.msgError("请填写回复内容！");
+          return;
+        }
+        let obj = {
+          messageId: this.form.id,
+          status: "2", // 回复=2
+          hfnr: this.form.messageHfnr
+        };
+        addMessageReceive(obj).then(res => {
+          if (200 == res.code) {
+            this.msgSuccess("操作成功！");
+            this.getList();
+            this.aloneVisible = false;
           } else {
             this.msgError("操作失败！请联系管理员！");
           }
