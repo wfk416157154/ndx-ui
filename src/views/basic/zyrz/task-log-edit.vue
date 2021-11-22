@@ -230,12 +230,14 @@ export default {
       this.queryParams = JSON.parse(this.$route.query.list);
       if (this.queryParams && this.queryParams.id) {
         this.queryParams.xsList = [];
-        if(this.queryParams.homeworkLogStudentList){// 当该学生-作业日志对象集合不为空
+        if (this.queryParams.homeworkLogStudentList) {
+          // 当该学生-作业日志对象集合不为空
           this.queryParams.homeworkLogStudentList.forEach(value => {
             this.queryParams.xsList.push(value.xsbh);
           });
         }
-        if(this.queryParams.tpid){// 如果没上传过图片，则不去查询图片列表
+        if (this.queryParams.tpid) {
+          // 如果没上传过图片，则不去查询图片列表
           this.getSelectFileList({ kzzd1: this.queryParams.tpid }, "getImages");
         }
         this.getListStudentData();
@@ -351,12 +353,12 @@ export default {
         this.queryParams.zdxsid = secretKey();
       }
       this.form.zdxsglid = this.queryParams.zdxsid;
-
       if (typeof index == "number") {
         listHomeworkLogStudent(this.form).then(res => {
           if (res.rows.length > 0) {
             this.form = res.rows[0];
-            if(this.form.tpid){// 如果没上传过图片，则不去查询图片列表
+            if (this.form.tpid) {
+              // 如果没上传过图片，则不去查询图片列表
               this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
             }
           }
@@ -372,7 +374,8 @@ export default {
       listHomeworkLogStudent({ zdxsglid: zdxsid, xsbh }).then(res => {
         if (res.code == 200 && res.rows.length > 0) {
           this.form = res.rows[0];
-          if(this.form.tpid){// 如果没上传过图片，则不去查询图片列表
+          if (this.form.tpid) {
+            // 如果没上传过图片，则不去查询图片列表
             this.getSelectFileList({ kzzd1: this.form.tpid }, "zdxsGetImage");
           }
         }
