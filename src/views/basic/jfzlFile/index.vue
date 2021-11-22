@@ -160,7 +160,7 @@
           <el-input v-model="form.bookName" placeholder="请输入书名" />
         </el-form-item>
         <el-form-item label="课程进度" prop="kcjd">
-          <el-radio-group v-model="form.kcjd">
+          <el-radio-group v-model="form.kcjd" @change="kcjdChange" >
             <el-radio
               v-for="dict in kcjdOptions"
               :key="dict.dictValue"
@@ -312,6 +312,10 @@ export default {
     });
   },
   methods: {
+    // 选择课程进度后
+    kcjdChange(val){
+      console.log("val:",val)
+    },
     /** 查询教辅资料列表 */
     getList() {
       this.loading = true;
@@ -336,13 +340,13 @@ export default {
         id: null,
         syfw: [],
         bookName: null,
-        kcjd: "0",
+        kcjd: null,
         zlbt: null,
         wjid: null,
         remark: null,
         userId: null,
         userName: null,
-        status: "0",
+        status: null,
         dataOrder: null,
         createTime: null,
         updateTime: null,
