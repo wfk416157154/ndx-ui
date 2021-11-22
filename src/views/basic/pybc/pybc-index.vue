@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="班级id" prop="bjid">
+      <el-form-item label="班级" prop="bjid">
         <el-select v-model="queryParams.bjid" filterable placeholder="请选择班级">
           <el-option
             v-for="item in bjclassList "
