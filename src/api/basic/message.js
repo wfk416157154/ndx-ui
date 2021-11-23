@@ -9,6 +9,15 @@ export function listMessage(query) {
   })
 }
 
+// 查询未回复消息的人员
+export function listNoReplyMessage(query) {
+  return request({
+    url: '/basic/message/listNoReply',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询消息管理详细
 export function getMessage(id) {
   return request({

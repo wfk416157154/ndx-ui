@@ -104,6 +104,13 @@
               @click="showJsrPage(scope.row)"
             >查看(确认/回复)人员</span>
           </a>
+          <br/>
+          <a href="#">
+            <span
+              style="margin-left: 10px;color: red"
+              @click="showNoReplyPage(scope.row)"
+            >查看(未确认/未回复)人员</span>
+          </a>
         </template>
       </el-table-column>
       <el-table-column label="消息类型" align="center" prop="xxlx">
@@ -287,13 +294,22 @@
       </el-table>
     </el-dialog>
 
+    <!-- 消息接收人-未确认表表格数据 -->
+    <el-dialog :title="title" :visible.sync="noReplyOpen" width="500px" append-to-body>
+      <el-table v-loading="noReplyLoading"  border :data="messageNoReplyList" >
+        <el-table-column type="index" width="50" />
+        <el-table-column label="用户手机号" align="center" prop="nickName" />
+        <el-table-column label="用户名称" align="center" prop="userName" />
+      </el-table>
+    </el-dialog>
+
   </div>
 
 
 </template>
 
 <script>
-  import {listMessage, getMessage, delMessage, addMessage, updateMessage} from "@/api/basic/message";
+  import {listMessage, getMessage, delMessage, addMessage, updateMessage,listNoReplyMessage} from "@/api/basic/message";
   import { listMessageReceive, getMessageReceive, delMessageReceive, addMessageReceive, updateMessageReceive } from "@/api/basic/messageReceive";
   import {listTeacher} from "@/api/basic/teacher";
   import {getToken} from "@/utils/auth";
@@ -309,6 +325,7 @@
         // 遮罩层
         loading: true,
         loadingReceive:true,
+        noReplyLoading:true,
         importBtn: false,
         fullscreenLoading: false,
         // 选中数组
@@ -327,6 +344,7 @@
         title: "",
         // 是否显示弹出层
         open: false,
+        noReplyOpen:false,
         // 消息类型字典
         xxlxOptions: [],
         // 是否发送给所有用户(0:否，1:是)字典
@@ -384,6 +402,8 @@
         receiveOpen:false,
         // 接收人消息-确认状态
         confirmOptions:[],
+        // 未确认/未回复人员信息
+        messageNoReplyList:[],
       };
     },
     created() {
@@ -636,6 +656,16 @@
       showJsrPage(row){
         this.receiveOpen=true
         this.getReceiveList({messageId:row.id})
+      },
+      // 点击查看未回复未确认的人员信息
+      showNoReplyPage(row){
+        this.noReplyOpen=true
+        this.title="未回复/未确认消息的人员信息"
+        this.noReplyLoading=true
+        listNoReplyMessage({id:row.id}).then(res=>{
+          this.messageNoReplyList=res.rows
+          this.noReplyLoading=false
+        });
       },
 
     }
