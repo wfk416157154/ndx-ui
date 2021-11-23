@@ -101,6 +101,20 @@
             @click="getAchievement(item.dictValue)"
           >{{item.dictLabel}}</el-button>
         </el-form-item>
+        <el-form-item label="考试时间">
+          <div class="block">
+            <el-date-picker
+              v-model="dcForm.sjArr"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd"
+            >
+            </el-date-picker>
+            <el-button type="primary" class="el-btn" plain @click="handleClassStugradeCollect">导出</el-button>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
@@ -177,6 +191,9 @@ export default {
   name: "statisticalChartTtem",
   data() {
     return {
+      dcForm: {
+        sjArr: [], // 考试时间筛选
+      },
       year: new Date().getFullYear(),
       //开班学期字典
       selectNj: [],
@@ -194,7 +211,7 @@ export default {
         nj: null,
         pageNum: 1,
         pageSize: 10,
-        studentGradeType: 150 // 默认150分
+        studentGradeType: 150, // 默认150分
       },
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -407,6 +424,16 @@ export default {
           ...this.queryParams
         },
         `班级成绩表.xlsx`
+      );
+    },
+    // 导出班级课考或正式考试成绩汇总
+    handleClassStugradeCollect() {
+      this.download(
+        "basic/everytime/exportClassStugradeCollect",
+        {
+          ...this.dcForm
+        },
+        `班级课考或正式考试成绩汇总.xlsx`
       );
     },
     /** 重置按钮操作 */
