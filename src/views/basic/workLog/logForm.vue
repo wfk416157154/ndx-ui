@@ -151,6 +151,7 @@
         <div class="in-class-list">
           <div class="in-class-content">
             <ul>
+              <el-button type="primary" size="mini" @click="uploadVideo">早读视频上传</el-button>
               <li v-for="(item, index) in ruleForm.basicTeacherWorkLogLessonList" :key="index">
                 <el-form-item :label="item.courseTypeName">
                   <el-input v-model="ruleForm.basicTeacherWorkLogLessonList[index].content"></el-input>
@@ -375,12 +376,38 @@
         <el-button type="primary" @click.once="addKscjfxzj">确 定</el-button>
       </span>
     </el-dialog>
-    
+
     <el-dialog title="添加复习" :visible.sync="sffx">
       <fx-form :rzid="ruleForm.id" :bjid="bjNameId" />
       <div slot="footer" class="dialog-footer">
         <el-button @click="sffx = false">取 消</el-button>
         <el-button type="primary" @click="saveSbmit">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="视频上传" :visible.sync="dialogUploadVideoisible">
+      <div>
+        <el-upload
+          ref="uploadvideo"
+          :limit="1"
+          :headers="upload.headers"
+          :action="upload.imgUrl"
+          :on-progress="vHandleFileUploadProgress"
+          :on-success="vHandleFileSuccess"
+          :on-error="vHandleFileError"
+          :auto-upload="false"
+          drag
+        >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">
+            将文件拖到此处，或
+            <em>点击上传</em>
+          </div>
+        </el-upload>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="vsubmitFileForm">确 定</el-button>
+        <el-button @click="dialogUploadVideoisible = false">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -495,7 +522,8 @@ export default {
       // 是否辅导
       bkBcrz: "0",
       // 是否复习
-      sffx: false
+      sffx: false,
+      dialogUploadVideoisible: false
     };
   },
   components: {
@@ -526,6 +554,36 @@ export default {
     this.initGetListExaminationPaper();
   },
   methods: {
+    //视频上传
+    uploadVideo() {
+      this.dialogUploadVideoisible = true;
+    },
+    // 文件上传中处理
+    vHandleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 上传失败
+    vHandleFileError(err, file, fileList) {},
+    // 文件上传成功处理
+    vHandleFileSuccess(response, file, fileList) {
+      if (response.code == 200) {
+        let data = response.data;
+        data.kzzd1 = this.ruleForm.id;
+        this.ruleForm.id = data.kzzd1;
+        addImg(data).then(res => {
+          file.id = res.data.id;
+          this.dialogUploadVideoisible = false;
+        });
+        this.msgSuccess("上传成功");
+      } else {
+        this.msgError("上传失败");
+      }
+      this.getList("false");
+    },
+    // 提交上传文件
+    vsubmitFileForm() {
+      this.$refs.uploadvideo.submit();
+    },
     selectZfx() {
       this.sffx = true;
     },

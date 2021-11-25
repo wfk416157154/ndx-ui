@@ -40,3 +40,11 @@ export function selectFileList(data) {
         params: data
     })
 }
+
+// 获取视频
+export function getVideo(id) {
+  return request({
+    url: '/file/filetable/video/' + id,
+    method: 'get'
+  })
+}

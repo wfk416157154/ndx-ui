@@ -9,6 +9,15 @@ export function listClassPlan(query) {
   })
 }
 
+// 教务/管理员查询班级教学计划列表
+export function adminList(query) {
+  return request({
+    url: '/basic/classPlan/adminList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询班级教学计划详细
 export function getClassPlan(id) {
   return request({

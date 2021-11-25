@@ -1,100 +1,86 @@
 <template>
   <div class="teaching-plan-list">
-    <el-form :inline="true">
-      <el-form-item label="教材">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择教材">
+    <el-form :inline="true" :model="queryParams" ref="teachingPlanForm">
+      <el-form-item label="教材" prop="jcid">
+        <el-select filterable v-model="queryParams.jcid" placeholder="请选择教材">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item,index) in listTeachingMaterial"
+            :key="index"
+            :label="item.jcmc"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="开班时间">
+      <el-form-item label="开班时间" prop="sjall">
         <el-date-picker
-          v-model="teachingPlanForm.value1"
+          v-model="queryParams.sjall"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="学期">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择学期">
+      <el-form-item label="学期" prop="kbxq">
+        <el-select filterable v-model="queryParams.kbxq" placeholder="请选择学期">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item,index) in teachingTermConfig"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="所需天数">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择学期">
+      <el-form-item label="届数" prop="rybjmc">
+        <el-input v-model="queryParams.rybjmc" placeholder="请输入所需天数"></el-input>
+      </el-form-item>
+      <el-form-item label="校区" prop="xqid">
+        <el-select filterable v-model="queryParams.xqid" @change="xqmcOnChange" placeholder="请选择校区">
+          <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="班级" prop="rybjid">
+        <el-select filterable v-model="queryParams.rybjid" placeholder="请选择班级">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :label="item.rybjmc"
+            :value="item.id"
+            v-for="(item,index) in classList"
+            :key="index"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="届数">
-        <el-input v-model="teachingPlanForm.input" placeholder="请输入所需天数"></el-input>
-      </el-form-item>
-      <el-form-item label="校区">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择校区">
+      <el-form-item label="老师" prop="lsid">
+        <el-select filterable v-model="queryParams.lsid" placeholder="请选择老师">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item,index) in teacherList"
+            :key="index"
+            :label="item.lsxm"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="班级">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择班级">
+      <el-form-item label="教学进度" prop="jxjd">
+        <el-select filterable v-model="queryParams.jxjd" placeholder="请选择">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item,index) in teachingProgress"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="老师">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择老师">
+      <el-form-item label="课程类型" prop="kclx">
+        <el-select filterable v-model="queryParams.kclx" placeholder="请选择教学内容">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="教学进度">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="教学内容">
-        <el-select filterable v-model="teachingPlanForm.value" placeholder="请选择教学内容">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item,index) in kcType"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
           ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search">查询</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
+        <el-button @click="resetForm('teachingPlanForm')">重置</el-button>
       </el-form-item>
     </el-form>
     <div class="central-navigation">
@@ -188,11 +174,11 @@
 
     <div class="teaching-plan-item">
       <ul class="teaching-list-content">
-        <li v-for="(item,index) in 10" :key="index">
+        <li v-for="(item,index) in teachingPlanData" :key="index">
           <div class="content-top">
             <div class="content-top-left">
               <div class="info-left">
-                <h4>陇南扬名20级22届（高二上）</h4>
+                <h4>{{item.rybjmc}}</h4>
                 <div>
                   <span>当前课程 :</span>
                   <span>第三课</span>
@@ -202,8 +188,10 @@
                   <span>2020-08-01至2022-06-07</span>
                 </div>
                 <div>
-                  <span>老师: 张三</span>
-                  <span>教学进度: 超前</span>
+                  <span>老师: {{item.lsxm}}</span>
+                </div>
+                <div>
+                  <span>教学进度:</span>
                   <span>新课</span>
                 </div>
               </div>
@@ -245,32 +233,138 @@
                 </li>
               </ul>
             </div>
-            <div
-              class="progress"
-              style="width : 100% ;height : 15px;background : #eee;border-radius: 10px;"
-            >
-              <div style="width : 30%; height : 100%;background : #909399"></div>
-              <div style="width : 30%; height : 100%;background : #409EFF"></div>
-              <div style="width : 30%; height : 100%;background : #67C23A"></div>
-              <div style="width : 40%; height : 100%;background : #E6A23C"></div>
-              <div style="width : 10%; height : 100%;background : #F56C6C"></div>
+            <div>
+              <ndx-progress :progressItem="list" />
             </div>
           </div>
         </li>
       </ul>
+
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { adminList } from "@/api/teaching/classPlan";
+import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
+import { listSchool } from "@/api/basic/school";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listTeacher } from "@/api/basic/teacher";
 export default {
   data() {
     return {
-      teachingPlanForm: {},
-      ifContent: null
+      teachingPlanData: [],
+      ifContent: null,
+      list: [
+        {
+          type: "primary",
+          percentage: 10
+        },
+        {
+          type: "success",
+          percentage: 20
+        },
+        {
+          type: "info",
+          percentage: 50
+        },
+        {
+          type: "warning",
+          percentage: 10
+        },
+        {
+          type: "danger",
+          percentage: 30
+        }
+      ],
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        jcid: null,
+        sjall: [],
+        kbxq: null,
+        rybjmc: null,
+        xqid: null,
+        rybjid: null,
+        lsid: null,
+        jxjd: null,
+        kclx: null,
+        ksrq: null,
+        jzrq: null
+      },
+      total: 0,
+      // 学期
+      teachingTermConfig: [],
+      // 教学进度
+      teachingProgress: [],
+      // 教材
+      listTeachingMaterial: [],
+      // 课程类型
+      kcType: [],
+      // 校区
+      schoolList: [],
+      // 班级
+      classList: [],
+      // 老师
+      teacherList: []
     };
   },
+  created() {
+    this.getDicts("nianji").then(response => {
+      this.teachingTermConfig = response.data;
+    });
+    this.getDicts("teachingProgress").then(response => {
+      this.teachingProgress = response.data;
+    });
+    this.getDicts("jfzl-kcjd").then(response => {
+      this.kcType = response.data;
+    });
+    listSchool().then(response => {
+      this.schoolList = response.rows;
+    });
+    listTeacher().then(response => {
+      this.teacherList = response.rows;
+    });
+    listTeachingMaterial({ parentId: 0 }).then(res => {
+      this.listTeachingMaterial = res.data;
+    });
+  },
+  mounted() {
+    this.getList();
+  },
   methods: {
+    // 基础数据
+    getList() {
+      this.queryParams.ksrq = this.queryParams.sjall[0];
+      this.queryParams.jzrq = this.queryParams.sjall[1];
+      adminList(this.queryParams).then(res => {
+        this.teachingPlanData = res.rows;
+        this.total = res.total;
+      });
+    },
+    // 获取班级
+    xqmcOnChange(xqid) {
+      if (!xqid) {
+        this.classList = [];
+        return;
+      }
+      listBjclass({ kzzd1: xqid }).then(res => {
+        this.classList = res.rows;
+      });
+    },
+    // 重置
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.getList();
+    },
     // 组件
     toComponent(value) {
       this.ifContent = value;

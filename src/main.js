@@ -26,6 +26,7 @@ import RightToolbar from "@/components/RightToolbar"
 import Editor from "@/components/Editor"
 // 进度条
 import Progress from "@/components/progress"
+import NdxProgress from "@/components/ndx-progress"
 import calendar from "@/components/calendar"
 import yNoticeBar from "@/components/yNoticeBar"
 import historicalRecords from "@/components/historical-records"
@@ -75,6 +76,7 @@ Vue.component('RightToolbar', RightToolbar)
 Vue.component('DictTag', DictTag)
 Vue.component('Editor', Editor)
 Vue.component('Progress', Progress)
+Vue.component('NdxProgress', NdxProgress)
 Vue.component('historical-records', historicalRecords)
 Vue.component('y-notice-bar', yNoticeBar)
 Vue.component('calendar', calendar)
