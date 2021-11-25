@@ -417,6 +417,7 @@ import { getToken } from "@/utils/auth";
 import { listBjclass } from "@/api/basic/bjclass";
 import { addExamSummary } from "@/api/basic/examSummary";
 import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
+import { selectFileList } from "@/api/tool/common";
 
 export default {
   name: "ExaminationPaper",
@@ -829,22 +830,25 @@ export default {
     },
     /** 下载试卷 */
     handleExport(row) {
+
       this.datas = {
         url: "file/filetable/download",
         params: {
           ssmk: this.filessmk,
           kzzd1: row.id
         },
-        filename: `考卷-${row.bjmc}-${row.ksfw}.zip`
+        filename: `考卷-${row.bjmc}-${row.ksfw}.`
       };
-      this.$nextTick(() => {
-        this.$refs.progress.download();
-      });
+      selectFileList({kzzd1: row.id}).then(res=>{
+        this.datas.filename= this.datas.filename+ (res.rows[0].name.split('.')[1])
+        this.$nextTick(() => {
+          this.$refs.progress.download();
+        });
+      })
       // // 修改老师试卷状态
       // this.submitForm("3"); by 2021/9/8可多次下载不改状态
     },
     callBack(data) {
-      console.log(data);
     },
     /** 成绩导入按钮操作 */
     handleCjImport() {

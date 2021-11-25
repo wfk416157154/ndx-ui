@@ -38,7 +38,7 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button type="success" size="mini" @click="seeHistorical">查看下载历史</el-button>
+        <el-button type="success" size="mini" v-has-role="['admin','academicAdministrator']" @click="seeHistorical">查看下载历史</el-button>
       </el-form-item>
     </el-form>
 
@@ -50,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['basic:jfzlFile:add']"
+          v-has-role="['admin','academicAdministrator']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -61,7 +61,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['basic:jfzlFile:edit']"
+          v-has-role="['admin','academicAdministrator']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -72,7 +72,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['basic:jfzlFile:remove']"
+          v-has-role="['admin','academicAdministrator']"
         >删除</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -115,6 +115,11 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="是否公开" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="statusOptions" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"></el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -123,14 +128,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:jfzlFile:edit']"
+            v-has-role="['admin','academicAdministrator']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['basic:jfzlFile:remove']"
+            v-has-role="['admin','academicAdministrator']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -168,8 +173,20 @@
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="是否公开" prop="status">
+          <el-radio-group v-model="form.status" >
+            <el-radio
+              v-for="dict in statusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictValue"
+            >{{dict.dictLabel}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="资料标题" prop="zlbt">
           <el-input v-model="form.zlbt" placeholder="请输入资料标题" />
+        </el-form-item>
+        <el-form-item label="数字课程" prop="dataOrder">
+          <el-input-number v-model="form.dataOrder" :min="0" :max="100" placeholder="请输入数字课程" />
         </el-form-item>
         <el-form-item label="资料上传">
           <el-upload
@@ -259,6 +276,7 @@ export default {
       syfwOptions: [],
       // 课程进度字典
       kcjdOptions: [],
+      statusOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -275,7 +293,9 @@ export default {
         syfw: [{ required: true, message: "必填项", trigger: "change" }],
         bookName: [{ required: true, message: "必填项", trigger: "blur" }],
         kcjd: [{ required: true, message: "必填项", trigger: "change" }],
-        zlbt: [{ required: true, message: "必填项", trigger: "blur" }]
+        zlbt: [{ required: true, message: "必填项", trigger: "blur" }],
+        dataOrder:[{ required: true, message: "必填项", trigger: "blur" }],
+        status:[{ required: true, message: "必填项", trigger: "change" }],
       },
       // 导入参数
       upload: {
@@ -309,6 +329,9 @@ export default {
     });
     this.getDicts("jfzl-kcjd").then(response => {
       this.kcjdOptions = response.data;
+    });
+    this.getDicts("isOrNot").then(response => {
+      this.statusOptions = response.data;
     });
   },
   methods: {
