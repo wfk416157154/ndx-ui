@@ -40,7 +40,7 @@
               size="mini"
               type="text"
               icon="el-icon-delete"
-              @click="messageConfirm(scope.row)"
+              @click="messageConfirm(scope.row.id)"
               v-if="scope.row.messageStatus=='0'"
             >确认
             </el-button>
@@ -160,6 +160,14 @@
           v-if="messageConfirmStatus=='3'"
         >回复
         </el-button>
+        <el-button
+          type="primary"
+          v-prevent-re-click
+          @click="messageAloneConfirm"
+          v-if="messageConfirmStatus=='0'"
+        >确认
+        </el-button>
+
         <el-button @click="cancelAlone">取 消</el-button>
       </div>
     </el-dialog>
@@ -209,7 +217,9 @@
         // 接收人消息-确认状态码表
         confirmOptions: [],
         // 接收人消息-确认状态数据
-        messageConfirmStatus: ""
+        messageConfirmStatus: "",
+        // 消息id
+        rowId:null
       };
     },
     created() {
@@ -233,14 +243,19 @@
           this.messageList = response.rows;
           if (this.messageList.length > 0) {
             let num = 0;
+            let newArr=[]
             for (let i = 0; i < response.total; i++) {
               // 如果有消息通知处于 0=待确认；3=待回复  的状态，则弹出提示框
               if ("0" == response.rows[i].messageStatus || "3" == response.rows[i].messageStatus) {
                 num++;
+                newArr.push(response.rows[i])
               }
             }
             if (num > 0) {
-              this.messageAloneCheck(this.messageList[0])// 默认取第一条
+              for (let i = 0; i < newArr.length; i++) {
+                this.messageAloneCheck(newArr[i])// 默认取第一条
+                break
+              }
               // 如果有消息则弹出提示框
               this.reminder(num);
             }
@@ -267,6 +282,7 @@
       },
       // 消息查看
       messageCheck(row) {
+        this.rowId=row.id
         this.messageConfirmStatus = row.messageStatus;
         this.innerTitle = "查看消息详情";
         this.innerVisible = true;
@@ -275,8 +291,9 @@
           this.wjidFile = this.ifNullToNewArray(response.data.fileArr);
         });
       },
-
+      // 单独弹窗
       messageAloneCheck(row) {
+        this.rowId=row.id
         this.messageConfirmStatus = row.messageStatus;
         this.innerTitle = "查看消息详情";
         getMessage(row.id).then(response => {
@@ -292,9 +309,9 @@
         return arr;
       },
       // 消息确认
-      messageConfirm(row) {
+      messageConfirm(id) {
         let obj = {
-          messageId: row.id,
+          messageId: id,
           status: "1" // 状态：1=确认
         };
         this.$confirm("是否确认?", "警告", {
@@ -308,6 +325,26 @@
             this.msgSuccess("操作成功");
         }).catch(e => {
             console.log(e);
+        });
+      },
+      // 消息单独确认
+      messageAloneConfirm(){
+        let obj = {
+          messageId: this.rowId,
+          status: "1" // 状态：1=确认
+        };
+        this.$confirm("是否确认?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function () {
+          return addMessageReceive(obj);
+        }).then(() => {
+          this.aloneVisible = false;
+          this.getList();
+          this.msgSuccess("操作成功");
+        }).catch(e => {
+          console.log(e);
         });
       },
       // 消息回复
