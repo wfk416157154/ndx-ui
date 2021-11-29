@@ -151,7 +151,16 @@
         <div class="in-class-list">
           <div class="in-class-content">
             <ul>
-              <el-button type="primary" size="mini" @click="uploadVideo">早读视频上传</el-button>
+              <div style="display : flex;align-items : center">
+                <el-button type="primary" size="mini" @click="uploadVideo">视频上传</el-button>
+                <div style="margin-left : 20px">
+                  <p
+                    style
+                    v-for="(item,index) in ruleForm.spFileList"
+                    :key="index"
+                  >{{++index}} ) {{item.name}}</p>
+                </div>
+              </div>
               <li v-for="(item, index) in ruleForm.basicTeacherWorkLogLessonList" :key="index">
                 <el-form-item :label="item.courseTypeName">
                   <el-input v-model="ruleForm.basicTeacherWorkLogLessonList[index].content"></el-input>
@@ -389,7 +398,6 @@
       <div>
         <el-upload
           ref="uploadvideo"
-          :limit="1"
           :headers="upload.headers"
           :action="upload.imgUrl"
           :on-progress="vHandleFileUploadProgress"
@@ -573,6 +581,7 @@ export default {
         addImg(data).then(res => {
           file.id = res.data.id;
           this.dialogUploadVideoisible = false;
+          this.getList();
         });
         this.msgSuccess("上传成功");
       } else {
