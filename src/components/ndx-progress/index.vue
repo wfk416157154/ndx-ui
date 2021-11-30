@@ -36,6 +36,9 @@ export default {
 .danger {
   background-color: #f56c6c;
 }
+.white {
+  background-color: #fff;
+}
 .wrap-box {
   width: 100%;
   height: 15px;
