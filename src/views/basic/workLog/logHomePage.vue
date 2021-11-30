@@ -106,7 +106,11 @@
               <span>{{item.khBcrz}}</span>
             </div>
             <div class="button">
-              <el-button type="success" @click="toFileVideo(item.spFileList)">视频</el-button>
+              <el-button
+                type="success"
+                :disabled="item.spFileList == null || item.spFileList.length == 0"
+                @click="toFileVideo(item.spFileList)"
+              >视频</el-button>
               <el-button type="warning" plain @click="toDetails(item.teacherWorkLogId)">查看详情</el-button>
               <el-button type="success" plain @click="downloadZipFile(item.teacherWorkLogId)">下载压缩包</el-button>
             </div>
@@ -150,7 +154,7 @@
       @pagination="getList"
     />
 
-    <el-dialog title="收货地址" :visible.sync="dialogVideoFileVisible">
+    <el-dialog title="视频" :visible.sync="dialogVideoFileVisible">
       <div class="wrap-box">
         <div class="left-list">
           <ul>
@@ -172,8 +176,8 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVideoFileVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVideoFileVisible = false">确 定</el-button>
+        <el-button @click="cancelVideo">取 消</el-button>
+        <el-button type="primary" @click="cancelVideo">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -401,9 +405,13 @@ export default {
     toFileVideo(sp) {
       this.videoList = sp;
       this.dialogVideoFileVisible = true;
+      this.videoUrl = "";
     },
     getVideoUrl(url) {
       this.videoUrl = url;
+    },
+    cancelVideo() {
+      this.dialogVideoFileVisible = false;
     }
   }
 };
