@@ -171,7 +171,7 @@ export default {
         jsrArr: []
       },
       rules: {
-        xqid: [{ required: true, message: "请选择校区", trigger: "change" }],
+        // xqid: [{ required: true, message: "请选择校区", trigger: "change" }],
         nd: [{ required: true, message: "请选择年份", trigger: "change" }],
         kbType: [
           { required: true, message: "请选择课表类型", trigger: "change" }
