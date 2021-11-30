@@ -62,7 +62,7 @@
       <el-table-column label="年份/课表类型">
         <template slot-scope="scope">
           <span>{{scope.row.nd}}</span>
-          <span>{{queryParams.kbType}}</span>
+          <span>{{scope.row.kblxLabel}}</span>
         </template>
       </el-table-column>
       <el-table-column label="老师姓名" prop="lsxm" />
