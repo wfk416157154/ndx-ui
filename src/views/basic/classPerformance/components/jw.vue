@@ -193,6 +193,7 @@ export default {
     return {
       dcForm: {
         sjArr: [], // 考试时间筛选
+        studentGradeType: null,
       },
       year: new Date().getFullYear(),
       //开班学期字典
@@ -413,6 +414,7 @@ export default {
       if (typeof fz == "string") {
         this.form.studentGradeType = fz;
       }
+      this.dcForm.studentGradeType = fz;
       this.queryList = Object.assign(this.form, this.queryList);
       this.getListClassGrade();
     },
