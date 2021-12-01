@@ -122,7 +122,7 @@ export default {
       // 表单参数
       form: {
         sfqbfs: "0",
-        xxlx: "2",
+        xxlx: "1",
         jsrArr: []
       },
       // 表单校验
