@@ -440,6 +440,7 @@ import { listBjclass } from "@/api/basic/bjclass";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { addExamSummary } from "@/api/basic/examSummary";
 import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
+import { planIsFinish } from "@/api/basic/teachingReview";
 import FxForm from "./fxForm";
 export default {
   data() {
@@ -594,7 +595,16 @@ export default {
       this.$refs.uploadvideo.submit();
     },
     selectZfx() {
-      this.sffx = true;
+      // 判断该班级教学计划是否全部完成 完成才能点击
+      planIsFinish(this.bjNameId).then(res =>{
+        if(1===res.data){
+          this.sffx = true;
+        }else {
+          this.msgError("课程还未全部完成，无法进行复习！");
+        }
+        }
+      )
+
     },
     saveSbmit() {
       this.sffx = false;

@@ -121,6 +121,12 @@
             @click="handleExport(scope.row)"
             v-if="(scope.row.lssjzt == '2' || scope.row.lssjzt == '3')&&scope.row.kzzd2 !== '3' "
           >下载</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleCjscEdit(scope.row)"
+            v-if="scope.row.kzzd2 == '3'"
+          >成绩更新</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -262,11 +268,49 @@
             size="mini"
             @click="handleCjImport"
             v-has-role="['teacher']"
+            v-if="!isEdit"
           >导入成绩</el-button>
+          <el-button
+            type="info"
+            icon="el-icon-upload2"
+            size="mini"
+            @click="handleCjImportEdit"
+            v-has-role="['teacher']"
+            v-if="isEdit"
+          >更新成绩</el-button>
         </div>
       </el-form>
     </el-dialog>
-
+    <!-- 成绩更新对话框 -->
+    <el-dialog :title="uploadEdit.title" :visible.sync="uploadEdit.open" width="400px">
+      <el-upload
+        ref="uploadEdit"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="uploadEdit.headers"
+        :action="uploadEdit.fileUrl"
+        :disabled="uploadEdit.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccessForUpdate"
+        :auto-upload="false"
+        :data="{ ksmc: cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj }"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileFormEdit">确 定</el-button>
+        <el-button @click="uploadEdit.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
     <!-- 成绩导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
       <el-upload
@@ -424,6 +468,7 @@ export default {
   components: {},
   data() {
     return {
+      isEdit: false,
       // 遮罩层
       loading: true,
       dialogFormVisible: false,
@@ -508,6 +553,25 @@ export default {
         fileUrl:
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
+        // 上传图片地址
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      // 成绩更新
+      uploadEdit: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传考试成绩地址
+        fileUrl:
+          process.env.VUE_APP_BASE_API +
+          "/basic/examinationPaper/importClassGradeDataForUpdate",
         // 上传图片地址
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
@@ -630,6 +694,8 @@ export default {
     },
     // 表单重置
     reset() {
+      this.ksfw_ksbf= null,
+      this.ksfw_jsbf= null,
       this.form = {
         id: null,
         bjid: null,
@@ -662,6 +728,8 @@ export default {
     },
     // 其他试卷表单重置
     resetQt() {
+      this.ksfw_ksbf= null,
+      this.ksfw_jsbf= null,
       this.formQt = {
         id: null,
         bjid: null,
@@ -744,6 +812,13 @@ export default {
     handleCjsc(row) {
       this.cjsc.open = true;
       this.cjscForm = row;
+      this.isEdit = false;
+    },
+    /** 打开成绩上传对话框*/
+    handleCjscEdit(row) {
+      this.cjsc.open = true;
+      this.cjscForm = row;
+      this.isEdit = true;
     },
     // 下载模板操作
     importTemplate() {
@@ -782,6 +857,10 @@ export default {
       this.form.ksfw = this.setFormKsfwValue(this.form.kslx, this.form.ksfw);
       this.$refs.formState.validate(valid => {
         if (valid) {
+          if(this.showKsfwKsJs&&!this.ksfw_jsbf){
+            this.msgError("考试范围不能为空");
+            return;
+          }
           this.getClassList(this.form.bjid);
           if (this.form.id != null) {
             updateExaminationPaper(this.form).then(response => {
@@ -811,6 +890,10 @@ export default {
       );
       this.$refs.formState.validate(valid => {
         if (valid) {
+          if(this.showKsfwKsJs&&!this.ksfw_jsbf){
+            this.msgError("考试范围不能为空");
+            return;
+          }
           this.getClassList(this.formQt.bjid);
           if (this.formQt.id != null) {
             updateExaminationPaper(this.formQt).then(response => {
@@ -855,10 +938,33 @@ export default {
       this.upload.title = "成绩数据导入";
       this.upload.open = true;
     },
-
+    /** 成绩更新按钮操作 */
+    handleCjImportEdit() {
+      this.uploadEdit.title = "成绩更新导入";
+      this.uploadEdit.open = true;
+    },
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccessForUpdate(response, file, fileList) {
+      this.uploadEdit.open = false;
+      this.cjsc.open = false;
+      this.uploadEdit.isUploading = false;
+      this.$refs.uploadEdit.clearFiles();
+      if (response.code == 200) {
+        this.$notify({
+          message: response.msg,
+          type: "success"
+        });
+      } else {
+        this.$notify({
+          message: response.msg,
+          type: "error"
+        });
+      }
+      this.getList();
     },
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
@@ -891,6 +997,10 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
+    },
+    // 提交上传文件
+    submitFileFormEdit() {
+      this.$refs.uploadEdit.submit();
     },
     //班级id 和 名称
     getClassList(value) {

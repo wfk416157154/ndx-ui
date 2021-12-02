@@ -39,7 +39,7 @@
               size="mini"
               type="text"
               icon="el-icon-delete"
-              @click="messageConfirm(scope.row)"
+              @click="messageConfirm(scope.row.id)"
               v-if="scope.row.messageStatus=='0'"
             >确认</el-button>
             <el-button
@@ -152,7 +152,16 @@
           v-prevent-re-click
           @click="submitFormAlone"
           v-if="messageConfirmStatus=='3'"
-        >回复</el-button>
+        >回复
+        </el-button>
+        <el-button
+          type="primary"
+          v-prevent-re-click
+          @click="messageAloneConfirm"
+          v-if="messageConfirmStatus=='0'"
+        >确认
+        </el-button>
+
         <el-button @click="cancelAlone">取 消</el-button>
       </div>
     </el-dialog>
@@ -175,63 +184,73 @@ import {
   updateMessageReceive
 } from "@/api/basic/messageReceive";
 
-export default {
-  name: "index",
-  data() {
-    return {
-      // 版本号
-      version: "2.5.0",
-      // 遮罩层
-      loading: true,
-      // 消息管理表格数据
-      messageList: [],
-      // 消息类型字典
-      xxlxOptions: [],
-      // 显示弹窗
-      dialogTableVisible: false,
-      // 内层弹窗
-      innerVisible: false,
-      aloneVisible: false,
-      // 内层弹窗标题
-      innerTitle: "",
-      // 文件数组
-      wjidFile: [],
-      // 表单内容
-      form: {},
-      // 接收人消息-确认状态码表
-      confirmOptions: [],
-      // 接收人消息-确认状态数据
-      messageConfirmStatus: ""
-    };
-  },
-  created() {
-    this.getDicts("messageType").then(response => {
-      this.xxlxOptions = response.data;
-    });
-    this.getDicts("confirmStatus").then(response => {
-      this.confirmOptions = response.data;
-    });
-    this.getList();
-  },
-  methods: {
-    goTarget(href) {
-      window.open(href, "_blank");
+  export default {
+    name: "index",
+    data() {
+      return {
+        // 版本号
+        version: "2.5.0",
+        // 遮罩层
+        loading: true,
+        // 消息管理表格数据
+        messageList: [],
+        // 消息类型字典
+        xxlxOptions: [],
+        // 显示弹窗
+        dialogTableVisible: false,
+        // 内层弹窗
+        innerVisible: false,
+        aloneVisible:false,
+        // 内层弹窗标题
+        innerTitle: "",
+        // 文件数组
+        wjidFile: [],
+        // 表单内容
+        form: {},
+        // 接收人消息-确认状态码表
+        confirmOptions: [],
+        // 接收人消息-确认状态数据
+        messageConfirmStatus: "",
+        // 消息id
+        rowId:null
+      };
     },
-    /** 查询消息管理列表 */
-    getList() {
-      this.loading = true;
-      // 是否查询个人的-消息（1：是，0：否）
-      listMessage({ sfcxgr: "1" }).then(response => {
-        this.messageList = response.rows;
-        if (this.messageList.length > 0) {
-          let num = 0;
-          for (let i = 0; i < response.total; i++) {
-            // 如果有消息通知处于 0=待确认；3=待回复  的状态，则弹出提示框
-            if (
-              "0" == response.rows[i].messageStatus ||
-              "3" == response.rows[i].messageStatus
-            ) {
-              num++;
+    created() {
+      this.getDicts("messageType").then(response => {
+        this.xxlxOptions = response.data;
+      });
+      this.getDicts("confirmStatus").then(response => {
+        this.confirmOptions = response.data;
+      });
+      this.getList();
+    },
+    methods: {
+      goTarget(href) {
+        window.open(href, "_blank");
+      },
+      /** 查询消息管理列表 */
+      getList() {
+        this.loading = true;
+        // 是否查询个人的-消息（1：是，0：否）
+        listMessage({sfcxgr: "1"}).then(response => {
+          this.messageList = response.rows;
+          if (this.messageList.length > 0) {
+            let num = 0;
+            let newArr=[]
+            for (let i = 0; i < response.total; i++) {
+              // 如果有消息通知处于 0=待确认；3=待回复  的状态，则弹出提示框
+              if ("0" == response.rows[i].messageStatus || "3" == response.rows[i].messageStatus) {
+                num++;
+                newArr.push(response.rows[i])
+              }
+            }
+            if (num > 0) {
+              for (let i = 0; i < newArr.length; i++) {
+                this.messageAloneCheck(newArr[i])// 默认取第一条
+                break
+              }
+              // 如果有消息则弹出提示框
+              this.reminder(num);
             }
           }
           if (num > 0) {
@@ -239,27 +258,111 @@ export default {
             // 如果有消息则弹出提示框
             this.reminder(num);
           }
+        });
+      },
+      checkMessageNotify() {
+        this.dialogTableVisible = true;
+      },
+      // 消息查看
+      messageCheck(row) {
+        this.rowId=row.id
+        this.messageConfirmStatus = row.messageStatus;
+        this.innerTitle = "查看消息详情";
+        this.innerVisible = true;
+        getMessage(row.id).then(response => {
+          this.form = response.data;
+          this.wjidFile = this.ifNullToNewArray(response.data.fileArr);
+        });
+      },
+      // 单独弹窗
+      messageAloneCheck(row) {
+        this.rowId=row.id
+        this.messageConfirmStatus = row.messageStatus;
+        this.innerTitle = "查看消息详情";
+        getMessage(row.id).then(response => {
+          this.aloneVisible = true;
+          this.form = response.data;
+          this.wjidFile = this.ifNullToNewArray(response.data.fileArr);
+        });
+      },
+      ifNullToNewArray(arr) {
+        if (null == arr) {
+          return [];
         }
-        this.loading = false;
-      });
-    },
-    // 右下角的提示框
-    reminder(num) {
-      let _that = this;
-      this.$notify({
-        title: "消息通知",
-        dangerouslyUseHTMLString: true,
-        position: "bottom-right",
-        message:
-          "<a href='#' style=\"color: dodgerblue\">" +
-          "您有" +
-          num +
-          "条消息需要处理！请点击查看消息</a>",
-        duration: 60000,
-        onClick() {
-          _that.checkMessageNotify();
+        return arr;
+      },
+      // 消息确认
+      messageConfirm(id) {
+        let obj = {
+          messageId: id,
+          status: "1" // 状态：1=确认
+        };
+        this.$confirm("是否确认?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function () {
+            return addMessageReceive(obj);
+        }).then(() => {
+            this.getList();
+            this.msgSuccess("操作成功");
+        }).catch(e => {
+            console.log(e);
+        });
+      },
+      // 消息单独确认
+      messageAloneConfirm(){
+        let obj = {
+          messageId: this.rowId,
+          status: "1" // 状态：1=确认
+        };
+        this.$confirm("是否确认?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function () {
+          return addMessageReceive(obj);
+        }).then(() => {
+          this.aloneVisible = false;
+          this.getList();
+          this.msgSuccess("操作成功");
+        }).catch(e => {
+          console.log(e);
+        });
+      },
+      // 消息回复
+      messageReply(row) {
+        this.messageConfirmStatus = row.messageStatus;
+        this.innerTitle = "回复消息";
+        this.innerVisible = true;
+        getMessage(row.id).then(response => {
+          this.form = response.data;
+          this.wjidFile = this.ifNullToNewArray(response.data.fileArr);
+        });
+      },
+      /** 下载操作 */
+      downloadFileName(fileName) {
+        this.download("file/filetable/download",
+          {
+            wjmc: fileName
+          },
+          fileName
+        );
+      },
+      // 取消按钮
+      cancel() {
+        this.innerVisible = false;
+        this.reset();
+      },
+      cancelAlone(){
+        this.aloneVisible = false;
+        this.reset();
+      },
+      submitForm() {
+        if (!this.form.messageHfnr) {
+          this.msgError("请填写回复内容！");
+          return;
         }
-      });
     },
     checkMessageNotify() {
       this.dialogTableVisible = true;

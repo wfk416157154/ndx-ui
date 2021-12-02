@@ -42,3 +42,12 @@ export function delTeachingReview(id) {
     method: 'delete'
   })
 }
+/**
+ * 教学计划是否全部完成
+ */
+export function planIsFinish(bjid) {
+  return request({
+    url: '/basic/teachingReview/planIsFinish/' + bjid,
+    method: 'get'
+  })
+}

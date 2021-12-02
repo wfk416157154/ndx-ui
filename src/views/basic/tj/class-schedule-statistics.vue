@@ -62,7 +62,7 @@
       <el-table-column label="年份/课表类型">
         <template slot-scope="scope">
           <span>{{scope.row.nd}}</span>
-          <span>{{queryParams.kbType}}</span>
+          <span>{{scope.row.kblxLabel}}</span>
         </template>
       </el-table-column>
       <el-table-column label="老师姓名" prop="lsxm" />
@@ -167,11 +167,11 @@ export default {
       // 表单参数
       form: {
         sfqbfs: "0",
-        xxlx: "2",
+        xxlx: "1",
         jsrArr: []
       },
       rules: {
-        xqid: [{ required: true, message: "请选择校区", trigger: "change" }],
+        // xqid: [{ required: true, message: "请选择校区", trigger: "change" }],
         nd: [{ required: true, message: "请选择年份", trigger: "change" }],
         kbType: [
           { required: true, message: "请选择课表类型", trigger: "change" }
