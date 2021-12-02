@@ -83,6 +83,7 @@
         <el-button @click="resetForm('teachingPlanForm')">重置</el-button>
       </el-form-item>
     </el-form>
+
     <div class="central-navigation">
       <ul>
         <li>
@@ -96,13 +97,13 @@
                 <span
                   style="display : inline-block;width : 10px;height : 10px;background : #409EFF;margin-right : 5px"
                 ></span>
-                <span style="isplay : inline-block;margin-right : 10px">超前</span>
+                <span style="isplay : inline-block;margin-right : 10px">正常</span>
               </li>
               <li>
                 <span
                   style="display : inline-block;width : 10px;height : 10px;background : #67C23A;margin-right : 5px"
                 ></span>
-                <span style="isplay : inline-block;margin-right : 10px">正常</span>
+                <span style="isplay : inline-block;margin-right : 10px">超前</span>
               </li>
               <li>
                 <span
@@ -118,7 +119,7 @@
               </li>
             </ul>
           </div>
-          <div style="display : flex;width : 100%">
+          <!-- <div style="display : flex;width : 100%">
             <div style="width : 180px">班级信息卡标注</div>
             <ul class="navigation-title">
               <li>
@@ -141,7 +142,7 @@
               </li>
               <li></li>
             </ul>
-          </div>
+          </div>-->
         </li>
         <li>
           <div style="display : flex; align-items: center;">
@@ -151,20 +152,20 @@
             <div>
               <span
                 style="cursor: pointer;"
-                :class="['SemesterView' == ifContent ? 'active-color' : '']"
-                @click="toComponent('SemesterView')"
-              >学期</span>
-              <el-divider direction="vertical"></el-divider>
-              <span
-                style="cursor: pointer;"
                 :class="['MonthView' == ifContent ? 'active-color' : '']"
-                @click="toComponent('MonthView')"
+                @click="toComponent('MonthView',1)"
               >月</span>
               <el-divider direction="vertical"></el-divider>
               <span
                 style="cursor: pointer;"
+                :class="['SemesterView' == ifContent ? 'active-color' : '']"
+                @click="toComponent('SemesterView',2)"
+              >学期</span>
+              <el-divider direction="vertical"></el-divider>
+              <span
+                style="cursor: pointer;"
                 :class="['WholeView' == ifContent ? 'active-color' : '']"
-                @click="toComponent('WholeView')"
+                @click="toComponent('WholeView',3)"
               >全部</span>
             </div>
           </div>
@@ -181,22 +182,27 @@
                 <h4>{{item.rybjmc}}</h4>
                 <div>
                   <span>当前课程 :</span>
-                  <span>第三课</span>
+                  <span>{{item.nowCourseName}}</span>
                 </div>
                 <div>
                   <span>时间区间 :</span>
-                  <span>2020-08-01至2022-06-07</span>
+                  <span>{{parseTime(item.kbsj,"{y}-{m}-{d}")}}至{{parseTime(item.gksj,"{y}-{m}-{d}")}}</span>
                 </div>
                 <div>
                   <span>老师: {{item.lsxm}}</span>
                 </div>
                 <div>
                   <span>教学进度:</span>
-                  <span>新课</span>
+                  <span>{{jxjd(item.jxjd)}}</span>
+                  <span v-if="item.jxjd == 0">{{item.errorMsg}}</span>
                 </div>
               </div>
               <div class="info-right">
-                <el-button size="mini" style="width :80px">修正|查看</el-button>
+                <el-button
+                  size="mini"
+                  style="width :80px"
+                  @click="toAddTeaching('addTeaching',item)"
+                >修正|查看</el-button>
                 <br />
                 <el-button size="mini" style="width :80px">调用</el-button>
                 <br />
@@ -205,7 +211,7 @@
             </div>
             <div class="content-top-right">
               <el-scrollbar style="height:100%">
-                <ul>
+                <!-- <ul>
                   <li v-for="(item,index) in 10" :key="index">
                     <h4>异常记录</h4>
                     <div>
@@ -221,20 +227,44 @@
                       <span>学校运动会</span>
                     </div>
                   </li>
-                </ul>
+                </ul>-->
               </el-scrollbar>
             </div>
           </div>
           <div class="content-bottom">
             <div class="content-sj">
               <ul>
-                <li v-for="(item,index) in 7" :key="index">
-                  <el-divider>10月</el-divider>
-                </li>
+                <template v-if="item.monthList && item.monthList.length > 0">
+                  <li v-for="(month,index) in item.monthList" :key="index">
+                    <el-divider>{{month}}</el-divider>
+                  </li>
+                </template>
+                <template v-if="item.weekList && item.weekList.length > 0">
+                  <li v-for="(week,index) in item.weekList" :key="index">
+                    <el-divider>{{week}}</el-divider>
+                  </li>
+                </template>
+                <template v-if="item.termDictList && item.termDictList.length > 0">
+                  <li v-for="(termDict,index) in item.termDictList" :key="index">
+                    <el-divider>{{termDict.dictLabel}}</el-divider>
+                  </li>
+                </template>
               </ul>
             </div>
             <div>
-              <ndx-progress :progressItem="list" />
+              <div v-if="item.lessonProcessObjList.length > 0">
+                <ndx-progress :progressItem="item.lessonProcessObjList" />
+              </div>
+              <div v-else>
+                <div
+                  style="display : flex;margin : 10px;align-items : center"
+                  v-for="(row,j) in item.reviewProcessObjList"
+                  :key="j"
+                >
+                  <p style="margin-right : 30px;width : 100px">{{row.reviewName}}</p>
+                  <ndx-progress :progressItem="row.reviewProcessList" />
+                </div>
+              </div>
             </div>
           </div>
         </li>
@@ -261,7 +291,7 @@ export default {
   data() {
     return {
       teachingPlanData: [],
-      ifContent: null,
+      ifContent: "SemesterView",
       list: [
         {
           type: "primary",
@@ -298,7 +328,8 @@ export default {
         jxjd: null,
         kclx: null,
         ksrq: null,
-        jzrq: null
+        jzrq: null,
+        queryType: 2
       },
       total: 0,
       // 学期
@@ -317,6 +348,7 @@ export default {
       teacherList: []
     };
   },
+  computed: {},
   created() {
     this.getDicts("nianji").then(response => {
       this.teachingTermConfig = response.data;
@@ -341,6 +373,16 @@ export default {
     this.getList();
   },
   methods: {
+    // 进度转换
+    jxjd(type) {
+      let label = "";
+      this.teachingProgress.map(value => {
+        if (value.dictValue == type) {
+          label = value.dictLabel;
+        }
+      });
+      return label;
+    },
     // 基础数据
     getList() {
       this.queryParams.ksrq = this.queryParams.sjall[0];
@@ -366,8 +408,22 @@ export default {
       this.getList();
     },
     // 组件
-    toComponent(value) {
+    toComponent(value, type) {
       this.ifContent = value;
+      this.queryParams.queryType = type;
+      this.getList();
+    },
+    // 修正按钮
+    toAddTeaching(path, item) {
+      item.flag = path;
+      this.getConfigKey(path).then(res => {
+        this.$router.push({
+          path: res.msg,
+          query: {
+            [path]: item
+          }
+        });
+      });
     }
   }
 };
@@ -424,7 +480,7 @@ export default {
         margin-bottom: 20px;
         .content-top {
           width: 100%;
-          height: 200px;
+          height: 100%;
           display: flex;
           align-items: center;
           .content-top-left {
@@ -474,7 +530,7 @@ export default {
               padding: 0;
               li {
                 width: 300px;
-                height: 180px;
+                height: 160px;
                 margin-right: 20px;
                 display: inline-block;
                 padding: 10px;
@@ -505,10 +561,10 @@ export default {
         }
         .content-bottom {
           widows: 100%;
-          height: 80px;
+          height: 100%;
           // background: crimson;
           border-top: 2px solid #ccc;
-          padding: 0 10px;
+          padding: 10px 10px;
           box-sizing: border-box;
           .progress {
             display: flex;

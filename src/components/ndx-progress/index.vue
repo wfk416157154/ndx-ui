@@ -37,7 +37,7 @@ export default {
   background-color: #f56c6c;
 }
 .white {
-  background-color: #fff;
+  background-color: #eee;
 }
 .wrap-box {
   width: 100%;
