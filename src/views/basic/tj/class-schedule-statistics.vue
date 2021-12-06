@@ -264,14 +264,20 @@ export default {
       }
     },
     submitForm() {
-      addMessage(this.form).then(res => {
-        if (200 == res.code) {
-          this.onSubmit();
-          this.reset();
-          this.msgSuccess("操作成功！");
-          this.dialogFormVisible = false;
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          addMessage(this.form).then(res => {
+            if (200 == res.code) {
+              this.onSubmit();
+              this.reset();
+              this.msgSuccess("操作成功！");
+              this.dialogFormVisible = false;
+            } else {
+              this.msgError("操作失败！请联系管理员！");
+            }
+          });
         } else {
-          this.msgError("操作失败！请联系管理员！");
+          return false;
         }
       });
     },

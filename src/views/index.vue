@@ -319,12 +319,12 @@
           cancelButtonText: "取消",
           type: "warning"
         }).then(function () {
-            return addMessageReceive(obj);
+          return addMessageReceive(obj);
         }).then(() => {
-            this.getList();
-            this.msgSuccess("操作成功");
+          this.getList();
+          this.msgSuccess("操作成功");
         }).catch(e => {
-            console.log(e);
+          console.log(e);
         });
       },
       // 消息单独确认

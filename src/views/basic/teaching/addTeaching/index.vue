@@ -87,8 +87,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="总复习" prop="zfx" >
-                <el-checkbox-group v-model="teachingForm.zfx" @change="zfxOnChange" :disabled="!showUpdateBtn" >
+              <el-form-item label="总复习" prop="zfx">
+                <el-checkbox-group
+                  v-model="teachingForm.zfx"
+                  @change="zfxOnChange"
+                  :disabled="!showUpdateBtn"
+                >
                   <el-checkbox
                     v-for="(item,index) in reviewList"
                     :label="item.jdid"
@@ -122,11 +126,16 @@
           <el-form-item>
             <el-button
               type="primary"
-              @click="dialogTableVisible = true"
+              @click="getListClassCourseBasic(teachingForm.rybjid)"
               :disabled="!teachingForm.rybjid"
             >点击查看该班课表</el-button>
             <el-button @click="resetForm('teachingForm')">重置</el-button>
-            <el-button type="primary" :disabled="!teachingForm.rybjid" v-prevent-re-click @click="saveTeachingForm">保存</el-button>
+            <el-button
+              type="primary"
+              :disabled="!teachingForm.rybjid"
+              v-prevent-re-click
+              @click="saveTeachingForm"
+            >保存</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -362,7 +371,7 @@ import {
 } from "@/api/teaching/generate";
 import { listClassCourse } from "@/api/basic/classCourse";
 import { listClassPlan } from "@/api/teaching/classPlan";
-import {listTeachingReview} from "@/api/basic/teachingReview";
+import { listTeachingReview } from "@/api/basic/teachingReview";
 export default {
   data() {
     return {
@@ -424,9 +433,9 @@ export default {
       // 是否显示 更新教学计划按钮
       showUpdateBtn: false,
       // 临时保存总复习
-      tempZfx:[],
+      tempZfx: [],
       // 上一次勾选的总复习
-      lastZfx:[]
+      lastZfx: []
     };
   },
   components: {
@@ -451,12 +460,23 @@ export default {
     listTeachingMaterial({ parentId: 0 }).then(res => {
       this.listTeachingMaterial = res.data;
     });
-    listTeachingReview({parentId: 0}).then(res=>{
+    listTeachingReview({ parentId: 0 }).then(res => {
       this.reviewList = res.data;
     });
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
     });
+    if (
+      this.$route.query.addTeaching &&
+      this.$route.query.addTeaching.flag == "addTeaching"
+    ) {
+      this.teachingForm.xqid = this.$route.query.addTeaching.xqid;
+      this.teachingForm.rybjid = this.$route.query.addTeaching.rybjid;
+      if (this.teachingForm.xqid && this.teachingForm.rybjid) {
+        this.xqmcOnChange(this.teachingForm.xqid);
+        this.bjOnChange(this.teachingForm.rybjid);
+      }
+    }
   },
   methods: {
     // 组件
@@ -474,61 +494,75 @@ export default {
         this.$refs[value].toGrade();
       });
     },
-    // 选择总复习后触发的事件
-    zfxOnChange(chooseZfxArr){
-      let obj=this.$refs["SemesterView"]
-      if(undefined==obj){
-        this.teachingForm.zfx=this.tempZfx
-        this.msgError("请先点击【学期】,然后再勾选总复习选项！")
-        return
+    // 获取课表
+    getListClassCourseBasic(bjid) {
+      if (!bjid) {
+        return;
       }
-      let chooseId=this.rtnChooseId(chooseZfxArr)
-      if(chooseId){// 当勾选有值了
-        let vo={
-          chooseId:chooseId,
-          chooseFxmc:this.rtnChooseFxmc(chooseId)
-        }
-        obj.insertEvent(vo,-1);
+      // 查课表数据
+      listClassCourse({ bjid }).then(response => {
+        this.classCourseList = response.rows;
+        this.dialogTableVisible = true;
+      });
+    },
+    // 选择总复习后触发的事件
+    zfxOnChange(chooseZfxArr) {
+      let obj = this.$refs["SemesterView"];
+      if (undefined == obj) {
+        this.teachingForm.zfx = this.tempZfx;
+        this.msgError("请先点击【学期】,然后再勾选总复习选项！");
+        return;
+      }
+      let chooseId = this.rtnChooseId(chooseZfxArr);
+      if (chooseId) {
+        // 当勾选有值了
+        let vo = {
+          chooseId: chooseId,
+          chooseFxmc: this.rtnChooseFxmc(chooseId)
+        };
+        obj.insertEvent(vo, -1);
       }
     },
-    rtnChooseFxmc(chooseId){
-      let arr=this.reviewList
-      let obj
-      let chooseFxmc=""
+    rtnChooseFxmc(chooseId) {
+      let arr = this.reviewList;
+      let obj;
+      let chooseFxmc = "";
       for (let i = 0; i < arr.length; i++) {
-        obj=arr[i]
-        if(chooseId==obj.jdid){
-          chooseFxmc=obj.jdmc
-          break
+        obj = arr[i];
+        if (chooseId == obj.jdid) {
+          chooseFxmc = obj.jdmc;
+          break;
         }
       }
-      return chooseFxmc
+      return chooseFxmc;
     },
     // 返回当前勾选的id
-    rtnChooseId(chooseZfxArr){
+    rtnChooseId(chooseZfxArr) {
       let id;
       let lastId;
-      let chooseId=null;
-      if(chooseZfxArr.length>this.lastZfx.length){// 当勾选的总复习大于上次勾选的总复习选项，则可以认定该操作是勾选的操作；反之是取消勾选的操作
-        if(chooseZfxArr.length>1){// 当勾选一个时
+      let chooseId = null;
+      if (chooseZfxArr.length > this.lastZfx.length) {
+        // 当勾选的总复习大于上次勾选的总复习选项，则可以认定该操作是勾选的操作；反之是取消勾选的操作
+        if (chooseZfxArr.length > 1) {
+          // 当勾选一个时
           // 当前选择的复习选项
-          for (let i = 0; i <chooseZfxArr.length ; i++) {
-            id=chooseZfxArr[i]
+          for (let i = 0; i < chooseZfxArr.length; i++) {
+            id = chooseZfxArr[i];
             // 上一次选择的复习选项
             for (let j = 0; j < this.lastZfx.length; j++) {
-              lastId=this.lastZfx[j]
-              if(id!=lastId){
-                chooseId=id;
+              lastId = this.lastZfx[j];
+              if (id != lastId) {
+                chooseId = id;
                 break;
               }
             }
           }
-        }else if(chooseZfxArr.length==1){
-          chooseId=chooseZfxArr[0]
+        } else if (chooseZfxArr.length == 1) {
+          chooseId = chooseZfxArr[0];
         }
       }
-      this.lastZfx=chooseZfxArr
-      return chooseId
+      this.lastZfx = chooseZfxArr;
+      return chooseId;
     },
     // 获取班级
     xqmcOnChange(xqid) {
@@ -536,7 +570,9 @@ export default {
         this.classList = [];
         return;
       }
-      this.teachingForm.rybjid = null;
+      if (!this.$route.query.addTeaching.flag == "addTeaching") {
+        this.teachingForm.rybjid = null;
+      }
       listBjclass({ kzzd1: xqid }).then(res => {
         this.classList = res.rows;
       });
@@ -558,10 +594,6 @@ export default {
           this.teachingForm.yyxks = res.rows[0].kzzd1;
         }
       });
-      // 查课表数据
-      listClassCourse({ bjid }).then(response => {
-        this.classCourseList = response.rows;
-      });
       // 是否生成教学计划
       listClassPlan({ rybjid: bjid }).then(response => {
         if (response.total > 0) {
@@ -582,12 +614,15 @@ export default {
             this.teachingForm,
             this.listGenerate[0]
           );
-          if(null!=this.listGenerate[0].zfx&&""!=this.listGenerate[0].zfx){
+          if (
+            null != this.listGenerate[0].zfx &&
+            "" != this.listGenerate[0].zfx
+          ) {
             this.teachingForm.zfx = this.listGenerate[0].zfx.split(",");
-            this.tempZfx=this.teachingForm.zfx
-            this.lastZfx=this.tempZfx
-          }else{
-            this.teachingForm.zfx=[]
+            this.tempZfx = this.teachingForm.zfx;
+            this.lastZfx = this.tempZfx;
+          } else {
+            this.teachingForm.zfx = [];
           }
           this.teachingForm.kbsjStr = this.teachingForm.kbsj;
           this.listSkiptime(this.teachingForm.id);
@@ -610,8 +645,8 @@ export default {
     saveTeachingForm() {
       this.$refs["teachingForm"].validate(valid => {
         if (valid) {
-          if(null==this.teachingForm.zfx||this.teachingForm.zfx==""){
-            this.teachingForm.zfx=[]
+          if (null == this.teachingForm.zfx || this.teachingForm.zfx == "") {
+            this.teachingForm.zfx = [];
           }
           this.teachingForm.zfx = this.teachingForm.zfx.join();
           if (this.teachingForm.id) {

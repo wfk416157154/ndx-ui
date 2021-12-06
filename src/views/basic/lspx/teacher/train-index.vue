@@ -1,7 +1,7 @@
 <template>
   <div class="lesson-preparation-statistics">
     <el-form ref="form" :model="queryParams" :inline="true" label-width="80px">
-      <el-form-item label="老师姓名">
+      <el-form-item label="课程名称">
         <el-select v-model="queryParams.lsid" filterable placeholder="请选择老师">
           <el-option
             v-for="item in teacherListOption"
@@ -23,6 +23,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="applyComplete">申请完成培训</el-button>
       </el-form-item>
     </el-form>
 
@@ -35,10 +36,12 @@
         </template>
       </el-table-column>
       <el-table-column label="进度" prop="jd" :formatter="jdFormat" />
-      <el-table-column label="操作" width="200px">
+      <el-table-column label="操作" width="400px">
         <template slot-scope="scope">
-          <!-- <el-button size="mini" @click="handleViews(scope.row)">查看</el-button> -->
-          <el-button size="mini" type="danger" @click="handleNotice(scope.row)">提醒老师</el-button>
+          <el-button size="mini" @click="handleViews(scope.row)">学习</el-button>
+          <el-button size="mini" @click="handleViews(scope.row)">考试</el-button>
+          <el-button size="mini" type="success" @click="handleViews(scope.row)">查看考试</el-button>
+          <el-button size="mini" type="success" @click="handleNotice(scope.row)">查看笔记</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -53,54 +56,29 @@
 
     <!-- 添加或修改消息管理对话框 -->
     <el-dialog width="800px" :visible.sync="dialogFormVisible">
-      <el-form ref="form" :model="form" :rules="formRules" label-width="80px">
-        <el-form-item label="消息类型" prop="xxlx">
-          <el-select v-model="form.xxlx" disabled placeholder="请选择消息类型">
-            <el-option
-              v-for="dict in xxlxOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="消息标题" prop="xxbt">
-          <el-input v-model="form.xxbt" maxlength="100" placeholder="请输入消息标题" />
-        </el-form-item>
-        <el-form-item label="消息内容" prop="xxnr">
-          <editor v-model="form.xxnr" :min-height="192" />
-        </el-form-item>
-        <el-form-item label="全部发送" prop="sfqbfs">
-          <el-select v-model="form.sfqbfs" disabled placeholder="请选择是否发送给所有用户">
-            <el-option
-              v-for="dict in sfqbfsOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="接收人" prop="sfqbfs">
-          <el-checkbox-group v-model="form.jsrArr">
-            <el-checkbox v-for="(item,index) in teacherListData" :key="index" :label="item">{{item}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="消息确认" prop="xxqrlx">
-          <el-radio-group v-model="form.xxqrlx">
-            <el-radio
-              v-for="dict in xxqrlxOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
+      <div>
+        <img
+          style="width : 200px;margin : 20px"
+          v-for="(item,index) in 6"
+          :key="index"
+          src="https://ndx-file.nandouxingriyu.com/statics/2021/09/10/c2aa5f01-a1ba-4999-a9bf-68ad7a7bb042.jpg"
+          alt
+        />
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 申请完成 -->
+    <el-dialog title="培训感想" :visible.sync="dialogApplyCompleteVisible">
+      <el-form :model="applyCompleteForm">
+        <editor v-model="applyCompleteForm.pxgx" :item="items" :min-height="300" />
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogApplyCompleteVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogApplyCompleteVisible = false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -122,9 +100,10 @@ export default {
       // 表单参数
       form: {
         sfqbfs: "0",
-        xxlx: "1",
+        xxlx: "2",
         jsrArr: []
       },
+      applyCompleteForm: {},
       // 表单校验
       formRules: {
         xxlx: [{ required: true, message: "必填项", trigger: "change" }],
@@ -140,7 +119,8 @@ export default {
       sfqbfsOptions: [],
       xxqrlxOptions: [],
       teacherListData: [],
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      dialogApplyCompleteVisible: false
     };
   },
   created() {
@@ -218,6 +198,9 @@ export default {
         jsrArr: []
       };
       this.resetForm("form");
+    },
+    applyComplete() {
+      this.dialogApplyCompleteVisible = true;
     }
   }
 };

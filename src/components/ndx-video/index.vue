@@ -93,9 +93,9 @@ export default {
         +this.newCurrentTime.toFixed(0)
       );
       if (index != -1) {
-        this.executeDocument.stopTime.splice(index, 1);
         this.stopPlaying();
         this.$emit("executionFun", this.executeDocument.stopTime[index]);
+        this.executeDocument.stopTime.splice(index, 1);
       }
     },
     // 声音
@@ -193,7 +193,7 @@ export default {
     background-image: linear-gradient(#aaa, #000);
     position: absolute;
     bottom: 0%;
-    opacity: 0.5;
+    opacity: 0.8;
     padding: 20px;
     box-sizing: border-box;
     display: flex;
@@ -222,6 +222,8 @@ export default {
         width: 3%;
         margin-left: 20px;
         position: relative;
+        display: flex;
+        justify-content: center;
         &:hover {
           .voice-slider {
             .slider {
