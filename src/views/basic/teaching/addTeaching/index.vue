@@ -475,7 +475,6 @@ export default {
       if (this.teachingForm.xqid && this.teachingForm.rybjid) {
         this.xqmcOnChange(this.teachingForm.xqid);
         this.bjOnChange(this.teachingForm.rybjid);
-        console.log(this.teachingForm.rybjid);
       }
     }
   },
@@ -571,16 +570,15 @@ export default {
         this.classList = [];
         return;
       }
-      if (!this.$route.query.addTeaching.flag == "addTeaching") {
-        this.teachingForm.rybjid = null;
-      }
       listBjclass({ kzzd1: xqid }).then(res => {
         this.classList = res.rows;
       });
+      if (!this.$route.query.addTeaching) {
+        this.teachingForm.rybjid = null;
+      }
     },
     // 选择班级锁定老师
     bjOnChange(bjid) {
-      console.log(bjid);
       this.reset();
       this.itemSkiptime = [];
       this.classList.forEach(value => {
