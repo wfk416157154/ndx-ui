@@ -475,7 +475,6 @@ export default {
       if (this.teachingForm.xqid && this.teachingForm.rybjid) {
         this.xqmcOnChange(this.teachingForm.xqid);
         this.bjOnChange(this.teachingForm.rybjid);
-        console.log(this.teachingForm.rybjid);
       }
     }
   },
@@ -580,7 +579,6 @@ export default {
     },
     // 选择班级锁定老师
     bjOnChange(bjid) {
-      console.log(bjid);
       this.reset();
       this.itemSkiptime = [];
       this.classList.forEach(value => {
