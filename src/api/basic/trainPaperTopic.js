@@ -17,6 +17,15 @@ export function getTrainPaperTopic(id) {
   })
 }
 
+// 新增或修改 培训试卷-题目
+export function addOrUpdateTrainPaperTopic(data) {
+  return request({
+    url: '/basic/trainPaperTopic/addOrEdit',
+    method: 'post',
+    data: data
+  })
+}
+
 // 新增培训试卷-题目
 export function addTrainPaperTopic(data) {
   return request({

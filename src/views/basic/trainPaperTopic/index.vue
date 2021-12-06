@@ -128,7 +128,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="题目类型" prop="tmlx">
-              <el-select v-model="form.tmlx" placeholder="请选择题目类型" @change="tmlxOnChange">
+              <el-select v-model="form.tmlx" :disabled="null!=form.tmlx" placeholder="请选择题目类型" @change="tmlxOnChange">
                 <el-option
                   v-for="dict in tmlxOptions"
                   :key="dict.dictValue"
@@ -167,7 +167,7 @@
 
         <el-row v-if="isDanxuan">
           <el-col style="margin-bottom: 10px">
-            <el-button icon="el-icon-plus" type="primary" @click="insertEvent(-1)">新增选项</el-button>
+            <el-button icon="el-icon-plus" type="primary"  @click="insertEvent(-1)">新增选项</el-button>
           </el-col>
           <el-col>
             <vxe-table
@@ -177,39 +177,70 @@
               ref="xTable"
               max-height="400px"
               :data="topicOptionData"
-              :edit-config="{trigger: 'click', mode: 'cell', icon: 'fa fa-pencil', showStatus: true}">
-              <vxe-column type="checkbox" width="60"></vxe-column>
+              :edit-config="{trigger: 'click', mode: 'row', icon: 'fa fa-pencil', showStatus: true}">
+              <vxe-column type="checkbox" width="60" v-if="false"></vxe-column>
               <vxe-column type="seq" title="序号" width="60"></vxe-column>
-              <vxe-column field="xxbt" title="选项标题" sortable :edit-render="{autofocus: '.vxe-input--inner'}">
+              <vxe-column field="kzzd1" title="选项" align="center" width="150px" sortable :edit-render="{autofocus: '.vxe-input--inner'}">
                 <template #edit="{ row }">
-                  <vxe-input v-model="row.xxbt" type="text" @blur="xxbtOnblur"></vxe-input>
+                  <vxe-input v-model="row.kzzd1" type="text"></vxe-input>
+                </template>
+              </vxe-column>
+              <vxe-column field="xxbt" title="选项标题" align="center" v-if="'1'==form.tmlx" :edit-render="{}">
+                <template #edit="{ row }">
+                  <vxe-input v-model="row.xxbt" type="text"></vxe-input>
+                </template>
+              </vxe-column>
+
+              <vxe-column field="zdcd" title="最大长度" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
+                <template #edit="{ row }">
+                  <el-input-number v-model="row.zdcd" :min="1" :max="20" />
+                </template>
+              </vxe-column>
+              <vxe-column field="xxda" title="填空答案" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
+                <template #edit="{ row }">
+                  <vxe-input v-model="row.xxbt" type="text"></vxe-input>
+                </template>
+              </vxe-column>
+              <vxe-column field="dfgz" title="得分规则" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
+                <template slot-scope="scope">
+                  <dict-tag :options="dfgzOptions" :value="scope.row.dfgz"/>
+                </template>
+                <template #edit="{ row }">
+                  <el-radio-group v-model="row.dfgz">
+                    <el-radio
+                      v-for="(item,index) in dfgzOptions"
+                      :key="index"
+                      :label="item.dictValue"
+                    >{{item.dictLabel}}</el-radio>
+                  </el-radio-group>
                 </template>
               </vxe-column>
             </vxe-table>
           </el-col>
-          <el-col style="margin-top: 20px">
+          <el-col style="margin-top: 20px" v-if="'3'!=form.tmlx">
             <el-form-item label="题目答案" prop="tmda">
-              <el-select v-model="form.tmda" placeholder="请选择题目类型" clearable size="small">
+              <el-select v-model="form.tmda" :disabled="topicOptionData.length<1" placeholder="请先新增选项再选择答案" clearable
+                         size="small">
                 <el-option
                   v-for="(item,index) in topicOptionData"
                   :key="index"
-                  :label="item.xxbt"
-                  :value="item.id"
+                  :label="item.kzzd1"
+                  :value="item.kzzd1"
                 />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row v-if="isWenda">
+        <!--<el-row v-if="isWenda">
           <el-col>
             <el-form-item label="题目答案" prop="tmda">
               <el-input v-model="form.tmda" type="textarea" :rows="8" placeholder="请输入内容"/>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row>-->
         <el-row>
-          <el-col>
+          <el-col style="margin-top: 20px">
             <el-form-item label="排序号" prop="dataOrder">
               <el-input-number v-model="form.dataOrder" placeholder="请输入排序号"/>
             </el-form-item>
@@ -235,8 +266,16 @@
     getTrainPaperTopic,
     delTrainPaperTopic,
     addTrainPaperTopic,
-    updateTrainPaperTopic
+    updateTrainPaperTopic,
+    addOrUpdateTrainPaperTopic
   } from "@/api/basic/trainPaperTopic";
+  import {
+    listTrainPaperOption,
+    getTrainPaperOption,
+    delTrainPaperOption,
+    addTrainPaperOption,
+    updateTrainPaperOption
+  } from "@/api/basic/trainPaperOption";
   import {getToken} from "@/utils/auth";
 
   export default {
@@ -279,17 +318,26 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {},
+        rules: {
+          tmlx: [{required: true, message: "不能为空", trigger: "change"}],
+          splb: [{required: true, message: "不能为空", trigger: "change"}],
+          tmbt: [{required: true, message: "不能为空", trigger: "blur"}],
+          tmda: [{required: true, message: "不能为空", trigger: "change"}],
+        },
         // 是否单选
-        isDanxuan:false,
+        isDanxuan: false,
         // 是否判断
-        isPanduan:false,
+        isPanduan: false,
         // 是否填空
-        isTiankong:false,
+        isTiankong: false,
         // 是否问答
-        isWenda:false,
+        isWenda: false,
         // 题目选项内容数据
-        topicOptionData: []
+        topicOptionData: [],
+        // 得分规则码表数据
+        dfgzOptions:[],
+        // 填空题数量
+        tiankongCount:0
       };
     },
     created() {
@@ -300,44 +348,53 @@
       this.getDicts("videoType").then(response => {
         this.splbOptions = response.data;
       });
+      this.getDicts("paperTopicDfgz").then(response => {
+        this.dfgzOptions = response.data;
+      });
     },
     methods: {
       // 新增选项按钮
       async insertEvent(row) {
         const $table = this.$refs.xTable
-        const record = {}
-        const {row: newRow} = await $table.insertAt(record, row)
-        await $table.setActiveCell(newRow, 'xxbt')
-      },
-      // 选项标题-鼠标焦点移除后触发
-      xxbtOnblur() {
-        const $table = this.$refs.xTable
-        const insertRecords = $table.getInsertRecords()
-        this.topicOptionData = $table.getTableData().tableData;
+        let record = {}
+        if("2"==this.form.tmlx){ // 判断题
+          record = {kzzd1:"对"}
+          await $table.insertAt(record, row)
+          record = {kzzd1:"错"}
+          await $table.insertAt(record, row)
+        }else if("3"==this.form.tmlx){
+          this.tiankongCount++;
+          let title="第"+this.tiankongCount+"空"
+          record = {
+            kzzd1:title,
+            dataOrder:this.tiankongCount
+          }
+          await $table.insertAt(record, row)
+          this.form.tmbt=this.form.tmbt+"(     )"
+        }else{
+          const {row: newRow} = await $table.insertAt(record, row)
+          await $table.setActiveCell(newRow, 'kzzd1')
+        }
+        this.topicOptionData=$table.getTableData().tableData
       },
       // 选择题目类型触发
       tmlxOnChange(val) {
+        this.topicOptionData=[]// 切换为其他题型后清空题目选项数组
         switch (val) {
-          case "1":// 单选
-            this.switchToFalse(true,false,false,false)
-            break
-          case "2":// 判断
-            this.switchToFalse(false,true,false,false)
-            break
-          case "3":// 填空
-            this.switchToFalse(false,false,true,false)
-            break
           case "4":// 问答
-            this.switchToFalse(false,false,false,true)
+            this.switchToFalse(false, false, false, true)
+            break
+          default:// 单选 判断 填空
+            this.switchToFalse(true, false, false, false)
             break
         }
       },
       // 切换隐藏显示状态
-      switchToFalse(danxuan,panduan,tiankong,wenda){
-        this.isDanxuan=danxuan // 单选
-        this.isPanduan=panduan // 判断
-        this.isTiankong=tiankong //填空
-        this.isWenda=wenda // 问答
+      switchToFalse(danxuan, panduan, tiankong, wenda) {
+        this.isDanxuan = danxuan // 单选
+        this.isPanduan = panduan // 判断
+        this.isTiankong = tiankong //填空
+        this.isWenda = wenda // 问答
       },
 
       /** 查询培训试卷-题目列表 */
@@ -356,10 +413,13 @@
       },
       // 表单重置
       reset() {
+        this.topicOptionData=[]
+        this.tiankongCount=0
+        this.switchToFalse(false,false,false,false)
         this.form = {
           id: null,
           tmlx: null,
-          tmbt: null,
+          tmbt: "",
           splb: null,
           tmfz: null,
           tmda: null,
@@ -376,7 +436,8 @@
           kzzd2: null,
           kzzd3: null,
           kzzd4: null,
-          kzzd5: null
+          kzzd5: null,
+          optionList:[]
         };
         this.resetForm("form");
       },
@@ -410,35 +471,31 @@
           this.form = response.data;
           this.open = true;
           this.title = "修改培训试卷-题目";
+          if("4"!=this.form.tmlx){// 非问答题
+            this.topicOptionData = response.data.optionList;
+          }
         });
       },
       /** 提交按钮 */
       submitForm() {
         this.$refs["form"].validate(valid => {
           if (valid) {
-            if (this.form.id != null) {
-              updateTrainPaperTopic(this.form).then(response => {
-                if (200 == response.code) {
-                  this.getList();
-                  this.msgSuccess(response.msg);
-                } else {
-                  this.msgError(response.msg);
-                }
-                this.open = false;
-                this.getList();
-              });
-            } else {
-              addTrainPaperTopic(this.form).then(response => {
-                if (200 == response.code) {
-                  this.getList();
-                  this.msgSuccess(response.msg);
-                } else {
-                  this.msgError(response.msg);
-                }
-                this.open = false;
-                this.getList();
-              });
+            const $table = this.$refs.xTable
+            const records = $table.getTableData().tableData
+            if (records.length < 1) {
+              this.msgError("请先新增题目选项！")
+              return
             }
+            addOrUpdateTrainPaperTopic(this.form).then(response => {
+              if (200 == response.code) {
+                this.getList();
+                this.msgSuccess(response.msg);
+              } else {
+                this.msgError(response.msg);
+              }
+              this.open = false;
+              this.getList();
+            });
           }
         });
       },
