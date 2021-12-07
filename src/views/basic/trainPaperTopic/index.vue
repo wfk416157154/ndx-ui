@@ -128,7 +128,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="题目类型" prop="tmlx">
-              <el-select v-model="form.tmlx" :disabled="null!=form.tmlx" placeholder="请选择题目类型" @change="tmlxOnChange">
+              <el-select v-model="form.tmlx" :disabled="topicOptionData.length>0" placeholder="请选择题目类型" @change="tmlxOnChange">
                 <el-option
                   v-for="dict in tmlxOptions"
                   :key="dict.dictValue"
@@ -165,7 +165,7 @@
           </el-col>
         </el-row>
 
-        <el-row v-if="isDanxuan">
+        <el-row v-if="isOptionTable">
           <el-col style="margin-bottom: 10px">
             <el-button icon="el-icon-plus" type="primary"  @click="insertEvent(-1)">新增选项</el-button>
           </el-col>
@@ -191,14 +191,14 @@
                 </template>
               </vxe-column>
 
-              <vxe-column field="zdcd" title="最大长度" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
+              <vxe-column field="zdcd" title="最大长度" width="240px" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
                 <template #edit="{ row }">
                   <el-input-number v-model="row.zdcd" :min="1" :max="20" />
                 </template>
               </vxe-column>
               <vxe-column field="xxda" title="填空答案" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
                 <template #edit="{ row }">
-                  <vxe-input v-model="row.xxbt" type="text"></vxe-input>
+                  <vxe-input v-model="row.xxda" type="text" placeholder="多个答案请用竖线 | 区分" ></vxe-input>
                 </template>
               </vxe-column>
               <vxe-column field="dfgz" title="得分规则" align="center" v-if="'3'==form.tmlx" :edit-render="{}">
@@ -232,13 +232,6 @@
           </el-col>
         </el-row>
 
-        <!--<el-row v-if="isWenda">
-          <el-col>
-            <el-form-item label="题目答案" prop="tmda">
-              <el-input v-model="form.tmda" type="textarea" :rows="8" placeholder="请输入内容"/>
-            </el-form-item>
-          </el-col>
-        </el-row>-->
         <el-row>
           <el-col style="margin-top: 20px">
             <el-form-item label="排序号" prop="dataOrder">
@@ -324,14 +317,8 @@
           tmbt: [{required: true, message: "不能为空", trigger: "blur"}],
           tmda: [{required: true, message: "不能为空", trigger: "change"}],
         },
-        // 是否单选
-        isDanxuan: false,
-        // 是否判断
-        isPanduan: false,
-        // 是否填空
-        isTiankong: false,
-        // 是否问答
-        isWenda: false,
+        // 是否选项表格
+        isOptionTable: false,
         // 题目选项内容数据
         topicOptionData: [],
         // 得分规则码表数据
@@ -362,7 +349,7 @@
           await $table.insertAt(record, row)
           record = {kzzd1:"错"}
           await $table.insertAt(record, row)
-        }else if("3"==this.form.tmlx){
+        }else if("3"==this.form.tmlx){// 填空题
           this.tiankongCount++;
           let title="第"+this.tiankongCount+"空"
           record = {
@@ -382,21 +369,13 @@
         this.topicOptionData=[]// 切换为其他题型后清空题目选项数组
         switch (val) {
           case "4":// 问答
-            this.switchToFalse(false, false, false, true)
+            this.isOptionTable=false
             break
           default:// 单选 判断 填空
-            this.switchToFalse(true, false, false, false)
+            this.isOptionTable=true
             break
         }
       },
-      // 切换隐藏显示状态
-      switchToFalse(danxuan, panduan, tiankong, wenda) {
-        this.isDanxuan = danxuan // 单选
-        this.isPanduan = panduan // 判断
-        this.isTiankong = tiankong //填空
-        this.isWenda = wenda // 问答
-      },
-
       /** 查询培训试卷-题目列表 */
       getList() {
         this.loading = true;
@@ -415,7 +394,7 @@
       reset() {
         this.topicOptionData=[]
         this.tiankongCount=0
-        this.switchToFalse(false,false,false,false)
+        this.isOptionTable=false
         this.form = {
           id: null,
           tmlx: null,
@@ -471,6 +450,7 @@
           this.form = response.data;
           this.open = true;
           this.title = "修改培训试卷-题目";
+          this.tmlxOnChange(this.form.tmlx)
           if("4"!=this.form.tmlx){// 非问答题
             this.topicOptionData = response.data.optionList;
           }
@@ -480,11 +460,15 @@
       submitForm() {
         this.$refs["form"].validate(valid => {
           if (valid) {
-            const $table = this.$refs.xTable
-            const records = $table.getTableData().tableData
-            if (records.length < 1) {
-              this.msgError("请先新增题目选项！")
-              return
+            if("4"!=this.form.tmlx){// 非问答题
+              const $table = this.$refs.xTable
+              const records = $table.getTableData().tableData
+              if (records.length < 1) {
+                this.msgError("请先新增题目选项！")
+                return
+              }
+              // 将选项集合赋值给对象中的选项集合
+              this.form.optionList=records
             }
             addOrUpdateTrainPaperTopic(this.form).then(response => {
               if (200 == response.code) {
