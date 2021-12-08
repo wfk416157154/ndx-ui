@@ -560,7 +560,7 @@ export default {
           }
         }
         .content-bottom {
-          widows: 100%;
+          width: 100%;
           height: 100%;
           // background: crimson;
           border-top: 2px solid #ccc;
