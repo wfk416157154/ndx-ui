@@ -337,7 +337,7 @@
         </div>
         <div class="in-class-list">
           <div class="in-class-content" style="text-align : center">
-            <el-button type="primary" @click="sendOut">保存日志</el-button>
+            <el-button type="primary" v-prevent-re-click @click="sendOut">保存日志</el-button>
           </div>
         </div>
       </div>
@@ -414,7 +414,7 @@
         </el-upload>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="vsubmitFileForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm">确 定</el-button>
         <el-button @click="dialogUploadVideoisible = false">取 消</el-button>
       </div>
     </el-dialog>
