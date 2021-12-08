@@ -435,7 +435,9 @@ export default {
       // 临时保存总复习
       tempZfx: [],
       // 上一次勾选的总复习
-      lastZfx: []
+      lastZfx: [],
+      // 页面类型
+      pageType:null
     };
   },
   components: {
@@ -466,10 +468,9 @@ export default {
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
     });
-    if (
-      this.$route.query.addTeaching &&
-      this.$route.query.addTeaching.flag == "addTeaching"
-    ) {
+    this.pageType=this.$route.query.flag
+    // 当父页面传递过来的参数不为空，且是带有页面标志的
+    if (this.$route.query.addTeaching && this.pageType == "addTeachingPage") {
       this.teachingForm.xqid = this.$route.query.addTeaching.xqid;
       this.teachingForm.rybjid = this.$route.query.addTeaching.rybjid;
       if (this.teachingForm.xqid && this.teachingForm.rybjid) {
@@ -569,6 +570,9 @@ export default {
       if (!xqid) {
         this.classList = [];
         return;
+      }
+      if (!this.pageType) {// 当页面标志为空，则表示不是从父页面跳转过来的，需要清掉该日语班级id的值
+        this.teachingForm.rybjid = null;
       }
       listBjclass({ kzzd1: xqid }).then(res => {
         this.classList = res.rows;

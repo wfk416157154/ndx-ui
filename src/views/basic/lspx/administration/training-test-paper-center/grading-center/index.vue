@@ -1,31 +1,30 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="试卷名称" prop="sjmc">
+      <el-form-item label="老师id" prop="lsid">
         <el-input
-          v-model="queryParams.sjmc"
-          placeholder="请输入试卷名称"
+          v-model="queryParams.lsid"
+          placeholder="请输入老师id"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="视频类别" prop="splb">
-        <el-select v-model="queryParams.splb" placeholder="请选择视频类别" clearable size="small">
-          <el-option
-            v-for="dict in splbOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
+      <el-form-item label="试卷id" prop="sjid">
+        <el-input
+          v-model="queryParams.sjid"
+          placeholder="请输入试卷id"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
+<!--
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -34,7 +33,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['basic:trainPaper:add']"
+          v-hasPermi="['basic:trainGrade:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -45,7 +44,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['basic:trainPaper:edit']"
+          v-hasPermi="['basic:trainGrade:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -56,23 +55,19 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['basic:trainPaper:remove']"
+          v-hasPermi="['basic:trainGrade:remove']"
         >删除</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :height="$root.tableHeight" border :data="trainPaperList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :height="$root.tableHeight" border :data="trainGradeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="试卷名称" align="center" prop="sjmc" />
-      <el-table-column label="视频类别" align="center" prop="splb" >
-          <template slot-scope="scope">
-              <dict-tag :options="splbOptions" :value="scope.row.splb"/>
-          </template>
-      </el-table-column>
-      <el-table-column label="试卷满分" align="center" prop="sjmf" />
-      <el-table-column label="考试时长(分钟)" align="center" prop="kssc" />
+      <!-- <el-table-column label="id" align="center" prop="id" /> -->
+      <el-table-column label="老师id" align="center" prop="lsid" />
+      <el-table-column label="试卷id" align="center" prop="sjid" />
+      <el-table-column label="客观题分值" align="center" prop="kgtfz" />
+      <el-table-column label="试卷总分" align="center" prop="sjzf" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -80,14 +75,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['basic:trainPaper:edit']"
+            v-hasPermi="['basic:trainGrade:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['basic:trainPaper:remove']"
+            v-hasPermi="['basic:trainGrade:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -101,27 +96,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改培训试卷对话框 -->
+    <!-- 添加或修改培训试卷成绩对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="试卷名称" prop="sjmc">
-          <el-input v-model="form.sjmc" placeholder="请输入试卷名称" />
+        <el-form-item label="老师id" prop="lsid">
+          <el-input v-model="form.lsid" placeholder="请输入老师id" />
         </el-form-item>
-        <el-form-item label="视频类别" prop="splb">
-          <el-select v-model="form.splb" placeholder="请选择视频类别">
-            <el-option
-              v-for="dict in splbOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
+        <el-form-item label="试卷id" prop="sjid">
+          <el-input v-model="form.sjid" placeholder="请输入试卷id" />
         </el-form-item>
-        <el-form-item label="试卷满分" prop="sjmf">
-          <el-input v-model="form.sjmf" placeholder="请输入试卷满分" />
+        <el-form-item label="客观题分值" prop="kgtfz">
+          <el-input v-model="form.kgtfz" placeholder="请输入客观题分值" />
         </el-form-item>
-        <el-form-item label="考试时长(分钟)" prop="kssc">
-          <el-input v-model="form.kssc" placeholder="请输入考试时长(分钟)" />
+        <el-form-item label="试卷总分" prop="sjzf">
+          <el-input v-model="form.sjzf" placeholder="请输入试卷总分" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -137,11 +125,11 @@
 </template>
 
 <script>
-import { listTrainPaper, getTrainPaper, delTrainPaper, addTrainPaper, updateTrainPaper } from "@/api/basic/trainPaper";
+import { listTrainGrade, getTrainGrade, delTrainGrade, addTrainGrade, updateTrainGrade } from "@/api/basic/trainGrade";
 import { getToken } from "@/utils/auth";
 
 export default {
-  name: "TrainPaper",
+  name: "TrainGrade",
   components: {
   },
   data() {
@@ -158,23 +146,20 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 培训试卷表格数据
-      trainPaperList: [],
+      // 培训试卷成绩表格数据
+      trainGradeList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 视频类别字典
-      splbOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        sjmc: null,
-        splb: null,
-        sjmf: null,
-        kssc: null,
-        createTime: null,
+        lsid: null,
+        sjid: null,
+        kgtfz: null,
+        sjzf: null,
       },
       // 表单参数
       form: {},
@@ -185,16 +170,13 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("videoType").then(response => {
-      this.splbOptions = response.data;
-    });
   },
   methods: {
-    /** 查询培训试卷列表 */
+    /** 查询培训试卷成绩列表 */
     getList() {
       this.loading = true;
-      listTrainPaper(this.queryParams).then(response => {
-        this.trainPaperList = response.rows;
+      listTrainGrade(this.queryParams).then(response => {
+        this.trainGradeList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -208,14 +190,14 @@ export default {
     reset() {
       this.form = {
         id: null,
-        sjmc: null,
-        splb: null,
-        sjmf: null,
-        kssc: null,
+        lsid: null,
+        sjid: null,
+        kgtfz: null,
+        sjzf: null,
         userId: null,
-        status: "0",
         dataOrder: null,
         createTime: null,
+        updateTime: null,
         kzzd1: null,
         kzzd2: null
       };
@@ -241,16 +223,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加培训试卷";
+      this.title = "添加培训试卷成绩";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getTrainPaper(id).then(response => {
+      getTrainGrade(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改培训试卷";
+        this.title = "修改培训试卷成绩";
       });
     },
     /** 提交按钮 */
@@ -258,7 +240,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateTrainPaper(this.form).then(response => {
+            updateTrainGrade(this.form).then(response => {
                 if(200==response.code){
                     this.getList();
                     this.msgSuccess(response.msg);
@@ -269,7 +251,7 @@ export default {
               this.getList();
             });
           } else {
-            addTrainPaper(this.form).then(response => {
+            addTrainGrade(this.form).then(response => {
                 if(200==response.code){
                     this.getList();
                     this.msgSuccess(response.msg);
@@ -291,7 +273,7 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delTrainPaper(ids);
+          return delTrainGrade(ids);
         }).then((res) => {
             if(200==res.code){
                 this.getList();

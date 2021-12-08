@@ -415,12 +415,12 @@ export default {
     },
     // 修正按钮
     toAddTeaching(path, item) {
-      item.flag = path;
       this.getConfigKey(path).then(res => {
         this.$router.push({
           path: res.msg,
           query: {
-            [path]: item
+            flag : "addTeachingPage",// 生成教学计划页面
+            [path]: item,
           }
         });
       });
