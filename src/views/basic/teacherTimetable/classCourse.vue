@@ -210,7 +210,7 @@
                     prop="kbType"
                     label-width="100px"
                   >
-                    <el-input v-model="yxsj" disabled placeholder="请输入有效课时"></el-input>
+                    <el-input-number v-model="yxsj" disabled placeholder="请输入有效课时"></el-input-number>
                   </el-form-item>
                 </el-form>
               </div>
