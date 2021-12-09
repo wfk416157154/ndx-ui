@@ -17,10 +17,28 @@ export function getCurriculum(id) {
   })
 }
 
+// 课程管理
+export function curriculumManage(query) {
+  return request({
+    url: '/basic/curriculum/curriculumManage',
+    method: 'get',
+    params: query
+  })
+}
+
 // 新增培训课程
 export function addCurriculum(data) {
   return request({
     url: '/basic/curriculum',
+    method: 'post',
+    data: data
+  })
+}
+
+// 保存培训课程
+export function saveCurriculumWithVideos(data) {
+  return request({
+    url: '/basic/curriculum/saveCurriculumWithVideos',
     method: 'post',
     data: data
   })

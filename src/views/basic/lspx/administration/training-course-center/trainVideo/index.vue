@@ -92,6 +92,7 @@
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="视频名称" align="center" prop="videoName" />
       <el-table-column label="上传时间" align="center" prop="createTime" />
+      <el-table-column label="完成人数" align="center" prop="spwcrs" />
       <el-table-column label="视频类别" align="center" prop="videoType">
         <template slot-scope="scope">
           <dict-tag :options="videoTypeOptions" :value="scope.row.videoType" />
