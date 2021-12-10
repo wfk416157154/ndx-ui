@@ -1,58 +1,87 @@
 <template>
   <div class="lesson-preparation-statistics">
-    <el-form ref="form" :model="queryParams" :inline="true" label-width="80px">
-      <el-form-item label="课程名称">
-        <el-select v-model="queryParams.lsid" filterable placeholder="请选择老师">
-          <el-option
-            v-for="item in teacherListOption"
-            :key="item.id"
-            :label="item.lsxm"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="进度">
-        <el-select v-model="queryParams.jd" placeholder="请选择活动区域">
-          <el-option
-            v-for="dict in prepareStatsProgress"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
-        <el-button type="primary" @click="applyComplete">申请完成培训</el-button>
-      </el-form-item>
-    </el-form>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <el-tab-pane label="视频培训" name="first">
+        <el-form ref="form" :model="queryParams" :inline="true" label-width="80px">
+          <el-form-item label="课程名称">
+            <el-select v-model="queryParams.courseName" filterable placeholder="请选择老师">
+              <el-option
+                v-for="item in listCurriculum"
+                :key="item.id"
+                :label="item.curriculumName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="进度">
+            <el-select v-model="queryParams.spjd" placeholder="请选择活动区域">
+              <el-option
+                v-for="dict in prepareStatsProgress"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="primary" @click="applyComplete">申请完成培训</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table border :data="videoList" style="width: 100%;font-size : 18px">
+          <el-table-column label="课程名称" prop="courseName" />
+          <el-table-column label="视频名称" prop="videoName" />
+          <el-table-column label="分配时间" prop="fpsj">
+            <template slot-scope="scope">{{parseTime(scope.row.fpsj,"{y}-{m}-{d}")}}</template>
+          </el-table-column>
+          <el-table-column label="完成时间" prop="wcsj">
+            <template slot-scope="scope">{{parseTime(scope.row.wcsj,"{y}-{m}-{d}")}}</template>
+          </el-table-column>
+          <el-table-column label="视频进度" prop="spjd" />
+          <el-table-column label="操作" width="400px">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleViews(scope.row)">学习</el-button>
+              <el-button size="mini" type="success" @click="handleNotice(scope.row)">查看笔记</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination
+          v-show="total>0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="onSubmit"
+        />
+      </el-tab-pane>
 
-    <el-table border :data="listDataStatisticsQuery" style="width: 100%;font-size : 18px">
-      <el-table-column label="班级" prop="rybjmc" />
-      <el-table-column label="老师姓名" prop="lsxm" />
-      <el-table-column label="教案数量/合格/不合格/优秀" prop="sftxkb">
-        <template slot-scope="scope">
-          <span>{{scope.row.jasl}} / {{scope.row.hg}} / {{scope.row.bhg}} / {{scope.row.yx}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="进度" prop="jd" :formatter="jdFormat" />
-      <el-table-column label="操作" width="400px">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleViews(scope.row)">学习</el-button>
-          <el-button size="mini" @click="handleViews(scope.row)">考试</el-button>
-          <el-button size="mini" type="success" @click="handleViews(scope.row)">查看考试</el-button>
-          <el-button size="mini" type="success" @click="handleNotice(scope.row)">查看笔记</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="onSubmit"
-    />
+      <el-tab-pane label="考试" name="second">
+        <el-table border :data="listDataStatisticsQuery" style="width: 100%;font-size : 18px">
+          <el-table-column label="班级" prop="rybjmc" />
+          <el-table-column label="老师姓名" prop="lsxm" />
+          <el-table-column label="教案数量/合格/不合格/优秀" prop="sftxkb">
+            <template slot-scope="scope">
+              <span>{{scope.row.jasl}} / {{scope.row.hg}} / {{scope.row.bhg}} / {{scope.row.yx}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="进度" prop="jd" :formatter="jdFormat" />
+          <el-table-column label="操作" width="400px">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleViews(scope.row)">学习</el-button>
+              <el-button size="mini" @click="handleViews(scope.row)">考试</el-button>
+              <el-button size="mini" type="success" @click="handleViews(scope.row)">查看考试</el-button>
+              <el-button size="mini" type="success" @click="handleNotice(scope.row)">查看笔记</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination
+          v-show="ksTotal>0"
+          :total="ksTotal"
+          :page.sync="ksQueryParams.pageNum"
+          :limit.sync="ksQueryParams.pageSize"
+          @pagination="onSubmit"
+        />
+      </el-tab-pane>
+    </el-tabs>
 
     <!-- 添加或修改消息管理对话框 -->
     <el-dialog width="800px" :visible.sync="dialogFormVisible">
@@ -85,6 +114,9 @@
 </template>
 
 <script>
+import { listCurriculum } from "@/api/basic/curriculum";
+import { getExamList, getVideoList } from "@/api/basic/train-teacher";
+
 import { teacherList } from "@/api/basic/assignTeachers";
 import { dataStatisticsQuery } from "@/api/basic/statistics";
 import { addMessage } from "@/api/basic/message";
@@ -94,9 +126,18 @@ export default {
       queryParams: {
         pageNum: 0,
         pageSize: 10,
+        courseName: null,
+        spjd: null
+      },
+      ksQueryParams: {
+        pageNum: 0,
+        pageSize: 10,
         lsid: null,
         jd: null
       },
+      Total: 0,
+      ksTotal: 0,
+      activeName: "first",
       // 表单参数
       form: {
         sfqbfs: "0",
@@ -112,39 +153,31 @@ export default {
         xxqrlx: [{ required: true, message: "必填项", trigger: "change" }]
       },
       total: 0,
-      teacherListOption: [],
-      prepareStatsProgress: [],
-      listDataStatisticsQuery: [],
-      xxlxOptions: [],
-      sfqbfsOptions: [],
-      xxqrlxOptions: [],
-      teacherListData: [],
       dialogFormVisible: false,
-      dialogApplyCompleteVisible: false
+      dialogApplyCompleteVisible: false,
+      listCurriculum: [],
+      videoList: []
     };
   },
   created() {
+    listCurriculum().then(res => {
+      this.listCurriculum = res.rows;
+    });
     teacherList().then(response => {
       this.teacherListOption = response.rows;
     });
     this.getDicts("prepareStatsProgress").then(response => {
       this.prepareStatsProgress = response.data;
     });
-    this.getDicts("messageType").then(response => {
-      this.xxlxOptions = response.data;
-    });
-    this.getDicts("isOrNot").then(response => {
-      this.sfqbfsOptions = response.data;
-    });
-    this.getDicts("messageConfirmWay").then(response => {
-      this.xxqrlxOptions = response.data;
-    });
   },
   methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
     onSubmit() {
-      dataStatisticsQuery(this.queryParams).then(res => {
-        this.listDataStatisticsQuery = res.rows;
-        this.total = res.total;
+      getVideoList(this.queryParams).then(res => {
+        console.log(res);
+        this.videoList = res.rows;
       });
     },
     jdFormat(row, column) {

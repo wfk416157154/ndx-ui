@@ -2,65 +2,66 @@
   <div class="edit-test paper">
     <div class="train-examination">
       <div>
-        <el-button type="primary" @click="addTestPaper">添加试卷</el-button>
+        <el-button type="primary" @click="getAddTestPaper">添加试卷</el-button>
       </div>
       <div class="content">
-        <div class="single-choice">
+        <div class="single-choice" v-if="getTrainPaperTopicListTem.danxuan.length > 0">
           <h2>单选题</h2>
           <div>
             <ul>
-              <li>
-                <h3>1) 试卷清晰，单题单答，且有答题卡，可检查漏答题目或修改答案</h3>
+              <li v-for="(item,index) in getTrainPaperTopicListTem.danxuan" :key="index">
+                <h3>{{++index}} ) {{item.tmbt}}</h3>
                 <div class="answer">
-                  <el-radio-group v-model="radio">
-                    <el-radio :label="3">A备选项</el-radio>
-                    <el-radio :label="6">B备选项</el-radio>
-                    <el-radio :label="9">C备选项</el-radio>
+                  <el-radio-group>
+                    <el-radio
+                      disabled
+                      v-for="(list,j) in item.optionList"
+                      :key="j"
+                      :label="3"
+                    >{{list.kzzd1}} {{list.xxbt}}</el-radio>
                   </el-radio-group>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-        <div class="judgment-question">
+        <div class="judgment-question" v-if="getTrainPaperTopicListTem.panduan.length > 0">
           <h2>判断题</h2>
           <div>
             <ul>
-              <li>
-                <h3>1) 试卷清晰，单题单答，且有答题卡，可检查漏答题目或修改答案</h3>
+              <li v-for="(item,index) in getTrainPaperTopicListTem.panduan" :key="index">
+                <h3>{{++index}} ) {{item.tmbt}}</h3>
                 <div class="answer">
-                  <el-radio-group v-model="radio">
-                    <el-radio :label="3">A备选项</el-radio>
-                    <el-radio :label="6">B备选项</el-radio>
-                    <el-radio :label="9">C备选项</el-radio>
+                  <el-radio-group>
+                    <el-radio
+                      disabled
+                      v-for="(list,j) in item.optionList"
+                      :key="j"
+                      :label="3"
+                    >{{list.kzzd1}} {{list.xxbt}}</el-radio>
                   </el-radio-group>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-        <div class="blanks-topic">
+        <div class="blanks-topic" v-if="getTrainPaperTopicListTem.tiankong.length > 0">
           <h2>填空题</h2>
           <div>
             <ul>
-              <li>
-                <div>1) , 试卷清晰，1 单题单答，2 且有答题卡，3 可检查漏答题目或修改答案</div>
+              <li v-for="(item,index) in getTrainPaperTopicListTem.tiankong" :key="index">
+                <h3>{{++index}} ) {{item.tmbt}}</h3>
                 <div>
                   <ul>
-                    <li style="margin : 20px 0px;align-items : center">
+                    <li
+                      style="margin : 20px 0px;align-items : center"
+                      v-for="(list,j) in item.optionList"
+                      :key="j"
+                    >
                       <div>
                         <el-form>
-                          <el-form-item label="第一空" label-width="70px">
-                            <el-input v-model="formInline"></el-input>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                    </li>
-                    <li style="margin : 20px 0px;align-items : center">
-                      <div>
-                        <el-form>
-                          <el-form-item label="第二空" label-width="70px">
-                            <el-input v-model="formInline"></el-input>
+                          <el-form-item :label="list.kzzd1" label-width="70px">
+                            <el-input disabled></el-input>
                           </el-form-item>
                         </el-form>
                       </div>
@@ -71,15 +72,15 @@
             </ul>
           </div>
         </div>
-        <div class="questions-answers">
+        <div class="questions-answers" v-if="getTrainPaperTopicListTem.wenda.length > 0">
           <h2>问答题</h2>
           <div>
             <ul>
-              <li>
-                <h3>1) くらいではありません（くらい（这点，这些，表示程度小，数量少）。不是这么点）</h3>
+              <li v-for="(item,index) in getTrainPaperTopicListTem.wenda" :key="index">
+                <h3>{{++index}} ) {{item.tmbt}}</h3>
                 <div class="answer">
                   <h3>答题区</h3>
-                  <editor v-model="getKscjzj" :min-height="300" />
+                  <editor :disabled="true" :min-height="300" />
                 </div>
               </li>
             </ul>
@@ -90,45 +91,51 @@
 
     <el-dialog title="添加试卷" :visible.sync="dialogFormVisible">
       <el-form :model="queryParams" :inline="true">
-        <el-form-item label="全部分类">
-          <el-select v-model="queryParams.region" placeholder="请选择活动区域">
-            <el-option label="分类一" value="shanghai"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="全部考点">
-          <el-select v-model="queryParams.region" placeholder="请选择活动区域">
-            <el-option label="分类一" value="shanghai"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="全部题型">
-          <el-select v-model="queryParams.region" placeholder="请选择活动区域">
-            <el-option label="分类一" value="shanghai"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="全部难易点">
-          <el-select v-model="queryParams.region" placeholder="请选择活动区域">
-            <el-option label="分类一" value="shanghai"></el-option>
-          </el-select>
+        <el-form-item label="试题名称">
+          <el-input v-model="queryParams.tmbt" placeholder="请输入试题名称" />
         </el-form-item>
         <el-form-item>
           <el-button type="success">搜索</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="date" label="日期" width="180"></el-table-column>
-        <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-        <el-table-column prop="address" label="地址"></el-table-column>
+      <el-table
+        ref="multipleTable"
+        :data="getTrainPaperTopicList"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        border
+      >
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column label="题目" prop="tmbt"></el-table-column>
+        <el-table-column label="题目类型" prop="tmlx" :formatter="tmlxFormat"></el-table-column>
       </el-table>
-      <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getAddTestPaper"
+      />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addPaperWithTopic">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  listTrainPaper,
+  getTrainPaper,
+  delTrainPaper,
+  addTrainPaper,
+  updateTrainPaper,
+  trainPaperTopicList,
+  addPaperWithTopic,
+  topicTypeList
+} from "@/api/basic/trainPaper";
 export default {
   name: "EditTestPaper",
   data() {
@@ -136,37 +143,65 @@ export default {
       dialogFormVisible: false,
       queryParams: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        tmbt: null
       },
       total: 0,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      multipleSelection: [],
+      sjid: {},
+      getTrainPaperTopicList: [],
+      trainPaperTopicType: [],
+      getTrainPaperTopicListTem: {
+        danxuan: [],
+        panduan: [],
+        tiankong: [],
+        wenda: []
+      }
     };
   },
+  created() {
+    this.getDicts("trainPaperTopicType").then(response => {
+      this.trainPaperTopicType = response.data;
+    });
+    if (this.$route.query.name == "composition-test-paper-list") {
+      this.sjid = this.$route.query.id;
+      console.log("id", this.$route.query.id);
+      this.getList();
+    }
+  },
   methods: {
-    getList() {},
-    addTestPaper() {
+    getList() {
+      topicTypeList({ sjid: this.sjid }).then(res => {
+        this.getTrainPaperTopicListTem = res.data;
+      });
+    },
+    getAddTestPaper() {
       this.dialogFormVisible = true;
+      trainPaperTopicList(this.queryParams).then(res => {
+        this.getTrainPaperTopicList = res.rows;
+        this.total = res.total;
+      });
+    },
+    tmlxFormat(row, column) {
+      return this.selectDictLabel(this.trainPaperTopicType, row.tmlx);
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      let jsonArr = [];
+      this.multipleSelection.forEach(value => {
+        jsonArr.push({
+          sjid: this.sjid,
+          tmid: value.id
+        });
+      });
+      this.multipleSelection = jsonArr;
+    },
+    addPaperWithTopic() {
+      addPaperWithTopic(this.multipleSelection).then(res => {
+        this.msgSuccess("添加成功");
+        this.getList()
+        this.dialogFormVisible = false;
+      });
     }
   }
 };

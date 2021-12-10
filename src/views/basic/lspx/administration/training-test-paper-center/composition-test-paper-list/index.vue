@@ -43,7 +43,7 @@
           v-hasPermi="['basic:trainPaper:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -63,8 +63,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['basic:trainPaper:remove']"
-        >删除</el-button>
-      </el-col>
+      >删除</el-button>-->
+      <!-- </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -93,7 +93,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['basic:trainPaper:edit']"
-          >修改</el-button>
+          >编辑</el-button>
           <el-button
             size="mini"
             type="text"
@@ -259,11 +259,15 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
-      getTrainPaper(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改培训试卷";
-      });
+      this.getConfigKey("edit-test-paper").then(res => [
+        this.$router.push({
+          path: res.msg,
+          query: {
+            id: row.id,
+            name: "composition-test-paper-list"
+          }
+        })
+      ]);
     },
     /** 提交按钮 */
     submitForm() {
