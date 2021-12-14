@@ -2,13 +2,7 @@
   <div class="qrientation-assignment">
     <el-form :inline="true" :model="queryParams" class="demo-form-inline">
       <el-form-item label="老师">
-        <el-input v-model="queryParams.user" placeholder="审批人"></el-input>
-      </el-form-item>
-      <el-form-item label="培训类别">
-        <el-select v-model="queryParams.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
-        </el-select>
+        <el-input v-model="queryParams.lsxm" placeholder="审批人"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="querySubmit">查询</el-button>
@@ -17,29 +11,30 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column label="日期" width="180">
+    <el-table :data="entryAllocateData" border style="width: 100%">
+      <el-table-column label="老师" prop="lsxm" width="180" />
+      <el-table-column label="课程名称" prop="curriculumName" width="180" />
+      <el-table-column label="视频名称" prop="videoName" width="180" />
+      <el-table-column label="时间" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span
+            style="margin-left: 10px"
+          >{{ parseTime(scope.row.allocateDate,"{y}-{m}-{d}") }} 至 {{ parseTime(scope.row.trainEndDate,"{y}-{m}-{d}")}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="姓名" width="180">
+      <el-table-column label="状态" prop="zt" width="180">
         <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>姓名: {{ scope.row.name }}</p>
-            <p>住址: {{ scope.row.address }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.name }}</el-tag>
-            </div>
-          </el-popover>
+          <span style="margin-left: 10px">{{scope.row.zt}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="分配人" prop="allocateTeacherName" width="180" />
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="success"
-            @click="distributionSubmit(scope.$index, scope.row)"
+            :disabled="scope.row.ztbs == 1"
+            @click="distribution(scope.$index, scope.row)"
           >分 配</el-button>
         </template>
       </el-table-column>
@@ -58,98 +53,188 @@
         <tbody>
           <tr>
             <td class="tds">老师</td>
-            <td>吴珂</td>
+            <td>{{lsName}}</td>
           </tr>
           <tr>
             <td class="tds">课程名称</td>
             <td>
-              <el-select v-model="assignmentForm.region" placeholder="活动区域">
-                <el-option label="区域一" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
+              <el-select
+                v-model="distributionForm.curriculumId"
+                @change="getCurriculumManage"
+                filterable
+                disabled
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in listCurriculum"
+                  :key="item.id"
+                  :label="item.curriculumName"
+                  :value="item.id"
+                ></el-option>
               </el-select>
             </td>
           </tr>
-          <tr></tr>
           <tr>
             <td class="tds">课程选择</td>
             <td>
-              <el-checkbox-group v-model="assignmentForm.checkList">
-                <el-checkbox label="复选框 A"></el-checkbox>
+              <el-checkbox-group
+                v-if=" curriculumManageList.videoList && curriculumManageList.videoList.length > 0"
+                v-model="checkbox"
+              >
+                <el-checkbox
+                  v-for="(item,index) in curriculumManageList.videoList"
+                  :key="index"
+                  :label="item.id"
+                >{{item.videoName}}</el-checkbox>
               </el-checkbox-group>
             </td>
           </tr>
           <tr>
             <td class="tds">视频类别</td>
             <td>
-              <el-checkbox-group v-model="assignmentForm.checkList">
-                <el-checkbox label="复选框 A">qwerwqr</el-checkbox>
-              </el-checkbox-group>
-              <el-radio v-model="assignmentForm.radio" label="1">a卷</el-radio>
+              <div v-for="(item,index) in getTrainPaperTopicListTem" :key="index">
+                <el-checkbox :label="item.dictValue">{{item.dictLabel}}</el-checkbox>
+                <div style="padding : 20px 10px ;boxsizing : border-box">
+                  <el-radio-group v-model="item[index]">
+                    <div v-for="(list,j) in item.paperList" :key="j" @click="getVideo(list,index)">
+                      <el-radio :label="list.id">
+                        <span>{{list.sjmc}}</span>
+                      </el-radio>
+                    </div>
+                  </el-radio-group>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">提 交</el-button>
+        <el-button type="primary" @click="distributionSubmit">提 交</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  entryAllocateList,
+  trainAllocate,
+  paperGroupQuery
+} from "@/api/basic/qrientation-assignment";
+import { listCurriculum } from "@/api/basic/curriculum";
+import { curriculumManage } from "@/api/basic/curriculum";
+import { listTrainPaper } from "@/api/basic/trainPaper";
 export default {
   data() {
     return {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        user: "",
-        region: ""
+        isAllocate: "",
+        lsxm: ""
       },
       total: 0,
-      assignmentForm: {
-        checkList: []
-      },
       dialogFormVisible: false,
-      dialogFormVisibleView: false,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      distributionForm: {
+        curriculumId: null,
+        curriculumName: null,
+        trainAllocateVideos: [],
+        trainAllocatePapers: [],
+        trainAllocateTeachers: [{}]
+      },
+      checkbox: [],
+      entryAllocateData: [],
+      listCurriculum: [],
+      curriculumManageList: [],
+      getTrainPaperTopicListTem: [],
+      lsName: ""
     };
+  },
+  created() {
+    listCurriculum().then(res => {
+      this.listCurriculum = res.rows;
+      this.listCurriculum.forEach(value => {
+        if (value.curriculumName == "入职培训") {
+          this.distributionForm.curriculumId = value.id;
+          this.distributionForm.curriculumName = value.curriculumName;
+          this.getCurriculumManage();
+        }
+      });
+    });
+    paperGroupQuery().then(res => {
+      this.getTrainPaperTopicListTem = res.data;
+    });
   },
   methods: {
     querySubmit() {
-      console.log("submit!");
+      entryAllocateList(this.queryParams).then(res => {
+        this.entryAllocateData = res.rows;
+        this.queryParams.isAllocate = null;
+      });
     },
     assignedSubmit() {
-      console.log("submit!");
+      this.queryParams.isAllocate = 1;
+      this.querySubmit();
     },
     unassignedSubmit() {
-      console.log("submit!");
+      this.queryParams.isAllocate = 0;
+      this.querySubmit();
     },
-    distributionSubmit(index, row) {
+    getCurriculumManage() {
+      curriculumManage({ id: this.distributionForm.curriculumId }).then(res => {
+        this.curriculumManageList = res.data[0];
+      });
+    },
+    distribution(index, row) {
+      this.reset();
+      this.lsName = row.lsxm;
+      this.distributionForm.trainAllocateTeachers[0].teacherId = row.lsid;
+      this.distributionForm.trainAllocateTeachers[0].teacherName = row.lsxm;
       this.dialogFormVisible = true;
-      console.log(index, row);
+    },
+    getVideo(item, index) {
+      let count = 0;
+      if (this.distributionForm.trainAllocatePapers.length > 0) {
+        this.distributionForm.trainAllocatePapers.forEach(value => {
+          if (value.index === index) {
+            this.distributionForm.trainAllocatePapers[index].paperId = item.id;
+            this.distributionForm.trainAllocatePapers[index].paperName =
+              item.sjmc;
+            ++count;
+          }
+        });
+      }
+      if (count == 0) {
+        this.distributionForm.trainAllocatePapers.push({
+          index,
+          paperId: item.id,
+          paperName: item.sjmc
+        });
+      }
+    },
+    reset() {
+      this.checkbox = [];
+      (this.distributionForm.trainAllocateVideos = []),
+        (this.distributionForm.trainAllocatePapers = []),
+        (this.distributionForm.trainAllocateTeachers = [{}]);
+    },
+    distributionSubmit() {
+      let trainAllocateVideosArr = [];
+      this.curriculumManageList.videoList.forEach(value => {
+        if (this.checkbox.indexOf(value.id) != -1) {
+          trainAllocateVideosArr.push({
+            videoId: value.id,
+            videoName: value.videoName
+          });
+        }
+      });
+      this.distributionForm.trainAllocateVideos = trainAllocateVideosArr;
+      trainAllocate(this.distributionForm).then(res => {
+        this.msgSuccess(res.msg);
+        this.querySubmit();
+        this.dialogFormVisible = false;
+      });
     }
   }
 };

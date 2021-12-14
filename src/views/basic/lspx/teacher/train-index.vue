@@ -40,11 +40,12 @@
           <el-table-column label="视频进度" prop="spjd" />
           <el-table-column label="操作" width="400px">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleViews(scope.row)">学习</el-button>
+              <el-button size="mini" @click="toLearn(scope.row)">学习</el-button>
               <el-button size="mini" type="success" @click="handleNotice(scope.row)">查看笔记</el-button>
             </template>
           </el-table-column>
         </el-table>
+
         <pagination
           v-show="total>0"
           :total="total"
@@ -55,21 +56,20 @@
       </el-tab-pane>
 
       <el-tab-pane label="考试" name="second">
-        <el-table border :data="listDataStatisticsQuery" style="width: 100%;font-size : 18px">
-          <el-table-column label="班级" prop="rybjmc" />
-          <el-table-column label="老师姓名" prop="lsxm" />
-          <el-table-column label="教案数量/合格/不合格/优秀" prop="sftxkb">
-            <template slot-scope="scope">
-              <span>{{scope.row.jasl}} / {{scope.row.hg}} / {{scope.row.bhg}} / {{scope.row.yx}}</span>
-            </template>
+        <el-table border :data="examList" style="width: 100%;font-size : 18px">
+          <el-table-column label="考卷名称" prop="sjmc" />
+          <el-table-column label="视频类别" prop="splb" :formatter="splxFormat" />
+          <el-table-column label="分配时间" prop="fpsj">
+            <template slot-scope="scope">{{parseTime(scope.row.fpsj,"{y}-{m}-{d}")}}</template>
           </el-table-column>
-          <el-table-column label="进度" prop="jd" :formatter="jdFormat" />
+          <el-table-column label="完成时间" prop="wcsj">
+            <template slot-scope="scope">{{parseTime(scope.row.wcsj,"{y}-{m}-{d}")}}</template>
+          </el-table-column>
+          <el-table-column label="考试分数" prop="sjzf" />
           <el-table-column label="操作" width="400px">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleViews(scope.row)">学习</el-button>
-              <el-button size="mini" @click="handleViews(scope.row)">考试</el-button>
-              <el-button size="mini" type="success" @click="handleViews(scope.row)">查看考试</el-button>
-              <el-button size="mini" type="success" @click="handleNotice(scope.row)">查看笔记</el-button>
+              <el-button size="mini" @click="toExamination(scope.row)">考试</el-button>
+              <el-button size="mini" type="success" @click="toExaminationDetails(scope.row)">查看考试</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -103,7 +103,7 @@
     <!-- 申请完成 -->
     <el-dialog title="培训感想" :visible.sync="dialogApplyCompleteVisible">
       <el-form :model="applyCompleteForm">
-        <editor v-model="applyCompleteForm.pxgx" :item="items" :min-height="300" />
+        <editor v-model="applyCompleteForm.pxgx" :min-height="300" />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogApplyCompleteVisible = false">取 消</el-button>
@@ -156,7 +156,10 @@ export default {
       dialogFormVisible: false,
       dialogApplyCompleteVisible: false,
       listCurriculum: [],
-      videoList: []
+      videoList: [],
+      examList: [],
+      prepareStatsProgress: [],
+      videoTypeOptions: []
     };
   },
   created() {
@@ -165,6 +168,9 @@ export default {
     });
     teacherList().then(response => {
       this.teacherListOption = response.rows;
+    });
+    this.getDicts("videoType").then(response => {
+      this.videoTypeOptions = response.data;
     });
     this.getDicts("prepareStatsProgress").then(response => {
       this.prepareStatsProgress = response.data;
@@ -176,12 +182,14 @@ export default {
     },
     onSubmit() {
       getVideoList(this.queryParams).then(res => {
-        console.log(res);
         this.videoList = res.rows;
       });
+      getExamList(this.queryParams).then(res => {
+        this.examList = res.rows;
+      });
     },
-    jdFormat(row, column) {
-      return this.selectDictLabel(this.prepareStatsProgress, row.jd);
+    splxFormat(row, column) {
+      return this.selectDictLabel(this.videoTypeOptions, row.splx);
     },
     handleNotice(row) {
       if (row.lsxm) {
@@ -234,6 +242,30 @@ export default {
     },
     applyComplete() {
       this.dialogApplyCompleteVisible = true;
+    },
+    toLearn(row) {
+      this.getConfigKey("train-learning").then(res => {
+        this.$router.push({
+          path: res.msg,
+          query: {
+            list: JSON.stringify(row)
+          }
+        });
+      });
+    },
+    toExamination(row) {
+      this.getConfigKey("train-examination").then(res => {
+        this.$router.push({
+          path: res.msg
+        });
+      });
+    },
+    toExaminationDetails(row) {
+      this.getConfigKey("train-examination-details").then(res => {
+        this.$router.push({
+          path: res.msg
+        });
+      });
     }
   }
 };

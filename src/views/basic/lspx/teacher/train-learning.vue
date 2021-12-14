@@ -5,20 +5,27 @@
         <h3>视频</h3>
       </div>
       <div class="video">
-        <ndx-video ref="video" :executeDocument="executeDocument" @executionFun="demo"></ndx-video>
+        <ndx-video
+          ref="video"
+          @realTimePush="realTimePush"
+          :executeDocument="executeDocument"
+          @executionFun="testQuestions"
+        ></ndx-video>
       </div>
       <div class="jd">
-        <span>学习进度：0%</span>
+        <span>学习进度: {{rateOfIearning}}%</span>
       </div>
     </div>
     <div class="content">
       <h3>笔记上传</h3>
       <div>
         <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
+          :action="upload.imgUrl"
+          :headers="upload.headers"
           list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
+          :on-preview="bjPreview"
+          :on-remove="bjRemove"
+          :on-success="bjSuccess"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -26,7 +33,11 @@
           <img width="100%" :src="dialogImageUrl" alt />
         </el-dialog>
       </div>
+      <div style="padding : 20px">
+        <el-button type="primary" :disabled="!answerStatus" @click="saveSubimit">保存</el-button>
+      </div>
     </div>
+
     <el-dialog
       title="测试题"
       :close-on-click-modal="false"
@@ -37,72 +48,168 @@
       <div class="question-board">
         <ul>
           <li>
-            <p>
-              <el-radio v-model="radio" label="1">高一</el-radio>
-            </p>
-          </li>
-          <li>
-            <p>
-              <el-radio v-model="radio" label="2">高二</el-radio>
-            </p>
-          </li>
-          <li>
-            <p>
-              <el-radio v-model="radio" label="3">高三</el-radio>
-            </p>
-          </li>
-          <li>
-            <p>
-              <el-radio v-model="radio" label="4">高四</el-radio>
-            </p>
+            <div v-for="(item,index) in videoQuestionData" :key="index">
+              <div style="padding : 20px 0px">{{++index}}, {{item.topic}}</div>
+              <el-radio
+                v-model="item[index]"
+                @change="toAnswer(item[index],item.answer)"
+                label="A"
+              >A, {{item.optionA}}</el-radio>
+              <el-radio
+                v-model="item[index]"
+                @change="toAnswer(item[index],item.answer)"
+                label="B"
+              >B, {{item.optionB}}</el-radio>
+              <el-radio
+                v-model="item[index]"
+                @change="toAnswer(item[index],item.answer)"
+                label="C"
+              >C, {{item.optionC}}</el-radio>
+              <el-radio
+                v-model="item[index]"
+                @change="toAnswer(item[index],item.answer)"
+                label="D"
+              >D, {{item.optionD}}</el-radio>
+            </div>
           </li>
         </ul>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="a">取 消</el-button>
-        <el-button type="primary" @click="b">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="answerOver">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  learnRecordList,
+  videoQuestionList,
+  addLearnRecord,
+  updateLearnRecord
+} from "@/api/basic/train-index";
+import { getToken } from "@/utils/auth";
+import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
       executeDocument: {
-        videoUrl:
-          "http://192.168.0.129:9300/statics/2021/11/25/视频-53b3361a.mp4",
+        videoUrl: "",
         disabledProgress: false,
-        stopTime: [5, 9]
+        stopTime: []
       },
       dialogFormVisible: false,
       dialogImageUrl: "",
       dialogVisible: false,
-      radio: "1"
+      radio: "1",
+      videoQuestionData: [],
+      answerStatus: false,
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传考试成绩地址
+        fileUrl:
+          process.env.VUE_APP_BASE_API +
+          "/basic/examinationPaper/importClassGradeData",
+        // 上传图片地址
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      dialogImageUrl: "",
+      dialogVisible: false,
+      learnRecordForm: {},
+      rateOfIearning: 0
     };
   },
-  created() {},
+  created() {
+    this.studyList = JSON.parse(this.$route.query.list);
+    // console.log(this.studyList);
+    selectFileList({ kzzd1: this.studyList.videoFileId }).then(res => {
+      this.executeDocument.videoUrl = res.rows[0].url;
+    });
+    learnRecordList({
+      lsid: this.studyList.lsid,
+      spid: this.studyList.spid
+    }).then(res => {
+      console.log(res);
+    });
+  },
   methods: {
-    demo(data) {
-      console.log(data);
-      this.dialogFormVisible = true;
-      console.log(this.executeDocument.stopTime);
+    testQuestions(data) {
+      videoQuestionList({ trainVideoId: this.studyList.spid }).then(res => {
+        this.videoQuestionData = res.rows;
+        this.dialogFormVisible = true;
+      });
     },
-    a() {
-      this.$refs.video.resetVideo();
+    cancel() {
       this.dialogFormVisible = false;
     },
-    b() {
-      this.$refs.video.startPlaying();
+    answerOver() {
       this.dialogFormVisible = false;
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    toAnswer(target, origin) {
+      target = target.toLowerCase();
+      origin = origin.toLowerCase();
+      if (target == origin) {
+        this.answerStatus = true;
+      } else {
+        this.answerStatus = false;
+        this.dialogFormVisible = false;
+        this.$refs.video.resetVideo();
+        this.msgError("答题错误请重新观看视频");
+      }
     },
-    handlePictureCardPreview(file) {
+    bjPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    bjRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    bjSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.learnRecordForm.bjtpid || secretKey();
+      this.learnRecordForm.bjtpid = data.kzzd1;
+      addImg(data).then(res => {
+        file.id = res.data.id;
+        this.msgSuccess("上传成功");
+      });
+    },
+    realTimePush(data) {
+      console.log(data);
+      if (!data.targetDuration) {
+        this.rateOfIearning;
+        return;
+      }
+      console.log(data.targetDuration);
+      this.rateOfIearning =
+        (data.newCurrentTime / data.targetDuration).toFixed(2) * 100;
+    },
+    saveSubimit() {
+      if (this.learnRecordForm.id) {
+      } else {
+        addLearnRecord().then(res => {
+          console.log(res);
+        });
+      }
     }
   }
 };

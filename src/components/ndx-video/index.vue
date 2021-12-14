@@ -86,8 +86,13 @@ export default {
       this.videoProgress = Math.round(
         (this.newCurrentTime / this.targetDuration) * 100
       );
+      this.$emit("realTimePush", {
+        newCurrentTime: this.newCurrentTime,
+        targetDuration: this.targetDuration
+      });
       if (this.newCurrentTime === this.targetDuration) {
         this.playStatus = true;
+        this.$emit("executionFun");
       }
       let index = this.executeDocument.stopTime.indexOf(
         +this.newCurrentTime.toFixed(0)
