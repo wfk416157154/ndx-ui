@@ -21,6 +21,7 @@
           type="date"
           placeholder="选择日期时间"
           @change="onLogTime"
+          :picker-options="pickerOptions0"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="是否辅导" label-width="100px">
@@ -532,7 +533,12 @@ export default {
       bkBcrz: "0",
       // 是否复习
       sffx: false,
-      dialogUploadVideoisible: false
+      dialogUploadVideoisible: false,
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() > Date.now() - 8.64e7;;
+        }
+      },
     };
   },
   components: {
