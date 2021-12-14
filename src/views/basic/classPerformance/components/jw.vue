@@ -382,7 +382,7 @@ export default {
                 item[i].everyTimeGradeInfoQueries[j].ksmc +
                   this.ifGetExaminationType(
                     item[i].everyTimeGradeInfoQueries[j].kslx
-                  )
+                  )+item[i].everyTimeGradeInfoQueries[j].kssj
               );
               obj[i].series[0].data.push(
                 item[i].everyTimeGradeInfoQueries[j].pjfs
