@@ -83,14 +83,14 @@
       </el-tab-pane>
     </el-tabs>
 
-    <!-- 添加或修改消息管理对话框 -->
-    <el-dialog width="800px" :visible.sync="dialogFormVisible">
+    <!-- 查看笔记 -->
+    <el-dialog title="培训感想" width="800px" :visible.sync="dialogFormVisible">
       <div>
         <img
           style="width : 200px;margin : 20px"
-          v-for="(item,index) in 6"
+          v-for="(item,index) in getImgList"
           :key="index"
-          src="https://ndx-file.nandouxingriyu.com/statics/2021/09/10/c2aa5f01-a1ba-4999-a9bf-68ad7a7bb042.jpg"
+          :src="item.url"
           alt
         />
       </div>
@@ -116,7 +116,7 @@
 <script>
 import { listCurriculum } from "@/api/basic/curriculum";
 import { getExamList, getVideoList } from "@/api/basic/train-teacher";
-
+import { selectFileList } from "@/api/tool/common";
 import { teacherList } from "@/api/basic/assignTeachers";
 import { dataStatisticsQuery } from "@/api/basic/statistics";
 import { addMessage } from "@/api/basic/message";
@@ -159,7 +159,8 @@ export default {
       videoList: [],
       examList: [],
       prepareStatsProgress: [],
-      videoTypeOptions: []
+      videoTypeOptions: [],
+      getImgList: []
     };
   },
   created() {
@@ -176,6 +177,9 @@ export default {
       this.prepareStatsProgress = response.data;
     });
   },
+  mounted() {
+    this.onSubmit();
+  },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
@@ -183,6 +187,7 @@ export default {
     onSubmit() {
       getVideoList(this.queryParams).then(res => {
         this.videoList = res.rows;
+        this.total = res.total;
       });
       getExamList(this.queryParams).then(res => {
         this.examList = res.rows;
@@ -192,9 +197,12 @@ export default {
       return this.selectDictLabel(this.videoTypeOptions, row.splx);
     },
     handleNotice(row) {
-      if (row.lsxm) {
-        this.teacherListData.push(row.lsxm + "-" + row.dhhm);
-        this.dialogFormVisible = true;
+      this.getImgList = [];
+      this.dialogFormVisible = true;
+      if (row && row.bjtpid) {
+        selectFileList({ kzzd1: row.bjtpid }).then(res => {
+          this.getImgList = res.rows;
+        });
       }
     },
     submitForm() {
@@ -256,7 +264,10 @@ export default {
     toExamination(row) {
       this.getConfigKey("train-examination").then(res => {
         this.$router.push({
-          path: res.msg
+          path: res.msg,
+          query: {
+            list: JSON.stringify(row)
+          }
         });
       });
     },

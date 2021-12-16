@@ -1,19 +1,25 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="老师id" prop="lsid">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
+      <el-form-item label="老师" prop="lsxm">
         <el-input
-          v-model="queryParams.lsid"
-          placeholder="请输入老师id"
+          v-model="queryParams.lsxm"
+          placeholder="请输入老师"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="试卷id" prop="sjid">
+      <el-form-item label="试卷" prop="sjmc">
         <el-input
-          v-model="queryParams.sjid"
-          placeholder="请输入试卷id"
+          v-model="queryParams.sjmc"
+          placeholder="请输入试卷"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -24,50 +30,20 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-<!--
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['basic:trainGrade:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['basic:trainGrade:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['basic:trainGrade:remove']"
-        >删除</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
 
-    <el-table v-loading="loading" :height="$root.tableHeight" border :data="trainGradeList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :height="$root.tableHeight"
+      border
+      :data="trainGradeList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="id" align="center" prop="id" /> -->
-      <el-table-column label="老师id" align="center" prop="lsid" />
-      <el-table-column label="试卷id" align="center" prop="sjid" />
+      <el-table-column label="老师" align="center" prop="lsxm" />
+      <el-table-column label="试卷名称" align="center" prop="sjmc" />
       <el-table-column label="客观题分值" align="center" prop="kgtfz" />
       <el-table-column label="试卷总分" align="center" prop="sjzf" />
+      <el-table-column label="提交时间" align="center" prop="createTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -76,14 +52,14 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['basic:trainGrade:edit']"
-          >修改</el-button>
+          >判 卷</el-button>
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
+            icon="el-icon-view"
+            @click="handleView(scope.row)"
             v-hasPermi="['basic:trainGrade:remove']"
-          >删除</el-button>
+          >查 看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -117,21 +93,22 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
-
   </div>
-
-
 </template>
 
 <script>
-import { listTrainGrade, getTrainGrade, delTrainGrade, addTrainGrade, updateTrainGrade } from "@/api/basic/trainGrade";
+import {
+  listTrainGrade,
+  getTrainGrade,
+  delTrainGrade,
+  addTrainGrade,
+  updateTrainGrade,
+} from "@/api/basic/trainGrade";
 import { getToken } from "@/utils/auth";
 
 export default {
   name: "TrainGrade",
-  components: {
-  },
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -159,13 +136,12 @@ export default {
         lsid: null,
         sjid: null,
         kgtfz: null,
-        sjzf: null,
+        sjzf: null
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {}
     };
   },
   created() {
@@ -215,9 +191,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -228,11 +204,17 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       getTrainGrade(id).then(response => {
         this.form = response.data;
-        this.open = true;
-        this.title = "修改培训试卷成绩";
+        this.getConfigKey("mark-exam-papers").then(res => {
+          this.$router.push({
+            path: res.msg,
+            query: {
+              list: JSON.stringify(this.form)
+            }
+          });
+        });
       });
     },
     /** 提交按钮 */
@@ -241,23 +223,23 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateTrainGrade(this.form).then(response => {
-                if(200==response.code){
-                    this.getList();
-                    this.msgSuccess(response.msg);
-                }else{
-                    this.msgError(response.msg);
-                }
+              if (200 == response.code) {
+                this.getList();
+                this.msgSuccess(response.msg);
+              } else {
+                this.msgError(response.msg);
+              }
               this.open = false;
               this.getList();
             });
           } else {
             addTrainGrade(this.form).then(response => {
-                if(200==response.code){
-                    this.getList();
-                    this.msgSuccess(response.msg);
-                }else{
-                    this.msgError(response.msg);
-                }
+              if (200 == response.code) {
+                this.getList();
+                this.msgSuccess(response.msg);
+              } else {
+                this.msgError(response.msg);
+              }
               this.open = false;
               this.getList();
             });
@@ -266,28 +248,16 @@ export default {
       });
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除选中的数据?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return delTrainGrade(ids);
-        }).then((res) => {
-            if(200==res.code){
-                this.getList();
-                this.msgSuccess("删除成功");
-            }else{
-                this.msgError("删除失败");
-            }
-        }).catch((e)=>{
-          console.log(e);
-      })
-
-    },
-
-
+    handleView(row) {
+      this.getConfigKey("grading-center-index").then(res => {
+        this.$router.push({
+          path: res.msg,
+          query: {
+            list: JSON.stringify(row)
+          }
+        });
+      });
+    }
   }
 };
 </script>

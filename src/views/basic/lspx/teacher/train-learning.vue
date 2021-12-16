@@ -132,7 +132,6 @@ export default {
   },
   created() {
     this.studyList = JSON.parse(this.$route.query.list);
-    // console.log(this.studyList);
     selectFileList({ kzzd1: this.studyList.videoFileId }).then(res => {
       this.executeDocument.videoUrl = res.rows[0].url;
     });
@@ -140,7 +139,8 @@ export default {
       lsid: this.studyList.lsid,
       spid: this.studyList.spid
     }).then(res => {
-      console.log(res);
+      this.answerStatus = true;
+      this.learnRecordForm = res.rows[0];
     });
   },
   methods: {
@@ -194,20 +194,28 @@ export default {
       });
     },
     realTimePush(data) {
-      console.log(data);
       if (!data.targetDuration) {
         this.rateOfIearning;
         return;
       }
-      console.log(data.targetDuration);
       this.rateOfIearning =
         (data.newCurrentTime / data.targetDuration).toFixed(2) * 100;
     },
     saveSubimit() {
+      this.learnRecordForm.xxjd = this.rateOfIearning;
+      this.learnRecordForm.lsid = this.studyList.lsid;
+      this.learnRecordForm.spid = this.studyList.spid;
+      this.learnRecordForm.lsxm = this.$store.state.user.nickName;
+      this.learnRecordForm.kzzd1 = this.studyList.courseId;
       if (this.learnRecordForm.id) {
+        updateLearnRecord(this.learnRecordForm).then(res => {
+          this.msgSuccess(res.msg);
+          this.$router.go(-1);
+        });
       } else {
-        addLearnRecord().then(res => {
-          console.log(res);
+        addLearnRecord(this.learnRecordForm).then(res => {
+          this.msgSuccess(res.msg);
+          this.$router.go(-1);
         });
       }
     }

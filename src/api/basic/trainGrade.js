@@ -9,6 +9,24 @@ export function listTrainGrade(query) {
   })
 }
 
+// 查询某个考试结果-填写答案和题目答案的详情列表
+export function queryPaperGradeTopicDetailList(query) {
+  return request({
+    url: '/basic/trainPaperTopic/queryPaperGradeTopicDetailList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 批量修改培训试卷成绩
+export function batchEdit(data) {
+  return request({
+    url: '/basic/trainPaperGradeDetail/batchEdit',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查询培训试卷成绩详细
 export function getTrainGrade(id) {
   return request({

@@ -53,6 +53,15 @@ export function addPaperWithTopic(data) {
   })
 }
 
+// 交卷
+export function handPaper(data) {
+  return request({
+    url: '/basic/trainPaper/handPaper',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改培训试卷
 export function updateTrainPaper(data) {
   return request({
@@ -66,6 +75,14 @@ export function updateTrainPaper(data) {
 export function delTrainPaper(id) {
   return request({
     url: '/basic/trainPaper/' + id,
+    method: 'delete'
+  })
+}
+
+// 删除培训试卷关联题目
+export function removePaperWithTopic(id) {
+  return request({
+    url: '/basic/trainPaperTopic/removePaperWithTopic/' + id,
     method: 'delete'
   })
 }

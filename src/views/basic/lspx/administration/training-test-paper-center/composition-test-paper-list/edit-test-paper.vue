@@ -2,7 +2,7 @@
   <div class="edit-test paper">
     <div class="train-examination">
       <div>
-        <el-button type="primary" @click="getAddTestPaper">添加试卷</el-button>
+        <el-button type="primary" @click="getAddTestPaper">添加试题</el-button>
       </div>
       <div class="content">
         <div class="single-choice" v-if="getTrainPaperTopicListTem.danxuan.length > 0">
@@ -10,7 +10,20 @@
           <div>
             <ul>
               <li v-for="(item,index) in getTrainPaperTopicListTem.danxuan" :key="index">
-                <h3>{{++index}} ) {{item.tmbt}}</h3>
+                <div style="display : flex ;justify-content: space-between;">
+                  <div style="width : 90%">
+                    <h3>{{++index}} ) {{item.tmbt}}</h3>
+                  </div>
+                  <div style="display : flex;">
+                    <h4
+                      style="margin-right : 20px ;align-items: center;display:flex"
+                    >{{item.tmfz}} 分</h4>
+                    <span
+                      style="color : red;cursor: pointer; align-items: center;display:flex"
+                      @click="removeSubject(item)"
+                    >删除</span>
+                  </div>
+                </div>
                 <div class="answer">
                   <el-radio-group>
                     <el-radio
@@ -30,7 +43,20 @@
           <div>
             <ul>
               <li v-for="(item,index) in getTrainPaperTopicListTem.panduan" :key="index">
-                <h3>{{++index}} ) {{item.tmbt}}</h3>
+                <div style="display : flex ;justify-content: space-between;">
+                  <div style="width : 90%">
+                    <h3>{{++index}} ) {{item.tmbt}}</h3>
+                  </div>
+                  <div style="display : flex;">
+                    <h4
+                      style="margin-right : 20px ;align-items: center;display:flex"
+                    >{{item.tmfz}} 分</h4>
+                    <span
+                      style="color : red;cursor: pointer; align-items: center;display:flex"
+                      @click="removeSubject(item)"
+                    >删除</span>
+                  </div>
+                </div>
                 <div class="answer">
                   <el-radio-group>
                     <el-radio
@@ -50,7 +76,20 @@
           <div>
             <ul>
               <li v-for="(item,index) in getTrainPaperTopicListTem.tiankong" :key="index">
-                <h3>{{++index}} ) {{item.tmbt}}</h3>
+                <div style="display : flex ;justify-content: space-between;">
+                  <div style="width : 90%">
+                    <h3>{{++index}} ) {{item.tmbt}}</h3>
+                  </div>
+                  <div style="display : flex;">
+                    <h4
+                      style="margin-right : 20px ;align-items: center;display:flex"
+                    >{{item.tmfz}} 分</h4>
+                    <span
+                      style="color : red;cursor: pointer; align-items: center;display:flex"
+                      @click="removeSubject(item)"
+                    >删除</span>
+                  </div>
+                </div>
                 <div>
                   <ul>
                     <li
@@ -77,7 +116,20 @@
           <div>
             <ul>
               <li v-for="(item,index) in getTrainPaperTopicListTem.wenda" :key="index">
-                <h3>{{++index}} ) {{item.tmbt}}</h3>
+                <div style="display : flex ;justify-content: space-between;">
+                  <div style="width : 90%">
+                    <h3>{{++index}} ) {{item.tmbt}}</h3>
+                  </div>
+                  <div style="display : flex;">
+                    <h4
+                      style="margin-right : 20px ;align-items: center;display:flex"
+                    >{{item.tmfz}} 分</h4>
+                    <span
+                      style="color : red;cursor: pointer; align-items: center;display:flex"
+                      @click="removeSubject(item)"
+                    >删除</span>
+                  </div>
+                </div>
                 <div class="answer">
                   <h3>答题区</h3>
                   <editor :disabled="true" :min-height="300" />
@@ -134,7 +186,8 @@ import {
   updateTrainPaper,
   trainPaperTopicList,
   addPaperWithTopic,
-  topicTypeList
+  topicTypeList,
+  removePaperWithTopic
 } from "@/api/basic/trainPaper";
 export default {
   name: "EditTestPaper",
@@ -144,7 +197,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        tmbt: null
+        tmbt: null,
+        queryWithTopic: "2",
+        sjid: null
       },
       total: 0,
       multipleSelection: [],
@@ -165,18 +220,18 @@ export default {
     });
     if (this.$route.query.name == "composition-test-paper-list") {
       this.sjid = this.$route.query.id;
-      console.log("id", this.$route.query.id);
       this.getList();
     }
   },
   methods: {
     getList() {
-      topicTypeList({ sjid: this.sjid }).then(res => {
+      topicTypeList({ sjid: this.sjid, queryWithTopic: "1" }).then(res => {
         this.getTrainPaperTopicListTem = res.data;
       });
     },
     getAddTestPaper() {
       this.dialogFormVisible = true;
+      this.queryParams.sjid = this.sjid;
       trainPaperTopicList(this.queryParams).then(res => {
         this.getTrainPaperTopicList = res.rows;
         this.total = res.total;
@@ -199,9 +254,35 @@ export default {
     addPaperWithTopic() {
       addPaperWithTopic(this.multipleSelection).then(res => {
         this.msgSuccess("添加成功");
-        this.getList()
+        this.getList();
         this.dialogFormVisible = false;
       });
+    },
+    removeSubject(item) {
+      this.$confirm(
+        `此操作将永久删除该 "${item.tmbt}" 题目, 是否继续?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(() => {
+          removePaperWithTopic(item.glid).then(res => {
+            this.getList();
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   }
 };

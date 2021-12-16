@@ -2,25 +2,30 @@
   <div class="mark-exam-papers">
     <div class="subject">
       <UL style="list-style : none">
-        <li>
+        <li v-for="(item,index) in subjectList" :key="index">
           <div>
-            <p>一, は降雨量は少ないですが、気温の上下【うえしは降雨量は少ないですが、気温の上下【うえしは降雨量は少ないですが、気温の上下【うえしは降雨量は少ないですが、気温の上下【うえしは降雨量は少ないですが、気温の上下【うえし</p>
+            <p>{{++index}} ), {{item.tmbt}}</p>
           </div>
           <br />
           <div>
             <h3>答案解析</h3>
-            <editor v-model="getKscjzj" :disabled="true" :min-height="300" />
+            <editor :disabled="true" v-model="item.tmda" :min-height="200" />
+            <h3>填写答案</h3>
+            <editor :disabled="true" v-model="item.txda" :min-height="200" />
           </div>
           <div class="score">
             <h3>评分</h3>
-            <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-              <el-form-item label="得分">
-                <el-input v-model="formLabelAlign.name"></el-input>
+            <el-form label-width="80px" :rules="rules" :model="formLabelAlign">
+              <el-form-item label="得分" prop="df">
+                <el-input v-model="item.score"></el-input>
               </el-form-item>
               <el-form-item label="评语">
-                <editor v-model="getKscjzj" :min-height="300" />
+                <editor v-model="item.remark" :min-height="300" />
               </el-form-item>
             </el-form>
+          </div>
+          <div style="text-align : center">
+            <el-button type="primary" @click="saveSubmit">提交</el-button>
           </div>
         </li>
       </UL>
@@ -29,16 +34,60 @@
 </template>
 
 <script>
+import {
+  queryPaperGradeTopicDetailList,
+  batchEdit
+} from "@/api/basic/trainGrade";
 export default {
   data() {
     return {
-      labelPosition: "right",
-      formLabelAlign: {
-        name: "",
-        region: "",
-        type: ""
-      }
+      formLabelAlign: {},
+      treasonPaper: {},
+      rules: {
+        df: [{ required: true, message: "得分不能为空" }]
+      },
+      subjectList: []
     };
+  },
+  created() {
+    this.treasonPaper = JSON.parse(this.$route.query.list);
+    this.getList();
+  },
+  methods: {
+    getList() {
+      queryPaperGradeTopicDetailList({
+        sjid: this.treasonPaper.sjid,
+        lsid: this.treasonPaper.lsid,
+        tmlx: "4"
+      }).then(res => {
+        this.subjectList = res.data.topicList;
+      });
+    },
+    saveSubmit() {
+      let reg = /^[0-9]*$/;
+      let optionArr = [];
+      for (let i = 0; i < this.subjectList.length; i++) {
+        if (!this.subjectList[i].score || !this.subjectList[i].remark) {
+          this.msgError("请填写完整数据");
+          return;
+        } else {
+          if (!reg.test(this.subjectList[i].score)) {
+            this.msgError("得分只能输入数字");
+            return;
+          } else {
+            optionArr.push({
+              id: this.subjectList[i].id,
+              score: this.subjectList[i].score,
+              remark: this.subjectList[i].remark
+            });
+          }
+        }
+      }
+      batchEdit(optionArr).then(res => {
+        this.msgSuccess(res.msg);
+        this.$router.go(-1);
+      });
+    }
   }
 };
 </script>
