@@ -28,10 +28,10 @@
                   <el-form-item label="试讲人" prop="sjrid">
                     <el-select v-model="form.sjrid" filterable placeholder="请选择试讲人" style="width: 100%">
                       <el-option
-                        v-for="item in teacherListOption"
-                        :key="item.id"
-                        :label="item.lsxm+'-'+item.dhhm"
-                        :value="item.id"
+                        v-for="(item,index) in teacherListOption"
+                        :key="index"
+                        :label="item.zymc"
+                        :value="item.zyid"
                       ></el-option>
                     </el-select>
                   </el-form-item>
@@ -173,7 +173,7 @@
     created() {
       this.loadDictData()
       this.parentParams = this.$route.query
-      this.getTeacherList()
+      //this.getTeacherList()
     },
     mounted() {
 
@@ -230,6 +230,7 @@
       },
       // 返回组员名称的拼接
       rtnZyStr(zyList) {
+        this.teacherListOption=zyList
         let zyStr = ""// 组员-账号拼接
         for (let i = 0; i < zyList.length; i++) {
           zyStr += zyList[i].zymc + ","
