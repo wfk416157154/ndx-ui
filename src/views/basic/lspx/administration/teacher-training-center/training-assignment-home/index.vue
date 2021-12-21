@@ -2,17 +2,10 @@
   <div class="training-assignment-home">
     <el-form :inline="true" :model="queryParams" class="demo-form-inline">
       <el-form-item label="老师">
-        <el-input v-model="queryParams.lsxm" placeholder="审批人"></el-input>
+        <el-input v-model="queryParams.lsxm" placeholder="老师"></el-input>
       </el-form-item>
       <el-form-item label="课程名称">
-        <el-select v-model="queryParams.curriculumId" filterable placeholder="请选择老师">
-          <el-option
-            v-for="item in listCurriculum"
-            :key="item.id"
-            :label="item.curriculumName"
-            :value="item.id"
-          ></el-option>
-        </el-select>
+        <el-input v-model="queryParams.courseName" placeholder="课程名称"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="querySubmit">查询</el-button>

@@ -102,7 +102,7 @@ import {
   getTrainGrade,
   delTrainGrade,
   addTrainGrade,
-  updateTrainGrade,
+  updateTrainGrade
 } from "@/api/basic/trainGrade";
 import { getToken } from "@/utils/auth";
 
@@ -249,11 +249,11 @@ export default {
     },
     /** 删除按钮操作 */
     handleView(row) {
-      this.getConfigKey("grading-center-index").then(res => {
+      this.getConfigKey("train-examination-details").then(res => {
         this.$router.push({
           path: res.msg,
           query: {
-            list: JSON.stringify(row)
+            item: JSON.stringify(row)
           }
         });
       });

@@ -4,36 +4,73 @@
       <tbody>
         <tr>
           <td class="tds">姓名</td>
-          <td>张三</td>
+          <td>{{parentTiem.lsxm}}</td>
         </tr>
         <tr>
           <td class="tds">高考试卷分数</td>
           <td>
-            <el-input v-model="input" placeholder="请输入内容"></el-input>
+            <el-input v-model="parentTiem.gksjfs" placeholder="请输入内容"></el-input>
           </td>
         </tr>
         <tr>
           <td class="tds">培训过程</td>
           <td>
-            <el-upload
-              class="upload-demo"
-              drag
-              action="https://jsonplaceholder.typicode.com/posts/"
-              multiple
-            >
-              <i class="el-icon-upload"></i>
-              <div class="el-upload__text">
-                将文件拖到此处，或
-                <em>点击上传</em>
+            <div>
+              <h4>视频上传</h4>
+              <div>
+                <el-upload
+                  ref="uploadvideo"
+                  :headers="upload.headers"
+                  :action="upload.imgUrl"
+                  :on-progress="vHandleFileUploadProgress"
+                  :on-success="vHandleFileSuccess"
+                  :on-error="vHandleFileError"
+                  :auto-upload="false"
+                  drag
+                >
+                  <i class="el-icon-upload"></i>
+                  <div class="el-upload__text">
+                    将文件拖到此处，或
+                    <em>点击上传</em>
+                  </div>
+                </el-upload>
               </div>
-              <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>分
+              <div slot="footer" class="dialog-footer">
+                <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm">确 定</el-button>
+              </div>
+            </div>
+            <div>
+              <h4>图片上传</h4>
+              <div>
+                <el-upload
+                  :action="upload.imgUrl"
+                  :headers="upload.headers"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :on-success="bxgcBjSuccess"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt />
+                </el-dialog>
+              </div>
+            </div>
           </td>
         </tr>
         <tr>
           <td class="tds">备注</td>
           <td>
-            <editor :min-height="300" />
+            <editor v-model="parentTiem.remark" :min-height="300" />
+          </td>
+        </tr>
+        <tr>
+          <td class="tds">操作</td>
+          <td>
+            <div style="text-align : center">
+              <el-button @click="saveSubmit">保存</el-button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -42,6 +79,10 @@
 </template>
 
 <script>
+import { getToken } from "@/utils/auth";
+import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
+import { secretKey } from "@/utils/tools";
+import { addTeacher } from "@/api/basic/teacher-training-completed";
 export default {
   data() {
     return {
@@ -51,16 +92,98 @@ export default {
         user: "",
         region: ""
       },
+      form: {},
       total: 0,
-      url:
-        "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
-      srcList: [
-        "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
-        "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg"
-      ]
+      // 文件图片上传
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传考试成绩地址
+        fileUrl:
+          process.env.VUE_APP_BASE_API +
+          "/basic/examinationPaper/importClassGradeData",
+        // 上传图片地址
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+      },
+      dialogVisible: false,
+      dialogImageUrl: null
     };
   },
-  methods: {}
+  created() {
+    if (this.$route.query.list) {
+      this.parentTiem = JSON.parse(this.$route.query.list);
+    }
+  },
+  methods: {
+    // 文件上传中处理
+    vHandleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 上传失败
+    vHandleFileError(err, file, fileList) {},
+    // 文件上传成功处理
+    vHandleFileSuccess(response, file, fileList) {
+      if (response.code == 200) {
+        let data = response.data;
+        data.kzzd1 = this.parentTiem.spid || secretKey();
+        this.parentTiem.spid = data.kzzd1;
+        addImg(data).then(res => {
+          file.id = res.data.id;
+        });
+        this.msgSuccess("上传成功");
+      } else {
+        this.msgError("上传失败");
+      }
+    },
+    // 提交上传文件
+    vsubmitFileForm() {
+      this.$refs.uploadvideo.submit();
+    },
+    // 图片预览 大图
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    //图片删除
+    handleRemove(file, fileList) {
+      deleteImg(file.id).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
+    },
+    bxgcBjSuccess(response, file, fileList) {
+      let data = response.data;
+      data.kzzd1 = this.parentTiem.tpid || secretKey();
+      this.parentTiem.tpid = data.kzzd1;
+      addImg(data).then(res => {
+        file.id = res.data.id;
+      });
+    },
+    saveSubmit() {
+      addTeacher(this.parentTiem).then(res => {
+        console.log(res);
+      });
+    }
+    // getSelectFileList(id){
+    //   selectFileList({kzzd1 : id}).then(res=>{
+
+    //   })
+    // }
+  }
 };
 </script>
 

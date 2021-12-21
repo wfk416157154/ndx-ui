@@ -6,23 +6,25 @@
         <h2>单选题</h2>
         <div>
           <ul>
-            <li>
-              <h3>1) 试卷清晰，单题单答，且有答题卡，可检查漏答题目或修改答案</h3>
+            <li v-for="(item,index) in subjectData.topicList1" :key="index">
+              <h3>{{item.tmbt}}</h3>
               <div class="answer">
-                <el-radio-group v-model="radio">
-                  <el-radio :label="3">A备选项</el-radio>
-                  <el-radio :label="6">B备选项</el-radio>
-                  <el-radio :label="9">C备选项</el-radio>
+                <el-radio-group>
+                  <el-radio
+                    v-for="(list,j) in item.optionList"
+                    :key="j"
+                    :label="list.kzzd1"
+                  >{{list.kzzd1}} {{list.xxbt}}</el-radio>
                 </el-radio-group>
               </div>
               <div>
                 <div style="margin: 10px 0px">
                   <span>填写答案 :</span>
-                  <span>A</span>
+                  <span>{{item.txda}}</span>
                 </div>
                 <div style="margin: 10px 0px">
                   <span>正确答案 :</span>
-                  <span>A</span>
+                  <span>{{item.tmda}}</span>
                 </div>
               </div>
             </li>
@@ -33,23 +35,25 @@
         <h2>判断题</h2>
         <div>
           <ul>
-            <li>
-              <h3>1) 试卷清晰，单题单答，且有答题卡，可检查漏答题目或修改答案</h3>
+            <li v-for="(item,index) in subjectData.topicList2" :key="index">
+              <h3>{{item.tmbt}}</h3>
               <div class="answer">
-                <el-radio-group v-model="radio">
-                  <el-radio :label="3">A备选项</el-radio>
-                  <el-radio :label="6">B备选项</el-radio>
-                  <el-radio :label="9">C备选项</el-radio>
+                <el-radio-group>
+                  <el-radio
+                    v-for="(list,j) in item.optionList"
+                    :key="j"
+                    :label="list.kzzd1"
+                  >{{list.kzzd1}} {{list.xxbt}}</el-radio>
                 </el-radio-group>
               </div>
               <div>
                 <div style="margin: 10px 0px">
                   <span>填写答案 :</span>
-                  <span>A</span>
+                  <span>{{item.txda}}</span>
                 </div>
                 <div style="margin: 10px 0px">
                   <span>正确答案 :</span>
-                  <span>A</span>
+                  <span>{{item.tmda}}</span>
                 </div>
               </div>
             </li>
@@ -60,25 +64,21 @@
         <h2>填空题</h2>
         <div>
           <ul>
-            <li>
-              <div>1) , 试卷清晰，1 单题单答，2 且有答题卡，3 可检查漏答题目或修改答案</div>
+            <li v-for="(item,index) in subjectData.topicList3" :key="index">
+              <h3>{{item.tmbt}}</h3>
               <div>
                 <ul>
                   <li style="margin : 20px 0px;align-items : center">
                     <div>
                       <el-form>
-                        <el-form-item label="第一空" label-width="70px">
-                          <el-input v-model="formInline" placeholder="未答" disabled></el-input>
-                        </el-form-item>
-                      </el-form>
-                    </div>
-                  </li>
-                  <li style="margin : 20px 0px;align-items : center">
-                    <div>
-                      <el-form>
-                        <el-form-item label="第二空" label-width="70px">
-                          <el-input v-model="formInline" placeholder="未答" disabled></el-input>
-                        </el-form-item>
+                        <div v-for="(list,j) in item.optionList" :key="j">
+                          <el-form-item :label="list.kzzd1" label-width="70px">
+                            <el-input v-model="list.txda" placeholder="未答" disabled></el-input>
+                          </el-form-item>
+                          <el-form-item label="正确答案" label-width="70px">
+                            <el-input v-model="list.xxda" placeholder="未答" disabled></el-input>
+                          </el-form-item>
+                        </div>
                       </el-form>
                     </div>
                   </li>
@@ -92,16 +92,16 @@
         <h2>问答题</h2>
         <div>
           <ul>
-            <li>
-              <h3>1) くらいではありません（くらい（这点，这些，表示程度小，数量少）。不是这么点）</h3>
+            <li v-for="(item,index) in subjectData.topicList4" :key="index">
+              <h3>{{item.tmbt}}</h3>
               <div class="answer">
                 <div>
                   <p>答题</p>
-                  <editor v-model="getKscjzj" :disabled="true" :min-height="300" />
+                  <editor v-model="item.txda" :disabled="true" :min-height="300" />
                 </div>
                 <div>
                   <p>评语</p>
-                  <editor v-model="getKscjzj" :disabled="true" :min-height="300" />
+                  <editor v-model="item.remark" :disabled="true" :min-height="300" />
                 </div>
               </div>
             </li>
@@ -115,8 +115,11 @@
 <script>
 export default {
   data() {
-    return {};
-  }
+    return {
+      radio: null
+    };
+  },
+  props: ["subjectData"]
 };
 </script>
 

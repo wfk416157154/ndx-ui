@@ -2,37 +2,50 @@
   <div class="teacher-training-home">
     <el-form :inline="true" :model="queryParams" class="demo-form-inline">
       <el-form-item label="老师">
-        <el-input v-model="queryParams.user" placeholder="审批人"></el-input>
+        <el-input v-model="queryParams.lsxm" placeholder="老师"></el-input>
       </el-form-item>
       <el-form-item label="培训类别">
-        <el-select v-model="queryParams.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
-        </el-select>
+        <el-input v-model="queryParams.courseName" placeholder="培训类别"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="querySubmit">查询</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column label="日期" width="180">
+    <el-table :data="trainResultData" border>
+      <el-table-column label="老师" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span style="margin-left: 10px">{{ scope.row.lsxm }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="姓名" width="180">
+      <el-table-column label="课程名称" width="180">
         <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>姓名: {{ scope.row.name }}</p>
-            <p>住址: {{ scope.row.address }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.name }}</el-tag>
-            </div>
-          </el-popover>
+          <span style="margin-left: 10px">{{ scope.row.courseName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="培训时间" width="180">
+        <template slot-scope="scope">
+          <span
+            style="margin-left: 10px"
+          >{{ parseTime(scope.row.fpsj) }} 至 {{ parseTime(scope.row.wcsj) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="视频进度" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.spjd }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="高考卷子分数" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.gkjzfs }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="考试成绩" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.kscj }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="editSubmit(scope.$index, scope.row)">编 辑</el-button>
           <el-button size="mini" type="success" @click="viewSubmit(scope.$index, scope.row)">查 看</el-button>
@@ -51,16 +64,18 @@
 </template>
 
 <script>
+import { trainResultList } from "@/api/basic/teacher-training-completed";
 export default {
   data() {
     return {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        user: "",
-        region: ""
+        courseName: "",
+        lsxm: ""
       },
       total: 0,
+      trainResultData: [],
       tableData: [
         {
           date: "2016-05-02",
@@ -85,9 +100,15 @@ export default {
       ]
     };
   },
+  created() {
+    this.querySubmit();
+  },
   methods: {
     querySubmit() {
-      console.log("submit!");
+      trainResultList(this.queryParams).then(res => {
+        this.trainResultData = res.rows;
+        this.total = res.total;
+      });
     },
     editSubmit(index, row) {
       this.getConfigKey("teacher-training-home-edit").then(res => [
@@ -101,7 +122,7 @@ export default {
       ]);
     },
     viewSubmit(index, row) {
-      this.getConfigKey("teacher-training-home-details").then(res => [
+      this.getConfigKey("teacher-training-completed-detalis").then(res => [
         this.$router.push({
           path: res.msg,
           query: {

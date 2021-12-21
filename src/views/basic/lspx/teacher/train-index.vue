@@ -68,8 +68,17 @@
           <el-table-column label="考试分数" prop="sjzf" />
           <el-table-column label="操作" width="400px">
             <template slot-scope="scope">
-              <el-button size="mini" @click="toExamination(scope.row)">考试</el-button>
-              <el-button size="mini" type="success" @click="toExaminationDetails(scope.row)">查看考试</el-button>
+              <el-button
+                size="mini"
+                v-if="scope.row.examStatus == 0"
+                @click="toExamination(scope.row)"
+              >考试</el-button>
+              <el-button
+                v-else
+                size="mini"
+                type="success"
+                @click="toExaminationDetails(scope.row)"
+              >查看考试</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -115,7 +124,11 @@
 
 <script>
 import { listCurriculum } from "@/api/basic/curriculum";
-import { getExamList, getVideoList } from "@/api/basic/train-teacher";
+import {
+  getExamList,
+  getVideoList,
+  teacherExamList
+} from "@/api/basic/train-teacher";
 import { selectFileList } from "@/api/tool/common";
 import { teacherList } from "@/api/basic/assignTeachers";
 import { dataStatisticsQuery } from "@/api/basic/statistics";
@@ -127,7 +140,8 @@ export default {
         pageNum: 0,
         pageSize: 10,
         courseName: null,
-        spjd: null
+        spjd: null,
+        lsid: this.$store.state.user.glrid
       },
       ksQueryParams: {
         pageNum: 0,
@@ -182,14 +196,14 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
+      // console.log(tab, event);
     },
     onSubmit() {
       getVideoList(this.queryParams).then(res => {
         this.videoList = res.rows;
         this.total = res.total;
       });
-      getExamList(this.queryParams).then(res => {
+      teacherExamList(this.queryParams).then(res => {
         this.examList = res.rows;
       });
     },
@@ -262,19 +276,39 @@ export default {
       });
     },
     toExamination(row) {
-      this.getConfigKey("train-examination").then(res => {
-        this.$router.push({
-          path: res.msg,
-          query: {
-            list: JSON.stringify(row)
-          }
+      this.$confirm(
+        "此操作将进入考试,退出考试页面将会自动退提交试卷,不能再次进行考试, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(() => {
+          this.getConfigKey("train-examination").then(res => {
+            this.$router.push({
+              path: res.msg,
+              query: {
+                list: JSON.stringify(row)
+              }
+            });
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消"
+          });
         });
-      });
     },
     toExaminationDetails(row) {
       this.getConfigKey("train-examination-details").then(res => {
         this.$router.push({
-          path: res.msg
+          path: res.msg,
+          query: {
+            item: JSON.stringify(row)
+          }
         });
       });
     }

@@ -24,11 +24,11 @@
               </el-form-item>
             </el-form>
           </div>
-          <div style="text-align : center">
-            <el-button type="primary" @click="saveSubmit">提交</el-button>
-          </div>
         </li>
       </UL>
+      <div style="text-align : center">
+        <el-button type="primary" @click="saveSubmit">提交</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -56,8 +56,7 @@ export default {
   methods: {
     getList() {
       queryPaperGradeTopicDetailList({
-        sjid: this.treasonPaper.sjid,
-        lsid: this.treasonPaper.lsid,
+        gradeId: this.treasonPaper.id,
         tmlx: "4"
       }).then(res => {
         this.subjectList = res.data.topicList;

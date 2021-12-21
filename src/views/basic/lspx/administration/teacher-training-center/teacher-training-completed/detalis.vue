@@ -4,35 +4,44 @@
       <tbody>
         <tr>
           <td class="tds">姓名</td>
-          <td>张三</td>
+          <td>{{trainTeacherProcessData.lsxm}}</td>
         </tr>
         <tr>
           <td class="tds">培训时间</td>
-          <td>分配时间-至-培训结束时间(培训老师审核 培训合格)</td>
+          <td>{{ parseTime(trainTeacherProcessData.fpsj) }} 至 {{ parseTime(trainTeacherProcessData.wcsj) }}</td>
         </tr>
         <tr>
           <td class="tds">考试分数</td>
-          <td>备课规范：54/80分|课堂管控：100分</td>
+          <td></td>
         </tr>
         <tr>
           <td class="tds">高考试卷分数</td>
           <td>
-            <span>115</span>
+            <span>{{trainTeacherProcessData.gksjfs}}</span>
           </td>
         </tr>
         <tr>
           <td class="tds">培训过程</td>
           <td>
             <div class="demo-image__preview">
-              <el-image style="width: 100px; height: 100px" :src="url" :preview-src-list="srcList"></el-image>
+              <el-image
+                style="width: 100px; height: 100px"
+                v-for="(img,index) in imageList"
+                :key="index"
+                :src="img.url"
+                :preview-src-list="[img.url]"
+              ></el-image>
+            </div>
+            <div>
+              <video v-for="(img,index) in videoList" :key="index" :src="img.url"></video>
             </div>
           </td>
         </tr>
         <tr></tr>
         <tr>
-          <td class="tds">培训过程</td>
+          <td class="tds">笔记</td>
           <td>
-            <el-form class="demo-form-inline">
+            <!-- <el-form class="demo-form-inline">
               <el-form-item label="座位表" label-width="120px">
                 <div class="demo-image__preview">
                   <el-image
@@ -60,7 +69,16 @@
                   ></el-image>
                 </div>
               </el-form-item>
-            </el-form>
+            </el-form>-->
+            <div class="demo-image__preview" v-for="(item,index) in notesData" :key="index">
+              <el-image
+                style="width: 100px; height: 100px;margin-right : 10px"
+                v-for="(img,j) in item.bjtpList"
+                :key="j"
+                :src="img.url"
+                :preview-src-list="[img.url]"
+              ></el-image>
+            </div>
           </td>
         </tr>
         <tr>
@@ -75,6 +93,11 @@
 </template>
 
 <script>
+import {
+  trainTeacherProcess,
+  notesList
+} from "@/api/basic/teacher-training-completed";
+import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 export default {
   data() {
     return {
@@ -85,15 +108,47 @@ export default {
         region: ""
       },
       total: 0,
-      url:
-        "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
-      srcList: [
-        "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
-        "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg"
-      ]
+      parentItem: {},
+      trainTeacherProcessData: {},
+      imageList: [],
+      videoList: [],
+      notesData: []
     };
   },
-  methods: {}
+  created() {
+    if (this.$route.query.list) {
+      this.parentItem = JSON.parse(this.$route.query.list);
+    }
+    trainTeacherProcess({ lsid: this.parentItem.lsid }).then(res => {
+      this.trainTeacherProcessData = res.rows[0];
+      this.getImage(this.trainTeacherProcessData.tpid);
+      this.getVideo(this.trainTeacherProcessData.spid);
+      this.getNotesList(this.parentItem.lsid);
+    });
+  },
+  methods: {
+    getImage(tpid) {
+      if (!tpid) return;
+      selectFileList({ kzzd1: tpid }).then(res => {
+        if (200 == res.code) {
+          this.imageList = res.rows;
+        }
+      });
+    },
+    getVideo(spid) {
+      if (!spid) return;
+      selectFileList({ kzzd1: spid }).then(res => {
+        if (200 == res.code) {
+          this.getselectFileList = res.rows;
+        }
+      });
+    },
+    getNotesList(lsid) {
+      notesList({ lsid }).then(res => {
+        this.notesData = res.rows;
+      });
+    }
+  }
 };
 </script>
 

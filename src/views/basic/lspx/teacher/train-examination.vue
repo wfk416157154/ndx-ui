@@ -1,6 +1,12 @@
 <template>
   <div class="train-examination">
     <div class="content">
+      <!-- <div class="count">
+        考试剩余时间 :
+        <span>{{h}}</span> :
+        <span>{{m}}</span> :
+        <span>{{s}}</span>
+      </div>-->
       <div class="single-choice" v-if="getTrainPaperTopicListTem.danxuan.length > 0">
         <h2>单选题</h2>
         <div>
@@ -129,7 +135,14 @@ export default {
       danxuan: [],
       panduan: [],
       tiankong: [],
-      wenda: []
+      wenda: [],
+      h: 0,
+      m: 1,
+      s: 5,
+      endTime: null,
+      timer: null,
+      examinationTime: null,
+      examinationEndTime: null
     };
   },
   created() {
@@ -137,6 +150,33 @@ export default {
     topicTypeList({ sjid: this.studyList.id }).then(res => {
       this.getTrainPaperTopicListTem = res.data;
     });
+  },
+  mounted() {
+    let oldTime = new Date().getTime();
+    this.endTime = oldTime + 60 * 1000 * 120;
+    clearInterval(this.timer);
+    this.timer = setInterval(() => {
+      this.s -= 1;
+      if (this.m && this.s == 0) {
+        this.m -= 1;
+        this.s = 59;
+      }
+      if (this.h && this.m == 0) {
+        this.h -= 1;
+        this.m = 59;
+      }
+      if (this.h == 0 && this.m == 0 && this.s == 0) {
+        clearInterval(this.timer);
+        // this.testPaperSubmit();
+      }
+      this.getNewDate();
+    }, 1000);
+    this.examinationTime = new Date().getTime();
+    // console.log(this.examinationTime);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
+    // this.testPaperSubmit();
   },
   methods: {
     danxuanFun(item, index, rows) {
@@ -147,7 +187,6 @@ export default {
           value.tmid = item.tmid;
           value.content = item.kzzd1;
           value.tmlx = rows.tmlx;
-          value.sjid = this.studyList.id;
         }
       });
       if (count == 0) {
@@ -155,8 +194,7 @@ export default {
           index,
           tmid: item.tmid,
           content: item.kzzd1,
-          tmlx: rows.tmlx,
-          sjid: this.studyList.id
+          tmlx: rows.tmlx
         });
       }
     },
@@ -168,7 +206,6 @@ export default {
           value.tmid = item.tmid;
           value.content = item.kzzd1;
           value.tmlx = rows.tmlx;
-          value.sjid = this.studyList.id;
         }
       });
       if (count == 0) {
@@ -176,8 +213,7 @@ export default {
           index,
           tmid: item.tmid,
           content: item.kzzd1,
-          tmlx: rows.tmlx,
-          sjid: this.studyList.id
+          tmlx: rows.tmlx
         });
       }
     },
@@ -190,7 +226,6 @@ export default {
             j: j,
             tmid: item.tmid,
             tmlx: rows.tmlx,
-            sjid: this.studyList.id,
             ["content"]: item.content
           });
         }
@@ -209,7 +244,6 @@ export default {
             j: j,
             tmid: item.tmid,
             tmlx: rows.tmlx,
-            sjid: this.studyList.id,
             ["content"]: item.content
           });
         }
@@ -239,8 +273,7 @@ export default {
           this.getTrainPaperTopicListTemForm.wenda.push({
             content: value.content,
             tmid: value.id,
-            tmlx: value.tmlx,
-            sjid: this.studyList.id
+            tmlx: value.tmlx
           });
         }
       });
@@ -252,16 +285,32 @@ export default {
       } = this.getTrainPaperTopicListTemForm;
       let resultArr = [];
       resultArr = resultArr.concat(danxuan, panduan, tiankong, wenda);
-      console.log(resultArr);
-      if (resultArr.length == 0) {
-        this.msgError("提示 : 不能交白卷,请认真作答");
-        return;
-      } else {
-        handPaper(resultArr).then(res => {
-          this.msgSuccess(res.msg);
-          this.reset();
-          this.$router.go(-1);
-        });
+      // if (resultArr.length == 0) {
+      //   this.msgError("提示 : 不能交白卷,请认真作答");
+      //   return;
+      // } else {
+      this.examinationEndTime = new Date().getTime();
+      let date = (
+        (this.examinationEndTime - this.examinationTime) /
+        60000
+      ).toFixed(2);
+      handPaper({
+        sjid: this.studyList.paperId,
+        allocateId: this.studyList.allocateId,
+        param: resultArr,
+        examinationTime: date.toString()
+      }).then(res => {
+        this.msgSuccess(res.msg);
+        this.reset();
+        this.$router.go(-1);
+      });
+      // }
+    },
+    getNewDate() {
+      let time = new Date().getTime();
+      if (this.endTime <= time) {
+        clearInterval(this.timer);
+        // this.testPaperSubmit();
       }
     }
   }
@@ -309,6 +358,22 @@ export default {
       ul {
         list-style: none;
       }
+    }
+    .count {
+      // float: right;
+      position: fixed;
+      top: 80px;
+      right: 50px;
+      z-index: 1000;
+      width: 260px;
+      height: 50px;
+      color: #fff;
+      text-align: center;
+      line-height: 50px;
+      background-color: #000;
+      // opacity: .6;
+      border: 1px solid #fff;
+      box-shadow: 5px 5px 5px #888888;
     }
   }
 }

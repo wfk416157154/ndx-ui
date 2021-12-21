@@ -17,3 +17,12 @@ export function getVideoList(query) {
     params: query
   })
 }
+
+// 查询-老师考试列表
+export function teacherExamList(query) {
+  return request({
+    url: '/basic/trainPaper/teacherExamList',
+    method: 'get',
+    params: query
+  })
+}

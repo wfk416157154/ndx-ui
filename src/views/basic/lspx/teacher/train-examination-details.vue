@@ -1,13 +1,15 @@
 <template>
   <div class="train-examination-details">
     <div class="top-title">
-      <TopTitle />
+      <TopTitle :teacherInfoDto="this.queryPaperGradeTopicDetailData.teacherInfoDto" />
     </div>
     <div class="table-data">
-      <TableData />
+      <TableData
+        :gradeStatisticsDtoList="this.queryPaperGradeTopicDetailData.gradeStatisticsDtoList"
+      />
     </div>
     <div class="question-board">
-      <Questionboard />
+      <Questionboard :subjectData="this.subjectData" />
     </div>
   </div>
 </template>
@@ -16,11 +18,45 @@
 import TopTitle from "./components/top-title";
 import TableData from "./components/table-data";
 import Questionboard from "./components/question-board";
+import { queryPaperGradeTopicDetailList } from "@/api/basic/trainGrade";
 export default {
   data() {
-    return {};
+    return {
+      parentItem: {},
+      queryPaperGradeTopicDetailData: {},
+      subjectData: {}
+    };
   },
-  components: { TopTitle, TableData, Questionboard }
+  components: { TopTitle, TableData, Questionboard },
+  created() {
+    if (this.$route.query.item) {
+      this.parentItem = JSON.parse(this.$route.query.item);
+      console.log(this.parentItem)
+      queryPaperGradeTopicDetailList({
+        gradeId: this.parentItem.gradeId || this.parentItem.id,
+        lsid: this.parentItem.teacherId
+      }).then(res => {
+        this.queryPaperGradeTopicDetailData = res.data;
+        let {
+          topicList1,
+          topicList2,
+          topicList3,
+          topicList4
+        } = this.queryPaperGradeTopicDetailData;
+        this.subjectData = {
+          topicList1,
+          topicList2,
+          topicList3,
+          topicList4
+        };
+        this.queryPaperGradeTopicDetailData.teacherInfoDto = Object.assign(
+          this.queryPaperGradeTopicDetailData.teacherInfoDto,
+          this.parentItem
+        );
+        console.log(this.queryPaperGradeTopicDetailData);
+      });
+    }
+  }
 };
 </script>
 

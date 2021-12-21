@@ -1,9 +1,19 @@
 <template>
   <div class="table-data">
-    <el-table :data="tableData" style="width: 100%" border>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table :data="gradeStatisticsDtoList" style="width: 100%" border>
+      <el-table-column prop="date" label="题型">
+        <template slot-scope="scope">
+          <span v-if="scope.row.tmlx == 1">单选 ({{scope.row.zs}})</span>
+          <span v-if="scope.row.tmlx == 2">判断 ({{scope.row.zs}})</span>
+          <span v-if="scope.row.tmlx == 3">填空 ({{scope.row.zs}})</span>
+          <span v-if="scope.row.tmlx == 4">阅读 ({{scope.row.zs}})</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="zqs" label="正确"></el-table-column>
+      <el-table-column prop="cws" label="错误"></el-table-column>
+      <el-table-column prop="bds" label="半对"></el-table-column>
+      <el-table-column prop="wds" label="未答"></el-table-column>
+      <el-table-column prop="df" label="得分"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -35,7 +45,8 @@ export default {
         }
       ]
     };
-  }
+  },
+  props: ["gradeStatisticsDtoList"]
 };
 </script>
 

@@ -1,17 +1,14 @@
 <template>
   <div class="top-title">
     <div class="left">
-      <img
-        style="height : 100%"
-        src="https://ndx-file.nandouxingriyu.com/statics/2021/11/15/18-1-8531e54a.jpg"
-        alt
-      />
+      <img style="height : 100%" :src="teacherInfoDto.lstx" alt />
     </div>
     <div class="right">
       <div>
-        <p>张三</p>
-        <p>总分 : 129分</p>
-        <p>考试时间</p>
+        <p v-if="teacherInfoDto.teacherName">老师 : {{teacherInfoDto.teacherName}}</p>
+        <p v-else>老师 : {{teacherInfoDto.lsxm}}</p>
+        <p>总分 : {{teacherInfoDto.zf}}分</p>
+        <p>考试时间: {{teacherInfoDto.fpsj}} 至 {{teacherInfoDto.wcsj}}</p>
       </div>
     </div>
   </div>
@@ -21,6 +18,10 @@
 export default {
   data() {
     return {};
+  },
+  props: ["teacherInfoDto"],
+  created() {
+    console.log(this.teacherInfoDto);
   }
 };
 </script>
