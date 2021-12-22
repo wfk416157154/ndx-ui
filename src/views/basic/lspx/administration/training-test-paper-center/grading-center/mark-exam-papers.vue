@@ -73,7 +73,7 @@ export default {
             return;
           } else {
             optionArr.push({
-              id: this.subjectList[i].id,
+              id: this.subjectList[i].gradeDetailId,
               score: this.subjectList[i].score,
               remark: this.subjectList[i].remark
             });
