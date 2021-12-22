@@ -8,8 +8,6 @@
           </div>
           <br />
           <div>
-            <h3>答案解析</h3>
-            <editor :disabled="true" v-model="item.tmda" :min-height="200" />
             <h3>填写答案</h3>
             <editor :disabled="true" v-model="item.txda" :min-height="200" />
           </div>
