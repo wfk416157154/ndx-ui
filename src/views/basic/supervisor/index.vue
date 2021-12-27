@@ -14,7 +14,7 @@
           :picker-options="pickerOptions">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="组长名称" prop="zzid">
+      <el-form-item label="组长名称" prop="zzid" v-if="dataRoleId>50">
         <el-select v-model="queryParams.zzid" filterable placeholder="请选择组长" style="width: 100%" >
           <el-option
             v-for="item in userListOption"
@@ -24,7 +24,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="部门名称" prop="zzbmid">
+      <el-form-item label="部门名称" prop="zzbmid" v-if="dataRoleId>50">
         <el-select v-model="queryParams.zzbmid" filterable placeholder="请选择部门" style="width: 100%" >
           <el-option
             v-for="item in deptListOption"
@@ -37,7 +37,7 @@
       <el-form-item label="试讲人" prop="sjrid">
         <el-select v-model="queryParams.sjrid" filterable placeholder="请选择试讲人" style="width: 100%" >
           <el-option
-            v-for="item in userListOption"
+            v-for="item in sjrListOption"
             :key="item.id"
             :label="item.nickName"
             :value="item.glrid"
@@ -219,16 +219,26 @@
         },
         userListOption:[],
         deptListOption:[],
+        sjrListOption:[],
+        dataRoleId : 0,
       };
     },
     created() {
+      let nickName=this.$store.state.user.nickName;
+      this.dataRoleId=this.$store.state.user.dataRoleWeightId;
       this.getList();
-      listUser().then(data=>{
-        this.userListOption=data
+      if(this.dataRoleId>50){// 当角色权限大于老师50
+        listUser().then(data=>{
+          this.userListOption=data
+        });
+        listDept().then(data=>{
+          this.deptListOption=data
+        });
+      }
+      listUser({"nickName":nickName}).then(data=>{
+        this.sjrListOption=data
       });
-      listDept().then(data=>{
-        this.deptListOption=data
-      });
+
     },
     methods: {
       /** 查询督导会议记录列表 */
