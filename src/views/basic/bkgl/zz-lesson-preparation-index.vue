@@ -64,7 +64,8 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-    <el-dialog title="查看备课信息" :visible.sync="viewDialogFormVisible">
+
+    <el-dialog title="审核" :visible.sync="viewDialogFormVisible">
       <div
         style="width : 100%;height : 100%;padding : 40px; box-sizing : border-box;text-align : center"
       >
@@ -126,6 +127,12 @@
                       :value="dict.dictValue"
                     />
                   </el-select>
+                </td>
+              </tr>
+              <tr>
+                <td>审核意见</td>
+                <td>
+                  <editor v-model="form.kzzd4" :min-height="192" />
                 </td>
               </tr>
             </tbody>
@@ -232,10 +239,11 @@ export default {
     },
     // 保存审核
     editSubmit() {
-      let { shzt, id } = this.form;
-      editPrepareLessons({ shzt, id }).then(res => {
+      let { shzt, id ,kzzd4} = this.form;
+      editPrepareLessons({ shzt, id, kzzd4 }).then(res => {
         if (res.code == 200) {
           this.viewDialogFormVisible = false;
+          this.form = {}
           this.getList();
         }
       });

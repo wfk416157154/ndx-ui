@@ -55,7 +55,7 @@
             <td>
               <el-form :model="assignmentForm">
                 <el-form-item label="届数" label-width="80px">
-                  <el-input v-model="teacherFrom.ydrybj" @input="getTeacher" autocomplete="off"></el-input>
+                  <el-input v-model="teacherFrom.rybjmc" @input="getTeacher" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="老师" label-width="80px">
                   <el-input v-model="teacherFrom.lsxm" @input="getTeacher" autocomplete="off"></el-input>
@@ -219,7 +219,7 @@
 
 <script>
 import { listCurriculum } from "@/api/basic/curriculum";
-import { listHomepage } from "@/api/basic/teacher";
+import { listHomepage, listTeacher } from "@/api/basic/teacher";
 import { trainAllocateHomePage } from "@/api/basic/training-assignment-home";
 import {
   entryAllocateList,
@@ -251,7 +251,12 @@ export default {
       listCurriculum: [],
       curriculumManageList: [],
       teacherList: [],
-      teacherFrom: { ydrybj: null, lsxm: null, status: 1 },
+      teacherFrom: {
+        lszzStatusArr: ["1", "3"],
+        rybjStatusArr: ["1", "3", "4"],
+        rybjmc: null,
+        lsxm: null
+      },
       entryAllocateData: [],
       teacherCheckbox: [],
       checkbox: [],
@@ -276,12 +281,12 @@ export default {
       });
     },
     getTeacher() {
-      listHomepage(this.teacherFrom).then(response => {
+      listTeacher(this.teacherFrom).then(response => {
         this.teacherList = response.rows;
       });
     },
     updeteTeacher() {
-      listHomepage(this.teacherFrom).then(response => {
+      listTeacher(this.teacherFrom).then(response => {
         this.teacherList = response.rows;
         this.teacherList.forEach(value => {
           this.teacherCheckbox.push(value.id);
