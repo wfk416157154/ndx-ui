@@ -37,7 +37,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="试讲用时" prop="sjys">
+                  <el-form-item label="试讲用时(分钟)" label-width="150px" prop="sjys">
                     <el-input v-model="form.sjys" placeholder="请输入试讲用时(分钟)"/>
                   </el-form-item>
                 </el-col>
