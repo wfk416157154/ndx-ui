@@ -178,6 +178,12 @@
                   </el-select>
                 </td>
               </tr>
+              <tr>
+                <td>审核意见</td>
+                <td>
+                  <editor v-model="form.kzzd4" :min-height="192" />
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -293,10 +299,11 @@ export default {
     },
     // 审核
     editSubmit() {
-      let { shzt, id } = this.form;
-      editPrepareLessons({ shzt, id }).then(res => {
+      let { shzt, id ,kzzd4} = this.form;
+      editPrepareLessons({ shzt, id, kzzd4}).then(res => {
         if (res.code == 200) {
           this.viewDialogFormVisible = false;
+          this.form = {}
           this.getList();
         }
       });

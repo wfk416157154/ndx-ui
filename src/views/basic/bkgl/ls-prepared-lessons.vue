@@ -138,6 +138,12 @@
                 </td>
               </tr>
               <tr>
+                <td>审核意见</td>
+                <td>
+                  <editor v-model="form.kzzd4" :disabled="true" :min-height="192" />
+                </td>
+              </tr>
+              <tr>
                 <td>备注</td>
                 <td>
                   <editor v-model="form.remark" :disabled="true" :min-height="192" />
@@ -152,6 +158,7 @@
         <el-button type="primary" @click="viewDialogFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
+
     <el-dialog title="编辑备课信息" :visible.sync="dialogFormVisible">
       <div
         style="width : 100%;height : 100%;padding : 40px; box-sizing : border-box;text-align : center"
@@ -233,6 +240,12 @@
                     <el-button type="primary" @click="submitFileForm">确 定</el-button>
                     <el-button @click="upload.open = false">取 消</el-button>
                   </div>
+                </td>
+              </tr>
+              <tr>
+                <td>审核意见</td>
+                <td>
+                  <editor v-model="form.kzzd4" :disabled="true" :min-height="192" />
                 </td>
               </tr>
               <tr>
@@ -465,10 +478,11 @@ export default {
     },
     // 保存编辑
     editSubmit() {
-      let { bkTpid, bkWjid, remark, id } = this.form;
+      let { bkTpid, bkWjid, remark, id, kzzd4} = this.form;
       editPrepareLessons({ bkTpid, bkWjid, remark, id }).then(res => {
         if (res.code == 200) {
           this.dialogFormVisible = false;
+          this.form = {}
           this.msgSuccess("成功 : 保存成功");
         }
       });
