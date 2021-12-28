@@ -186,7 +186,7 @@ export default {
     },
     saveSubmit() {
       addOrUpdate(this.parentTiem).then(res => {
-        console.log(res);
+        this.$router.go(-1);
       });
     },
     // 给对应的图片和视频进行赋值
