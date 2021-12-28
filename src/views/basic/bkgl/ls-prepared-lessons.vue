@@ -94,7 +94,7 @@
               <tr>
                 <th>课程</th>
                 <th v-if="form.kzzd2 == '1'">{{form.kcmc}}</th>
-                <th>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
+                <th v-else>{{form.fxzlmc}} / {{form.zmc}} / {{form.jmc}}</th>
               </tr>
             </thead>
             <tbody>
@@ -135,6 +135,19 @@
                       <a :href="item" style="color : #409EFF">{{++index}} ) {{item}}</a>
                     </div>
                   </div>
+                </td>
+              </tr>
+              <tr>
+                <td>教案状态</td>
+                <td>
+                  <el-select v-model="queryParams.shzt" size="small" :disabled="true">
+                    <el-option
+                      v-for="(dict,index) in preparelesoonsStatus"
+                      :key="index"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
                 </td>
               </tr>
               <tr>
@@ -240,6 +253,19 @@
                     <el-button type="primary" @click="submitFileForm">确 定</el-button>
                     <el-button @click="upload.open = false">取 消</el-button>
                   </div>
+                </td>
+              </tr>
+              <tr>
+                <td>教案状态</td>
+                <td>
+                  <el-select v-model="queryParams.shzt" size="small" :disabled="true">
+                    <el-option
+                      v-for="(dict,index) in preparelesoonsStatus"
+                      :key="index"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
                 </td>
               </tr>
               <tr>
@@ -478,11 +504,11 @@ export default {
     },
     // 保存编辑
     editSubmit() {
-      let { bkTpid, bkWjid, remark, id, kzzd4} = this.form;
+      let { bkTpid, bkWjid, remark, id, kzzd4 } = this.form;
       editPrepareLessons({ bkTpid, bkWjid, remark, id }).then(res => {
         if (res.code == 200) {
           this.dialogFormVisible = false;
-          this.form = {}
+          this.form = {};
           this.msgSuccess("成功 : 保存成功");
         }
       });

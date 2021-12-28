@@ -4,12 +4,12 @@
       <tbody>
         <tr>
           <td class="tds">报销人</td>
-          <td>张三</td>
+          <td>{{from.applyName}}</td>
         </tr>
         <tr>
           <td class="tds">区域负责人</td>
           <td>
-            <el-select v-model="form.region" placeholder="请选择区域负责人">
+            <el-select v-model="form.areaId" placeholder="请选择区域负责人">
               <el-option label="吴珂" value="shanghai"></el-option>
             </el-select>
           </td>
@@ -17,9 +17,9 @@
         <tr>
           <td class="tds">是否已开班</td>
           <td>
-            <el-radio-group v-model="form.radio">
-              <el-radio :label="3">是</el-radio>
-              <el-radio :label="6">否</el-radio>
+            <el-radio-group v-model="form.isClassCreate">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
             </el-radio-group>
           </td>
         </tr>
@@ -110,6 +110,12 @@
 </template>
 
 <script>
+import {
+  addExpense,
+  editExpense,
+  listExpense,
+  getClassInfo
+} from "@/api/basic/cw-teacher";
 export default {
   data() {
     return {
