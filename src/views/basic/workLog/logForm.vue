@@ -716,11 +716,9 @@ export default {
       }
       if (this.logTiem) {
         json.date = this.logTiem;
-      } else {
-        // json.date = new Date();
       }
       workLogStatusQuery(json).then(res => {
-        switch (res.data) {
+        switch (res.logStatus) {
           case 1:
             this.findTemplateQuery(json.date); // 查询课表的课中模板
             break;
@@ -734,7 +732,7 @@ export default {
                 this.skipToLogHomePage();
               })
               .catch(() => {
-                this.getWorkLogListQuery(this.bjNameId, this.logTiem); // 查询已填写未发送的日志
+                this.getWorkLogListQuery(this.bjNameId, this.logTiem,res.rzid); // 查询已填写未发送的日志
               });
             break;
           case 3:
@@ -798,7 +796,7 @@ export default {
       });
     },
     // 查询某一班级日志
-    async getWorkLogListQuery(bjid, date) {
+    async getWorkLogListQuery(bjid, date,rzid) {
       if (!this.rzid) {
         if (!bjid) {
           this.$notify({
@@ -866,7 +864,7 @@ export default {
           }
         });
       } else {
-        workLogListQuery({ id: this.rzid }).then(res => {
+        workLogListQuery({ id: rzid }).then(res => {
           // 获取日志信息
           if (res.data.length != 0) {
             this.rzid = res.data[0].id;
@@ -1098,7 +1096,7 @@ export default {
         // if (!this.logTiem) {
         //   this.logTiem = new Date();
         // }
-        this.getWorkLogListQuery(this.bjNameId, this.logTiem);
+        this.getWorkLogListQuery(this.bjNameId, this.logTiem,null);
         if (res.code == 200) {
           this.ifsfyks = false;
           if (this.ruleForm.kzzd4) {
