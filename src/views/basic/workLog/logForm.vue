@@ -1096,7 +1096,7 @@ export default {
         // if (!this.logTiem) {
         //   this.logTiem = new Date();
         // }
-        this.getWorkLogListQuery(this.bjNameId, this.logTiem,res.data.id);
+        await this.getWorkLogListQuery(this.bjNameId, this.logTiem, res.data.id);
         if (res.code == 200) {
           this.ifsfyks = false;
           if (this.ruleForm.kzzd4) {
