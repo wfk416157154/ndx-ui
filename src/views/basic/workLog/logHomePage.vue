@@ -289,12 +289,16 @@ export default {
         this.allLogs.forEach(value => {
           value.jswsImg = [];
           value.xsbxImg = [];
-          value.jswsFileList.forEach(img => {
-            value.jswsImg.push(img.url);
-          });
-          value.xsbxFileList.forEach(img => {
-            value.xsbxImg.push(img.url);
-          });
+          if(value.jswsFileList){
+            value.jswsFileList.forEach(img => {
+              value.jswsImg.push(img.url);
+            });
+          }
+          if(value.xsbxFileList) {
+            value.xsbxFileList.forEach(img => {
+              value.xsbxImg.push(img.url);
+            });
+          }
         });
       });
     },
