@@ -23,31 +23,41 @@
           <span style="margin-left: 10px">{{ scope.row.courseName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="分配的视频" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.videoName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="培训时间" width="180">
         <template slot-scope="scope">
           <span
             style="margin-left: 10px"
-          >{{ parseTime(scope.row.fpsj) }} 至 {{ parseTime(scope.row.wcsj) }}</span>
+          >{{ parseTime(scope.row.fpsj,'{y}-{m}-{d}') }} 至 {{ parseTime(scope.row.wcsj,'{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="视频进度" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.spjd }}</span>
+          <span style="margin-left: 10px">{{ scope.row.wcspsl }}/{{ scope.row.fpspsl }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="笔记" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.bjwcsl }}/{{ scope.row.fpspsl }}</span>
         </template>
       </el-table-column>
       <el-table-column label="高考卷子分数" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.gkjzfs }}</span>
+          <span style="margin-left: 10px">{{ scope.row.gksjfs }}</span>
         </template>
       </el-table-column>
       <el-table-column label="考试成绩" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.kscj }}</span>
+          <span style="margin-left: 10px">{{ scope.row.sjmcAndKscj }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button size="mini" type="danger" @click="editSubmit(scope.$index, scope.row)">编 辑</el-button>
+          <el-button size="mini" type="primary" @click="editSubmit(scope.$index, scope.row)">编 辑</el-button>
           <el-button size="mini" type="success" @click="viewSubmit(scope.$index, scope.row)">查 看</el-button>
         </template>
       </el-table-column>
@@ -64,7 +74,7 @@
 </template>
 
 <script>
-import { trainResultList } from "@/api/basic/teacher-training-completed";
+import { trainTeacherProcess } from "@/api/basic/teacher-training-completed";
 export default {
   data() {
     return {
@@ -76,28 +86,6 @@ export default {
       },
       total: 0,
       trainResultData: [],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
     };
   },
   created() {
@@ -105,7 +93,7 @@ export default {
   },
   methods: {
     querySubmit() {
-      trainResultList(this.queryParams).then(res => {
+      trainTeacherProcess(this.queryParams).then(res => {
         this.trainResultData = res.rows;
         this.total = res.total;
       });

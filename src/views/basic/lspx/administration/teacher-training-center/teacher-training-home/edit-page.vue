@@ -3,13 +3,13 @@
     <table style="width : 100%;" border="1" cellspacing="0">
       <tbody>
         <tr>
-          <td class="tds">姓名</td>
+          <td class="tds">老师姓名</td>
           <td>{{parentTiem.lsxm}}</td>
         </tr>
         <tr>
           <td class="tds">高考试卷分数</td>
           <td>
-            <el-input v-model="parentTiem.gksjfs" placeholder="请输入内容"></el-input>
+            <el-input-number v-model="parentTiem.gksjfs" placeholder="请输入内容" :max="150" :min="0" ></el-input-number>
           </td>
         </tr>
         <tr>
@@ -25,7 +25,9 @@
                   :on-progress="vHandleFileUploadProgress"
                   :on-success="vHandleFileSuccess"
                   :on-error="vHandleFileError"
-                  :auto-upload="false"
+                  :on-remove="handleRemove"
+                  :auto-upload="true"
+                  :file-list="spList"
                   drag
                 >
                   <i class="el-icon-upload"></i>
@@ -34,9 +36,6 @@
                     <em>点击上传</em>
                   </div>
                 </el-upload>
-              </div>
-              <div slot="footer" class="dialog-footer">
-                <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm">确 定</el-button>
               </div>
             </div>
             <div>
@@ -49,6 +48,7 @@
                   :on-preview="handlePictureCardPreview"
                   :on-remove="handleRemove"
                   :on-success="bxgcBjSuccess"
+                  :file-list="tpList"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -69,7 +69,7 @@
           <td class="tds">操作</td>
           <td>
             <div style="text-align : center">
-              <el-button @click="saveSubmit">保存</el-button>
+              <el-button @click="saveSubmit" type="primary" >保存</el-button>
             </div>
           </td>
         </tr>
@@ -82,7 +82,7 @@
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
-import { addTeacher } from "@/api/basic/teacher-training-completed";
+import { addOrUpdate } from "@/api/basic/teacher-training-completed";
 export default {
   data() {
     return {
@@ -96,9 +96,9 @@ export default {
       total: 0,
       // 文件图片上传
       upload: {
-        // 是否显示弹出层（用户导入）
+        // 是否显示弹出层
         open: false,
-        // 弹出层标题（用户导入）
+        // 弹出层标题
         title: "",
         // 是否禁用上传
         isUploading: false,
@@ -106,23 +106,38 @@ export default {
         updateSupport: 0,
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
-        // 上传考试成绩地址
-        fileUrl:
-          process.env.VUE_APP_BASE_API +
-          "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
         imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
       },
       dialogVisible: false,
-      dialogImageUrl: null
+      dialogImageUrl: null,
+      parentTiem:{
+        lsid:null,
+        lsxm:null,
+        gksjfs:null,
+        tpid:null,
+        spid:null,
+        remark:null
+      },
+      tpList:[],
+      spList:[],
     };
   },
   created() {
     if (this.$route.query.list) {
-      this.parentTiem = JSON.parse(this.$route.query.list);
+      let parentObj = JSON.parse(this.$route.query.list);
+      this.parentTiem.lsid=parentObj.lsid
+      this.parentTiem.lsxm=parentObj.lsxm
+      this.parentTiem.gksjfs=parentObj.gksjfs
+      this.parentTiem.tpid=parentObj.tpid
+      this.parentTiem.spid=parentObj.spid
+      this.parentTiem.remark=parentObj.remark
+      this.getSelectFileList(parentObj.tpid,"tpList")
+      this.getSelectFileList(parentObj.spid,"spList")
     }
   },
   methods: {
+
     // 文件上传中处理
     vHandleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;
@@ -142,10 +157,6 @@ export default {
       } else {
         this.msgError("上传失败");
       }
-    },
-    // 提交上传文件
-    vsubmitFileForm() {
-      this.$refs.uploadvideo.submit();
     },
     // 图片预览 大图
     handlePictureCardPreview(file) {
@@ -174,15 +185,19 @@ export default {
       });
     },
     saveSubmit() {
-      addTeacher(this.parentTiem).then(res => {
+      addOrUpdate(this.parentTiem).then(res => {
         console.log(res);
       });
-    }
-    // getSelectFileList(id){
-    //   selectFileList({kzzd1 : id}).then(res=>{
+    },
+    // 给对应的图片和视频进行赋值
+    getSelectFileList(id,tempName){
+      if(id){// 当id不为空
+        selectFileList({kzzd1 : id}).then(res=>{
+          this[tempName]=res.rows
+        })
+      }
+     },
 
-    //   })
-    // }
   }
 };
 </script>

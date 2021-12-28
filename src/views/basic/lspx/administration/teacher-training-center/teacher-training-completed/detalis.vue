@@ -8,11 +8,11 @@
         </tr>
         <tr>
           <td class="tds">培训时间</td>
-          <td>{{ parseTime(trainTeacherProcessData.fpsj) }} 至 {{ parseTime(trainTeacherProcessData.wcsj) }}</td>
+          <td>{{ parseTime(trainTeacherProcessData.fpsj,'{y}-{m}-{d}') }} 至 {{ parseTime(trainTeacherProcessData.wcsj,'{y}-{m}-{d}') }}</td>
         </tr>
         <tr>
           <td class="tds">考试分数</td>
-          <td></td>
+          <td>{{trainTeacherProcessData.sjmcAndKscj}}</td>
         </tr>
         <tr>
           <td class="tds">高考试卷分数</td>
@@ -41,36 +41,8 @@
         <tr>
           <td class="tds">笔记</td>
           <td>
-            <!-- <el-form class="demo-form-inline">
-              <el-form-item label="座位表" label-width="120px">
-                <div class="demo-image__preview">
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="url"
-                    :preview-src-list="srcList"
-                  ></el-image>
-                </div>
-              </el-form-item>
-              <el-form-item label="备课规范" label-width="120px">
-                <div class="demo-image__preview">
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="url"
-                    :preview-src-list="srcList"
-                  ></el-image>
-                </div>
-              </el-form-item>
-              <el-form-item label="早读" label-width="120px">
-                <div class="demo-image__preview">
-                  <el-image
-                    style="width: 100px; height: 100px"
-                    :src="url"
-                    :preview-src-list="srcList"
-                  ></el-image>
-                </div>
-              </el-form-item>
-            </el-form>-->
-            <div class="demo-image__preview" v-for="(item,index) in notesData" :key="index">
+            <div class="demo-image__preview" v-for="(item,index) in notesData" :key="index" >
+              <div>视频名称:{{item.videoName}}</div>
               <el-image
                 style="width: 100px; height: 100px;margin-right : 10px"
                 v-for="(img,j) in item.bjtpList"
@@ -84,7 +56,7 @@
         <tr>
           <td class="tds">备注</td>
           <td>
-            <editor :min-height="300" />
+            <editor :min-height="300" v-model="trainTeacherProcessData.remark" />
           </td>
         </tr>
       </tbody>
@@ -160,7 +132,7 @@ export default {
   box-sizing: border-box;
   th,
   td {
-    padding: 40px;
+    padding: 30px;
   }
   .tds {
     width: 20%;
