@@ -4,7 +4,7 @@
       <el-form-item label="老师">
         <el-input v-model="queryParams.lsxm" placeholder="老师"></el-input>
       </el-form-item>
-      <el-form-item label="培训类别">
+      <el-form-item label="课程类别">
         <el-select v-model="queryParams.courseName" placeholder="培训类别">
           <el-option
             v-for="item in listCurriculum"
@@ -25,21 +25,31 @@
           <span style="margin-left: 10px">{{ scope.row.lsxm }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="考试分数" width="180">
-        <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="课程名称" width="180">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.courseName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="试卷名称" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.sjmc }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="考试分数" width="180">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.sjzf }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="视频类别" width="180">
+        <template slot-scope="scope">
+          <dict-tag :options="splbOptions" :value="scope.row.splb"/>
         </template>
       </el-table-column>
       <el-table-column label="培训时间" width="180">
         <template slot-scope="scope">
           <span
             style="margin-left: 10px"
-          >{{ parseTime(scope.row.fpsj) }} 至 {{ parseTime(scope.row.wcsj) }}</span>
+          >{{ parseTime(scope.row.fpsj,'{y}-{m}-{d}') }} 至 {{ parseTime(scope.row.wcsj,'{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -79,12 +89,17 @@ export default {
       },
       total: 0,
       listCurriculum: [],
-      trainResultData: []
+      trainResultData: [],
+      // 视频类别
+      splbOptions:[]
     };
   },
   created() {
     listCurriculum().then(res => {
       this.listCurriculum = res.rows;
+    });
+    this.getDicts("videoType").then(response => {
+      this.splbOptions = response.data;
     });
     this.querySubmit();
   },
