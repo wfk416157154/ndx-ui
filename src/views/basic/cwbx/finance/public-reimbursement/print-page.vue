@@ -91,11 +91,11 @@
             </tbody>
           </table>
           <br />
-          <!-- <img
+          <img
             width="80%"
             src="https://d1icd6shlvmxi6.cloudfront.net/gsc/LSKMZO/4b/e7/8d/4be78dd161f74573a4da5f27c433589c/images/%E6%89%93%E5%8D%B0/u168.png?token=54d953f0a6777c7a63528414906445d3f414473970e64f1c61bd361623e49956"
             alt
-          /> -->
+          />
         </div>
       </el-card>
     </div>

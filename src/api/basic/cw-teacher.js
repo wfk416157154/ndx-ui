@@ -9,10 +9,36 @@ export function listExpense(query) {
   })
 }
 
+// 查询报销流程列表
+export function listExpenseProcess(query) {
+  return request({
+    url: '/basic/expenseProcess/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询区域负责人列表
+export function listAreaManager(query) {
+  return request({
+    url: '/basic/areaManager/list',
+    method: 'get',
+    params: query
+  })
+}
+
 // 获取报销的详细信息
 export function getListExpense(id) {
   return request({
     url: '/basic/expense/' + id,
+    method: 'get'
+  })
+}
+
+// 金额转为中文形式
+export function digitToChinese(id) {
+  return request({
+    url: '/basic/expense/digitToChinese/' + id,
     method: 'get'
   })
 }

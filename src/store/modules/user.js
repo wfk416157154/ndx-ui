@@ -28,6 +28,9 @@ const user = {
     SET_GLRID: (state, glrid) => {
       state.glrid = glrid
     },
+    SET_DEPT_NAME: (state, deptName) => {
+      state.deptName = deptName
+    },
     SET_DATAROLEWEIGHTID: (state, dataRoleWeightId) => {
       state.dataRoleWeightId = dataRoleWeightId
     },
@@ -81,6 +84,7 @@ const user = {
           commit('SET_NICKNAME', user.nickName)
           commit('SET_NAME', user.userName)
           commit('SET_GLRID', user.glrid)
+          commit('SET_DEPT_NAME', user.dept.deptName)
           commit('SET_USERID', user.userId)
           commit('SET_DATAROLEWEIGHTID', user.dataRoleWeightId)
           commit('SET_AVATAR', avatar)
