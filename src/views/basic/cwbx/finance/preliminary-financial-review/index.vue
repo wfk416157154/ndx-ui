@@ -1,28 +1,38 @@
 <template>
   <div class="public-reimbursement">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <el-form :inline="true" :model="queryParams" class="demo-form-inline">
       <el-form-item label="报销类型">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
+        <el-select v-model="queryParams.expenseType">
+          <el-option
+            v-for="(item,index) in expenseType"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
+        <el-select v-model="queryParams.auditStatus" placeholder="活动区域">
+          <el-option
+            v-for="(item,index) in expenseAuditStatus"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="发生时间">
         <el-date-picker
-          v-model="value1"
+          v-model="queryParams.happenTimeArr"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="报销时间">
+      <el-form-item label="申请时间">
         <el-date-picker
-          v-model="value1"
+          v-model="queryParams.applyTimeArr"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -34,59 +44,67 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="listExpense" border style="width: 100%">
       <el-table-column label="报销人" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span style="margin-left: 10px">{{ scope.row.applyName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="所属部门" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span style="margin-left: 10px">{{ scope.row.departName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报销类型" width="180">
-        <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="报销类型" width="180" prop="expenseData" :formatter="statusFormat"></el-table-column>
       <el-table-column label="发生时间" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span style="margin-left: 10px">{{ scope.row.happenTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="报销金额" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <p style="margin-left: 10px">{{ scope.row.cost }}</p>
+          <p style="margin-left: 10px">{{ scope.row.costUpper }}</p>
         </template>
       </el-table-column>
-      <el-table-column label="报销说明" width="180">
+      <el-table-column label="报销说明">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span style="margin-left: 10px">{{ scope.row.costExplain }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="发票格式" width="180">
+      <el-table-column label="附件" width="200">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <div v-for="(item,index) in scope.row.attachmentFileList" :key="index">
+            <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="附件" width="180">
+      <el-table-column label="发票状态" width="180">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <p v-if="scope.row.invoiceFormat == 1" style="margin-left: 10px">电子发票</p>
+          <div v-else style="margin-left: 10px">
+            <span>纸质发票</span>
+            <p v-if="scope.row.invoiceStatusPaper == 1">(已提醒)</p>
+            <p v-if="scope.row.invoiceStatusPaper == 2">(已收回)</p>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="180">
+      <el-table-column
+        label="审批状态"
+        width="180"
+        prop="auditStatus"
+        :formatter="getExpenseAuditStatus"
+      ></el-table-column>
+      <el-table-column label="操作" width="260">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleExamine(scope.$index, scope.row)">审 核</el-button>
+          <el-button
+            size="mini"
+            v-if="scope.row.auditStatus != 7"
+            @click="handleExamine(scope.$index, scope.row)"
+          >审 核</el-button>
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       v-show="total>0"
       :total="total"
@@ -98,6 +116,14 @@
 </template>
 
 <script>
+import {
+  addExpense,
+  editExpense,
+  listExpense,
+  digitToChinese,
+  listExpenseProcess,
+  listAreaManager
+} from "@/api/basic/cw-teacher";
 export default {
   data() {
     return {
@@ -105,23 +131,61 @@ export default {
         user: "",
         region: ""
       },
-      tableData: [{}],
       queryParams: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        auditStatusArr: [1, 2, 4]
       },
-      total: 0
+      total: 0,
+      listExpense: [],
+      expenseType: [],
+      expenseAuditStatus: []
     };
+  },
+  created() {
+    this.getDicts("expense_type").then(response => {
+      this.expenseType = response.data;
+    });
+    this.getDicts("expense_data").then(response => {
+      this.expenseDataList = response.data;
+    });
+    this.getDicts("invoice_format").then(response => {
+      this.invoiceFormat = response.data;
+    });
+    this.getDicts("expense_audit_status").then(response => {
+      this.expenseAuditStatus = response.data;
+    });
+    listAreaManager().then(res => {
+      this.getListAreaManager = res.rows;
+    });
+  },
+  mounted() {
+    this.getList();
   },
   methods: {
     getList() {
-      console.log("submit!");
+      listExpense(this.queryParams).then(res => {
+        this.listExpense = res.rows;
+        this.total = res.total;
+      });
     },
-    handleExamine() {
-      //examine-page
+    openDocument(path) {
+      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+    },
+    statusFormat(row, column) {
+      return this.selectDictLabel(this.expenseType, row.expenseData);
+    },
+    getExpenseAuditStatus(row, column) {
+      return this.selectDictLabel(this.expenseAuditStatus, row.auditStatus);
+    },
+    handleExamine(index, row) {
       this.getConfigKey("examine-page").then(res => {
         this.$router.push({
-          path: res.msg
+          path: res.msg,
+          query: {
+            item: JSON.stringify(row),
+            name: "cs"
+          }
         });
       });
     }

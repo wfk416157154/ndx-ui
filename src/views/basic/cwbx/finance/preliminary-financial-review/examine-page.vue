@@ -4,64 +4,99 @@
       <tbody>
         <tr>
           <td class="tds">报销人</td>
-          <td>张三</td>
+          <td>{{reimbursementTiem.applyName}}</td>
         </tr>
         <tr>
           <td class="tds">所属部门</td>
-          <td>随县二中20级21届</td>
+          <td>{{reimbursementTiem.departName}}</td>
         </tr>
         <tr>
           <td class="tds">报销类型</td>
-          <td>电话费：电话费发票、手机费发票。</td>
+          <td>{{statusFormat()}}</td>
         </tr>
         <tr>
           <td class="tds">发生时间</td>
-          <td>2021-10-21</td>
+          <td>{{reimbursementTiem.happenTime}}</td>
         </tr>
         <tr>
           <td class="tds">
             费用金额
             大写
           </td>
-          <td>281.00元（捌拾壹圆）</td>
+          <td>
+            <p>{{reimbursementTiem.cost}}</p>
+            <p>{{reimbursementTiem.costUpper}}</p>
+          </td>
         </tr>
         <tr>
           <td class="tds">费用说明</td>
-          <td>
-            7.15武汉-随州 火车票 50元
-            7.18随州-武汉 火车票50元
-            7.15-7.17随州住宿费3晚 住宿费300元
-            随县二中23届3-10课打印费50元
-            随县二中23届 21年下半年期中考试试卷打印费60元
-          </td>
+          <td>{{reimbursementTiem.costExplain}}</td>
         </tr>
         <tr>
           <td class="tds">附件</td>
           <td>
-            1.报销类型+姓名+当前上传时间.jpg
-            2.报销类型+姓名+当前上传时间.pdf
+            <div>
+              <el-radio-group
+                @change="getInvoicePtatusPaper"
+                v-model="reimbursementTiem.invoicePtatusPaper"
+              >
+                <el-radio
+                  :label="item.dictValue"
+                  v-for="(item,index) in invoicePtatusPaper"
+                  :key="index"
+                >{{item.dictLabel}}</el-radio>
+              </el-radio-group>
+            </div>
+            <h3>图片</h3>
+            <div v-for="(item,index) in reimbursementTiem.photoFileList" :key="index">
+              <el-image
+                style="width: 100px; height: 100px"
+                :src="item.wjlj"
+                :preview-src-list="[item.wjlj]"
+              ></el-image>
+            </div>
+            <h3>文件</h3>
+            <div v-for="(item,index) in reimbursementTiem.attachmentFileList" :key="++index">
+              <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
+            </div>
           </td>
         </tr>
         <tr></tr>
         <tr>
           <td class="tds">支付方式</td>
           <td>
-            <el-select placeholder>
-              <el-option label="区域一" value="shanghai"></el-option>
+            <el-select placeholder v-model="reimbursementTiem.payType">
+              <el-option
+                v-for="(item,index) in expensePaytype"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              ></el-option>
             </el-select>
           </td>
         </tr>
         <tr>
           <td class="tds">审批意见</td>
           <td>
-            <editor :min-height="300" />
+            <editor
+              v-if="pageName == 'fs'"
+              v-model="reimbursementTiem.auditReviewOpinion"
+              :min-height="300"
+            />
+            <editor v-else v-model="reimbursementTiem.auditInitOpinion" :min-height="300" />
           </td>
         </tr>
         <tr>
           <td class="tds">操作</td>
           <td>
-            <el-button type="success">同 意</el-button>
-            <el-button type="danger">驳 回</el-button>
+            <div v-if="pageName == 'cs'">
+              <el-button type="success" @click="saveSubmit(2)">同 意</el-button>
+              <el-button type="danger" @click="saveSubmit(4)">驳 回</el-button>
+            </div>
+            <div v-else>
+              <el-button type="success" @click="saveSubmit(3)">同 意</el-button>
+              <el-button type="danger" @click="saveSubmit(5)">驳 回</el-button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -70,7 +105,57 @@
 </template>
 
 <script>
-export default {};
+import { expenseAudit, editExpense } from "@/api/basic/cw-teacher";
+export default {
+  data() {
+    return {
+      reimbursementTiem: {},
+      pageName: "",
+      expenseType: [],
+      expensePaytype: [],
+      invoicePtatusPaper: []
+    };
+  },
+  created() {
+    this.reimbursementTiem = JSON.parse(this.$route.query.item);
+    this.pageName = this.$route.query.name;
+    this.getDicts("expense_type").then(response => {
+      this.expenseType = response.data;
+    });
+    this.getDicts("expense_paytype").then(response => {
+      this.expensePaytype = response.data;
+    });
+    this.getDicts("invoice_status_paper").then(response => {
+      this.invoicePtatusPaper = response.data;
+    });
+  },
+  methods: {
+    openDocument(path) {
+      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+    },
+    statusFormat() {
+      return this.selectDictLabel(
+        this.expenseType,
+        this.reimbursementTiem.expenseType
+      );
+    },
+    getInvoicePtatusPaper() {
+      editExpense({
+        id: this.reimbursementTiem.id,
+        invoiceStatusPaper: this.reimbursementTiem.invoicePtatusPaper
+      }).then(res => {
+        this.msgSuccess(res.msg);
+      });
+    },
+    saveSubmit(num) {
+      this.reimbursementTiem.auditStatus = num;
+      expenseAudit(this.reimbursementTiem).then(res => {
+        this.msgSuccess(res.msg);
+        this.$router.go(-1);
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

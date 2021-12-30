@@ -1,19 +1,29 @@
 <template>
   <div class="public-reimbursement">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <el-form :inline="true" :model="queryParams" class="demo-form-inline">
       <el-form-item label="报销类型">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
+        <el-select v-model="queryParams.expenseType">
+          <el-option
+            v-for="(item,index) in expenseType"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
+        <el-select v-model="queryParams.auditStatus" placeholder="活动区域">
+          <el-option
+            v-for="(item,index) in expenseAuditStatus"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="发生时间">
         <el-date-picker
-          v-model="value1"
+          v-model="queryParams.happenTimeArr"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -25,7 +35,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="listExpense" style="width: 100%">
+    <el-table :data="listExpense" border style="width: 100%">
       <el-table-column label="报销人" width="180">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.applyName }}</span>
@@ -55,8 +65,8 @@
       </el-table-column>
       <el-table-column label="附件" width="200">
         <template slot-scope="scope">
-          <div v-for="(item,index) in scope.row.attachmentUrl.split(',')" :key="index">
-            <a target="_blank" :href="item">{{item}}</a>
+          <div v-for="(item,index) in scope.row.attachmentFileList" :key="index">
+            <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
           </div>
         </template>
       </el-table-column>
@@ -64,8 +74,9 @@
         <template slot-scope="scope">
           <p v-if="scope.row.invoiceFormat == 1" style="margin-left: 10px">电子发票</p>
           <div v-else style="margin-left: 10px">
-            <p v-if="scope.row.invoiceStatusPaper == 1">需寄回</p>
-            <p v-else>已收回</p>
+            <span>纸质发票</span>
+            <p v-if="scope.row.invoiceStatusPaper == 1">(已提醒)</p>
+            <p v-if="scope.row.invoiceStatusPaper == 2">(已收回)</p>
           </div>
         </template>
       </el-table-column>
@@ -80,7 +91,7 @@
           <el-button
             size="mini"
             v-if="scope.row.auditStatus != 7"
-            @click="handleView(scope.$index, scope.row)"
+            @click="handleExamine(scope.$index, scope.row)"
           >审 核</el-button>
         </template>
       </el-table-column>
@@ -113,12 +124,13 @@ export default {
       },
       queryParams: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        auditStatusArr: [2, 3, 5]
       },
       total: 0,
       listExpense: [],
       expenseType: [],
-      expenseAuditStatus: [],
+      expenseAuditStatus: []
     };
   },
   created() {
@@ -148,17 +160,23 @@ export default {
         this.total = res.total;
       });
     },
+    openDocument(path) {
+      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+    },
     statusFormat(row, column) {
       return this.selectDictLabel(this.expenseType, row.expenseData);
     },
     getExpenseAuditStatus(row, column) {
       return this.selectDictLabel(this.expenseAuditStatus, row.auditStatus);
     },
-    handleExamine() {
-      //examine-page
+    handleExamine(index, row) {
       this.getConfigKey("examine-page").then(res => {
         this.$router.push({
-          path: res.msg
+          path: res.msg,
+          query: {
+            item: JSON.stringify(row),
+            name: "fs"
+          }
         });
       });
     }

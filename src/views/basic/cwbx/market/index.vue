@@ -75,8 +75,8 @@
       </el-table-column>
       <el-table-column label="附件" width="200">
         <template slot-scope="scope">
-          <div v-for="(item,index) in scope.row.attachmentUrl.split(',')" :key="index">
-            <a target="_blank" :href="item">{{item}}</a>
+          <div v-for="(item,index) in scope.row.attachmentFileList" :key="index">
+            <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
           </div>
         </template>
       </el-table-column>
@@ -84,8 +84,9 @@
         <template slot-scope="scope">
           <p v-if="scope.row.invoiceFormat == 1" style="margin-left: 10px">电子发票</p>
           <div v-else style="margin-left: 10px">
-            <p v-if="scope.row.invoiceStatusPaper == 1">需寄回</p>
-            <p v-else>已收回</p>
+            <span>纸质发票</span>
+            <p v-if="scope.row.invoiceStatusPaper == 1">(需寄回)</p>
+            <p v-if="scope.row.invoiceStatusPaper == 2">(已收回)</p>
           </div>
         </template>
       </el-table-column>
@@ -97,19 +98,11 @@
       ></el-table-column>
       <el-table-column label="操作" width="260">
         <template slot-scope="scope">
+          <el-button size="mini" @click="handleView(scope.$index, scope.row)">查 看</el-button>
+          <el-button size="mini" @click="handleViewProcess(scope.$index, scope.row)">查看流程</el-button>
           <el-button
             size="mini"
-            v-if="scope.row.auditStatus != 7"
-            @click="handleView(scope.$index, scope.row)"
-          >查 看</el-button>
-          <el-button
-            size="mini"
-            v-if="scope.row.auditStatus != 7"
-            @click="handleViewProcess(scope.$index, scope.row)"
-          >查看流程</el-button>
-          <el-button
-            size="mini"
-            v-if="scope.row.auditStatus != 7"
+            v-if="scope.row.auditStatus == 1 || scope.row.auditStatus == 2 || scope.row.auditStatus == 4"
             @click="handleWithdraw(scope.$index, scope.row)"
           >撤 回</el-button>
         </template>
@@ -245,42 +238,54 @@
               <br />
               <br />
               <h3>图片</h3>
-              <el-upload
-                :action="upload.imgUrl"
-                :headers="upload.headers"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :on-success="imgSuccess"
-                :before-upload="beforeFile"
-                :data="{renameFileName:renameFileName}"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible">
-                <img width="100%" :src="dialogImageUrl" alt />
-              </el-dialog>
+              <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
+                <el-upload
+                  :action="upload.imgUrl"
+                  :headers="upload.headers"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :on-success="imgSuccess"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="dialogImageUrl" alt />
+                </el-dialog>
+              </div>
+              <div v-else v-for="(item,index) in form.photoFileList" :key="index">
+                <el-image
+                  style="width: 100px; height: 100px"
+                  :src="item.wjlj"
+                  :preview-src-list="[item.wjlj]"
+                ></el-image>
+              </div>
               <h3>文件</h3>
-              <el-upload
-                class="upload-demo"
-                drag
-                :action="upload.imgUrl"
-                accept=".doc, .docx"
-                :headers="upload.headers"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :on-success="fileSuccess"
-                :before-upload="beforeFile"
-                :data="{renameFileName:renameFileName}"
-                multiple
-              >
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">
-                  将文件拖到此处，或
-                  <em>点击上传</em>
-                </div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-              </el-upload>
+              <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
+                <el-upload
+                  class="upload-demo"
+                  drag
+                  :action="upload.imgUrl"
+                  accept=".doc, .docx"
+                  :headers="upload.headers"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :on-success="fileSuccess"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
+                  multiple
+                >
+                  <i class="el-icon-upload"></i>
+                  <div class="el-upload__text">
+                    将文件拖到此处，或
+                    <em>点击上传</em>
+                  </div>
+                  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+              </div>
+              <div v-else v-for="(item,index) in form.attachmentFileList" :key="++index">
+                <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
+              </div>
             </td>
           </tr>
           <tr>
@@ -288,18 +293,22 @@
             <td>
               <h3>初审审批人 : {{form.auditInitName}}</h3>
               <h3>审批意见</h3>
-              <h4>{{form.auditInitOpinion}}</h4>
+              <div v-html="form.auditInitOpinion"></div>
               <br />
               <br />
               <h3>复审审批人 : {{form.auditReviewName}}</h3>
               <h3>审批意见</h3>
-              <h4>{{form.auditReviewOpinion}}</h4>
+              <div v-html="form.auditReviewOpinion"></div>
             </td>
           </tr>
           <tr>
             <td class="tds">操作</td>
             <td>
-              <el-button type="success" v-if="form.auditStatus != 3" @click="saveSubit">提 交</el-button>
+              <el-button
+                type="success"
+                v-if="form.auditStatus == 1 ||form.auditStatus == 2 ||form.auditStatus == 4"
+                @click="saveSubit"
+              >提 交</el-button>
               <p v-else>已复审完成,不可修改</p>
             </td>
           </tr>
@@ -340,9 +349,15 @@ export default {
         applyName: this.$store.state.user.nickName,
         applyType: 2,
         costUpper: null,
-        auditStatus: 1
+        auditStatus: 1,
+        expenseCode: null,
+        happenTime: null,
+        cost: null,
+        costExplain: null,
+        invoiceFormat: null,
+        photoFileId: null,
+        attachmentFileId: null
       },
-      tableData: [{}],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -385,7 +400,9 @@ export default {
       listExpenseProcess: [],
       getListAreaManager: [],
       rolesName: this.$store.state.user.roles[0],
-      renameFileName: "",
+      fileForm: {
+        renameFileName: ""
+      },
       expenseExplainTemplate: ""
     };
   },
@@ -421,9 +438,9 @@ export default {
         this.listExpense = res.rows;
         this.total = res.total;
       });
-      window.open(
-        "https://view.officeapps.live.com/op/view.aspx?src=https://ndx-file.nandouxingriyu.com/statics/2021/12/28/12.21PPT-8d015484.ppt"
-      );
+    },
+    openDocument(path) {
+      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
     },
     handleView(index, row) {
       this.form = row;
@@ -441,11 +458,16 @@ export default {
     },
     reset() {
       this.form = {
-        applyId: this.$store.state.user.glrid,
+        applyId: this.$store.state.user.userId,
         applyName: this.$store.state.user.nickName,
-        applyType: 1,
+        applyType: 2,
         costUpper: null,
-        auditStatus: 1
+        auditStatus: 1,
+        expenseCode: null,
+        happenTime: null,
+        cost: null,
+        costExplain: null,
+        invoiceFormat: null
       };
     },
     getExpenseData(value) {
@@ -488,9 +510,9 @@ export default {
       });
     },
     beforeFile(file) {
-      this.renameFileName = "";
+      this.fileForm.renameFileName = "";
       let hz = file.name.substr(file.name.lastIndexOf("."));
-      this.renameFileName = this.form.applyName + hz;
+      this.fileForm.renameFileName = this.form.applyName + hz;
     },
     imgSuccess(response, file, fileList) {
       let data = response.data;
