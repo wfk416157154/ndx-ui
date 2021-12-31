@@ -118,202 +118,239 @@
     />
 
     <el-dialog title="添加报销" :visible.sync="dialogFormVisible">
-      <table style="width : 100%;" border="1" cellspacing="0">
-        <tbody>
-          <tr>
-            <td class="tds">报销人</td>
-            <td>{{form.applyName}}</td>
-          </tr>
-          <tr>
-            <td class="tds">区域负责人</td>
-            <td>
-              <el-select filterable v-model="form.areaId" placeholder="请选择区域负责人">
-                <el-option
-                  v-for="(item,index) in getListAreaManager"
-                  :key="index"
-                  :label="item.xm"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </td>
-          </tr>
-          <tr v-if="rolesName == '市场部'">
-            <td class="tds">是否已开班</td>
-            <td>
-              <el-radio-group v-model="form.isClassCreate">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
-              </el-radio-group>
-            </td>
-          </tr>
-          <tr v-if="rolesName == 'marketing'">
-            <td class="tds">所用校区/班级</td>
-            <td>
-              <el-select v-if="form.isClassCreate == 1" @change="getDepartName" v-model="form.xqbj">
-                <el-option
-                  v-for="(item,index) in bjlist"
-                  :key="index"
-                  :label="item.rybjmc"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-              <el-input v-else v-model="form.departName"></el-input>
-            </td>
-          </tr>
-          <tr v-if="rolesName == 'teachingResearch' || rolesName == 'academicAdministrator'">
-            <td class="tds">所用校区/班级</td>
-            <td>
-              <el-select @change="getDepartName" v-model="form.xqbj">
-                <el-option
-                  v-for="(item,index) in bjlist"
-                  :key="index"
-                  :label="item.rybjmc"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">报销类型</td>
-            <td>
-              <el-select v-model="form.expenseCode" @change="getExpenseData">
-                <el-option
-                  v-for="(item,index) in expenseType"
-                  :key="index"
-                  :label="item.dictLabel"
-                  :value="item.dictCode"
-                ></el-option>
-              </el-select>-
-              <el-select v-model="form.expenseData">
-                <el-option
-                  v-for="(item,index) in expenseData"
-                  :key="index"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                ></el-option>
-              </el-select>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">发生时间</td>
-            <td>
-              <el-date-picker v-model="form.happenTime" type="date" placeholder="选择日期"></el-date-picker>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">
-              费用金额
-              大写
-            </td>
-            <td>
-              <el-input v-model="form.cost" @input="getDigitToChinese" placeholder="请输入金额"></el-input>
-              <br />
-              <br />
-              <span>{{form.costUpper}}</span>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">费用说明</td>
-            <td>
-              <el-popover placement="right" width="400" trigger="click">
-                <div v-html="expenseExplainTemplate"></div>
-                <el-button slot="reference" type="primary">查看填写模板</el-button>
-              </el-popover>
-              <br />
-              <br />
-              <el-input type="textarea" v-model="form.costExplain" :rows="5" placeholder="请输入内容"></el-input>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">附件</td>
-            <td>
-              <el-select v-model="form.invoiceFormat">
-                <el-option
-                  v-for="(item,index) in invoiceFormat"
-                  :key="index"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                ></el-option>
-              </el-select>
-              <br />
-              <br />
-              <h3>图片</h3>
-              <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
-                <el-upload
-                  :action="upload.imgUrl"
-                  :headers="upload.headers"
-                  list-type="picture-card"
-                  :on-preview="handlePictureCardPreview"
-                  :on-remove="handleRemove"
-                  :on-success="imgSuccess"
+      <el-form
+        :model="form"
+        :rules="rules"
+        ref="formName"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <table style="width : 100%;" border="1" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="tds">报销人</td>
+              <td>{{form.applyName}}</td>
+            </tr>
+            <tr>
+              <td class="tds">区域负责人</td>
+              <td>
+                <el-form-item prop="areaId" label-width="0">
+                  <el-select filterable v-model="form.areaId" placeholder="请选择区域负责人">
+                    <el-option
+                      v-for="(item,index) in getListAreaManager"
+                      :key="index"
+                      :label="item.xm"
+                      :value="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr v-if="rolesName == '市场部'">
+              <td class="tds">是否已开班</td>
+              <td>
+                <el-radio-group v-model="form.isClassCreate">
+                  <el-radio :label="1">是</el-radio>
+                  <el-radio :label="0">否</el-radio>
+                </el-radio-group>
+              </td>
+            </tr>
+            <tr v-if="rolesName == 'marketing'">
+              <td class="tds">所用校区/班级</td>
+              <td>
+                <el-select
+                  v-if="form.isClassCreate == 1"
+                  @change="getDepartName"
+                  v-model="form.xqbj"
                 >
-                  <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt />
-                </el-dialog>
-              </div>
-              <div v-else v-for="(item,index) in form.photoFileList" :key="index">
-                <el-image
-                  style="width: 100px; height: 100px"
-                  :src="item.wjlj"
-                  :preview-src-list="[item.wjlj]"
-                ></el-image>
-              </div>
-              <h3>文件</h3>
-              <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
-                <el-upload
-                  class="upload-demo"
-                  drag
-                  :action="upload.imgUrl"
-                  accept=".doc, .docx"
-                  :headers="upload.headers"
-                  :on-preview="handlePictureCardPreview"
-                  :on-remove="handleRemove"
-                  :on-success="fileSuccess"
-                  :before-upload="beforeFile"
-                  :data="fileForm"
-                  multiple
-                >
-                  <i class="el-icon-upload"></i>
-                  <div class="el-upload__text">
-                    将文件拖到此处，或
-                    <em>点击上传</em>
+                  <el-option
+                    v-for="(item,index) in bjlist"
+                    :key="index"
+                    :label="item.rybjmc"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+                <el-input v-else v-model="form.departName"></el-input>
+              </td>
+            </tr>
+            <tr v-if="rolesName == 'teachingResearch' || rolesName == 'academicAdministrator'">
+              <td class="tds">所用校区/班级</td>
+              <td>
+                <el-select @change="getDepartName" v-model="form.xqbj">
+                  <el-option
+                    v-for="(item,index) in bjlist"
+                    :key="index"
+                    :label="item.rybjmc"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">报销类型</td>
+              <td>
+                <el-form-item prop="expenseCode" label-width="0">
+                  <el-select v-model="form.expenseCode" @change="getExpenseData">
+                    <el-option
+                      v-for="(item,index) in expenseType"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictCode"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item prop="expenseData" label-width="0">
+                  <el-select v-model="form.expenseData">
+                    <el-option
+                      v-for="(item,index) in expenseData"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">发生时间</td>
+              <td>
+                <el-form-item prop="happenTime" label-width="0">
+                  <el-date-picker v-model="form.happenTime" type="date" placeholder="选择日期"></el-date-picker>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">
+                费用金额
+                大写
+              </td>
+              <td>
+                <el-form-item prop="cost" label-width="0">
+                  <el-input v-model="form.cost" @input="getDigitToChinese" placeholder="请输入金额"></el-input>
+                </el-form-item>
+                <br />
+                <br />
+                <span>{{form.costUpper}}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">费用说明</td>
+              <td>
+                <el-popover placement="right" width="400" trigger="click">
+                  <div>
+                    <p>7.15武汉-随州 火车票 50元</p>
+                    <p>7.18随州-武汉 火车票50元</p>
+                    <p>7.15-7.17随州住宿费3晚 住宿费300元</p>
+                    <p>随县二中23届3-10课打印费50元</p>
+                    <p>随县二中23届 21年下半年期中考试试卷打印费60元</p>
                   </div>
-                  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-                </el-upload>
-              </div>
-              <div v-else v-for="(item,index) in form.attachmentFileList" :key="++index">
-                <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">审批</td>
-            <td>
-              <h3>初审审批人 : {{form.auditInitName}}</h3>
-              <h3>审批意见</h3>
-              <div v-html="form.auditInitOpinion"></div>
-              <br />
-              <br />
-              <h3>复审审批人 : {{form.auditReviewName}}</h3>
-              <h3>审批意见</h3>
-              <div v-html="form.auditReviewOpinion"></div>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">操作</td>
-            <td>
-              <el-button
-                type="success"
-                v-if="form.auditStatus == 1 ||form.auditStatus == 2 ||form.auditStatus == 4"
-                @click="saveSubit"
-              >提 交</el-button>
-              <p v-else>已复审完成,不可修改</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                  <el-button slot="reference" type="primary">查看填写模板</el-button>
+                </el-popover>
+                <br />
+                <br />
+                <el-form-item prop="costExplain" label-width="0">
+                  <el-input
+                    type="textarea"
+                    v-model="form.costExplain"
+                    :rows="5"
+                    placeholder="请输入内容"
+                  ></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">附件</td>
+              <td>
+                <el-form-item prop="invoiceFormat" label-width="0">
+                  <el-select v-model="form.invoiceFormat">
+                    <el-option
+                      v-for="(item,index) in invoiceFormat"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <br />
+                <br />
+                <h3>图片</h3>
+                <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
+                  <el-upload
+                    :action="upload.imgUrl"
+                    :headers="upload.headers"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :on-success="imgSuccess"
+                  >
+                    <i class="el-icon-plus"></i>
+                  </el-upload>
+                  <el-dialog :visible.sync="dialogVisible">
+                    <img width="100%" :src="dialogImageUrl" alt />
+                  </el-dialog>
+                </div>
+                <div v-else v-for="(item,index) in form.photoFileList" :key="index">
+                  <el-image
+                    style="width: 100px; height: 100px"
+                    :src="item.wjlj"
+                    :preview-src-list="[item.wjlj]"
+                  ></el-image>
+                </div>
+                <h3>文件</h3>
+                <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
+                  <el-upload
+                    class="upload-demo"
+                    drag
+                    :action="upload.imgUrl"
+                    accept=".doc, .docx"
+                    :headers="upload.headers"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :on-success="fileSuccess"
+                    :before-upload="beforeFile"
+                    :data="fileForm"
+                    multiple
+                  >
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">
+                      将文件拖到此处，或
+                      <em>点击上传</em>
+                    </div>
+                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                  </el-upload>
+                </div>
+                <div v-else v-for="(item,index) in form.attachmentFileList" :key="++index">
+                  <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">审批</td>
+              <td>
+                <h3>初审审批人 : {{form.auditInitName}}</h3>
+                <h3>审批意见</h3>
+                <div v-html="form.auditInitOpinion"></div>
+                <br />
+                <br />
+                <h3>复审审批人 : {{form.auditReviewName}}</h3>
+                <h3>审批意见</h3>
+                <div v-html="form.auditReviewOpinion"></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="tds">操作</td>
+              <td>
+                <el-button
+                  type="success"
+                  v-if="form.auditStatus == 1 ||form.auditStatus == 2 ||form.auditStatus == 4"
+                  @click="saveSubit"
+                >提 交</el-button>
+                <p v-else>已复审完成,不可修改</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </el-form>
     </el-dialog>
 
     <el-dialog title="查看流程" :visible.sync="dialogTableVisible">
@@ -403,7 +440,17 @@ export default {
       fileForm: {
         renameFileName: ""
       },
-      expenseExplainTemplate: ""
+      expenseExplainTemplate: "",
+      rules: {
+        areaId: [{ required: true, message: "请选择", trigger: "change" }],
+        departName: [{ required: true, message: "请选择", trigger: "change" }],
+        expenseCode: [{ required: true, message: "请选择", trigger: "change" }],
+        expenseData: [{ required: true, message: "请选择", trigger: "change" }],
+        happenTime: [{ required: true, message: "请选择", trigger: "change" }],
+        invoiceFormat: [{ required: true, message: "请选择", trigger: "change" }],
+        cost: [{ required: true, message: "请填写", trigger: "change" }],
+        costExplain: [{ required: true, message: "请填写", trigger: "change" }]
+      }
     };
   },
   created() {
@@ -537,25 +584,32 @@ export default {
       return this.selectDictLabel(this.expenseAuditStatus, row.auditStatus);
     },
     saveSubit() {
-      if (this.form.invoiceFormat == 1) {
-        if (!this.form.photoFileId || !this.form.attachmentFileId) {
-          this.msgError("错误 : 附件必须上传图片和文件");
-          return;
+      this.$refs.formName.validate(valid => {
+        if (valid) {
+          if (this.form.invoiceFormat == 1) {
+            if (!this.form.photoFileId || !this.form.attachmentFileId) {
+              this.msgError("错误 : 附件必须上传图片和文件");
+              return;
+            }
+          }
+          if (this.form.id) {
+            editExpense(this.form).then(res => {
+              this.msgSuccess("成功 : 保存成功");
+              this.getList();
+              this.dialogFormVisible = false;
+            });
+          } else {
+            addExpense(this.form).then(res => {
+              this.msgSuccess("成功 : 保存成功");
+              this.getList();
+              this.dialogFormVisible = false;
+            });
+          }
+        } else {
+          this.msgError("错误 : 请填写完整数据");
+          return false;
         }
-      }
-      if (this.form.id) {
-        editExpense(this.form).then(res => {
-          this.msgSuccess("成功 : 保存成功");
-          this.getList();
-          this.dialogFormVisible = false;
-        });
-      } else {
-        addExpense(this.form).then(res => {
-          this.msgSuccess("成功 : 保存成功");
-          this.getList();
-          this.dialogFormVisible = false;
-        });
-      }
+      });
     },
     handleWithdraw(index, row) {
       this.$confirm("此操作将不可恢复,只能重新申请, 是否继续?", "提示", {

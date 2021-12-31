@@ -236,14 +236,16 @@
             <tr>
               <td class="tds">附件</td>
               <td>
-                <el-select v-model="form.invoiceFormat">
-                  <el-option
-                    v-for="(item,index) in invoiceFormat"
-                    :key="index"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  ></el-option>
-                </el-select>
+                <el-form-item prop="invoiceFormat" label-width="0">
+                  <el-select v-model="form.invoiceFormat">
+                    <el-option
+                      v-for="(item,index) in invoiceFormat"
+                      :key="index"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
                 <br />
                 <br />
                 <h3>图片</h3>
@@ -374,8 +376,11 @@ export default {
         expenseCode: [{ required: true, message: "请选择", trigger: "change" }],
         expenseData: [{ required: true, message: "请选择", trigger: "change" }],
         happenTime: [{ required: true, message: "请选择", trigger: "change" }],
-        cost: [{ required: true, message: "请选择", trigger: "change" }],
-        costExplain: [{ required: true, message: "请选择", trigger: "change" }]
+        invoiceFormat: [
+          { required: true, message: "请选择", trigger: "change" }
+        ],
+        cost: [{ required: true, message: "请填写", trigger: "change" }],
+        costExplain: [{ required: true, message: "请填写", trigger: "change" }]
       },
       upload: {
         // 是否显示弹出层（用户导入）
