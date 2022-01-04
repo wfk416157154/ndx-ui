@@ -26,6 +26,15 @@ export function curriculumManage(query) {
   })
 }
 
+// 学员管理
+export function traineeManage(query) {
+  return request({
+    url: '/basic/curriculum/traineeManage',
+    method: 'get',
+    params: query
+  })
+}
+
 // 新增培训课程
 export function addCurriculum(data) {
   return request({
