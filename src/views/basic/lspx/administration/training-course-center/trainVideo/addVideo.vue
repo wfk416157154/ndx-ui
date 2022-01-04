@@ -105,7 +105,6 @@
         <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -238,7 +237,7 @@ export default {
     vHandleFileSuccess(response, file, fileList) {
       if (response.code == 200) {
         let data = response.data;
-        data.kzzd1 = this.addVideoForm.videoFile || secretKey();
+        data.kzzd1 = secretKey();
         this.addVideoForm.videoFile = data.kzzd1;
         addImg(data).then(res => {
           file.id = res.data.id;

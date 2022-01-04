@@ -6,7 +6,7 @@
           <el-collapse-item
             v-for="(item,index) in curriculumManageList"
             :key="index"
-            :title="item.curriculumName"
+            :title="item.dictLabel + '/' + item.dictValue + '课时'"
             name="1"
           >
             <div class="video-item" v-for="(list,j) in item.videoList" :key="j">
