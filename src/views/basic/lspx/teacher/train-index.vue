@@ -14,7 +14,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="进度">
-            <el-select v-model="queryParams.spjd" placeholder="请选择活动区域">
+            <el-select v-model="queryParams.spjd" placeholder="请选择进度">
               <el-option
                 v-for="dict in prepareStatsProgress"
                 :key="dict.dictValue"
@@ -25,7 +25,11 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button type="primary" @click="applyComplete">申请完成培训</el-button>
+            <el-button
+              type="primary"
+              @click="applyComplete"
+              :disabled="this.$store.state.user.dataRoleWeightId != 50"
+            >申请完成培训</el-button>
           </el-form-item>
         </el-form>
         <el-table border :data="videoList" style="width: 100%;font-size : 18px">
@@ -112,11 +116,11 @@
     <!-- 申请完成 -->
     <el-dialog title="培训感想" :visible.sync="dialogApplyCompleteVisible">
       <el-form :model="applyCompleteForm">
-        <editor v-model="applyCompleteForm.pxgx" :min-height="300" />
+        <editor v-model="applyCompleteForm.kzzd1" :min-height="300" />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogApplyCompleteVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogApplyCompleteVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addaApplyComplete">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -127,7 +131,8 @@ import { listCurriculum } from "@/api/basic/curriculum";
 import {
   getExamList,
   getVideoList,
-  teacherExamList
+  teacherExamList,
+  trainTeacherProcess
 } from "@/api/basic/train-teacher";
 import { selectFileList } from "@/api/tool/common";
 import { teacherList } from "@/api/basic/assignTeachers";
@@ -158,7 +163,9 @@ export default {
         xxlx: "2",
         jsrArr: []
       },
-      applyCompleteForm: {},
+      applyCompleteForm: {
+        lsid: this.$store.state.user.glrid
+      },
       // 表单校验
       formRules: {
         xxlx: [{ required: true, message: "必填项", trigger: "change" }],
@@ -264,6 +271,12 @@ export default {
     },
     applyComplete() {
       this.dialogApplyCompleteVisible = true;
+    },
+    addaApplyComplete() {
+      trainTeacherProcess(this.applyCompleteForm).then(res => {
+        this.msgSuccess(res.msg);
+        this.dialogApplyCompleteVisible = false;
+      });
     },
     toLearn(row) {
       this.getConfigKey("train-learning").then(res => {

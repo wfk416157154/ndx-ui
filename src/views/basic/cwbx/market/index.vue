@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="queryParams.auditStatus" placeholder="活动区域">
+        <el-select v-model="queryParams.auditStatus" placeholder="状态">
           <el-option
             v-for="(item,index) in expenseAuditStatus"
             :key="index"
@@ -447,7 +447,9 @@ export default {
         expenseCode: [{ required: true, message: "请选择", trigger: "change" }],
         expenseData: [{ required: true, message: "请选择", trigger: "change" }],
         happenTime: [{ required: true, message: "请选择", trigger: "change" }],
-        invoiceFormat: [{ required: true, message: "请选择", trigger: "change" }],
+        invoiceFormat: [
+          { required: true, message: "请选择", trigger: "change" }
+        ],
         cost: [{ required: true, message: "请填写", trigger: "change" }],
         costExplain: [{ required: true, message: "请填写", trigger: "change" }]
       }

@@ -42,7 +42,7 @@
       </el-table-column>
       <el-table-column label="视频类别" width="180">
         <template slot-scope="scope">
-          <dict-tag :options="splbOptions" :value="scope.row.splb"/>
+          <dict-tag :options="splbOptions" :value="scope.row.splb" />
         </template>
       </el-table-column>
       <el-table-column label="培训时间" width="180">
@@ -57,7 +57,6 @@
           <el-button
             size="mini"
             type="success"
-            disabled
             @click="completeSubmit(scope.$index, scope.row)"
           >完成培训</el-button>
           <el-button size="mini" type="success" @click="viewSubmit(scope.$index, scope.row)">查 看</el-button>
@@ -77,6 +76,7 @@
 
 <script>
 import { trainResultList } from "@/api/basic/teacher-training-completed";
+import { updateTeacher } from "@/api/basic/teacher";
 import { listCurriculum } from "@/api/basic/curriculum";
 export default {
   data() {
@@ -91,7 +91,7 @@ export default {
       listCurriculum: [],
       trainResultData: [],
       // 视频类别
-      splbOptions:[]
+      splbOptions: []
     };
   },
   created() {
@@ -111,7 +111,29 @@ export default {
       });
     },
     completeSubmit(index, row) {
-      console.log("completeSubmit!");
+      this.$confirm("是否完成培训?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          updateTeacher({
+            id: this.$store.state.user.glrid,
+            kzzd4: 1
+          }).then(res => {
+            this.msgSuccess(res.msg);
+          });
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作"
+          });
+        });
     },
     viewSubmit(index, row) {
       this.getConfigKey("teacher-training-completed-detalis").then(res => [

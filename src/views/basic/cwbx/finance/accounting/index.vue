@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="queryParams.auditStatus" placeholder="活动区域">
+        <el-select v-model="queryParams.auditStatus" placeholder="状态">
           <el-option
             v-for="(item,index) in expenseAuditStatus"
             :key="index"

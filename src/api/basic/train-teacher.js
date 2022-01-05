@@ -26,3 +26,12 @@ export function teacherExamList(query) {
     params: query
   })
 }
+
+// 新增或修改老师培训过程
+export function trainTeacherProcess(data) {
+  return request({
+    url: '/basic/trainTeacherProcess/addOrUpdate',
+    method: 'post',
+    data: data
+  })
+}

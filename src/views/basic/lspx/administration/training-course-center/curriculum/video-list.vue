@@ -6,7 +6,7 @@
           <el-collapse-item
             v-for="(item,index) in curriculumManageList"
             :key="index"
-            :title="item.curriculumName"
+            :title="item.dictLabel + '/' + item.dictValue + '课时'"
             name="1"
           >
             <div class="video-item" v-for="(list,j) in item.videoList" :key="j">
@@ -17,10 +17,11 @@
         </el-collapse>
       </el-tab-pane>
       <el-tab-pane label="学员管理" name="second">
-        <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table :data="traineeManageList" border style="width: 100%">
+          <el-table-column prop="lsxm" label="老师姓名" width="180"></el-table-column>
+          <el-table-column prop="dhhm" label="电话号码" width="180"></el-table-column>
+          <el-table-column prop="wcs" label="已学课时"></el-table-column>
+          <el-table-column prop="xsjd" label="学习进度"></el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
@@ -35,7 +36,7 @@
   </div>
 </template>
 <script>
-import { curriculumManage } from "@/api/basic/curriculum";
+import { curriculumManage, traineeManage } from "@/api/basic/curriculum";
 export default {
   data() {
     return {
@@ -66,7 +67,8 @@ export default {
       ],
       parentId: null,
       videoUrl: null,
-      curriculumManageList: []
+      curriculumManageList: [],
+      traineeManageList: []
     };
   },
   created() {
@@ -82,6 +84,10 @@ export default {
     getList() {
       curriculumManage({ id: this.parentId }).then(res => {
         this.curriculumManageList = res.data;
+      });
+      traineeManage({ id: this.parentId }).then(res => {
+        console.log(res);
+        this.traineeManageList = res.data;
       });
     },
     seeVideo(url) {
