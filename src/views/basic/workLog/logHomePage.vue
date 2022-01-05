@@ -202,7 +202,7 @@ export default {
       // 查询条件
       queryParams: {
         pageNum: 1,
-        pageSize: 50,
+        pageSize: 10,
         orderChoose: null,
         isRead: null,
         xqid: null,
