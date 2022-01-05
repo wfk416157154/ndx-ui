@@ -97,7 +97,7 @@ export default {
     return {
       executeDocument: {
         videoUrl: "",
-        disabledProgress: false,
+        disabledProgress: true,
         stopTime: []
       },
       dialogFormVisible: false,
@@ -140,7 +140,9 @@ export default {
       spid: this.studyList.spid
     }).then(res => {
       this.answerStatus = true;
-      this.learnRecordForm = res.rows[0];
+      if (res.rows.length > 0) {
+        this.learnRecordForm = res.rows[0];
+      }
     });
   },
   methods: {
@@ -185,8 +187,11 @@ export default {
       });
     },
     bjSuccess(response, file, fileList) {
+      console.log(response);
+      console.log(this.learnRecordForm);
       let data = response.data;
       data.kzzd1 = this.learnRecordForm.bjtpid || secretKey();
+      console.log(data);
       this.learnRecordForm.bjtpid = data.kzzd1;
       addImg(data).then(res => {
         file.id = res.data.id;

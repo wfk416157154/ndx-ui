@@ -926,14 +926,18 @@ export default {
     },
     sjYZ(rows) {
       let date = new Date();
-      let date1 =
-        date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+      let n = date.getFullYear();
+      let y = date.getMonth();
+      y = y + 1;
+      let r = date.getDate();
+      let date1 = n + "-" + y + "-" + r;
       let date2 = date1;
-      let nowTime = new Date(date1 + "  " + rows.jssj);
-      date1 = new Date(date1 + " " + rows.kssj).getTime();
-      date2 = new Date(date2 + " " + rows.jssj).getTime();
+      let nowTime = new Date(date1 + " " + rows.jssj);
+      date1 = new Date(date1 + " " + rows.kssj + ":00").getTime();
+      date2 = new Date(date2 + " " + rows.jssj + ":00").getTime();
       if (date1 > date2) {
         this.msgError("错误: 开始时间不能大于结束时间");
+        rows.jssj = "";
         this.isAdd = false;
       } else {
         this.isAdd = true;

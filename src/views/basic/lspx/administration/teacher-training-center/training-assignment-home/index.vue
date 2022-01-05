@@ -272,6 +272,9 @@ export default {
       this.getTrainPaperTopicListTem = res.data;
     });
   },
+  mounted(){
+     this.querySubmit()
+  },
   methods: {
     querySubmit() {
       trainAllocateHomePage(this.queryParams).then(res => {
