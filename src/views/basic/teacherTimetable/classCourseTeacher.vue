@@ -570,10 +570,10 @@ export default {
     // 切换班级课表
     switchingClasses(bjid, nd) {
       this.queryParams.bjid = bjid;
-      this.getClassCourseBasicList(bjid, nd);
+      this.getClassCourseBasicList(bjid);
     },
     // 拿到该班级的所有课表
-    getClassCourseBasicList(rybjid, nd, $sfqy) {
+    getClassCourseBasicList(rybjid, nd = null, $sfqy) {
       if (!$sfqy) {
         this.classCourseList = [];
       }
@@ -631,7 +631,6 @@ export default {
       }
       if (value.sfqy) {
         this.yxsj = value.kzzd1;
-        console.log(this.yxsj);
         this.getCourse();
         this.msgSuccess("启动成功");
       } else {
