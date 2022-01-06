@@ -1,5 +1,5 @@
 <template>
-  <div class="train-examination">
+  <div class="train-examination" ref="examination">
     <div class="content">
       <!-- <div class="count">
         考试剩余时间 :
@@ -173,6 +173,30 @@ export default {
     }, 1000);
     this.examinationTime = new Date().getTime();
     // console.log(this.examinationTime);
+    this.$refs.examination.addEventListener(
+      "selectstart",
+      function(e) {
+        e = window.e || e;
+        if (e.preventDefault) {
+          e.preventDefault();
+        } else {
+          e.returnValue = true;
+        }
+      },
+      false
+    );
+    this.$refs.examination.addEventListener(
+      "paste",
+      function(e) {
+        e = window.e || e;
+        if (e.preventDefault) {
+          e.preventDefault();
+        } else {
+          e.returnValue = true;
+        }
+      },
+      false
+    );
   },
   beforeDestroy() {
     clearInterval(this.timer);
