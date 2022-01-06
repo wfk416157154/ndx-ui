@@ -3,6 +3,8 @@
     <div class="video" style="width ; 100%;height : 100%">
       <video
         ref="video"
+        controlslist="nodownload"
+        disablepictureinpicture
         :src="executeDocument.videoUrl"
         preload
         :disabled="executeDocument.disabledProgress"
@@ -78,6 +80,20 @@ export default {
         return {};
       }
     }
+  },
+  mounted() {
+    this.$refs.video.addEventListener(
+      "contextmenu",
+      function(e) {
+        e = window.e || e;
+        if (e.preventDefault) {
+          e.preventDefault();
+        } else {
+          e.returnValue = true;
+        }
+      },
+      false
+    );
   },
   methods: {
     getTimeupdate() {
