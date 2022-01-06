@@ -27,6 +27,15 @@ export function teacherExamList(query) {
   })
 }
 
+// 查询-视频完成状况
+export function videoCompleteStatus(query) {
+  return request({
+    url: '/basic/trainPaper/videoCompleteStatus',
+    method: 'get',
+    params: query
+  })
+}
+
 // 新增或修改老师培训过程
 export function trainTeacherProcess(data) {
   return request({

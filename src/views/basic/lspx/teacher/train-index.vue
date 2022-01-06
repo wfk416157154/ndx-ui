@@ -132,7 +132,8 @@ import {
   getExamList,
   getVideoList,
   teacherExamList,
-  trainTeacherProcess
+  trainTeacherProcess,
+  videoCompleteStatus
 } from "@/api/basic/train-teacher";
 import { selectFileList } from "@/api/tool/common";
 import { teacherList } from "@/api/basic/assignTeachers";
@@ -289,31 +290,40 @@ export default {
       });
     },
     toExamination(row) {
-      this.$confirm(
-        "此操作将进入考试,退出考试页面将会自动退提交试卷,不能再次进行考试, 是否继续?",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          this.getConfigKey("train-examination").then(res => {
-            this.$router.push({
-              path: res.msg,
-              query: {
-                list: JSON.stringify(row)
-              }
+      videoCompleteStatus({
+        lsid: row.teacherId,
+        allocateId: row.allocateId
+      }).then(res => {
+        if (res.msg == 1) {
+          this.$confirm(
+            "此操作将进入考试,退出考试页面将会自动退提交试卷,不能再次进行考试, 是否继续?",
+            "提示",
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+            }
+          )
+            .then(() => {
+              this.getConfigKey("train-examination").then(res => {
+                this.$router.push({
+                  path: res.msg,
+                  query: {
+                    list: JSON.stringify(row)
+                  }
+                });
+              });
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "已取消"
+              });
             });
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消"
-          });
-        });
+        }else{
+          this.msgError("请先学习完当前考试的所有视频")
+        }
+      });
     },
     toExaminationDetails(row) {
       this.getConfigKey("train-examination-details").then(res => {
