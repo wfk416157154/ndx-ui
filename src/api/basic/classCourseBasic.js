@@ -24,6 +24,14 @@ export function teaEnableCourseQuery(id) {
     method: 'get'
   })
 }
+
+// 获取班级启用课表
+export function getClassEnableCourse(id) {
+  return request({
+    url: '/basic/classCourse/getClassEnableCourse/' + id,
+    method: 'get'
+  })
+}
 // 学生签到数据查询
 export function stuQiandaoHomePageQuery(query) {
   return request({
