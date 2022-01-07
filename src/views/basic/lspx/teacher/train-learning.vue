@@ -187,11 +187,8 @@ export default {
       });
     },
     bjSuccess(response, file, fileList) {
-      console.log(response);
-      console.log(this.learnRecordForm);
       let data = response.data;
       data.kzzd1 = this.learnRecordForm.bjtpid || secretKey();
-      console.log(data);
       this.learnRecordForm.bjtpid = data.kzzd1;
       addImg(data).then(res => {
         file.id = res.data.id;
@@ -212,6 +209,15 @@ export default {
       this.learnRecordForm.spid = this.studyList.spid;
       this.learnRecordForm.lsxm = this.$store.state.user.nickName;
       this.learnRecordForm.kzzd1 = this.studyList.courseId;
+      if (this.rateOfIearning < 100) {
+        this.msgError("请先学习完视频");
+        return;
+      }
+      if (!this.learnRecordForm.bjtpid) {
+        this.msgError("请上传笔记");
+        this.learnRecordForm.spjd = 1;
+        return;
+      }
       if (this.learnRecordForm.id) {
         updateLearnRecord(this.learnRecordForm).then(res => {
           this.msgSuccess(res.msg);
