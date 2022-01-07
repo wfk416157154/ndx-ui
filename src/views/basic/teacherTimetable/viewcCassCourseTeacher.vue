@@ -88,7 +88,7 @@ export default {
       kcType: [],
       listBjclass: [],
       queryParams: {
-        bjid: ""
+        bjid: this.$route.query.bjid
       }
     };
   },
@@ -96,15 +96,13 @@ export default {
     this.getDicts("kc_type").then(response => {
       this.kcType = response.data;
     });
-    listBjclass({ lsid: this.$store.state.user.glrid }).then(res => {
+    listBjclass().then(res => {
       this.listBjclass = res.rows;
-      if (this.listBjclass.length == 1) {
-        this.queryParams.bjid = this.listBjclass[0].id;
-        this.getList();
-      }
     });
   },
-  mounted() {},
+  mounted() {
+    this.getList();
+  },
   methods: {
     getList() {
       getClassEnableCourse(this.queryParams.bjid).then(res => {
