@@ -77,23 +77,26 @@
           <tr>
             <td class="tds">课程选择</td>
             <td>
-              <el-checkbox-group
-                v-if=" curriculumManageList.videoList && curriculumManageList.videoList.length > 0"
-                v-model="checkbox"
-              >
-                <el-checkbox
-                  v-for="(item,index) in curriculumManageList.videoList"
-                  :key="index"
-                  :label="item.id"
-                >{{item.videoName}}</el-checkbox>
-              </el-checkbox-group>
+              <div v-for="(item,index) in curriculumManageList" :key="index">
+                <h4>{{item.dictLabel}}</h4>
+                <el-checkbox-group
+                  v-if=" item.videoList && item.videoList.length > 0"
+                  v-model="checkbox"
+                >
+                  <el-checkbox
+                    v-for="(list,j) in item.videoList"
+                    :key="j"
+                    :label="list.id"
+                  >{{list.videoName}}</el-checkbox>
+                </el-checkbox-group>
+              </div>
             </td>
           </tr>
           <tr>
             <td class="tds">视频类别</td>
             <td>
               <div v-for="(item,index) in getTrainPaperTopicListTem" :key="index">
-                <el-checkbox :label="item.dictValue">{{item.dictLabel}}</el-checkbox>
+                <h4>{{item.dictLabel}}</h4>
                 <div style="padding : 20px 10px ;boxsizing : border-box">
                   <el-radio-group v-model="item[index]">
                     <div v-for="(list,j) in item.paperList" :key="j" @click="getVideo(list,index)">
@@ -183,7 +186,7 @@ export default {
     },
     getCurriculumManage() {
       curriculumManage({ id: this.distributionForm.curriculumId }).then(res => {
-        this.curriculumManageList = res.data[0];
+        this.curriculumManageList = res.data;
       });
     },
     distribution(index, row) {
