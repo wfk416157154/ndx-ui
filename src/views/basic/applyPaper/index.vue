@@ -127,6 +127,11 @@
             @click="handleCjscEdit(scope.row)"
             v-if="scope.row.kzzd2 == '3'"
           >成绩更新</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleExamSummary(scope.row)"
+          >考试分析总结</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -446,6 +451,19 @@
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 考试成绩分析总结（操作） -->
+    <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzjDialog" width="60%">
+      <el-form label-width="120px">
+        <el-form-item label="考试总结">
+          <editor v-model="examSummaryForm.ksfxzj" :min-height="150"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="kscjzjDialog = false">取 消</el-button>
+        <el-button type="primary" @click="saveKscjfxzj">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -459,7 +477,7 @@ import {
 } from "@/api/basic/examinationPaper";
 import { getToken } from "@/utils/auth";
 import { listBjclass } from "@/api/basic/bjclass";
-import { addExamSummary } from "@/api/basic/examSummary";
+import { addExamSummary,listExamSummary,updateExamSummary } from "@/api/basic/examSummary";
 import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
 import { selectFileList } from "@/api/tool/common";
 
@@ -488,6 +506,10 @@ export default {
       title: "",
       //考试成绩总结
       kscjzj: false,
+      kscjzjDialog: false,
+      examSummaryForm: {
+        ksfxzj: null,
+      },
       // 是否显示弹出层
       open: false,
       openQt: false,
@@ -522,6 +544,7 @@ export default {
       cjscForm: {},
       // 考试分析总结
       getKscjzj: "",
+
       // 表单校验
       rules: {
         bjid: [{ required: true, message: "必填", trigger: "blur" }],
@@ -696,6 +719,11 @@ export default {
     reset() {
       this.ksfw_ksbf= null,
       this.ksfw_jsbf= null,
+      this.examSummaryForm = {
+        id: null,
+        ksfxzj: null,
+        examPaperId: null,
+      }
       this.form = {
         id: null,
         bjid: null,
@@ -819,6 +847,42 @@ export default {
       this.cjsc.open = true;
       this.cjscForm = row;
       this.isEdit = true;
+    },
+    /** 打开考试分析总结对话框*/
+    handleExamSummary(row) {
+      this.reset();
+      //  查询试卷考试分析
+      let json = {
+        examPaperId: row.id
+      };
+      listExamSummary(json).then(res => {
+        this.examSummaryForm.examPaperId = row.id
+        if (res.rows.length>0){
+          this.examSummaryForm.ksfxzj = res.rows[0].ksfxzj
+          this.examSummaryForm.id = res.rows[0].id
+        }
+      })
+      this.kscjzjDialog = true;
+    },
+    /** 打开考试分析总结对话框*/
+    saveKscjfxzj() {
+      this.kscjzjDialog = false;
+      //  查询试卷考试分析
+      if(this.examSummaryForm.id){
+        updateExamSummary(this.examSummaryForm).then(res => {
+          this.$notify({
+            message: res.msg,
+            type: "success"
+          });
+        });
+      }else {
+        addExamSummary(this.examSummaryForm).then(res => {
+          this.$notify({
+            message: res.msg,
+            type: "success"
+          });
+        });
+      }
     },
     // 下载模板操作
     importTemplate() {
