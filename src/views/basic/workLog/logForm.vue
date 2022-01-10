@@ -30,7 +30,9 @@
           <el-radio label="0">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-button type="primary" size="mini" :disabled="!ruleForm.id" @click="selectZfx">总复习</el-button>
+      <el-tooltip class="item" effect="dark" content="请先填写课程" placement="top-start">
+        <el-button type="primary" size="mini" :disabled="!ruleForm.id" @click="selectZfx">总复习</el-button>
+      </el-tooltip>
     </el-form>
     <el-form
       :model="ruleForm"
@@ -536,9 +538,9 @@ export default {
       dialogUploadVideoisible: false,
       pickerOptions0: {
         disabledDate(time) {
-          return time.getTime() > Date.now() - 8.64e7;;
+          return time.getTime() > Date.now() - 8.64e7;
         }
-      },
+      }
     };
   },
   components: {
@@ -602,15 +604,13 @@ export default {
     },
     selectZfx() {
       // 判断该班级教学计划是否全部完成 完成才能点击
-      planIsFinish(this.bjNameId).then(res =>{
-        if(1===res.data){
+      planIsFinish(this.bjNameId).then(res => {
+        if (1 === res.data) {
           this.sffx = true;
-        }else {
+        } else {
           this.msgError("课程还未全部完成，无法进行复习！");
         }
-        }
-      )
-
+      });
     },
     saveSbmit() {
       this.sffx = false;
@@ -732,7 +732,7 @@ export default {
                 this.skipToLogHomePage();
               })
               .catch(() => {
-                this.getWorkLogListQuery(this.bjNameId, this.logTiem,res.rzid); // 查询已填写未发送的日志
+                this.getWorkLogListQuery(this.bjNameId, this.logTiem, res.rzid); // 查询已填写未发送的日志
               });
             break;
           case 3:
@@ -796,7 +796,7 @@ export default {
       });
     },
     // 查询某一班级日志
-    async getWorkLogListQuery(bjid, date,rzid) {
+    async getWorkLogListQuery(bjid, date, rzid) {
       if (!this.rzid) {
         if (!bjid) {
           this.$notify({
@@ -1096,7 +1096,11 @@ export default {
         // if (!this.logTiem) {
         //   this.logTiem = new Date();
         // }
-        await this.getWorkLogListQuery(this.bjNameId, this.logTiem, res.data.id);
+        await this.getWorkLogListQuery(
+          this.bjNameId,
+          this.logTiem,
+          res.data.id
+        );
         if (res.code == 200) {
           this.ifsfyks = false;
           if (this.ruleForm.kzzd4) {
