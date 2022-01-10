@@ -1,7 +1,7 @@
 <template>
   <div class="index-page">
     <RoutineHome />
-    <TeacherHome v-if="this.$sore.state.user.dataRoleWeightId == 50" />
+    <TeacherHome v-if="this.$store.state.user.dataRoleWeightId == 50" />
     <!-- <TeacherHome /> -->
   </div>
 </template>
