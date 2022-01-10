@@ -18,6 +18,24 @@ export function listHomepage(query) {
   })
 }
 
+// 查询班级基础信息列表(页面查询调用)
+export function getPageList(query) {
+  return request({
+    url: '/basic/bjclass/pageList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询消息管理列表
+export function getMessageList(query) {
+  return request({
+    url: '/basic/message/list',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师信息详细
 export function getTeacher(id) {
   return request({
