@@ -580,7 +580,7 @@ export default {
       this.getConfigKey("addTeacher").then(resp=>{
         this.router=resp.msg;
         this.$router.push({
-          path: this.router
+          path: this.router+"addTeacher"
         });
       })
     },
