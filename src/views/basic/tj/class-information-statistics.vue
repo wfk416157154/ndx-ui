@@ -35,7 +35,7 @@
       <el-table-column prop="bjrs" label="班级人数">
         <template slot-scope="scope">
           <div v-if="scope.row.bjrs == 0">{{scope.row.bjrs}}</div>
-          <el-link v-else type="success">{{scope.row.bjrs}}</el-link>
+          <el-link v-else type="success" @click="handleExport(scope.row.id)">{{scope.row.bjrs}}</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="lsxm" label="课表">
@@ -45,12 +45,12 @@
       </el-table-column>
       <el-table-column prop="lsxm" label="班级成绩">
         <template slot-scope="scope">
-          <el-link type="success">班级成绩下载</el-link>
+          <el-link type="success" @click="toPages(scope.row.id)">班级成绩</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="lsxm" label="学生成绩">
         <template slot-scope="scope">
-          <el-link type="success">学生成绩下载</el-link>
+          <el-link type="success" @click="stugradeExport(scope.row.id)">学生成绩下载</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="lsxm" label="班级信息文件">
@@ -94,7 +94,33 @@ export default {
       getPageList(this.form).then(res => {
         this.pageList = res.rows;
         this.total = res.total;
+        // console.log(this.pageList);
       });
+    },
+    handleExport(id) {
+      this.download(
+        "basic/student/export",
+        {
+          ryb: id
+        },
+        `学生信息基础表.xlsx`
+      );
+    },
+    stugradeExport(id) {
+      this.download(
+        "basic/stugrade/export",
+        {
+          rybj: id
+        },
+        `学生成绩基础表.xlsx`
+      );
+    },
+    toPages(bjid) {
+      this.getConfigKey("class-grade").then(res => [
+        this.$router.push({
+          path: `${res.msg}?bjid=${bjid}`
+        })
+      ]);
     }
   }
 };
