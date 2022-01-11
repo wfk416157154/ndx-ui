@@ -8,7 +8,7 @@
           <p>开班人数 : {{item.bjrs}}</p>
           <p>
             教材 :
-            <el-link type="success" @click="toPage('teacherTeachingHome',item.id)">教学计划</el-link>
+            <el-button type="success" @click="toPage('teacherTeachingHome',item.id)">教学计划</el-button>
           </p>
           <div>
             <p>开班照</p>
@@ -33,36 +33,41 @@
             </div>
           </div>
           <div>
-            <el-link
+            <el-button
               style="margin-right:10px"
               type="success"
               @click="toPage('student',item.id)"
-            >学生信息</el-link>
-            <el-link
+            >学生信息</el-button>
+            <el-button
               style="margin-right:10px"
               type="success"
               @click="toPage('getSstugrade',item.id)"
-            >学生成绩</el-link>
-            <el-link
+            >学生成绩</el-button>
+            <el-button
               style="margin-right:10px"
               type="success"
               @click="toPage('viewcCassCourseTeacher',item.id)"
-            >班级课表</el-link>
-            <el-link
+            >班级课表</el-button>
+            <el-button
               style="margin-right:10px"
               type="success"
               @click="toPage('classPerformance',item.id)"
-            >班级成绩</el-link>
+            >班级成绩</el-button>
           </div>
         </li>
         <li class="class-wrap">
           <h2>通知</h2>
-          <ul style="list-style:none;">
+          <ul style="list-style:none; font-size:20px;">
             <li v-for="(item,index) in messageList" :key="index">
-              <p
-                style="cursor: pointer;"
+              <el-link
+                v-if="item.messageStatus == 0 || item.messageStatus == 3 "
+                type="danger"
                 @click="getMessageDetails(item.xxnr)"
-              >{{statusFormat(item)}} {{item.createTime}}</p>
+              >{{statusFormat(item)}} {{item.createTime}}</el-link>
+              <el-link
+                v-else
+                @click="getMessageDetails(item.xxnr)"
+              >{{statusFormat(item)}} {{item.createTime}}</el-link>
             </li>
           </ul>
           <pagination
@@ -78,18 +83,18 @@
     <div class="bottom-passageway">
       <h2>快速通道</h2>
       <div>
-        <el-link style="margin-right:10px" type="success" @click="toPage('log')">填写工作日志</el-link>
-        <el-link
+        <el-button style="margin-right:10px" type="success" @click="toPage('log')">填写工作日志</el-button>
+        <el-button
           style="margin-right:10px"
           type="success"
           @click="toPage('lessonPreparationHome')"
-        >备课</el-link>
-        <el-link style="margin-right:10px" type="success" @click="toPage('teacherBx')">报销</el-link>
-        <el-link style="margin-right:10px" type="success" @click="toPage('applyPaper')">试卷管理</el-link>
-        <el-link style="margin-right:10px" type="success" @click="toPage('train-index')">培训管理</el-link>
-        <el-link style="margin-right:10px" type="success" @click="toPage('pybc-index')">培优补差</el-link>
-        <el-link style="margin-right:10px" type="success" @click="toPage('task-log-index')">作业日志</el-link>
-        <el-link style="margin-right:10px" type="success" @click="toPage('jfzlFile')">教辅资料</el-link>
+        >备课</el-button>
+        <el-button style="margin-right:10px" type="success" @click="toPage('teacherBx')">报销</el-button>
+        <el-button style="margin-right:10px" type="success" @click="toPage('applyPaper')">试卷管理</el-button>
+        <el-button style="margin-right:10px" type="success" @click="toPage('train-index')">培训管理</el-button>
+        <el-button style="margin-right:10px" type="success" @click="toPage('pybc-index')">培优补差</el-button>
+        <el-button style="margin-right:10px" type="success" @click="toPage('task-log-index')">作业日志</el-button>
+        <el-button style="margin-right:10px" type="success" @click="toPage('jfzlFile')">教辅资料</el-button>
       </div>
     </div>
 
