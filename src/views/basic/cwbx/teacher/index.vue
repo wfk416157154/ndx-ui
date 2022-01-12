@@ -131,7 +131,7 @@
               <td class="tds">报销人</td>
               <td>{{form.applyName}}</td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td class="tds">区域负责人</td>
               <td>
                 <el-form-item prop="areaId" label-width="0">
@@ -145,7 +145,7 @@
                   </el-select>
                 </el-form-item>
               </td>
-            </tr>
+            </tr>-->
             <tr>
               <td class="tds">所属班级</td>
               <td>
@@ -440,6 +440,9 @@ export default {
     });
     listBjclass().then(res => {
       this.bjlist = res.rows;
+      if (this.bjlist.length == 1) {
+        this.form.departName = this.bjlist[0].id;
+      }
     });
   },
   mounted() {
@@ -553,6 +556,17 @@ export default {
               return;
             }
           }
+          // qyfzrid
+          this.bjlist.forEach(value => {
+            if (this.form.departName == value.rybjmc) {
+              this.form.areaId = value.qyfzrid;
+            }
+          });
+          this.getListAreaManager.forEach(value => {
+            if (this.form.areaId == value.id) {
+              this.form.areaName = value.xm;
+            }
+          });
           if (this.form.id) {
             editExpense(this.form).then(res => {
               this.msgSuccess("成功 : 保存成功");
