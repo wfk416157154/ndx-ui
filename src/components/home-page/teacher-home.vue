@@ -64,13 +64,13 @@
                 type="danger"
                 icon="el-icon-warning"
                 @click="getMessageDetails(item.xxnr)"
-              >{{statusFormat(item)}} {{item.createTime}}</el-link>
+              >{{statusFormat(item)}} -主题:{{item.xxbt}}-通知时间:{{item.createTime}}</el-link>
               <el-link
                 v-else
                 icon="el-icon-success"
                 type="success"
                 @click="getMessageDetails(item.xxnr)"
-              >{{statusFormat(item)}} {{item.createTime}}</el-link>
+              >{{statusFormat(item)}} -主题:{{item.xxbt}}-通知时间:{{item.createTime}}</el-link>
             </li>
           </ul>
           <pagination
