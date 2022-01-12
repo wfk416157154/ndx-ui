@@ -3,15 +3,15 @@
     <div class="top-info">
       <ul style="list-style:none;" class="clearfix">
         <li class="class-wrap" v-for="(item,index) in pageList" :key="index">
-          <h3>{{item.rybjmc}}</h3>
-          <p>开班时间 : {{item.kbsj}}</p>
-          <p>开班人数 : {{item.bjrs}}</p>
+          <h2 style="margin-top: 1px">{{item.rybjmc}}</h2>
+          <p><span style="font-weight: bold">开班时间</span> : {{item.kbsj}}</p>
+          <p><span style="font-weight: bold">开班人数</span> : {{item.bjrs}}</p>
           <p>
-            教材 :
-            <el-button type="success" @click="toPage('teacherTeachingHome',item.id)">教学计划</el-button>
+            <span style="font-weight: bold">教材</span> :{{item.jcmc}}
+            <el-button style="margin-left: 44%" type="primary" icon="el-icon-date" @click="toPage('teacherTeachingHome',item.id)">教学计划</el-button>
           </p>
           <div>
-            <p>开班照</p>
+            <p><span style="font-weight: bold">开班照</span></p>
             <div>
               <el-image
                 v-for="(list,j) in item.kbzArr"
@@ -21,7 +21,7 @@
                 :preview-src-list="item.kbzArr"
               ></el-image>
             </div>
-            <p>英语成绩</p>
+            <p><span style="font-weight: bold">英语成绩</span></p>
             <div>
               <el-image
                 v-for="(list,i) in item.jtzArr"
@@ -34,38 +34,41 @@
           </div>
           <div>
             <el-button
-              style="margin-right:10px"
-              type="success"
+              icon="el-icon-user"
+              type="primary"
               @click="toPage('student',item.id)"
             >学生信息</el-button>
             <el-button
-              style="margin-right:10px"
-              type="success"
+              icon="el-icon-s-custom"
+              type="danger"
               @click="toPage('getSstugrade',item.id)"
             >学生成绩</el-button>
             <el-button
-              style="margin-right:10px"
-              type="success"
+              icon="el-icon-s-grid"
+              type="warning"
               @click="toPage('viewcCassCourseTeacher',item.id)"
             >班级课表</el-button>
             <el-button
-              style="margin-right:10px"
-              type="success"
+              icon="el-icon-school"
+              type="danger"
               @click="toPage('classPerformance',item.id)"
             >班级成绩</el-button>
           </div>
         </li>
         <li class="class-wrap">
-          <h2>通知</h2>
-          <ul style="list-style:none; font-size:20px;">
+          <h2 style="margin-top: 1px">通知</h2>
+          <ul style="list-style:none; font-size:25px;">
             <li v-for="(item,index) in messageList" :key="index">
               <el-link
                 v-if="item.messageStatus == 0 || item.messageStatus == 3 "
                 type="danger"
+                icon="el-icon-warning"
                 @click="getMessageDetails(item.xxnr)"
               >{{statusFormat(item)}} {{item.createTime}}</el-link>
               <el-link
                 v-else
+                icon="el-icon-success"
+                type="success"
                 @click="getMessageDetails(item.xxnr)"
               >{{statusFormat(item)}} {{item.createTime}}</el-link>
             </li>
@@ -83,26 +86,25 @@
     <div class="bottom-passageway">
       <h2>快速通道</h2>
       <div>
-        <el-button style="margin-right:10px" type="success" @click="toPage('log')">填写工作日志</el-button>
+        <el-button icon="el-icon-edit" type="primary" @click="toPage('log')">填写工作日志</el-button>
         <el-button
-          style="margin-right:10px"
-          type="success"
+          icon="el-icon-s-order"
+          type="primary"
           @click="toPage('lessonPreparationHome')"
-        >备课</el-button>
-        <el-button style="margin-right:10px" type="success" @click="toPage('teacherBx')">报销</el-button>
-        <el-button style="margin-right:10px" type="success" @click="toPage('applyPaper')">试卷管理</el-button>
-        <el-button style="margin-right:10px" type="success" @click="toPage('train-index')">培训管理</el-button>
-        <el-button style="margin-right:10px" type="success" @click="toPage('pybc-index')">培优补差</el-button>
-        <el-button style="margin-right:10px" type="success" @click="toPage('task-log-index')">作业日志</el-button>
-        <el-button style="margin-right:10px" type="success" @click="toPage('jfzlFile')">教辅资料</el-button>
+        >备课主页</el-button>
+        <el-button icon="el-icon-s-promotion" type="warning" @click="toPage('teacherBx')">报销主页</el-button>
+        <el-button icon="el-icon-document-copy" type="success" @click="toPage('applyPaper')">试卷管理</el-button>
+        <el-button icon="el-icon-s-platform" type="success" @click="toPage('train-index')">培训管理</el-button>
+        <el-button icon="el-icon-s-check" type="primary" @click="toPage('pybc-index')">培优补差</el-button>
+        <el-button icon="el-icon-edit-outline" type="primary" @click="toPage('task-log-index')">作业日志</el-button>
+        <el-button icon="el-icon-folder-opened" type="success" @click="toPage('jfzlFile')">教辅资料</el-button>
       </div>
     </div>
 
-    <el-dialog title="消息" :visible.sync="dialogFormVisible">
+    <el-dialog title="消息查看" :visible.sync="dialogFormVisible">
       <div v-html="messageDetails"></div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">关闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -171,9 +173,9 @@ export default {
   height: 100%;
   .top-info {
     .class-wrap {
-      width: 30%;
+      width: 40%;
       height: 100%;
-      border: 1px solid #aaa;
+      border: 2px solid #aaa;
       padding: 10px;
       float: left;
       margin-left: 20px;
