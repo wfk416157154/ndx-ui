@@ -149,7 +149,37 @@
       </div>
       <div class="outline-list">
         <ul style="list-style : none">
-          <li class="list">1</li>
+          <li class="list">
+            <h4>当前进度教学计划</h4>
+            <div class="current-course-progress">
+              <div class="left">
+                <el-tree
+                  node-key="id"
+                  ref="dqtree"
+                  :highlight-current="true"
+                  :default-expanded-keys="dqDefaultExpandedKeys"
+                  :data="dqTreeListTeacherData"
+                  :props="dqDefaultProps"
+                  @node-click="dqHandleNodeClick"
+                ></el-tree>
+              </div>
+              <div class="right">
+                <div
+                  class="right-main"
+                  v-for="(item,index) in dqTemplatetreeListTeacher"
+                  :key="index"
+                >
+                  <template v-if="dqTemplatetreeListTeacher">
+                    <span
+                      style="color :#67C23A;margin : 0;padding : 0"
+                      v-if="item.isLastkc == '1'"
+                    >{{item.name}}</span>
+                    <span style="color : #303133;margin : 0;padding : 0" v-else>{{item.name}}</span>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </li>
           <li class="list">
             <h4>当前备课进度</h4>
             <div class="wrap-item">
@@ -267,6 +297,7 @@
 
 <script>
 import { listBjclass } from "@/api/basic/bjclass";
+import { topHalfQuery, lowerHalf } from "@/api/teaching/generate";
 import {
   treeListTeacher,
   prepareLessons,
@@ -332,6 +363,13 @@ export default {
       nianji: [],
       defaultExpandedKeys: [],
       fxDefaultExpandedKeys: [],
+      dqTreeListTeacherData: [],
+      dqDefaultExpandedKeys: [],
+      dqTemplatetreeListTeacher: [],
+      dqDefaultProps: {
+        children: "children",
+        label: "name"
+      },
       templatetreeListTeacher: null,
       fxTemplatetreeListTeacher: null
     };
@@ -377,6 +415,48 @@ export default {
           this.fxTemplatetreeListTeacher = null;
         }
       });
+      lowerHalf({
+        bjid: this.form.bjid,
+        lx: 1
+      }).then(res => {
+        if (res.code == 200) {
+          this.dqTreeListTeacherData = JSON.parse(
+            JSON.stringify(res.data.dqTreeTeachingClassPlan)
+          );
+          this.dqDataProcessing(
+            this.dqTreeListTeacherData,
+            "dqDefaultExpandedKeys",
+            "dqTemplatetreeListTeacher",
+            "dqtree"
+          );
+        }
+      });
+    },
+    dqDataProcessing(item, key, templates, trees) {
+      for (let i = 0; i < item.length; i++) {
+        if (item[i].children && item[i].children.length > 0) {
+          if (item[i].weight == "1") {
+            if (item[i].isLastdy == "1") {
+              this.$nextTick(() => {
+                this.$refs[trees].setCurrentKey(item[i].id);
+                this[key].push(item[i].id);
+              });
+              this[templates] = item[i].children;
+            }
+            item[i].ifChildren = item[i].children;
+            delete item[i].children;
+          } else {
+            this.dqDataProcessing(item[i].children, key, templates, trees);
+          }
+        }
+      }
+    },
+    dqHandleNodeClick(data) {
+      if (data.weight == "1") {
+        this.dqTemplatetreeListTeacher = data.ifChildren;
+      } else {
+        this.dqTemplatetreeListTeacher = null;
+      }
     },
     dataProcessing(item) {
       for (let i = 0; i < item.length; i++) {
@@ -594,6 +674,21 @@ export default {
           margin-top: 30px;
           padding: 20px;
           box-sizing: border-box;
+          .current-course-progress {
+            display: flex;
+            justify-content: space-between;
+            .left {
+              width: 30%;
+            }
+            .right {
+              width: 68%;
+              .right-main {
+                display: flex;
+                justify-content: space-between;
+                margin: 5px 0px;
+              }
+            }
+          }
           .wrap-item {
             width: 100%;
             display: flex;

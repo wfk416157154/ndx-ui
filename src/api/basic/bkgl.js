@@ -39,7 +39,7 @@ export function prepareSupervisorData(query) {
 // 修改备课
 export function editPrepareLessons(data) {
   return request({
-    url: '/basic/prepareLessons',
+    url: '/basic/prepareLessons/teacherEdit',
     method: 'put',
     data: data
   })
