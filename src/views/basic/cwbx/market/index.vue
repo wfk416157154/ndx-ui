@@ -56,7 +56,7 @@
           <span style="margin-left: 10px">{{ scope.row.departName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报销类型" width="180" prop="expenseData" :formatter="statusFormat"></el-table-column>
+      <el-table-column label="报销类型" width="180" prop="statusFormat" :formatter="statusFormat"></el-table-column>
       <el-table-column label="发生时间" width="180">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.happenTime }}</span>
@@ -288,8 +288,8 @@
                   <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt />
                   </el-dialog>
-                </div> -->
-                <div  v-for="(item,index) in form.photoFileList" :key="index">
+                </div>-->
+                <div v-for="(item,index) in form.photoFileList" :key="index">
                   <el-image
                     style="width: 100px; height: 100px"
                     :src="item.wjlj"
@@ -579,7 +579,7 @@ export default {
       });
     },
     statusFormat(row, column) {
-      return this.selectDictLabel(this.expenseType, row.expenseData);
+      return this.selectDictLabel(this.expenseType, row.expenseType);
     },
     getExpenseAuditStatus(row, column) {
       return this.selectDictLabel(this.expenseAuditStatus, row.auditStatus);
