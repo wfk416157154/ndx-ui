@@ -103,15 +103,28 @@
         </template>
       </el-table-column>
       <el-table-column label="资料标题" align="center" prop="zlbt" />
-      <el-table-column label="文件下载" align="center" prop="wjidArr" width="280px">
+      <el-table-column label="课件下载(点击下载)" align="center" prop="wjidArr" width="250px">
         <template slot-scope="scope">
-          <el-button
+          <el-link
+            type="danger"
             size="mini"
-            type="text"
+            icon="el-icon-bottom"
             v-for="(item,index) in scope.row.wjidArr"
             :key="index"
-            @click="downloadFileName(item.wjmc)"
-          >{{item.wjmc}}</el-button>
+            @click="downloadFileName(item)"
+          >{{item.wjmc}}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column label="考卷下载(点击下载)" align="center" prop="kjidArr" width="250px">
+        <template slot-scope="scope">
+          <el-link
+            type="danger"
+            size="mini"
+            icon="el-icon-bottom"
+            v-for="(item,index) in scope.row.kjidArr"
+            :key="index"
+            @click="downloadAndAddExam(scope.row,item)"
+          >{{item.wjmc}}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
@@ -188,7 +201,7 @@
         <el-form-item label="数字课程" prop="dataOrder">
           <el-input-number v-model="form.dataOrder" :min="0" :max="100" placeholder="请输入数字课程" />
         </el-form-item>
-        <el-form-item label="资料上传">
+        <el-form-item label="课件上传">
           <el-upload
             ref="upload"
             :limit="maxUploadNum"
@@ -201,6 +214,32 @@
             :on-success="handleFileSuccess"
             :auto-upload="true"
             :file-list="wjidFile"
+            drag
+            v-loading="fullscreenLoading"
+            element-loading-text="正在进行上传·······"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              将文件拖到此处，或
+              <em>点击上传</em>
+            </div>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="考卷上传">
+          <el-upload
+            ref="upload"
+            :limit="maxUploadNum"
+            accept="*"
+            :headers="upload.headers"
+            :action="upload.url"
+            :disabled="upload.isUploading"
+            :on-remove="handleRemove"
+            :on-progress="handleFileUploadProgress"
+            :on-success="handleKjFileSuccess"
+            :auto-upload="true"
+            :file-list="kjidFile"
             drag
             v-loading="fullscreenLoading"
             element-loading-text="正在进行上传·······"
@@ -237,6 +276,13 @@
 </template>
 
 <script>
+  import {
+    listExaminationPaper,
+    getExaminationPaper,
+    delExaminationPaper,
+    addExaminationPaper,
+    updateExaminationPaper
+  } from "@/api/basic/examinationPaper";
 import {
   listJfzlFile,
   getJfzlFile,
@@ -315,11 +361,19 @@ export default {
       // 文件id数组
       wjidFile: [],
       // 最多上传的文件数量
-      maxUploadNum: 3,
+      maxUploadNum: 1,
       progressData: {},
       // 文件所属模块
       filessmk: "教辅资料",
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      // 考卷文件数组
+      kjidFile:[],
+      // 考试试卷查询参数
+      examQueryParams:{
+        bjid:null,
+        ksfw:null
+      }
+
     };
   },
   created() {
@@ -400,6 +454,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.wjidFile = [];
+      this.kjidFile = [];
       this.reset();
       this.open = true;
       this.title = "添加教辅资料";
@@ -412,6 +467,7 @@ export default {
         this.form = response.data;
         this.form.syfw = this.form.syfw.split(",");
         this.wjidFile = this.ifNullToNewArray(response.data.wjidArr);
+        this.kjidFile = this.ifNullToNewArray(response.data.kjidArr);
         this.open = true;
         this.title = "修改教辅资料";
       });
@@ -467,7 +523,7 @@ export default {
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;
     },
-    // 文件上传成功处理
+    // 课件上传成功处理
     handleFileSuccess(response, file, fileList) {
       this.ifFileLimit(fileList.length, " 个文件");
       this.upload.open = false;
@@ -479,6 +535,21 @@ export default {
         file.id = res.data.id;
         this.msgSuccess("文件上传成功");
         this.wjidFile = fileList;
+      });
+      this.$refs.upload.clearFiles();
+    },
+    // 考卷上传成功处理
+    handleKjFileSuccess(response, file, fileList) {
+      this.ifFileLimit(fileList.length, " 个文件");
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      let data = response.data;
+      data.kzzd1 = this.form.kzzd1 || secretKey();
+      this.form.kzzd1 = data.kzzd1;
+      addImg(data).then(res => {
+        file.id = res.data.id;
+        this.msgSuccess("文件上传成功");
+        this.kjidFile = fileList;
       });
       this.$refs.upload.clearFiles();
     },
@@ -504,15 +575,27 @@ export default {
         }
       });
     },
+    // 下载文件且添加试卷
+    downloadAndAddExam(row,item){
+      //this.downloadFileName(item)
+      this.getExaminationPaperList(row)
+    },
+    // 获取考试试卷数据
+    getExaminationPaperList(row){
+      console.log("row:",row)
+      listExaminationPaper(this.examQueryParams).then(response => {
+
+      });
+    },
     /** 下载操作 */
-    downloadFileName(fileName) {
+    downloadFileName(item) {
       this.progressData = {
         url: "file/filetable/download",
         params: {
           ssmk: this.filessmk,
-          wjmc: fileName
+          wjmc: item.wjmc
         },
-        filename: fileName
+        filename: item.wjmc
       };
       this.$nextTick(() => {
         this.$refs.progress.download();
