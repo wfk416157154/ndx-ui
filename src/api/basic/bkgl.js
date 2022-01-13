@@ -36,8 +36,17 @@ export function prepareSupervisorData(query) {
   })
 }
 
+
 // 修改备课
 export function editPrepareLessons(data) {
+  return request({
+    url: '/basic/prepareLessons',
+    method: 'put',
+    data: data
+  })
+}
+// 修改备课-老师
+export function lsEditPrepareLessons(data) {
   return request({
     url: '/basic/prepareLessons/teacherEdit',
     method: 'put',

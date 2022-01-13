@@ -300,7 +300,7 @@ import { addPrepareLessons } from "@/api/basic/lessonPreparationHome"; // ?
 import {
   listAcdemicDean,
   prepareLessonsDetails,
-  editPrepareLessons
+  lsEditPrepareLessons
 } from "@/api/basic/bkgl";
 export default {
   name: "prepareLessons",
@@ -505,11 +505,12 @@ export default {
     // 保存编辑
     editSubmit() {
       let { bkTpid, bkWjid, remark, id, kzzd4 } = this.form;
-      editPrepareLessons({ bkTpid, bkWjid, remark, id }).then(res => {
+      lsEditPrepareLessons({ bkTpid, bkWjid, remark, id }).then(res => {
         if (res.code == 200) {
           this.dialogFormVisible = false;
           this.form = {};
           this.msgSuccess("成功 : 保存成功");
+          this.getList();
         }
       });
     }

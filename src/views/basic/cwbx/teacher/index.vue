@@ -248,7 +248,7 @@
                 </el-form-item>
                 <br />
                 <br />
-                <h3>图片</h3>
+                <!-- <h3>图片</h3>
                 <div v-if="form.auditStatus == 1 ||form.auditStatus == 2 || form.auditStatus == 4">
                   <el-upload
                     :action="upload.imgUrl"
@@ -263,8 +263,8 @@
                   <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt />
                   </el-dialog>
-                </div>
-                <div v-else v-for="(item,index) in form.photoFileList" :key="index">
+                </div>-->
+                <div v-for="(item,index) in form.photoFileList" :key="index">
                   <el-image
                     style="width: 100px; height: 100px"
                     :src="item.wjlj"
@@ -277,7 +277,6 @@
                     class="upload-demo"
                     drag
                     :action="upload.imgUrl"
-                    accept=".doc, .docx"
                     :headers="upload.headers"
                     :on-preview="handlePictureCardPreview"
                     :on-remove="handleRemove"
@@ -291,7 +290,7 @@
                       将文件拖到此处，或
                       <em>点击上传</em>
                     </div>
-                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    <!-- <div class="el-upload__tip" slot="tip">只能上传.doc,.docx文件，且不超过500kb</div> -->
                   </el-upload>
                 </div>
                 <div v-else v-for="(item,index) in form.attachmentFileList" :key="++index">
@@ -319,6 +318,7 @@
                   type="success"
                   v-if="form.auditStatus == 1 || form.auditStatus == 2 || form.auditStatus == 4"
                   @click="saveSubit"
+                  v-prevent-re-click
                 >提 交</el-button>
                 <p v-else>已复审完成,不可修改</p>
               </td>
@@ -550,12 +550,12 @@ export default {
     saveSubit() {
       this.$refs.formName.validate(valid => {
         if (valid) {
-          if (this.form.invoiceFormat == 1) {
-            if (!this.form.photoFileId || !this.form.attachmentFileId) {
-              this.msgError("错误 : 附件必须上传图片和文件");
-              return;
-            }
-          }
+          // if (this.form.invoiceFormat == 1) {
+          //   if (!this.form.photoFileId || !this.form.attachmentFileId) {
+          //     this.msgError("错误 : 附件必须上传图片和文件");
+          //     return;
+          //   }
+          // }
           // qyfzrid
           this.bjlist.forEach(value => {
             if (this.form.departName == value.rybjmc) {
