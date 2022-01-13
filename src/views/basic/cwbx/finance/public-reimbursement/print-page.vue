@@ -112,14 +112,14 @@ export default {
     };
   },
   created() {
-    this.reimbursementPrint = JSON.parse(this.$route.query.item);
-    this.imgUrl = this.reimbursementPrint.photoFileList[0];
     this.getDicts("expense_type").then(response => {
       this.expenseType = response.data;
     });
     this.getDicts("expense_paytype").then(response => {
       this.expensePaytype = response.data;
     });
+    this.reimbursementPrint = JSON.parse(this.$route.query.item);
+    this.imgUrl = this.reimbursementPrint.photoFileList[0];
   },
   methods: {
     statusFormat() {
