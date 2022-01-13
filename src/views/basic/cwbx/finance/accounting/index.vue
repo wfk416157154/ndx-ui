@@ -125,7 +125,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        auditStatusArr: [2, 3, 5]
+        auditStatus: "2"
       },
       total: 0,
       listExpense: [],
@@ -144,7 +144,13 @@ export default {
       this.invoiceFormat = response.data;
     });
     this.getDicts("expense_audit_status").then(response => {
-      this.expenseAuditStatus = response.data;
+      this.expenseAuditStatus = [];
+      response.data.forEach(value => {
+        let son = ["2", "3", "5"];
+        if (son.indexOf(value.dictValue) != -1) {
+          this.expenseAuditStatus.push(value);
+        }
+      });
     });
     listAreaManager().then(res => {
       this.getListAreaManager = res.rows;
