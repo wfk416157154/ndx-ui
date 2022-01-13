@@ -8,7 +8,7 @@
         </div>
         <br />
         <br />
-        <div id="printRef">
+        <div id="printRef" style="text-align: center;font-size: 12px;">
           <table style="width : 100%;text-align:center" border="1" cellspacing="0">
             <tbody>
               <tr>
@@ -16,13 +16,13 @@
                 <td>
                   <div style="width:100%;display:flex">
                     <div
-                      style="width : 40%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 40%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >{{getExpensePaytype()}}</div>
                     <div
-                      style="width : 20%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 20%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >提交时间</div>
                     <div
-                      style="width : 40%;height : 60px ; line-height : 60px"
+                      style="width : 40%;height : 40px ; line-height : 40px"
                     >{{reimbursementPrint.createTime}}</div>
                   </div>
                 </td>
@@ -32,13 +32,13 @@
                 <td>
                   <div style="width:100%;display:flex">
                     <div
-                      style="width : 40%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 40%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >{{reimbursementPrint.applyName}}</div>
                     <div
-                      style="width : 20%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 20%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >所在部门</div>
                     <div
-                      style="width : 40%;height : 60px ; line-height : 60px"
+                      style="width : 40%;height : 40px ; line-height : 40px"
                     >{{reimbursementPrint.departName}}</div>
                   </div>
                 </td>
@@ -48,13 +48,13 @@
                 <td>
                   <div style="width:100%;display:flex">
                     <div
-                      style="width : 40%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 40%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >{{statusFormat()}}</div>
                     <div
-                      style="width : 20%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 20%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >发生时间</div>
                     <div
-                      style="width : 40%;height : 60px ; line-height : 60px"
+                      style="width : 40%;height : 40px ; line-height : 40px"
                     >{{reimbursementPrint.happenTime}}</div>
                   </div>
                 </td>
@@ -74,15 +74,15 @@
                 <td>
                   <div style="width:100%;display:flex">
                     <div
-                      style="width : 40%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 40%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >
                       {{reimbursementPrint.auditInitName}}
                       {{reimbursementPrint.auditInitTime}}
                     </div>
                     <div
-                      style="width : 20%;height : 60px ;border-right:2px solid #000; line-height : 60px"
+                      style="width : 20%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >复审</div>
-                    <div style="width : 40%;height : 60px ; line-height : 60px">
+                    <div style="width : 40%;height : 40px ; line-height : 40px">
                       {{reimbursementPrint.auditReviewName}}
                       {{reimbursementPrint.auditReviewTime}}
                     </div>
@@ -153,10 +153,10 @@ export default {
   }
   th,
   td {
-    // height: 60px;
+    // height: 40px;
   }
   .tds {
-    width: 25%;
+    width: 15%;
   }
 }
 </style>
