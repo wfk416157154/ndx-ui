@@ -224,14 +224,16 @@ export default {
     },
     distributionSubmit() {
       let trainAllocateVideosArr = [];
-      this.curriculumManageList.videoList.forEach(value => {
-        if (this.checkbox.indexOf(value.id) != -1) {
-          trainAllocateVideosArr.push({
-            videoId: value.id,
-            videoName: value.videoName
-          });
-        }
-      });
+      for (let i = 0; i < this.curriculumManageList.length; i++) {
+        this.curriculumManageList[i].videoList.forEach(value => {
+          if (this.checkbox.indexOf(value.id) != -1) {
+            trainAllocateVideosArr.push({
+              videoId: value.id,
+              videoName: value.videoName
+            });
+          }
+        });
+      }
       this.distributionForm.trainAllocateVideos = trainAllocateVideosArr;
       trainAllocate(this.distributionForm).then(res => {
         this.msgSuccess(res.msg);
