@@ -40,7 +40,7 @@
       </el-table-column>
       <el-table-column prop="lsxm" label="课表">
         <template slot-scope="scope">
-          <el-link type="success">课表下载</el-link>
+          <el-link type="success" @click="timetableExport(scope.row)">课表下载</el-link>
         </template>
       </el-table-column>
       <el-table-column prop="lsxm" label="班级成绩">
@@ -113,6 +113,16 @@ export default {
           rybj: id
         },
         `学生成绩基础表.xlsx`
+      );
+    },
+    timetableExport(bj) {
+      this.download(
+        "basic/classCourse/exportClassCourse",
+        {
+          bjid: bj.id,
+          enableOnly: 1
+        },
+        `${bj.rybjmc}课表.xlsx`
       );
     },
     toPages(bjid) {
