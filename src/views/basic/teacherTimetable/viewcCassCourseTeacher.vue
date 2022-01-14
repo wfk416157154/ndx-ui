@@ -1,6 +1,7 @@
 <template>
   <div class="studentAttendance">
     <h2 style="color : #606266">课表</h2>
+    <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport">课表导出</el-button>
     <el-form>
       <el-form-item label="日语班" label-width="100px">
         <el-select v-model="queryParams.bjid" @change="getList" filterable placeholder="请选择班级名称">
@@ -89,7 +90,8 @@ export default {
       listBjclass: [],
       queryParams: {
         bjid: this.$route.query.bjid
-      }
+      },
+      classNmae:""
     };
   },
   created() {
@@ -111,6 +113,21 @@ export default {
     },
     statusFormat(row, column) {
       return this.selectDictLabel(this.kcType, row.kcType);
+    },
+    handleExport() {
+      this.listBjclass.forEach(value=>{
+        if(value.id == this.$route.query.bjid){
+           this.classNmae = value.rybjmc
+        }
+      })
+      this.download(
+        "basic/classCourse/exportClassCourse",
+        {
+          bjid: this.$route.query.bjid,
+          enableOnly: 1
+        },
+        `${this.classNmae}-课表.xlsx`
+      );
     }
   }
 };
