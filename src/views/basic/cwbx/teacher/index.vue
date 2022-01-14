@@ -56,7 +56,13 @@
           <span style="margin-left: 10px">{{ scope.row.departName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报销类型" width="180" prop="statusFormat" :formatter="statusFormat"></el-table-column>
+      <el-table-column label="报销类型" width="180" prop="expenseType">
+        <template slot-scope="scope">
+          <span
+            style="margin-left: 10px"
+          >{{ statusFormat(scope.row.expenseType)}}/{{statusFormatData(scope.row.expenseData)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="发生时间" width="180">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.happenTime }}</span>
@@ -541,8 +547,11 @@ export default {
       let hz = file.name.substr(file.name.lastIndexOf("."));
       this.fileForm.renameFileName = this.form.applyName + hz;
     },
-    statusFormat(row, column) {
-      return this.selectDictLabel(this.expenseType, row.expenseType);
+    statusFormat(expenseType) {
+      return this.selectDictLabel(this.expenseType, expenseType);
+    },
+    statusFormatData(expenseData) {
+      return this.selectDictLabel(this.expenseDataList, expenseData);
     },
     getExpenseAuditStatus(row, column) {
       return this.selectDictLabel(this.expenseAuditStatus, row.auditStatus);

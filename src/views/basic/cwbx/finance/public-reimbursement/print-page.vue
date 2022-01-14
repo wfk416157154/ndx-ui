@@ -49,7 +49,7 @@
                   <div style="width:100%;display:flex">
                     <div
                       style="width : 40%;height : 40px ;border-right:2px solid #000; line-height : 40px"
-                    >{{statusFormat()}}</div>
+                    >{{statusFormat()}} - {{statusFormatData()}}</div>
                     <div
                       style="width : 20%;height : 40px ;border-right:2px solid #000; line-height : 40px"
                     >发生时间</div>
@@ -108,6 +108,7 @@ export default {
       reimbursementPrint: {},
       imgUrl: {},
       expenseType: [],
+      expenseDataList: [],
       expensePaytype: []
     };
   },
@@ -115,17 +116,28 @@ export default {
     this.getDicts("expense_type").then(response => {
       this.expenseType = response.data;
     });
+    this.getDicts("expense_data").then(response => {
+      this.expenseDataList = response.data;
+    });
     this.getDicts("expense_paytype").then(response => {
       this.expensePaytype = response.data;
     });
     this.reimbursementPrint = JSON.parse(this.$route.query.item);
-    this.imgUrl = this.reimbursementPrint.photoFileList[0];
+    if (this.reimbursementPrint.photoFileList.length > 0) {
+      this.imgUrl = this.reimbursementPrint.photoFileList[0];
+    }
   },
   methods: {
     statusFormat() {
       return this.selectDictLabel(
         this.expenseType,
         this.reimbursementPrint.expenseType
+      );
+    },
+    statusFormatData() {
+      return this.selectDictLabel(
+        this.expenseDataList,
+        this.reimbursementPrint.expenseData
       );
     },
     getExpensePaytype() {
