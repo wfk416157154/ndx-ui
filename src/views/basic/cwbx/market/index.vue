@@ -82,7 +82,11 @@
       <el-table-column label="附件" width="200">
         <template slot-scope="scope">
           <div v-for="(item,index) in scope.row.attachmentFileList" :key="index">
-            <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
+            <el-link
+              type="primary"
+              @click="openDocument(item.wjlj)"
+              v-if="item.fileType == 'pdf'"
+            >{{item.wjmc}}</el-link>
           </div>
         </template>
       </el-table-column>
@@ -494,7 +498,8 @@ export default {
       });
     },
     openDocument(path) {
-      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+      // window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+      window.open(path);
     },
     handleView(index, row) {
       this.form = row;
