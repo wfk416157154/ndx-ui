@@ -574,7 +574,8 @@ export default {
       if (regImg.test(file.type) || regPdf.test(file.type)) {
         this.fileForm.renameFileName = "";
         let hz = file.name.substr(file.name.lastIndexOf("."));
-        this.fileForm.renameFileName = this.form.applyName + hz;
+        this.fileForm.renameFileName =
+          this.form.applyName + this.parseTime(new Date()) + hz;
       } else {
         this.msgError("只能上传图片或者pdf格式文件");
         return false;
