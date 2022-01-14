@@ -569,9 +569,16 @@ export default {
       });
     },
     beforeFile(file) {
-      this.fileForm.renameFileName = "";
-      let hz = file.name.substr(file.name.lastIndexOf("."));
-      this.fileForm.renameFileName = this.form.applyName + hz;
+      let regImg = /image/g;
+      let regPdf = /pdf/g;
+      if (regImg.test(file.type) || regPdf.test(file.type)) {
+        this.fileForm.renameFileName = "";
+        let hz = file.name.substr(file.name.lastIndexOf("."));
+        this.fileForm.renameFileName = this.form.applyName + hz;
+      } else {
+        this.msgError("只能上传图片或者pdf格式文件");
+        return false;
+      }
     },
     imgSuccess(response, file, fileList) {
       let data = response.data;

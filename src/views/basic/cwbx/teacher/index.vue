@@ -547,10 +547,17 @@ export default {
         file.id = res.data.id;
       });
     },
-    beforeFile(file, fileList) {
-      this.fileForm.renameFileName = "";
-      let hz = file.name.substr(file.name.lastIndexOf("."));
-      this.fileForm.renameFileName = this.form.applyName + hz;
+    beforeFile(file) {
+      let regImg = /image/g;
+      let regPdf = /pdf/g;
+      if (regImg.test(file.type) || regPdf.test(file.type)) {
+        this.fileForm.renameFileName = "";
+        let hz = file.name.substr(file.name.lastIndexOf("."));
+        this.fileForm.renameFileName = this.form.applyName + hz;
+      } else {
+        this.msgError("只能上传图片或者pdf格式文件");
+        return false;
+      }
     },
     statusFormat(expenseType) {
       return this.selectDictLabel(this.expenseType, expenseType);
