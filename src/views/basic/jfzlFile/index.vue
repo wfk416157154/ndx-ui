@@ -272,6 +272,25 @@
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="班级选择" :visible.sync="dialogBjFormVisible" width="30%">
+      <div>
+        <span style="">提示：请选择该考卷的使用班级</span>
+        <el-select v-model="rybjObj" placeholder="请选择该考卷的使用班级" @change="chooseBjChange" >
+          <el-option
+            v-for="item in bjclassList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item"
+          ></el-option>
+        </el-select>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogBjFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitBjidBtn">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -290,6 +309,7 @@ import {
   addJfzlFile,
   updateJfzlFile
 } from "@/api/basic/jfzlFile";
+  import { listBjclass } from "@/api/basic/bjclass";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
@@ -302,6 +322,8 @@ export default {
       loading: true,
       importBtn: false,
       fullscreenLoading: false,
+      // 日语班级对象
+      rybjObj:null,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -372,8 +394,15 @@ export default {
       examQueryParams:{
         bjid:null,
         ksfw:null
-      }
-
+      },
+      // 班级数据集合
+      bjclassList:[],
+      // 选择日语班级的对话框
+      dialogBjFormVisible:false,
+      // 文件对象
+      fileObj:null,
+      // 考卷对象
+      examForm:{},
     };
   },
   created() {
@@ -577,15 +606,61 @@ export default {
     },
     // 下载文件且添加试卷
     downloadAndAddExam(row,item){
-      //this.downloadFileName(item)
-      this.getExaminationPaperList(row)
+      let num=row.zlbt.indexOf("第")
+      if(num<0){
+        this.msgError("提示:该考卷无法下载，请联系管理员修改【资料标题】,该标题中必须包含“第”字")
+        return
+      }
+      let ksfw=row.zlbt.substr(num,row.zlbt.length)
+      this.rybjObj=null
+      this.examQueryParams.ksfw=ksfw // 考试范围
+      this.fileObj=item  // 文件对象
+      listBjclass().then(res => {
+        this.bjclassList=res.rows
+        this.resetExamForm() // 清空考卷对象
+        this.examForm.ksfw=ksfw
+        if(res.total>1){// 当有两个以上的班级
+          this.dialogBjFormVisible=true
+        }else if(res.total==1){ // 当只有一个班级
+          let obj=res.rows[0]
+          this.examQueryParams.bjid=obj.id // 班级id
+          this.examForm.bjid=obj.id
+          this.examForm.bjmc=obj.rybjmc // 日语班级名称
+          this.examForm.jcid=obj.jcid // 教材id
+          this.examForm.jcmc=obj.jcmc // 教材名称
+          this.getExaminationPaperList()
+          this.downloadFileName(this.fileObj)
+        }
+      });
     },
     // 获取考试试卷数据
-    getExaminationPaperList(row){
-      console.log("row:",row)
-      listExaminationPaper(this.examQueryParams).then(response => {
-
+    getExaminationPaperList(){
+      listExaminationPaper(this.examQueryParams).then(res => {
+        if(res.total<1){
+          addExaminationPaper(this.examForm).then(res => {
+            this.msgSuccess("考卷新增成功");
+          });
+        }
       });
+    },
+    // 选择班级后触发
+    chooseBjChange(obj){
+      this.rybjObj=obj
+      this.examForm.bjid=obj.id // 班级id
+      this.examForm.bjmc=obj.rybjmc // 日语班级名称
+      this.examForm.jcid=obj.jcid // 教材id
+      this.examForm.jcmc=obj.jcmc // 教材名称
+    },
+    // 提交选择班级的对话框
+    submitBjidBtn(){
+      if(this.rybjObj){
+        this.examQueryParams.bjid=this.rybjObj.id
+        this.getExaminationPaperList()
+        this.downloadFileName(this.fileObj)
+        this.dialogBjFormVisible=false // 隐藏对话框
+      }else{
+        this.msgError("提示：请选择该考卷的使用班级 ");
+      }
     },
     /** 下载操作 */
     downloadFileName(item) {
@@ -603,7 +678,37 @@ export default {
     },
     callBack(data) {
       console.log("data:", data);
-    }
+    },
+    resetExamForm(){
+      this.examForm={
+        id: null,
+        bjid: null,
+        bjmc: null,
+        lsid: this.$store.state.user.glrid,
+        kslx: "1",
+        ksnr: null,
+        ksfw: null,
+        jcid: null,
+        jcmc: null,
+        jwsjzt: "1",// 老师试卷状态:其他试卷
+        lssjzt: "4",// //教务试卷状态:默认已发送
+        kskssj: null,
+        ksjssj: null,
+        kssjwb: null,
+        fssj: null,
+        fsrid: null,
+        fsrmc: null,
+        status: "1",
+        remark: "下载考卷后系统自动添加的其他试卷",
+        dataOrder: null,
+        addOrUpdateTime: null,
+        kzzd1: null,
+        kzzd2: "1",// 未上传考试成绩
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null
+      }
+    },
   }
 };
 </script>
