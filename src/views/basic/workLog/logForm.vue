@@ -536,6 +536,8 @@ export default {
       // 是否复习
       sffx: false,
       dialogUploadVideoisible: false,
+      formLoading:null,
+      isLoad:false,
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e7;
@@ -571,6 +573,16 @@ export default {
     this.initGetListExaminationPaper();
   },
   methods: {
+    openFullScreen() {
+      if(this.isLoad){
+        this.formLoading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+      }
+    },
     //视频上传
     uploadVideo() {
       this.dialogUploadVideoisible = true;
@@ -619,8 +631,17 @@ export default {
       // 获取班级信息
       listBjclass().then(res => {
         this.getListBjclass = res.rows;
-        if (res.rows.length >= 1) {
+        if (res.rows.length == 1) {
+          this.isLoad=true
+          this.openFullScreen()
           this.bjNameId = res.rows[0].id;
+        }else if(res.total>1){
+          // 添加页面
+          if (this.$route.params.id == ":id") {
+            this.msgInfo("请手动选择班级！")
+          }
+        }else{
+          this.msgError("请联系管理员分配班级！")
         }
       });
     },
@@ -659,6 +680,7 @@ export default {
             this.msgError("当前日志只能预览,不可编辑");
             this.$refs.prent.style.pointerEvents = "none";
           }
+          this.bjNameId=res.rows[0].bjid
         });
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
@@ -687,16 +709,17 @@ export default {
           }
         });
       } else {
-        listBjclass().then(res => {
-          if (res.rows.length > 0) {
-            this.bjNameId = res.rows[0].id;
-            this.getWorkLogTemplateQuery($false);
-          }
-        });
+        if(this.bjNameId){
+          this.getWorkLogTemplateQuery($false);
+        }
       }
     },
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery($false) {
+      if(!this.isLoad){
+        this.isLoad=true
+        this.openFullScreen()
+      }
       this.initGetListExaminationPaper();
       if ($false == "false") return;
       this.getWorkLogStatusQuery();
@@ -757,6 +780,8 @@ export default {
             this.files2 = [];
             break;
         }
+        this.formLoading.close()
+        this.isLoad=false
       });
     },
     // 查询课中的课表模板
