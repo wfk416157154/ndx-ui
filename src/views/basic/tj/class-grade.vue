@@ -14,30 +14,12 @@
         <el-button type="warning" plain @click="onPrintJs">打印</el-button>
       </div>
       <br>
-      <div id="printRef">
       <li v-for="(item,index) in listClassGradeItem" :key="index" >
-        <div class="wrap-left">
-          <div class="student-information">
-            <h4>老师姓名 :</h4>&nbsp;
-            <span>{{item.lsxm}}</span>
-          </div>
-          <div class="student-information">
-            <h4>所属校区 :</h4>&nbsp;
-            <span>{{item.xqmc}}</span>
-          </div>
-          <div class="student-information">
-            <h4>日语班级 :</h4>&nbsp;
-            <span>{{item.rybj}}</span>
-          </div>
-          <div class="student-information">
-            <h4>进班平均英语成绩 :</h4>&nbsp;
-            <span>{{item.jbpjyycj}}</span>
-          </div>
-          <div class="student-information" style="float :right">
-            <!-- <el-button type="primary" plain @click="toPerformanceAnalysis(item.bjid)">成绩分析</el-button> -->
-          </div>
-        </div>
-        <div class="wrap-right">
+        <div class="wrap-right" id="printRef">
+            <span style="float: left"><font style="font-weight: bold">老师姓名 :</font>{{item.lsxm}}</span>
+            <span style="float: left;margin-left: 20px"><font style="font-weight: bold">所属校区 :</font>{{item.xqmc}}</span>
+            <span style="float: left;margin-left: 20px"><font style="font-weight: bold">日语班级 :</font>{{item.rybj}}</span>
+            <span style="float: left;margin-left: 20px"><font style="font-weight: bold">进班平均英语成绩 :</font>{{item.jbpjyycj}}</span>
           <div class="wrap-chart">
             <div
               :id="index"
@@ -51,7 +33,6 @@
           </div>
         </div>
       </li>
-      </div>
     </ul>
   </div>
 </template>
@@ -380,6 +361,7 @@ export default {
         width: 100%;
         height: 100%;
         float: left;
+        margin-left: 10px;
         .wrap-conversion {
           width: 100%;
           height: 40px;
