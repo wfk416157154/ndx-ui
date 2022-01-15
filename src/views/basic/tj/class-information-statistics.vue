@@ -2,16 +2,30 @@
   <div class="class-information-statistics">
     <el-form :inline="true" :model="form" class="demo-form-inline">
       <el-form-item label="学校">
-        <el-input v-model="form.xqmc" placeholder="请输入学校"></el-input>
+        <el-select v-model="form.xqmc" filterable placeholder="请选择校区名称" clearable>
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.xxmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="班级">
-        <el-input v-model="form.rybjmc" placeholder="请输入班级"></el-input>
+        <el-select v-model="form.rybjmc" filterable placeholder="请选择日语班级" clearable>
+          <el-option
+            v-for="item in pageList "
+            :key="item.id"
+            :label="item.rybjmc"
+            :value="item.rybjmc"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="老师">
-        <el-input v-model="form.lsxm" placeholder="请输入老师"></el-input>
+        <el-input v-model="form.lsxm" placeholder="可模糊查询老师姓名"></el-input>
       </el-form-item>
       <el-form-item label="届数">
-        <el-input v-model="form.rybjmc" placeholder="请输入届数"></el-input>
+        <el-input v-model="form.jieshu" placeholder="请输入届数"></el-input>
       </el-form-item>
       <el-form-item label="班级状态">
         <el-select v-model="form.status" placeholder="请选择毕业状态" clearable size="small">
@@ -35,25 +49,25 @@
       <el-table-column prop="bjrs" label="班级人数">
         <template slot-scope="scope">
           <div v-if="scope.row.bjrs == 0">{{scope.row.bjrs}}</div>
-          <el-link v-else type="success" @click="handleExport(scope.row.id)">{{scope.row.bjrs}}</el-link>
+          <el-link v-else type="success" @click="handleExport(scope.row)">{{scope.row.bjrs}}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="lsxm" label="课表">
+      <el-table-column  label="课表">
         <template slot-scope="scope">
           <el-link type="success" @click="timetableExport(scope.row)">课表下载</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="lsxm" label="班级成绩">
+      <el-table-column label="班级成绩">
         <template slot-scope="scope">
           <el-link type="success" @click="toPages(scope.row.id)">班级成绩</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="lsxm" label="学生成绩">
+      <el-table-column  label="学生成绩">
         <template slot-scope="scope">
-          <el-link type="success" @click="stugradeExport(scope.row.id)">学生成绩下载</el-link>
+          <el-link type="success" @click="stugradeExport(scope.row)">学生成绩下载</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="lsxm" label="班级信息文件">
+      <el-table-column  label="班级信息文件">
         <template slot-scope="scope">
           <el-link type="success">班级信息文件下载</el-link>
         </template>
@@ -72,47 +86,54 @@
 
 <script>
 import { getPageList, getMessageList } from "@/api/basic/teacher";
+import { listSchool } from "@/api/basic/school";
 export default {
   data() {
     return {
       form: {
-        pageNum: 0,
+        status:"1",// 只查询正常的班级
+        pageNum: 1,
         pageSize: 10
       },
       total: 0,
       statusOptions: [],
-      pageList: []
+      pageList: [],
+      //校区名称
+      selectXqmc: [],
     };
   },
   created() {
     this.getDicts("graduateStatus").then(response => {
       this.statusOptions = response.data;
     });
+    listSchool().then(response => {
+      this.selectXqmc = response.rows;
+    });
+    this.getList()
   },
   methods: {
     getList() {
       getPageList(this.form).then(res => {
         this.pageList = res.rows;
         this.total = res.total;
-        // console.log(this.pageList);
       });
     },
-    handleExport(id) {
+    handleExport(row) {
       this.download(
         "basic/student/export",
         {
-          ryb: id
+          ryb: row.id
         },
-        `学生信息基础表.xlsx`
+        `${row.rybjmc}-${row.lsxm}-学生信息基础表.xlsx`
       );
     },
-    stugradeExport(id) {
+    stugradeExport(row) {
       this.download(
         "basic/stugrade/export",
         {
-          rybj: id
+          rybj: row.id
         },
-        `学生成绩基础表.xlsx`
+        `${row.rybjmc}-${row.lsxm}-学生成绩基础表.xlsx`
       );
     },
     timetableExport(bj) {
@@ -122,7 +143,7 @@ export default {
           bjid: bj.id,
           enableOnly: 1
         },
-        `${bj.rybjmc}课表.xlsx`
+        `${bj.rybjmc}-${bj.lsxm}-课表.xlsx`
       );
     },
     toPages(bjid) {
