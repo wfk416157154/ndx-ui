@@ -1262,6 +1262,7 @@
         this.formStu.lsxm = loginUser.nickName;
         this.formStu.xsid = this.stuRow.id;
         this.formStu.xsxm = this.stuRow.xsxm;
+        this.formStu.kzzd2=this.stuRow.ryb;
         this.openStu = true;
         this.title = "添加学生谈话";
         this.$nextTick(() => {
