@@ -35,6 +35,18 @@
         <tr>
           <td class="tds">附件</td>
           <td>
+            <div v-if="reimbursementTiem.invoiceFormat == 2">
+              <el-radio-group
+                @change="getInvoicePtatusPaper"
+                v-model="reimbursementTiem.invoiceStatusPaper"
+              >
+                <el-radio
+                  :label="item.dictValue"
+                  v-for="(item,index) in invoiceStatusPaper"
+                  :key="index"
+                >{{item.dictLabel}}</el-radio>
+              </el-radio-group>
+            </div>
             <h3>图片</h3>
             <div v-for="(item,index) in reimbursementTiem.photoFileList" :key="index">
               <el-image
@@ -77,14 +89,15 @@
 </template>
 
 <script>
-import { expenseAudit } from "@/api/basic/cw-teacher";
+import { expenseAudit, editExpense } from "@/api/basic/cw-teacher";
 export default {
   data() {
     return {
       reimbursementTiem: {},
       pageName: "",
       expenseType: [],
-      expensePaytype: []
+      expensePaytype: [],
+      invoiceStatusPaper: []
     };
   },
   created() {
@@ -94,6 +107,9 @@ export default {
     });
     this.getDicts("expense_paytype").then(response => {
       this.expensePaytype = response.data;
+    });
+    this.getDicts("invoice_status_paper").then(response => {
+      this.invoiceStatusPaper = response.data;
     });
   },
   methods: {
@@ -105,6 +121,14 @@ export default {
         this.expenseType,
         this.reimbursementTiem.expenseType
       );
+    },
+    getInvoicePtatusPaper() {
+      editExpense({
+        id: this.reimbursementTiem.id,
+        invoiceStatusPaper: this.reimbursementTiem.invoiceStatusPaper
+      }).then(res => {
+        this.msgSuccess(res.msg);
+      });
     }
   }
 };

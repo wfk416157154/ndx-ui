@@ -35,10 +35,10 @@
         <tr>
           <td class="tds">附件</td>
           <td>
-            <div>
+            <div v-if="reimbursementTiem.invoiceFormat == 2">
               <el-radio-group
                 @change="getInvoicePtatusPaper"
-                v-model="reimbursementTiem.invoicePtatusPaper"
+                v-model="reimbursementTiem.invoiceStatusPaper"
               >
                 <el-radio
                   :label="item.dictValue"
@@ -142,7 +142,7 @@ export default {
     getInvoicePtatusPaper() {
       editExpense({
         id: this.reimbursementTiem.id,
-        invoiceStatusPaper: this.reimbursementTiem.invoicePtatusPaper
+        invoiceStatusPaper: this.reimbursementTiem.invoiceStatusPaper
       }).then(res => {
         this.msgSuccess(res.msg);
       });
