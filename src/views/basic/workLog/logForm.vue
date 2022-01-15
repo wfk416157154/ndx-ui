@@ -24,7 +24,7 @@
           :picker-options="pickerOptions0"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="是否辅导" label-width="100px">
+      <el-form-item label="新课复习" label-width="100px">
         <el-radio-group style="width: 200px" v-model="bkBcrz">
           <el-radio label="1">是</el-radio>
           <el-radio label="0">否</el-radio>
@@ -569,7 +569,6 @@ export default {
   },
   mounted() {
     this.initBjClassList();
-    this.getList();
     this.initGetListExaminationPaper();
   },
   methods: {
@@ -635,10 +634,13 @@ export default {
           this.isLoad=true
           this.openFullScreen()
           this.bjNameId = res.rows[0].id;
+          this.getList();
         }else if(res.total>1){
           // 添加页面
           if (this.$route.params.id == ":id") {
             this.msgInfo("请手动选择班级！")
+          }else{
+            this.getList();
           }
         }else{
           this.msgError("请联系管理员分配班级！")
