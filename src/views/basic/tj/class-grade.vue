@@ -11,9 +11,11 @@
           @click="getAchievement(item.dictValue)"
         >{{item.dictLabel}}</el-button>
         <el-button type="primary" class="el-btn" plain @click="handleClassStugradeCollect">导出</el-button>
+        <el-button type="warning" plain @click="onPrintJs">打印</el-button>
       </div>
       <br>
-      <li v-for="(item,index) in listClassGradeItem" :key="index">
+      <div id="printRef">
+      <li v-for="(item,index) in listClassGradeItem" :key="index" >
         <div class="wrap-left">
           <div class="student-information">
             <h4>老师姓名 :</h4>&nbsp;
@@ -49,11 +51,13 @@
           </div>
         </div>
       </li>
+      </div>
     </ul>
   </div>
 </template>
 
 <script>
+  import printJs from "@/components/print";
 import * as echarts from "echarts";
 import { listClassGrade } from "@/api/basic/classPerformance";
 import { listSchool } from "@/api/basic/school";
@@ -61,6 +65,7 @@ import { listBjclass } from "@/api/basic/bjclass";
 import { listExaminationPaper } from "@/api/basic/examinationPaper";
 export default {
   name: "statisticalChartTtem",
+  mixins: [printJs],
   data() {
     return {
       dcForm: {
@@ -68,8 +73,6 @@ export default {
         studentGradeType: null
       },
       year: new Date().getFullYear(),
-      //开班学期字典
-      selectNj: [],
       //查询条件
       form: {
         xqid: null,
@@ -147,8 +150,6 @@ export default {
       getBjClass: [],
       // 考试范围
       getExaminationPaper: [],
-      // 年份
-      getYear: [],
       studentGradeTypeList: [],
       getExaminationType: []
     };
@@ -160,12 +161,6 @@ export default {
     }
   },
   created() {
-    this.getDicts("year-list").then(response => {
-      this.getYear = response.data;
-    });
-    this.getDicts("nianji").then(response => {
-      this.selectNj = response.data;
-    });
     this.getDicts("studentGradeType").then(response => {
       this.studentGradeTypeList = response.data;
     });
@@ -246,6 +241,10 @@ export default {
           obj[i] = this.option;
           obj[i].xAxis[0].data = [];
           obj[i].series[0].data = [];
+          obj[i].series[0].label={
+            show: true,
+            position: 'top'
+          };
           let chartDom = document.getElementById(i);
           obj[i + "a"] = echarts.init(chartDom);
           obj[i].yAxis[0].max = this.form.studentGradeType;
@@ -325,7 +324,7 @@ export default {
           path: res.msg + bjid
         });
       });
-    }
+    },
   }
 };
 </script>
