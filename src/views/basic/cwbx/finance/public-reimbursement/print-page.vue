@@ -123,7 +123,7 @@ export default {
       this.expensePaytype = response.data;
     });
     this.reimbursementPrint = JSON.parse(this.$route.query.item);
-    if (this.reimbursementPrint.photoFileList.length > 0) {
+    if (this.reimbursementPrint.photoFileList&&this.reimbursementPrint.photoFileList.length > 0) {
       this.imgUrl = this.reimbursementPrint.photoFileList[0];
     }
   },
