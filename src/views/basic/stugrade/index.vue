@@ -101,6 +101,7 @@
         border
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
+        :height="$root.tableHeight"
         style="width: 100%;font-size : 18px"
       >
         <el-table-column
