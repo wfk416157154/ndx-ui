@@ -1,6 +1,11 @@
 import request from '@/utils/request'
 
 // PDF转换为图片
+/**
+ * 对象中两个参数
+ * {wjmc:xxx,glid:xxx}
+ * @param data
+ */
 export function pdfToImgUpload(data) {
   return request({
     url: '/file/pdfToImgUpload',
