@@ -229,7 +229,7 @@
         </el-form-item>
         <el-form-item label="考卷上传">
           <el-upload
-            ref="upload"
+            ref="kjUpload"
             :limit="maxUploadNum"
             accept="*"
             :headers="upload.headers"
@@ -276,12 +276,12 @@
     <el-dialog title="班级选择" :visible.sync="dialogBjFormVisible" width="30%">
       <div>
         <span style="">提示：请选择该考卷的使用班级</span>
-        <el-select v-model="rybjObj" placeholder="请选择该考卷的使用班级" @change="chooseBjChange" >
+        <el-select v-model="rybjid" placeholder="请选择该考卷的使用班级" @change="chooseBjChange" >
           <el-option
             v-for="item in bjclassList "
             :key="item.id"
             :label="item.rybjmc"
-            :value="item"
+            :value="item.id"
           ></el-option>
         </el-select>
       </div>
@@ -324,6 +324,7 @@ export default {
       fullscreenLoading: false,
       // 日语班级对象
       rybjObj:null,
+      rybjid:null,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -580,7 +581,7 @@ export default {
         this.msgSuccess("文件上传成功");
         this.kjidFile = fileList;
       });
-      this.$refs.upload.clearFiles();
+      this.$refs.kjUpload.clearFiles();
     },
     // 文件上传限制判断
     ifFileLimit(num, msg) {
@@ -644,8 +645,16 @@ export default {
       });
     },
     // 选择班级后触发
-    chooseBjChange(obj){
-      this.rybjObj=obj
+    chooseBjChange(bjid){
+      let obj
+      if(this.bjclassList){
+        this.bjclassList.forEach(vo=>{
+          if(bjid==vo.id){
+            this.rybjObj=vo
+            obj=vo
+          }
+        })
+      }
       this.examForm.bjid=obj.id // 班级id
       this.examForm.bjmc=obj.rybjmc // 日语班级名称
       this.examForm.jcid=obj.jcid // 教材id
