@@ -1,4 +1,14 @@
 import request from '@/utils/request'
+
+// PDF转换为图片
+export function pdfToImgUpload(data) {
+  return request({
+    url: '/file/pdfToImgUpload',
+    method: 'post',
+    data: data
+  })
+}
+
 // 添加上传图片
 export function addImg(data) {
     return request({
