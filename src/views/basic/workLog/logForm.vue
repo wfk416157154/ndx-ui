@@ -709,6 +709,8 @@ export default {
               "files2"
             );
           }
+          this.formLoading.close()
+          this.isLoad=false
         });
       } else {
         if(this.bjNameId){
