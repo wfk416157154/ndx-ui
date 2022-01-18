@@ -9,6 +9,15 @@ export function listExaminationPaper(query) {
   })
 }
 
+// 查询未上传成绩的考卷列表
+export function queryNotUploadGradeExamlist(query) {
+  return request({
+    url: '/basic/examinationPaper/queryNotUploadGradeExamlist',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询考卷详细
 export function getExaminationPaper(id) {
   return request({
