@@ -8,6 +8,16 @@ export function listBjclass(query) {
     params: query
   })
 }
+
+// 班级绩效考核
+export function classPerformance(query) {
+  return request({
+    url: '/basic/bjclass/classPerformance',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询班级基础信息列表（页面查询调用）
 export function pageListBjclass(query) {
   return request({
@@ -30,6 +40,15 @@ export function getBjclass(id) {
 export function addBjclass(data) {
   return request({
     url: '/basic/bjclass',
+    method: 'post',
+    data: data
+  })
+}
+
+// 导出班级绩效考核
+export function exportClassPerformance(data) {
+  return request({
+    url: '/basic/bjclass/exportClassPerformance',
     method: 'post',
     data: data
   })

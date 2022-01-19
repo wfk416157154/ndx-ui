@@ -385,7 +385,13 @@ import {
 import { listBjclass } from "@/api/basic/bjclass";
 import { listData } from "@/api/system/dict/data";
 import { getToken } from "@/utils/auth";
-import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
+import {
+  addImg,
+  addFile,
+  selectFileList,
+  deleteImg,
+  pdfToImgUpload
+} from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
 export default {
   data() {
@@ -575,7 +581,9 @@ export default {
         this.fileForm.renameFileName = "";
         let hz = file.name.substr(file.name.lastIndexOf("."));
         this.fileForm.renameFileName =
-          this.form.applyName + this.parseTime(new Date()) + hz;
+          this.form.applyName +
+          this.parseTime(new Date(),"{y}-{m}-{d}") +
+          hz;
       } else {
         this.msgError("只能上传图片或者pdf格式文件");
         return false;
@@ -595,6 +603,13 @@ export default {
       this.form.attachmentFileId = data.kzzd1;
       addImg(data).then(res => {
         file.id = res.data.id;
+      });
+      this.form.kzzd2 = this.form.kzzd2 || secretKey();
+      pdfToImgUpload({
+        glid: this.form.kzzd2,
+        wjmc: data.name
+      }).then(res => {
+        // console.log(res);
       });
     },
     statusFormat(expenseType) {
