@@ -36,7 +36,7 @@
           @click="toComponent('WholeView','3')"
         >总</h3>
       </div>
-      <div class="wrap-information">
+      <div v-if="!progressData.enterReview" class="wrap-information">
         <div class="main-left">
           <div class="class-name">
             <h3>{{progressData.teachingClassInfo.bjmc}}</h3>
@@ -97,6 +97,32 @@
                 :percentage="progressData.dqjdbfb"
                 status="exception"
               ></el-progress>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="wrap-information">
+        <div class="main-left">
+          <div class="class-name">
+            <h3>{{progressData.teachingClassInfo.bjmc}}</h3>
+            <div style="margin-top : 20px">
+              <span>老师 :</span>
+              <span>{{progressData.teachingClassInfo.lsxm}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="main-right">
+          <div>
+            <div>
+              <div v-for="(key,j) in progressData.reviewList" :key="j">
+                <p>{{key.reviewName}}</p>
+                <el-progress
+                  :text-inside="true"
+                  :stroke-width="22"
+                  :percentage="key.reviewProcessList[0].percentage"
+                  status="warning"
+                ></el-progress>
+              </div>
             </div>
           </div>
         </div>
