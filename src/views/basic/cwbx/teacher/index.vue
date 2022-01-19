@@ -552,13 +552,14 @@ export default {
       addImg(data).then(res => {
         file.id = res.data.id;
       });
-      this.form.kzzd2 = this.form.kzzd2 || secretKey();
-      pdfToImgUpload({
-        glid: this.form.kzzd2,
-        wjmc: data.name
-      }).then(res => {
-        // console.log(res);
-      });
+       let regPdf = /pdf/g;
+      if (regPdf.test(data.wjlx)) {
+        this.form.kzzd2 = this.form.kzzd2 || secretKey();
+        pdfToImgUpload({
+          glid: this.form.kzzd2,
+          wjmc: data.name
+        }).then(res => {});
+      }
     },
     beforeFile(file) {
       let regImg = /image/g;

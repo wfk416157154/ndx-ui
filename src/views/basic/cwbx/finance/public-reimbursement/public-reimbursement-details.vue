@@ -47,14 +47,14 @@
                 >{{item.dictLabel}}</el-radio>
               </el-radio-group>
             </div>
-            <h3>图片</h3>
+            <!-- <h3>图片</h3>
             <div v-for="(item,index) in reimbursementTiem.photoFileList" :key="index">
               <el-image
                 style="width: 100px; height: 100px"
                 :src="item.wjlj"
                 :preview-src-list="[item.wjlj]"
               ></el-image>
-            </div>
+            </div> -->
             <h3>文件</h3>
             <div v-for="(item,j) in reimbursementTiem.attachmentFileList" :key="++j">
               <el-link type="primary" @click="openDocument(item.wjlj)">{{item.wjmc}}</el-link>
@@ -114,7 +114,8 @@ export default {
   },
   methods: {
     openDocument(path) {
-      window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+      // window.open(`https://view.officeapps.live.com/op/view.aspx?src=${path}`);
+       window.open(path);
     },
     statusFormat() {
       return this.selectDictLabel(

@@ -581,9 +581,7 @@ export default {
         this.fileForm.renameFileName = "";
         let hz = file.name.substr(file.name.lastIndexOf("."));
         this.fileForm.renameFileName =
-          this.form.applyName +
-          this.parseTime(new Date(),"{y}-{m}-{d}") +
-          hz;
+          this.form.applyName + this.parseTime(new Date(), "{y}-{m}-{d}") + hz;
       } else {
         this.msgError("只能上传图片或者pdf格式文件");
         return false;
@@ -604,13 +602,14 @@ export default {
       addImg(data).then(res => {
         file.id = res.data.id;
       });
-      this.form.kzzd2 = this.form.kzzd2 || secretKey();
-      pdfToImgUpload({
-        glid: this.form.kzzd2,
-        wjmc: data.name
-      }).then(res => {
-        // console.log(res);
-      });
+      let regPdf = /pdf/g;
+      if (regPdf.test(data.wjlx)) {
+        this.form.kzzd2 = this.form.kzzd2 || secretKey();
+        pdfToImgUpload({
+          glid: this.form.kzzd2,
+          wjmc: data.name
+        }).then(res => {});
+      }
     },
     statusFormat(expenseType) {
       return this.selectDictLabel(this.expenseType, expenseType);
