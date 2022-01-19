@@ -92,7 +92,9 @@
             </tbody>
           </table>
           <br />
-          <img width="80%" :src="imgUrl.wjlj" alt />
+          <div v-for="(item,index) in imgUrl" :key="index">
+            <img width="80%" v-if="!item.wjlj.includes('pdf')" :src="item.wjlj" alt />
+          </div>
         </div>
       </el-card>
     </div>
@@ -123,12 +125,20 @@ export default {
       this.expensePaytype = response.data;
     });
     this.reimbursementPrint = JSON.parse(this.$route.query.item);
-    console.log(this.reimbursementPrint);
     if (
-      this.reimbursementPrint.photoFileList &&
-      this.reimbursementPrint.photoFileList.length > 0
+      this.reimbursementPrint.pdfImgObjArr &&
+      this.reimbursementPrint.pdfImgObjArr.length > 0
     ) {
-      this.imgUrl = this.reimbursementPrint.photoFileList[0];
+      this.imgUrl = this.reimbursementPrint.pdfImgObjArr;
+    }
+    if (
+      this.reimbursementPrint.attachmentFileList &&
+      this.reimbursementPrint.attachmentFileList.length > 0
+    ) {
+      this.imgUrl = [
+        ...this.reimbursementPrint.attachmentFileList,
+        ...this.imgUrl
+      ];
     }
   },
   methods: {

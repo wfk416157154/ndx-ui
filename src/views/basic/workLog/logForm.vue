@@ -30,9 +30,6 @@
           <el-radio label="0">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-tooltip class="item" effect="dark" content="请先填写课程" placement="top-start">
-        <el-button type="primary" size="mini" :disabled="!ruleForm.id" @click="selectZfx">总复习</el-button>
-      </el-tooltip>
     </el-form>
     <el-form
       :model="ruleForm"
@@ -57,6 +54,18 @@
               v-model="ruleForm.kczj"
             ></el-input>
           </el-form-item>
+        </div>
+      </div>
+      <div class="wrap-log">
+        <div class="curriculum-title">
+          <span>复习</span>
+        </div>
+        <div class="log-content">
+          <el-tooltip class="item" effect="dark" content="请先填写课程" placement="top-start">
+            <div>
+              <el-button type="primary" size="mini" :disabled="!ruleForm.id" @click="selectZfx">总复习</el-button>
+            </div>
+          </el-tooltip>
         </div>
       </div>
       <!-- 备课 -->
@@ -536,8 +545,8 @@ export default {
       // 是否复习
       sffx: false,
       dialogUploadVideoisible: false,
-      formLoading:null,
-      isLoad:false,
+      formLoading: null,
+      isLoad: false,
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e7;
@@ -573,12 +582,12 @@ export default {
   },
   methods: {
     openFullScreen() {
-      if(this.isLoad){
+      if (this.isLoad) {
         this.formLoading = this.$loading({
           lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
+          text: "Loading",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)"
         });
       }
     },
@@ -631,19 +640,19 @@ export default {
       listBjclass().then(res => {
         this.getListBjclass = res.rows;
         if (res.rows.length == 1) {
-          this.isLoad=true
-          this.openFullScreen()
+          this.isLoad = true;
+          this.openFullScreen();
           this.bjNameId = res.rows[0].id;
           this.getList();
-        }else if(res.total>1){
+        } else if (res.total > 1) {
           // 添加页面
           if (this.$route.params.id == ":id") {
-            this.msgInfo("请手动选择班级！")
-          }else{
+            this.msgInfo("请手动选择班级！");
+          } else {
             this.getList();
           }
-        }else{
-          this.msgError("请联系管理员分配班级！")
+        } else {
+          this.msgError("请联系管理员分配班级！");
         }
       });
     },
@@ -682,7 +691,7 @@ export default {
             this.msgError("当前日志只能预览,不可编辑");
             this.$refs.prent.style.pointerEvents = "none";
           }
-          this.bjNameId=res.rows[0].bjid
+          this.bjNameId = res.rows[0].bjid;
         });
         this.rzid = this.$route.params.id;
         workLogListQuery({ id: this.rzid }).then(res => {
@@ -709,20 +718,20 @@ export default {
               "files2"
             );
           }
-          this.formLoading.close()
-          this.isLoad=false
+          this.formLoading.close();
+          this.isLoad = false;
         });
       } else {
-        if(this.bjNameId){
+        if (this.bjNameId) {
           this.getWorkLogTemplateQuery($false);
         }
       }
     },
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery($false) {
-      if(!this.isLoad){
-        this.isLoad=true
-        this.openFullScreen()
+      if (!this.isLoad) {
+        this.isLoad = true;
+        this.openFullScreen();
       }
       this.initGetListExaminationPaper();
       if ($false == "false") return;
@@ -784,8 +793,8 @@ export default {
             this.files2 = [];
             break;
         }
-        this.formLoading.close()
-        this.isLoad=false
+        this.formLoading.close();
+        this.isLoad = false;
       });
     },
     // 查询课中的课表模板
