@@ -613,6 +613,7 @@ export default {
         return
       }
       let ksfw=row.zlbt.substr(num,row.zlbt.length)
+      this.rybjid=null
       this.rybjObj=null
       this.examQueryParams.ksfw=ksfw // 考试范围
       this.fileObj=item  // 文件对象
