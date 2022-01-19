@@ -370,7 +370,7 @@ export default {
     });
   },
   mounted() {
-    this.getList();
+    //this.getList();
   },
   methods: {
     // 进度转换
