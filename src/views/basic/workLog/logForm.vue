@@ -61,7 +61,7 @@
           </el-form-item>
         </div>
       </div>
-      <div class="wrap-log" v-if="sffx">
+      <div class="wrap-log" v-if="showFx">
         <div class="curriculum-title">
           <span>总复习</span>
         </div>
@@ -551,6 +551,7 @@ export default {
       bkBcrz: "0",
       // 是否复习
       sffx: false,
+      showFx: false,
       dialogUploadVideoisible: false,
       formLoading: null,
       isLoad: false,
@@ -664,6 +665,11 @@ export default {
           this.isLoad = true;
           this.openFullScreen();
           this.bjNameId = res.rows[0].id;
+          planIsFinish(this.bjNameId).then(res => {
+            if (1 === res.data) {
+              this.showFx = true;
+            }
+          });
           this.getList();
         } else if (res.total > 1) {
           // 添加页面
