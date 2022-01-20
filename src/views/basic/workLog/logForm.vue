@@ -12,7 +12,12 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="sfbrz" @change="chooseBrz" v-if="!ifRoleHasPerms">补日志</el-checkbox>
+        <el-checkbox
+          v-model="sfbrz"
+          :disabled="sfbrz"
+          @change="chooseBrz"
+          v-if="!ifRoleHasPerms"
+        >补日志</el-checkbox>
       </el-form-item>
       <el-form-item label="选择日期" v-if="showxzrq">
         <el-date-picker
@@ -457,7 +462,7 @@ import FxForm from "./fxForm";
 export default {
   data() {
     return {
-      sfbrz: null, // 是否补日志
+      sfbrz: false, // 是否补日志
       showxzrq: false, // 显示【选择日期】
       ifRoleHasPerms: false,
       ksmcdisable: false,
@@ -667,16 +672,13 @@ export default {
         this.getListExaminationPaper = res.rows;
       });
     },
-    chooseBrz(flag) {
+    chooseBrz() {
       // 当选择补日志时：true
-      if (flag) {
+      if (this.sfbrz) {
         this.showxzrq = true;
-        this.ruleForm.status = 0; // 表示后续补的日志
       } else {
         this.showxzrq = false;
-        this.ruleForm.status = 1; // 表示正常填写的日志
       }
-      this.sfbrz = flag;
     },
     onLogTime(val) {
       this.getWorkLogTemplateQuery();
@@ -1128,12 +1130,14 @@ export default {
       this.ruleForm.kzzd1 = this.bjNameId;
       this.ruleForm.date = this.logTiem;
       this.ruleForm.lsid = this.$store.state.user.glrid;
+      if (this.sfbrz) {
+        this.ruleForm.status = 0;
+      } else {
+        this.ruleForm.status = 1;
+      }
       addSave(this.ruleForm).then(async res => {
         this.rzid = res.data.id;
         this.ruleForm.id = this.rzid;
-        // if (!this.logTiem) {
-        //   this.logTiem = new Date();
-        // }
         await this.getWorkLogListQuery(
           this.bjNameId,
           this.logTiem,
