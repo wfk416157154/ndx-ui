@@ -129,11 +129,11 @@ export default {
     },
     stugradeExport(row) {
       this.download(
-        "basic/stugrade/export",
+        "basic/stugrade/exportEveryGrade",
         {
-          rybj: row.id
+          kzzd1: row.id
         },
-        `${row.rybjmc}-${row.lsxm}-学生成绩基础表.xlsx`
+        `${row.rybjmc}-${row.lsxm}-学生成绩表.xlsx`
       );
     },
     timetableExport(bj) {
