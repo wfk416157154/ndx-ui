@@ -582,6 +582,7 @@ export default {
     this.getConfigKey("zipFile").then(res => {
       this.upload.type = res.msg;
     });
+    this.selectZfx();
   },
   mounted() {
     this.initBjClassList();
@@ -648,8 +649,6 @@ export default {
       planIsFinish(this.bjNameId).then(res => {
         if (1 === res.data) {
           this.sffx = true;
-        } else {
-          this.msgError("课程还未全部完成，无法进行复习！");
         }
       });
     },
