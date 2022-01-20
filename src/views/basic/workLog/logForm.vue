@@ -12,7 +12,12 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="sfbrz" @change="chooseBrz" v-if="!ifRoleHasPerms">补日志</el-checkbox>
+        <el-checkbox
+          v-model="sfbrz"
+          :disabled="sfbrz"
+          @change="chooseBrz"
+          v-if="!ifRoleHasPerms"
+        >补日志</el-checkbox>
       </el-form-item>
       <el-form-item label="选择日期" v-if="showxzrq">
         <el-date-picker
@@ -56,9 +61,9 @@
           </el-form-item>
         </div>
       </div>
-      <div class="wrap-log">
+      <div class="wrap-log" v-if="sffx">
         <div class="curriculum-title">
-          <span>复习</span>
+          <span>总复习</span>
         </div>
         <div class="log-content">
           <el-tooltip class="item" effect="dark" content="请先填写课程" placement="top-start">
@@ -416,6 +421,7 @@
           :on-success="vHandleFileSuccess"
           :on-error="vHandleFileError"
           :auto-upload="false"
+          :before-upload="beforeUpload"
           drag
         >
           <i class="el-icon-upload"></i>
@@ -424,6 +430,7 @@
             <em>点击上传</em>
           </div>
         </el-upload>
+        <div>请确保视频格式为以下mp4 avi rmvb mov</div>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm">确 定</el-button>
@@ -457,7 +464,7 @@ import FxForm from "./fxForm";
 export default {
   data() {
     return {
-      sfbrz: null, // 是否补日志
+      sfbrz: false, // 是否补日志
       showxzrq: false, // 显示【选择日期】
       ifRoleHasPerms: false,
       ksmcdisable: false,
@@ -600,7 +607,21 @@ export default {
       this.upload.isUploading = true;
     },
     // 上传失败
-    vHandleFileError(err, file, fileList) {},
+    vHandleFileError(err, file, fileList) {
+      this.msgError(
+        "请确保视频格式为以下mp4 avi rmvb mov,如还不能上传成功,请联系管理员"
+      );
+    },
+    beforeUpload(file) {
+      let typeArr = ["mp4", "avi", "rmvb", "mov"];
+      let tex = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (typeArr.indexOf(tex) == -1) {
+        this.msgError(
+          "请确保视频格式为以下mp4 avi rmvb mov,如还不能上传成功,请联系管理员"
+        );
+        return false;
+      }
+    },
     // 文件上传成功处理
     vHandleFileSuccess(response, file, fileList) {
       if (response.code == 200) {
@@ -667,16 +688,13 @@ export default {
         this.getListExaminationPaper = res.rows;
       });
     },
-    chooseBrz(flag) {
+    chooseBrz() {
       // 当选择补日志时：true
-      if (flag) {
+      if (this.sfbrz) {
         this.showxzrq = true;
-        this.ruleForm.status = 0; // 表示后续补的日志
       } else {
         this.showxzrq = false;
-        this.ruleForm.status = 1; // 表示正常填写的日志
       }
-      this.sfbrz = flag;
     },
     onLogTime(val) {
       this.getWorkLogTemplateQuery();
@@ -1128,12 +1146,14 @@ export default {
       this.ruleForm.kzzd1 = this.bjNameId;
       this.ruleForm.date = this.logTiem;
       this.ruleForm.lsid = this.$store.state.user.glrid;
+      if (this.sfbrz) {
+        this.ruleForm.status = 0;
+      } else {
+        this.ruleForm.status = 1;
+      }
       addSave(this.ruleForm).then(async res => {
         this.rzid = res.data.id;
         this.ruleForm.id = this.rzid;
-        // if (!this.logTiem) {
-        //   this.logTiem = new Date();
-        // }
         await this.getWorkLogListQuery(
           this.bjNameId,
           this.logTiem,

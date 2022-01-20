@@ -89,6 +89,11 @@
                 <el-tag type="info" v-if="item.isRead == '1'">已读</el-tag>
               </div>
             </div>
+            <div>
+              <span>填写时间 :</span>
+              <span>{{item.createTime}}</span>
+              <span style="color:red" v-if="item.status == '0'">补</span>
+            </div>
             <div class="title-content">
               <span>工作日志</span>
             </div>
@@ -289,12 +294,12 @@ export default {
         this.allLogs.forEach(value => {
           value.jswsImg = [];
           value.xsbxImg = [];
-          if(value.jswsFileList){
+          if (value.jswsFileList) {
             value.jswsFileList.forEach(img => {
               value.jswsImg.push(img.url);
             });
           }
-          if(value.xsbxFileList) {
+          if (value.xsbxFileList) {
             value.xsbxFileList.forEach(img => {
               value.xsbxImg.push(img.url);
             });

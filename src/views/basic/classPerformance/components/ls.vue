@@ -2,7 +2,7 @@
   <div id="statisticalChartTtem">
     <div class="wrap-statisticalChartTtem">
       <el-form ref="queryForm" :inline="true" :model="form" label-width="100px">
-        <el-form-item label="日语班级" prop="bjid">
+        <el-form-item label="日语班级" prop="bjid" label-width="80px">
           <el-select
             width="100px"
             height="“10px"
@@ -19,7 +19,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="开班学期" prop="xq">
+        <el-form-item label="开班学期" prop="xq" label-width="80px">
           <el-select v-model="form.xq" placeholder="请选择开班学期">
             <el-option
               v-for="item in selectNj"
@@ -45,26 +45,36 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="最高分" prop="maxfs">
+        <el-form-item label="最高分" prop="maxfs" label-width="80px">
           <el-input v-model="form.maxfs" placeholder="请输入最高分"></el-input>
         </el-form-item>
-        <el-form-item label="最低分" prop="minfs">
+        <el-form-item label="最低分" prop="minfs" label-width="80px">
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="el-btn" plain @click="getAchievement()">查询</el-button>
           <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
+          <el-button icon="el-icon-refresh" @click="resetQuery()">重置</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button
+          <!-- <el-button
             v-for="item in studentGradeTypeList"
             :key="item.dictValue"
             type="primary"
             class="el-btn"
             plain
             @click="getAchievement(item.dictValue)"
-          >{{item.dictLabel}}</el-button>
+          >{{item.dictLabel}}</el-button>-->
+          <el-tooltip :content="'分制: ' + form.studentGradeType" placement="top">
+            <el-switch
+              v-model="form.studentGradeType"
+              @change="getAchievement(form.studentGradeType)"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-value="150"
+              inactive-value="100"
+            ></el-switch>
+          </el-tooltip>
         </el-form-item>
       </el-form>
     </div>
@@ -114,7 +124,7 @@
             <div
               :id="index"
               v-if="true"
-              style="width : 90%; height : 340px; display: inline-block;"
+              style="width : 90%; height : 500px; display: inline-block;"
             ></div>
             <div class="chart-nav">
               <h4 style="color: #FFCC00" @click="selectChart('bar' ,index)">柱状图</h4>
@@ -227,11 +237,11 @@ export default {
       getExaminationType: []
     };
   },
-  props:{
-     bjid : {
-       type : String,
-       default : null
-     }
+  props: {
+    bjid: {
+      type: String,
+      default: null
+    }
   },
   created() {
     this.getDicts("year-list").then(response => {
@@ -246,9 +256,9 @@ export default {
     this.getDicts("examination_type").then(response => {
       this.getExaminationType = response.data;
     });
-    if(this.bjid){
+    if (this.bjid) {
       this.form.bjid = this.bjid;
-      this.getAchievement()
+      this.getAchievement();
     }
   },
   mounted() {
@@ -317,6 +327,10 @@ export default {
           this.obj[i].yAxis[0].max = this.form.studentGradeType;
           this.obj[i].xAxis[0].data = [];
           this.obj[i].series[0].data = [];
+          this.obj[i].series[0].label = {
+            show: true,
+            position: "top"
+          };
           let chartDom = document.getElementById(i);
           this.obj[i + "a"] = echarts.init(chartDom);
           if (item[i].everyTimeGradeInfoQueries.length != 0) {
@@ -325,7 +339,8 @@ export default {
                 item[i].everyTimeGradeInfoQueries[j].ksmc +
                   this.ifGetExaminationType(
                     item[i].everyTimeGradeInfoQueries[j].kslx
-                  )+item[i].everyTimeGradeInfoQueries[j].kssj
+                  ) +
+                  item[i].everyTimeGradeInfoQueries[j].kssj
               );
               this.obj[i].series[0].data.push(
                 item[i].everyTimeGradeInfoQueries[j].pjfs
