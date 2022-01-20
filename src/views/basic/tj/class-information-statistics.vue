@@ -120,11 +120,11 @@ export default {
     },
     handleExport(row) {
       this.download(
-        "basic/student/export",
+        "basic/student/exportStudent",
         {
           ryb: row.id
         },
-        `${row.rybjmc}-${row.lsxm}-学生信息基础表.xlsx`
+        `${row.rybjmc}-${row.lsxm}-学生信息表.xlsx`
       );
     },
     stugradeExport(row) {
