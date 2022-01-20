@@ -1,6 +1,12 @@
 <template>
   <div class="teacherAttendanceStatistics">
-    <el-form ref="StatisticsForm" :model="StatisticsForm" :rules="rulesForm" :inline="true" label-width="100px">
+    <el-form
+      ref="StatisticsForm"
+      :model="StatisticsForm"
+      :rules="rulesForm"
+      :inline="true"
+      label-width="100px"
+    >
       <el-form-item label="开始日期" prop="startDate">
         <el-date-picker
           v-model="StatisticsForm.startDate"
@@ -27,16 +33,20 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="老师" prop="bjid">
+        <el-input v-model="StatisticsForm.lsxm" placeholder="请输入内容"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="queryData">查询</el-button>
-        <el-button icon="el-icon-refresh"  @click="resetQuery">重置</el-button>
+        <el-button type="warning" plain icon="el-icon-download" @click="handleExport">导出</el-button>
+        <el-button type="success" plain @click="selectTeacher">选择老师</el-button>
+        <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
     <div
       style="text-align : center;padding : 20px;box-sizing : border-box;font-size : 16px"
     >{{teacherAndBjmc}}</div>
-
     <div style="display : flex;justify-content : space-between">
       <div style="width : 50%">
         <el-table :data="resultItem" border style="width: 100%;font-size : 18px">
@@ -51,7 +61,12 @@
       </div>
 
       <div style="margin-left:10px;">
-        <el-table :data="detailItem" border style="width: 100%;font-size : 18px" :height="$root.tableHeight">
+        <el-table
+          :data="detailItem"
+          border
+          style="width: 100%;font-size : 18px"
+          :height="$root.tableHeight"
+        >
           <el-table-column
             :prop="item.prop"
             :label="item.label"
@@ -71,159 +86,250 @@
         </el-table>
       </div>
     </div>
+
+    <el-dialog title="添加" :visible.sync="dialogFormVisible">
+      <table style="width : 100%;" border="1" cellspacing="0">
+        <tbody>
+          <tr>
+            <td class="tds">
+              <el-radio v-model="radio" @change="updeteTeacher" label="1">全部</el-radio>
+            </td>
+            <td>
+              <el-form :model="teacherFrom">
+                <el-form-item label="届数" label-width="80px">
+                  <el-input v-model="teacherFrom.rybjmc" @input="getTeacher" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="老师" label-width="80px">
+                  <el-input v-model="teacherFrom.lsxm" @input="getTeacher" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-form>
+            </td>
+          </tr>
+          <tr>
+            <td class="tds">老师</td>
+            <td>
+              <el-checkbox-group v-model="teacherCheckbox">
+                <el-checkbox
+                  :label="item.id"
+                  v-for="(item,index) in teacherList"
+                  :key="index"
+                >{{item.lsxm}}</el-checkbox>
+              </el-checkbox-group>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="distributionSubmit">提 交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import {
-    teacherAttendanceStatistics,
-    teacherAttendanceStatisticsList
-  } from "@/api/basic/teacherAttendance";
-  import {
-    listBjclass,
-  } from "@/api/basic/bjclass";
-  export default {
-    data() {
-      return {
-        /* 老师姓名和班级名称+日期范围 */
-        teacherAndBjmc:"",
-        StatisticsForm: {
-          startDate: "",
-          endDate: "",
-          teacherId: this.$store.state.user.glrid,
-          xqid: "",
-          bjid: ""
-        },
-        rulesForm:{
-          startDate: [
-            { required: true, message: "请选择开始日期", trigger: "blur" }
-          ],
-          endDate: [
-            { required: true, message: "请选择结束日期", trigger: "blur" }
-          ],
-        },
-        detailList: [],
-        resultList: [],
-        detailItem: [],
-        resultItem: [],
-        statisticsProject: [],
-        statisticsResultType: [],
-        queryBjclassList:[],// 班级列表
-        limitDays:31 // 查询范围最多可允许的天数
-      };
-    },
-    created() {
-      this.getLimitDays();//从参数配置中获取限制的最大日期范围天数
-      this.getColumnNameList();// 获取动态列名
-      this.pageTurnInvokeMethod();// 从列表页面点击【查看】按钮跳转过来时执行的方法
-      this.getDicts("statistics_project").then(res => {
-        this.statisticsProject = res.data;
-      });
-      this.getDicts("statistics_result_type").then(res => {
-        this.statisticsResultType = res.data;
-      });
-    },
-    methods: {
-      /** 重置按钮操作 */
-      resetQuery() {
-        this.resetForm("StatisticsForm");
+import {
+  teacherAttendanceStatistics,
+  teacherAttendanceStatisticsList
+} from "@/api/basic/teacherAttendance";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listTeacher } from "@/api/basic/teacher";
+export default {
+  data() {
+    return {
+      /* 老师姓名和班级名称+日期范围 */
+      teacherAndBjmc: "",
+      StatisticsForm: {
+        startDate: "",
+        endDate: "",
+        teacherId: this.$store.state.user.glrid,
+        xqid: "",
+        bjid: ""
       },
-      /* 获取动态列名 */
-      getColumnNameList() {
-        teacherAttendanceStatistics().then(res => {
-          if (res.code == 200) {
-            this.detailList = res.data.detailList;
-            this.resultList = res.data.resultList;
-          }
+      rulesForm: {
+        startDate: [
+          { required: true, message: "请选择开始日期", trigger: "blur" }
+        ],
+        endDate: [
+          { required: true, message: "请选择结束日期", trigger: "blur" }
+        ]
+      },
+      detailList: [],
+      resultList: [],
+      detailItem: [],
+      resultItem: [],
+      statisticsProject: [],
+      statisticsResultType: [],
+      queryBjclassList: [], // 班级列表
+      limitDays: 31, // 查询范围最多可允许的天数
+      dialogFormVisible: false,
+      teacherCheckbox: [],
+      teacherList: [],
+      teacherFrom: {},
+      radio: false
+    };
+  },
+  created() {
+    this.getLimitDays(); //从参数配置中获取限制的最大日期范围天数
+    this.getColumnNameList(); // 获取动态列名
+    this.pageTurnInvokeMethod(); // 从列表页面点击【查看】按钮跳转过来时执行的方法
+    this.getDicts("statistics_project").then(res => {
+      this.statisticsProject = res.data;
+    });
+    this.getDicts("statistics_result_type").then(res => {
+      this.statisticsResultType = res.data;
+    });
+  },
+  methods: {
+    // 导出
+    handleExport() {
+      // this.download(
+      //   "basic/student/export",
+      //   {
+      //     ...this.queryParams
+      //   },
+      //   `学生信息基础表.xlsx`
+      // );
+    },
+    // 选择老师
+    selectTeacher() {
+      this.teacherCheckbox = [];
+      this.radio = false;
+      this.dialogFormVisible = true;
+    },
+    getTeacher() {
+      listTeacher(this.teacherFrom).then(response => {
+        this.teacherList = response.rows;
+      });
+    },
+    updeteTeacher() {
+      this.teacherCheckbox = [];
+      listTeacher(this.teacherFrom).then(response => {
+        this.teacherList = response.rows;
+        this.teacherList.forEach(value => {
+          this.teacherCheckbox.push(value.id);
         });
-      },
-      /* 点击查询按钮触发 */
-      queryData() {
-        this.$refs.StatisticsForm.validate(valid => {
-          if (valid) {
-            let no = this.getDate();
-            if (!no) {
-              this.getStatisticsList();
-            }
-          }
-        })
-      },
-      /* 从列表页面点击【查看】按钮跳转过来时执行的方法 */
-      pageTurnInvokeMethod(){
-        if (this.$route.params.list != ":list") {// 非老师角色查看
-          let result = JSON.parse(this.$route.params.list);// 转成json的格式进行页面传参
-          this.StatisticsForm.xqid=result.params.xqid;// 父页面传过来的校区id
-          this.StatisticsForm.bjid=result.params.bjid;// 父页面传过来的班级id
-          this.StatisticsForm.teacherId = result.lsid;// 父页面传过来的老师id
-          this.StatisticsForm.startDate = result.params.startDate;// 父页面传过来的开始日期
-          this.StatisticsForm.endDate = result.params.endDate;// 父页面传过来的结束日期
-          let bjParams={
-            lsid:this.StatisticsForm.teacherId,// 老师id
-            id:this.StatisticsForm.bjid // 日语班级id
-          }
-          // 查询班级列表
-          listBjclass(bjParams).then(response => {// 根据父页面传过来的老师id和班级id进行查询
-            this.queryBjclassList = response.rows
-          });
-          // 校验选择的日期范围
+      });
+    },
+    distributionSubmit() {
+      console.log(this.teacherCheckbox);
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("StatisticsForm");
+    },
+    /* 获取动态列名 */
+    getColumnNameList() {
+      teacherAttendanceStatistics().then(res => {
+        if (res.code == 200) {
+          this.detailList = res.data.detailList;
+          this.resultList = res.data.resultList;
+        }
+      });
+    },
+    /* 点击查询按钮触发 */
+    queryData() {
+      this.$refs.StatisticsForm.validate(valid => {
+        if (valid) {
           let no = this.getDate();
           if (!no) {
             this.getStatisticsList();
           }
-        }else{// 老师选择班级时
-          listBjclass().then(response => {
-            this.queryBjclassList = response.rows
-          });
         }
-      },
-      /* 获取统计的数据 */
-      getStatisticsList() {
-        teacherAttendanceStatisticsList(this.StatisticsForm).then(res => {
-          if (res.code == 200) {
-            this.teacherAndBjmc=res.data.title;
-            this.resultItem = res.data.resultList;
-            this.detailItem = res.data.detailList;
-            for (let j = 0; j < this.resultItem.length; j++) {
-              for (let i = 0; i < this.statisticsProject.length; i++) {
-                if (this.resultItem[j].project ==this.statisticsProject[i].dictValue) {
-                  this.resultItem[j].project = this.statisticsProject[i].dictLabel;
-                }
+      });
+    },
+    /* 从列表页面点击【查看】按钮跳转过来时执行的方法 */
+    pageTurnInvokeMethod() {
+      if (this.$route.params.list != ":list") {
+        // 非老师角色查看
+        let result = JSON.parse(this.$route.params.list); // 转成json的格式进行页面传参
+        this.StatisticsForm.xqid = result.params.xqid; // 父页面传过来的校区id
+        this.StatisticsForm.bjid = result.params.bjid; // 父页面传过来的班级id
+        this.StatisticsForm.teacherId = result.lsid; // 父页面传过来的老师id
+        this.StatisticsForm.startDate = result.params.startDate; // 父页面传过来的开始日期
+        this.StatisticsForm.endDate = result.params.endDate; // 父页面传过来的结束日期
+        let bjParams = {
+          lsid: this.StatisticsForm.teacherId, // 老师id
+          id: this.StatisticsForm.bjid // 日语班级id
+        };
+        // 查询班级列表
+        listBjclass(bjParams).then(response => {
+          // 根据父页面传过来的老师id和班级id进行查询
+          this.queryBjclassList = response.rows;
+        });
+        // 校验选择的日期范围
+        let no = this.getDate();
+        if (!no) {
+          this.getStatisticsList();
+        }
+      } else {
+        // 老师选择班级时
+        listBjclass().then(response => {
+          this.queryBjclassList = response.rows;
+        });
+      }
+    },
+    /* 获取统计的数据 */
+    getStatisticsList() {
+      teacherAttendanceStatisticsList(this.StatisticsForm).then(res => {
+        if (res.code == 200) {
+          this.teacherAndBjmc = res.data.title;
+          this.resultItem = res.data.resultList;
+          this.detailItem = res.data.detailList;
+          for (let j = 0; j < this.resultItem.length; j++) {
+            for (let i = 0; i < this.statisticsProject.length; i++) {
+              if (
+                this.resultItem[j].project ==
+                this.statisticsProject[i].dictValue
+              ) {
+                this.resultItem[j].project = this.statisticsProject[
+                  i
+                ].dictLabel;
               }
             }
           }
-        });
-      },
-      /**
-       * 判断选择的日期范围是否是限制的范围内
-       * @returns {boolean}
-       */
-      getDate() {
-        let date1 = new Date(this.StatisticsForm.startDate);
-        let date2 = new Date(this.StatisticsForm.endDate);
-        let date3 =(date2.getTime() / 1000 - date1.getTime() / 1000)/ 60 / 60 / 24;
-        if (date3 > this.limitDays) {
-          this.msgError("查询考勤最大天数不得超过"+this.limitDays+"天");
-          return true;
         }
-        return false;
-      },
-      /**
-       * 从参数配置中获取限制的最大日期范围天数
-       */
-      getLimitDays(){
-        this.getConfigKey("Limit_days").then(res => {
-          this.limitDays=res.msg;
-        })
-      },
+      });
+    },
+    /**
+     * 判断选择的日期范围是否是限制的范围内
+     * @returns {boolean}
+     */
+    getDate() {
+      let date1 = new Date(this.StatisticsForm.startDate);
+      let date2 = new Date(this.StatisticsForm.endDate);
+      let date3 =
+        (date2.getTime() / 1000 - date1.getTime() / 1000) / 60 / 60 / 24;
+      if (date3 > this.limitDays) {
+        this.msgError("查询考勤最大天数不得超过" + this.limitDays + "天");
+        return true;
+      }
+      return false;
+    },
+    /**
+     * 从参数配置中获取限制的最大日期范围天数
+     */
+    getLimitDays() {
+      this.getConfigKey("Limit_days").then(res => {
+        this.limitDays = res.msg;
+      });
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-  .teacherAttendanceStatistics {
-    width: 100%;
-    height: 100%;
+.teacherAttendanceStatistics {
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  box-sizing: border-box;
+  th,
+  td {
     padding: 40px;
-    box-sizing: border-box;
   }
+  .tds {
+    width: 20%;
+  }
+}
 </style>

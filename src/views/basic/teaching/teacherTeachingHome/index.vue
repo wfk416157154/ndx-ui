@@ -196,6 +196,10 @@ export default {
     listBjclass().then(res => {
       this.classList = res.rows;
     });
+    if (this.$route.query.bjid) {
+      this.form.bjid = this.$route.query.bjid;
+      this.getList();
+    }
   },
   methods: {
     // 组件
