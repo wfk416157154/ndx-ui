@@ -84,6 +84,11 @@
                 <span>日期 :</span>
                 <span>{{item.date}}</span>
               </div>
+              <div class="log-header-left __float">
+                <span>填写时间 :</span>
+                <span>{{item.createTime}}</span>
+                <span style="color:red" v-if="item.status == '0'"> 补</span>
+              </div>
               <div class="log-header-right __float" v-if="dataRoleWeightId > 50">
                 <el-tag type="success" v-if="item.isRead == '0'">未读</el-tag>
                 <el-tag type="info" v-if="item.isRead == '1'">已读</el-tag>
