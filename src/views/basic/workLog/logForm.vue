@@ -61,9 +61,9 @@
           </el-form-item>
         </div>
       </div>
-      <div class="wrap-log">
+      <div class="wrap-log" v-if="sffx">
         <div class="curriculum-title">
-          <span>复习</span>
+          <span>总复习</span>
         </div>
         <div class="log-content">
           <el-tooltip class="item" effect="dark" content="请先填写课程" placement="top-start">
@@ -421,6 +421,7 @@
           :on-success="vHandleFileSuccess"
           :on-error="vHandleFileError"
           :auto-upload="false"
+          :before-upload="beforeUpload"
           drag
         >
           <i class="el-icon-upload"></i>
@@ -429,6 +430,7 @@
             <em>点击上传</em>
           </div>
         </el-upload>
+        <div>请确保视频格式为以下mp4 avi rmvb mov</div>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm">确 定</el-button>
@@ -605,7 +607,21 @@ export default {
       this.upload.isUploading = true;
     },
     // 上传失败
-    vHandleFileError(err, file, fileList) {},
+    vHandleFileError(err, file, fileList) {
+      this.msgError(
+        "请确保视频格式为以下mp4 avi rmvb mov,如还不能上传成功,请联系管理员"
+      );
+    },
+    beforeUpload(file) {
+      let typeArr = ["mp4", "avi", "rmvb", "mov"];
+      let tex = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (typeArr.indexOf(tex) == -1) {
+        this.msgError(
+          "请确保视频格式为以下mp4 avi rmvb mov,如还不能上传成功,请联系管理员"
+        );
+        return false;
+      }
+    },
     // 文件上传成功处理
     vHandleFileSuccess(response, file, fileList) {
       if (response.code == 200) {
