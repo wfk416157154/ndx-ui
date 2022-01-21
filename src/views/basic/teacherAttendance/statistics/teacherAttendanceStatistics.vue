@@ -85,44 +85,6 @@
         </el-table>
       </div>
     </div>
-
-    <el-dialog title="添加" :visible.sync="dialogFormVisible">
-      <table style="width : 100%;" border="1" cellspacing="0">
-        <tbody>
-          <tr>
-            <td class="tds">
-              <el-radio v-model="radio" @change="updeteTeacher" label="1">全部</el-radio>
-            </td>
-            <td>
-              <el-form :model="teacherFrom">
-                <el-form-item label="届数" label-width="80px">
-                  <el-input v-model="teacherFrom.rybjmc" @input="getTeacher" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="老师" label-width="80px">
-                  <el-input v-model="teacherFrom.lsxm" @input="getTeacher" autocomplete="off"></el-input>
-                </el-form-item>
-              </el-form>
-            </td>
-          </tr>
-          <tr>
-            <td class="tds">老师</td>
-            <td>
-              <el-checkbox-group v-model="teacherCheckbox">
-                <el-checkbox
-                  :label="item.id"
-                  v-for="(item,index) in teacherList"
-                  :key="index"
-                >{{item.lsxm}}</el-checkbox>
-              </el-checkbox-group>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="distributionSubmit">提 交</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
