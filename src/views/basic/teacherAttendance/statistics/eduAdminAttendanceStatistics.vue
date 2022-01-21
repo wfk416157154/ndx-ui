@@ -45,6 +45,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="queryResult">查询</el-button>
+        <el-button type="warning" plain icon="el-icon-download" @click="handleExport">导出</el-button>
         <el-button type="success" plain @click="selectTeacher">选择老师</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -183,6 +184,16 @@ export default {
     });
   },
   methods: {
+    // 导出
+    handleExport() {
+      // this.download(
+      //   "basic/student/export",
+      //   {
+      //     ...this.queryParams
+      //   },
+      //   `学生信息基础表.xlsx`
+      // );
+    },
     // 选择老师
     selectTeacher() {
       this.teacherCheckbox = [];
