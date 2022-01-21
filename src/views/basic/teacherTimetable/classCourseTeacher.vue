@@ -139,6 +139,17 @@
                     :disabled="btnDisabled"
                     @click="deleteData"
                   >删除选中行</el-button>
+                  <el-form-item label="课表有效期" label-width="100px">
+                    <el-date-picker
+                      v-model="dateArr"
+                      :disabled="kbyxqShow"
+                      type="daterange"
+                      value-format="yyyy-MM-dd"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                    ></el-date-picker>
+                  </el-form-item>
                   <el-form-item
                     v-if="classCourseList.length > 0"
                     label="有效课时"
@@ -477,7 +488,9 @@ export default {
         start: "05:40",
         step: "00:05",
         end: "23:00"
-      }
+      },
+      dateArr: [],
+      kbyxqShow: false
     };
   },
   created() {
@@ -586,6 +599,22 @@ export default {
       }
       listClassCourseBasic(obj).then(response => {
         this.classCourseBasicList = response.rows;
+        this.dateArr = [];
+        this.classCourseBasicList.forEach(value => {
+          if (value.sfqy) {
+            if (value.kzzd2 && value.kzzd3) {
+              this.kbyxqShow = false;
+              this.dateArr[0] = value.kzzd2;
+              this.dateArr[1] = value.kzzd3;
+            }
+          } else {
+            if (value.kzzd2 && value.kzzd3) {
+              this.kbyxqShow = true;
+              this.dateArr[0] = value.kzzd2;
+              this.dateArr[1] = value.kzzd3;
+            }
+          }
+        });
         if (this.classCourseBasicList.length == 0) {
           this.classCourseList = [];
           this.alertHtml =
@@ -627,13 +656,21 @@ export default {
         this.queryParams.kzzd2 = value.nd;
         this.queryParams.kbType = value.kbType;
         value.ifAddYxsj = "sfqy";
-        this.submitTimetable(value);
+        updateClassCourseBasic({
+          id: value.id,
+          bjid: value.bjid,
+          sfqy: Number(value.sfqy)
+        }).then(res => {
+          this.getClassCourseBasicList(value.bjid);
+        });
       }
       if (value.sfqy) {
+        this.kbyxqShow = false;
         this.yxsj = value.kzzd1;
         this.getCourse();
         this.msgSuccess("启动成功");
       } else {
+        this.kbyxqShow = true;
         this.classCourseList = [];
         this.msgSuccess("关闭成功");
       }
@@ -830,6 +867,13 @@ export default {
       };
       if (value.ifAddYxsj !== "sfqy") {
         json.kzzd1 = this.yxsj;
+      }
+      if (this.dateArr.length > 0) {
+        json.kzzd2 = this.dateArr[0];
+        json.kzzd3 = this.dateArr[1];
+      } else {
+        this.msgError("请选择课表有效期");
+        return;
       }
       let result = await classCourseBasicSave(json);
       if (result.code == 200) {

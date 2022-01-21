@@ -39,7 +39,6 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="queryData">查询</el-button>
         <el-button type="warning" plain icon="el-icon-download" @click="handleExport">导出</el-button>
-        <el-button type="success" plain @click="selectTeacher">选择老师</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -191,29 +190,7 @@ export default {
       //   `学生信息基础表.xlsx`
       // );
     },
-    // 选择老师
-    selectTeacher() {
-      this.teacherCheckbox = [];
-      this.radio = false;
-      this.dialogFormVisible = true;
-    },
-    getTeacher() {
-      listTeacher(this.teacherFrom).then(response => {
-        this.teacherList = response.rows;
-      });
-    },
-    updeteTeacher() {
-      this.teacherCheckbox = [];
-      listTeacher(this.teacherFrom).then(response => {
-        this.teacherList = response.rows;
-        this.teacherList.forEach(value => {
-          this.teacherCheckbox.push(value.id);
-        });
-      });
-    },
-    distributionSubmit() {
-      console.log(this.teacherCheckbox);
-    },
+
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("StatisticsForm");
