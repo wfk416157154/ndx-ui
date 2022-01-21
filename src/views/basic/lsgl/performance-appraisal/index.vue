@@ -48,7 +48,9 @@
       <el-table-column property="lsxm" label="老师" width="120"></el-table-column>
       <el-table-column property="pybcStr" label="培优补差"></el-table-column>
       <el-table-column property="gtStr" label="沟通"></el-table-column>
-      <el-table-column property="bkStr" label="备课"></el-table-column>
+      <el-table-column property="bkStr" label="新课备课"></el-table-column>
+      <el-table-column property="zfxbkStr" label="总复习备课"></el-table-column>
+      <el-table-column property="bkCount" label="备课总数"></el-table-column>
       <el-table-column property="address" label="配合系统"></el-table-column>
     </el-table>
 
