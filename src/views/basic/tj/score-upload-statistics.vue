@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" type="danger" @click="handleRemind(scope.$index, scope.row)" disabled>提 醒</el-button>
+          <el-button size="mini" type="danger" @click="handleRemind(scope.row)">提 醒</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -60,10 +60,43 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+
+    <el-dialog title="提醒" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="消息标题" prop="xxbt">
+          <el-input v-model="form.xxbt" maxlength="100" placeholder="请输入消息标题" />
+        </el-form-item>
+        <el-form-item label="消息内容" prop="xxnr">
+          <editor v-model="form.xxnr" :min-height="192" />
+        </el-form-item>
+        <el-form-item label="消息确认" prop="xxqrlx">
+          <el-radio-group v-model="form.xxqrlx">
+            <el-radio
+              v-for="dict in xxqrlxOptions"
+              :key="dict.dictValue"
+              :label="dict.dictValue"
+            >{{dict.dictLabel}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  listMessage,
+  getMessage,
+  delMessage,
+  addMessage,
+  updateMessage,
+  listNoReplyMessage
+} from "@/api/basic/message";
+import { listTeacher } from "@/api/basic/teacher";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
 import { queryNotUploadGradeExamlist } from "@/api/basic/examinationPaper";
@@ -80,12 +113,55 @@ export default {
       selectXqmc: [],
       bjclassList: [],
       kslxOptions: [],
-      scoreUploadStatisticsList: []
+      scoreUploadStatisticsList: [],
+      open: false,
+      form: {
+        id: null,
+        xxlx: "1",
+        xxbt: null,
+        xxnr: null,
+        sfqbfs: "0",
+        xxqrlx: null,
+        remark: null,
+        userId: null,
+        userName: null,
+        status: "0",
+        dataOrder: null,
+        createTime: null,
+        updateTime: null,
+        kzzd1: null,
+        kzzd2: null,
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null,
+        jsrArr: []
+      },
+      xxlxOptions: [],
+      sfqbfsOptions: [],
+      teacherList: [],
+      xxqrlxOptions: [],
+      lsphone: null,
+      // 表单校验
+      rules: {
+        xxlx: [{ required: true, message: "必填项", trigger: "change" }],
+        xxbt: [{ required: true, message: "必填项", trigger: "blur" }],
+        sfqbfs: [{ required: true, message: "必填项", trigger: "change" }],
+        xxqrlx: [{ required: true, message: "必填项", trigger: "change" }]
+      }
     };
   },
   created() {
     this.getDicts("examination_type").then(response => {
       this.kslxOptions = response.data;
+    });
+    this.getDicts("messageType").then(response => {
+      this.xxlxOptions = response.data;
+    });
+    this.getDicts("isOrNot").then(response => {
+      this.sfqbfsOptions = response.data;
+    });
+    this.getDicts("messageConfirmWay").then(response => {
+      this.xxqrlxOptions = response.data;
     });
     listSchool().then(response => {
       this.selectXqmc = response.rows;
@@ -97,6 +173,10 @@ export default {
       listBjclass({ kzzd1: id }).then(response => {
         this.bjclassList = response.rows;
       });
+      this.lsphone = null;
+      listTeacher({ xqmc: id }).then(response => {
+        this.teacherList = response.rows;
+      });
     },
     getList() {
       queryNotUploadGradeExamlist(this.queryParams).then(res => {
@@ -107,7 +187,72 @@ export default {
     getKslx(row, column) {
       return this.selectDictLabel(this.kslxOptions, row.kslx);
     },
-    handleRemind() {}
+    handleRemind(row) {
+      listMessage({ kzzd2: row.id }).then(response => {
+        if (response.rows.length === 0) {
+          this.reset();
+          this.form.jsrArr[0] = row.lsxm + "-" + row.dhhm;
+          this.form.kzzd2 = row.id;
+          this.open = true;
+        } else {
+          this.msgError("您已填写过提醒消息,请勿重复操作");
+        }
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if ("1" == this.form.sfqbfs) {
+            // 如果发送给全部用户，则接收人数组置空
+            this.form.jsrArr = [];
+          }
+          if (this.form.id != null) {
+            updateMessage(this.form).then(response => {
+              this.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            this.form.id = this.wjid;
+            addMessage(this.form).then(response => {
+              this.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        xxlx: "1",
+        xxbt: null,
+        xxnr: null,
+        sfqbfs: "0",
+        xxqrlx: null,
+        remark: null,
+        userId: null,
+        userName: null,
+        status: "0",
+        dataOrder: null,
+        createTime: null,
+        updateTime: null,
+        kzzd1: null,
+        kzzd2: null,
+        kzzd3: null,
+        kzzd4: null,
+        kzzd5: null,
+        jsrArr: []
+      };
+      this.resetForm("form");
+    }
   }
 };
 </script>
