@@ -45,8 +45,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="queryResult">查询</el-button>
-        <el-button type="warning" plain icon="el-icon-download" @click="handleExport">导出</el-button>
-        <el-button type="success" plain @click="selectTeacher">选择老师</el-button>
+        <el-button type="success" plain @click="selectTeacher">选择老师并导出Excel</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -88,9 +87,21 @@
       @pagination="queryResult"
     />
 
-    <el-dialog title="添加" :visible.sync="dialogFormVisible">
+    <el-dialog title="导出日志考勤统计的数据" :visible.sync="dialogFormVisible">
       <table style="width : 100%;" border="1" cellspacing="0">
         <tbody>
+        <tr>
+          <td>
+            选择统计月份
+          </td>
+          <td class="tds">
+            <el-date-picker
+              v-model="monthDate"
+              type="month"
+              placeholder="月份"
+            ></el-date-picker>
+          </td>
+        </tr>
           <tr>
             <td class="tds">
               <el-radio v-model="radio" @change="updeteTeacher" label="1">全部</el-radio>
@@ -122,7 +133,7 @@
       </table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="distributionSubmit">提 交</el-button>
+        <el-button type="primary" @click="distributionSubmit">提 交并导出Excel</el-button>
       </div>
     </el-dialog>
   </div>
@@ -131,7 +142,8 @@
 <script>
 import {
   jwColumnNamelist,
-  jwTeaAttenDatalist
+  jwTeaAttenDatalist,
+  statisticTest
 } from "@/api/basic/teacherAttendance";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
@@ -167,8 +179,11 @@ export default {
       dialogFormVisible: false,
       teacherCheckbox: [],
       teacherList: [],
-      teacherFrom: {},
-      radio: false
+      teacherFrom: {
+        kzzd4:"1" // 默认查询在职状态的老师
+      },
+      radio: false,
+      monthDate:null
     };
   },
   created() {
@@ -184,16 +199,6 @@ export default {
     });
   },
   methods: {
-    // 导出
-    handleExport() {
-      // this.download(
-      //   "basic/student/export",
-      //   {
-      //     ...this.queryParams
-      //   },
-      //   `学生信息基础表.xlsx`
-      // );
-    },
     // 选择老师
     selectTeacher() {
       this.teacherCheckbox = [];
@@ -215,8 +220,23 @@ export default {
         });
       });
     },
-    distributionSubmit() {
-      console.log(this.teacherCheckbox);
+    async distributionSubmit() {
+      let obj = {
+        monthDate: this.formatDate(this.monthDate),
+        lsidArr: this.teacherCheckbox
+      }
+      let loading=this.$loading({
+        lock: true,
+        text: "请稍后，正在进行统计~~~",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      await this.download(
+        "basic/teacherAttendanceStatistics/exportWorkLogStatisticsData",
+        obj,
+        `日志考勤统计表-${this.formatDate(new Date())}.xlsx`
+      );
+      loading.close()
     },
     /** 重置按钮操作 */
     resetQuery() {
