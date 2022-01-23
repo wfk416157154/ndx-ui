@@ -221,6 +221,14 @@ export default {
       });
     },
     async distributionSubmit() {
+      if(!this.monthDate){
+        this.msgError("请选择统计的数据月份！")
+        return
+      }
+      if(this.teacherCheckbox.length<1){
+        this.msgError("请选择需要统计的老师！")
+        return
+      }
       let obj = {
         monthDate: this.formatDate(this.monthDate),
         lsidArr: this.teacherCheckbox
