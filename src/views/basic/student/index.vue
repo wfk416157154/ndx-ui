@@ -214,7 +214,7 @@
       <el-table-column v-if="false" label="状态" align="center" prop="id"/>
       <el-table-column label="学生头像" align="center" prop="xstx">
         <template slot-scope="scope">
-          <img style="width : 80px; hieght : 80px" :src="scope.row.xstx"/>
+          <el-image v-if="scope.row.xstx!=null&&scope.row.xstx!=''" style="width : 80px; hieght : 80px" :src="scope.row.xstx" :preview-src-list="previewPhoto(scope.row.xstx)" />
         </template>
       </el-table-column>
       <el-table-column label="学生姓名" align="center" prop="xsxm">
@@ -948,6 +948,12 @@
         this.form.ryb = obj.rybjmc;
         this.form.kzzd1 = obj.id;
       },*/
+      // 预览头像
+      previewPhoto(xstx){
+        let arr=[]
+        arr.push(xstx)
+        return arr
+      },
       // 性别字典翻译
       xbFormat(row, column) {
         return this.selectDictLabel(this.xbOptions, row.xb);
