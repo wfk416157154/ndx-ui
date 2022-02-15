@@ -90,6 +90,9 @@
           <el-button type="primary" class="el-icon-plus" size="mini">新增教学计划</el-button>
         </li>
         <li>
+          <el-button type="danger" class="el-icon-refresh-right" size="mini" @click="updateClassPlanClick">更新教学计划列表的数据</el-button>
+        </li>
+        <li>
           <div style="display : flex;width : 100%">
             <div style="width : 180px">进度条颜色标注</div>
             <ul class="navigation-title">
@@ -282,7 +285,7 @@
 </template>
 
 <script>
-import { adminList } from "@/api/teaching/classPlan";
+import { adminList,updateClassPlanResult } from "@/api/teaching/classPlan";
 import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
@@ -423,6 +426,11 @@ export default {
             [path]: item,
           }
         });
+      });
+    },
+    updateClassPlanClick(){
+      updateClassPlanResult().then(res=>{
+        this.msgSuccess(res.msg)
       });
     }
   }

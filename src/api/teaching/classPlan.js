@@ -18,6 +18,15 @@ export function adminList(query) {
   })
 }
 
+// 更新班级教学计划统计结果列表
+export function updateClassPlanResult(query) {
+  return request({
+    url: '/basic/classPlan/updateClassPlanResultList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询班级教学计划详细
 export function getClassPlan(id) {
   return request({
