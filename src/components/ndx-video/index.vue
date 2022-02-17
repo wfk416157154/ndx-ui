@@ -10,6 +10,7 @@
         :disabled="executeDocument.disabledProgress"
         @timeupdate="getTimeupdate"
         @play="monitorPlay"
+        muted
         class="video-box"
       ></video>
     </div>

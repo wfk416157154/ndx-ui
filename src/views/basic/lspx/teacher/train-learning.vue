@@ -132,8 +132,12 @@ export default {
   },
   created() {
     this.studyList = JSON.parse(this.$route.query.list);
-    selectFileList({ kzzd1: this.studyList.videoFileId }).then(res => {
-      this.executeDocument.videoUrl = res.rows[0].url;
+    selectFileList({ kzzd1: this.studyList.videoFileId }).then(async res => {
+      // this.executeDocument.videoUrl = res.rows[0].url;
+      this.executeDocument.videoUrl = `${
+        process.env.VUE_APP_BASE_API
+      }/file/play?fileId=${res.rows[0].id}&Authorization=${"Bearer " +
+        getToken()}`;
     });
     learnRecordList({
       lsid: this.studyList.lsid,
