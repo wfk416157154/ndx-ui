@@ -71,7 +71,16 @@
       <el-table-column label="id" align="center" prop="id" v-if="false" />
       <el-table-column label="统计月份" align="center" prop="tjyf" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
-      <el-table-column label="文件名称" align="center" prop="wjmc" />
+      <el-table-column label="文件下载(点击文件)" align="center" prop="wjmc" >
+        <template slot-scope="scope">
+          <el-link
+            type="danger"
+            size="mini"
+            icon="el-icon-bottom"
+            @click="downloadFileName(scope.row.wjlj)"
+          >{{scope.row.wjmc}}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="处理状态" align="center" prop="clzt" >
         <template slot-scope="scope">
           <dict-tag :options="clztOptions" :value="scope.row.clzt" />
@@ -210,6 +219,8 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        zxsj:[{ required: true, message: "执行时间不能为空", trigger: "blur" }],
+        tjyf:[{ required: true, message: "统计月份不能为空", trigger: "blur" }],
       },
       // 处理状态-码表
       clztOptions:[],
@@ -261,6 +272,8 @@ export default {
     },
     // 表单重置
     reset() {
+      this.invokeFlag=false
+      this.teacherCheckbox = [];
       this.form = {
         id: null,
         tjyf: null,
@@ -369,11 +382,18 @@ export default {
       })
 
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('basic/statisticsTask/export', {
-        ...this.queryParams
-      }, `老师日志考勤结果统计任务-${new Date().getTime()}.xlsx`)
+    /** 下载按钮操作 */
+    downloadFileName(wjlj) {
+      this.$confirm('是否下载文件?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function() {
+        window.open(wjlj)
+      }).catch((e)=>{
+        console.log(e);
+      })
+
     },
 
 
