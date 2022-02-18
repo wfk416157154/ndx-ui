@@ -753,6 +753,7 @@ export default {
     },
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery($false) {
+      this.initBjClassList();
       if (!this.isLoad) {
         this.isLoad = true;
         this.openFullScreen();
