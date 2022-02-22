@@ -71,7 +71,13 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="info" icon="el-icon-upload2" size="mini" v-has-role="['admin','academicAdministrator']" @click="handleImport">导入</el-button>
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          v-has-role="['admin','academicAdministrator']"
+          @click="handleImport"
+        >导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -142,9 +148,47 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="totalNum">
+      <el-table :data="listAllPjf" border>
+        <el-table-column
+          :fixed="item.fixed"
+          align="center"
+          v-for="(item,index) in columnNameList"
+          :key="index"
+          :prop="item.prop"
+        >
+          <template slot-scope="scope">
+            <span v-if="item.prop == 'rybj'  || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+            <span v-else-if="item.prop == 'xsxm'">
+              <el-link
+                type="primary"
+                @click.stop="chooseStudent(scope.row)"
+              >{{scope.row[item.prop]}}</el-link>
+            </span>
+            <span v-else-if="item.prop == 'wl'">
+              <div>{{scope.row[item.prop]}}</div>
+            </span>
+            <div v-else>
+              <div
+                v-if="scope.row[item.colour] == 1"
+                style="background : #67C23A; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</div>
+              <span
+                v-if="scope.row[item.colour] == 2"
+                style="background : #E6A23C; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</span>
+              <span
+                v-if="scope.row[item.colour] == 3"
+                style="background : red; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</span>
+              <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
+              <span v-if="scope.row[item.colour] == 5">{{scope.row[item.prop]}}</span>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- <div class="totalNum">
         <span>共{{total}}条</span>
-      </div>
+      </div>-->
     </div>
     <lineChart v-show="iflineChart" :query="iflineChart" ref="chart1" />
     <!-- 成绩分析 -->
@@ -342,6 +386,7 @@ export default {
       columnNameList: [],
       // 获取学生成绩表
       listAll: [],
+      listAllPjf: [],
       //校区名称字典
       selectXqmc: [],
       // 日语班级字典
@@ -384,7 +429,6 @@ export default {
   mounted() {
     // this.getList();
     // console.log(this.$route.query.bjid)
-
   },
   methods: {
     // 当选择一个学生进行点击时，查看该学生的成绩分析
@@ -443,9 +487,11 @@ export default {
       };
       // 学生成绩表数据
       listAll(listAllJson).then(res => {
-        if (res.rows && res.rows.length > 0) {
-          this.listAll = res.rows;
-          this.total = res.total;
+
+        if (res.data) {
+          this.listAll = res.data.avgStugradeInfo;
+          this.listAllPjf = res.data.tableDataInfo;
+          // this.total = res.total;
           this.listAll.forEach(value => {
             if (value.xsbh == this.queryParams.xsbh) {
               this.allData = true;

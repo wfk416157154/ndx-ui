@@ -60,6 +60,7 @@
         :data="listAll"
         border
         :summary-method="getSummaries"
+        max-height="600px"
         style="width: 100%;font-size : 18px"
       >
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -78,6 +79,62 @@
         <el-table-column
           :fixed="item.fixed"
           :label="item.label"
+          align="center"
+          v-for="(item,index) in columnNameList"
+          :key="index"
+          :prop="item.prop"
+        >
+          <template slot-scope="scope">
+            <span v-if="item.prop == 'xsxm'">
+              <el-link
+                type="primary"
+                @click.stop="chooseStudent(scope.row)"
+              >{{scope.row[item.prop]}}</el-link>
+            </span>
+            <span v-if="item.prop == 'rybj' ||  item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+            <span v-if="item.prop == 'wl'">{{scope.row[item.prop]}}</span>
+            <div v-else>
+              <div
+                v-if="scope.row[item.colour] == 1"
+                style="background : #67C23A; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}
+              </div>
+              <span
+                v-if="scope.row[item.colour] == 2"
+                style="background : #E6A23C; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</span>
+              <span
+                v-if="scope.row[item.colour] == 3"
+                style="background : red; display : inline-block ; width :100%;color : #fff"
+              >{{scope.row[item.prop]}}</span>
+              <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
+              <span v-if="scope.row[item.colour] == 5">{{scope.row[item.prop]}}</span>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table
+        :data="listAllPjf"
+        border
+        :summary-method="getSummaries"
+        style="width: 100%;font-size : 18px"
+      >
+        <el-table-column label="" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['basic:everytime:edit']"
+              v-if="scope.row.id"
+            >修改
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :fixed="item.fixed"
+
           align="center"
           v-for="(item,index) in columnNameList"
           :key="index"
@@ -263,7 +320,8 @@
         wlOption: [],
         // 控制考试类型
         isKslx: false,
-        ksfwOption: []
+        ksfwOption: [],
+        listAllPjf: [],
       };
     },
     created() {
@@ -314,8 +372,9 @@
         };
         // 学生成绩表数据
         listAll(listAllJson).then(res => {
-          this.listAll = res.rows;
-          this.total = res.total;
+          this.listAll = res.data.avgStugradeInfo;
+          this.listAllPjf = res.data.tableDataInfo;
+          // this.total = res.total;
         });
         // 学生成绩表title列
         getColumnNameList(listAllJson).then(res => {

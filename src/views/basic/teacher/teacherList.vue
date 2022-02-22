@@ -66,7 +66,7 @@
           />
         </el-select>
       </el-form-item>-->
-        <el-form-item label="毕业状态" prop="status">
+      <el-form-item label="毕业状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择毕业状态" clearable size="small">
           <el-option
             v-for="dict in statusOptions"
@@ -138,22 +138,23 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false" />
-      <el-table-column label="老师头像" align="center" width="150px" prop="lstx" >
+      <el-table-column label="老师头像" align="center" width="150px" prop="lstx">
         <template slot-scope="scope">
           <div class="block" style="display : flex; width : 100% ; height : 100%">
-            <el-image v-if="scope.row.lstx!=null&&scope.row.lstx!=''"
-              :src="scope.row.lstx" :preview-src-list="previewPhoto(scope.row.lstx)">
-            </el-image>
+            <el-image
+              v-if="scope.row.lstx!=null&&scope.row.lstx!=''"
+              :src="scope.row.lstx"
+              :preview-src-list="previewPhoto(scope.row.lstx)"
+            ></el-image>
           </div>
         </template>
       </el-table-column>
       <el-table-column label="校区名称" align="center" prop="xqmc" v-if="false" />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
       <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
-<!--      <el-table-column label="分配的日语班级" align="center" prop="fpbj" />-->
       <el-table-column label="代课日语班级" align="center" prop="dkrybj" />
       <el-table-column label="已代毕业班" align="center" prop="ydrybj" />
-      <el-table-column label="入职时间" align="center" prop="rzsj" width="180"  />
+      <el-table-column label="入职时间" align="center" prop="rzsj" width="180" />
       <el-table-column label="工龄(月)" align="center" prop="rzgl" />
       <el-table-column label="身份证号" align="center" prop="sfzh" v-if="false" />
       <el-table-column label="电话号码" align="center" prop="dhhm" />
@@ -195,7 +196,7 @@
           <dict-tag :options="zaizhiStatusOptions" :value="scope.row.kzzd4" />
         </template>
       </el-table-column>
-      <el-table-column label="离职时间" align="center" prop="kzzd5" v-if="lzShow"/>
+      <el-table-column label="离职时间" align="center" prop="kzzd5" v-if="lzShow" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -256,7 +257,7 @@ export default {
   components: {},
   data() {
     return {
-      lzShow:false,//离职信息是否展示
+      lzShow: false, //离职信息是否展示
       // 遮罩层
       loading: true,
       // 选中数组
@@ -290,7 +291,7 @@ export default {
         lsxm: null,
         xb: null,
         sfyjszgz: null,
-        status: "1",// 默认未毕业
+        status: "1", // 默认未毕业
         kzzd4: "1" //默认在职
       },
       // 表单参数
@@ -351,6 +352,7 @@ export default {
     };
   },
   created() {
+    console.log("activated")
     this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;
@@ -445,10 +447,10 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
-      if (this.queryParams.kzzd4==="2"){
-        this.lzShow = true
-      }else {
-        this.lzShow = false
+      if (this.queryParams.kzzd4 === "2") {
+        this.lzShow = true;
+      } else {
+        this.lzShow = false;
       }
     },
     /** 重置按钮操作 */
@@ -492,7 +494,7 @@ export default {
       });
     },
     // 上传老师证件照资料的页面
-    uploadTeacherFilePage(id){
+    uploadTeacherFilePage(id) {
       // 获取页面中参数配置的路由
       this.getConfigKey("teacherForm").then(resp => {
         this.$router.push({
@@ -548,10 +550,10 @@ export default {
       return Math.max.call(null, ...arr) * 75;
     },
     // 预览老师头像
-    previewPhoto(lstx){
-      let arr=[]
-      arr.push(lstx)
-      return arr
+    previewPhoto(lstx) {
+      let arr = [];
+      arr.push(lstx);
+      return arr;
     }
   }
 };
