@@ -56,6 +56,7 @@
         <el-button type="danger" @click="queryShenpi('1,3')">未审批</el-button>
         <el-button type="success" @click="queryShenpi('2,3,4,5,6')">已审批</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-bottom" @click="exportTuibanData">导出退班数据</el-button>
       </el-form-item>
     </el-form>
 
@@ -340,6 +341,25 @@
         this.download('file/filetable/download', {
           wjmc: fileName
         }, fileName)
+      },
+
+      /**
+       * 导出退班数据
+       */
+      exportTuibanData(){
+        this.$confirm('确认导出?', "警告", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        ).then(function () {
+          this.download('basic/stuTuiban/export', {
+            ...this.queryParams
+          },`退班学生数据-${new Date().getTime()}.xlsx`)
+        }).catch((e) => {
+          console.log(e);
+        });
+
       },
 
 
