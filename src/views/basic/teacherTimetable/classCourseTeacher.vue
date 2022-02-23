@@ -131,6 +131,13 @@
                     size="mini"
                     @click="handleExport"
                   >导出</el-button>
+                  <el-button
+                    type="primary"
+                    plain
+                    icon="el-icon-document-copy"
+                    size="mini"
+                    @click="showCopyDialog"
+                  >复制课表</el-button>
 
                   <el-button
                     type="danger"
@@ -353,6 +360,44 @@
         <el-button @click="courseCancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 添加或修改课程对话框 -->
+    <el-dialog :title="copyTitle" :visible.sync="copyOpen" width="500px" append-to-body>
+      <p style="color:red;">（注意：该设置参数为复制后的年份和课表类型）</p>
+      <el-select
+        style="margin-right : 10px"
+        v-model="chooseNianfen"
+        placeholder="请选择年份"
+        clearable
+        size="small"
+      >
+        <el-option
+          v-for="(item, index) in bjkbStartDate"
+          :label="item"
+          :value="item"
+          :key="index"
+        />
+      </el-select>
+      <el-select
+        style="margin-right : 10px"
+        v-model="chooseKblx"
+        placeholder="请选择课表类型"
+        clearable
+        size="small"
+      >
+        <el-option
+          v-for="dict in kbTypeOptionsEL"
+          :key="dict.dictValue"
+          :label="dict.dictLabel"
+          :value="dict.dictValue"
+        />
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-prevent-re-click @click="copySubmitForm">确 定</el-button>
+        <el-button @click="copyCancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -372,7 +417,8 @@ import {
   getClassCourseBasic,
   delClassCourseBasic,
   addClassCourseBasic,
-  updateClassCourseBasic
+  updateClassCourseBasic,
+  copyCourseBasicApi
 } from "@/api/basic/classCourseBasic";
 
 export default {
@@ -490,7 +536,12 @@ export default {
         end: "23:00"
       },
       dateArr: [],
-      kbyxqShow: false
+      kbyxqShow: false,
+      copyTitle:"复制课表的参数(复制后的)",
+      // 默认是否展示
+      copyOpen:false,
+      chooseNianfen:null,
+      chooseKblx:null,
     };
   },
   created() {
@@ -515,6 +566,45 @@ export default {
     this.getList();
   },
   methods: {
+
+    /* ------------------------复制课表功能的部分代码----------------------------- */
+    // 显示复制课表的弹窗
+    showCopyDialog(){
+      this.chooseNianfen=null;
+      this.chooseKblx=null;
+      this.copyOpen=true
+    },
+    // 提交复制请求
+    copySubmitForm(){
+      if(!this.chooseKblx||!this.chooseNianfen){
+        this.msgError("复制课表的参数为必填项!")
+        return false
+      }
+      let obj={
+        bjid:this.queryParams.bjid,
+        kbType:this.queryParams.kbType,
+        nd:this.queryParams.kzzd2,
+        updateAfterKbType:this.chooseKblx,
+        updateAfterNd:this.chooseNianfen
+      }
+      this.$confirm("此操作将复制当前启用的课表, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        return copyCourseBasicApi(obj);
+      }).then(res=>{
+          this.msgSuccess(res.msg)
+      }).catch((e) => {
+        console.log(e)
+      });
+    },
+    // 关闭复制课表的参数弹窗
+    copyCancel(){
+      this.copyOpen=false
+    },
+    /* ------------------------复制课表功能的部分代码----------------------------- */
+
     // 导出
     handleExport() {
       let { bjid, kbType, kzzd2 } = this.queryParams;
@@ -610,8 +700,7 @@ export default {
           } else {
             if (value.kzzd2 && value.kzzd3) {
               this.kbyxqShow = true;
-              this.dateArr[0] = value.kzzd2;
-              this.dateArr[1] = value.kzzd3;
+              this.dateArr=[]
             }
           }
         });
