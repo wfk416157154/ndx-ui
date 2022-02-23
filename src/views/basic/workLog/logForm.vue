@@ -616,7 +616,7 @@ export default {
     beforeUpload(file) {
       let typeArr = ["mp4", "avi", "rmvb", "mov"];
       let tex = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (typeArr.indexOf(tex) == -1) {
+      if (typeArr.indexOf(tex.toLowerCase()) == -1) {
         this.msgError(
           "请确保视频格式为以下mp4 avi rmvb mov,如还不能上传成功,请联系管理员"
         );
