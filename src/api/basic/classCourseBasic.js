@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 复制课表的提交方法
+export function copyCourseBasicApi(data) {
+  return request({
+    url: '/basic/classCourseBasic/copyCourseBasicDetail',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查询班级课程基本列表
 export function listClassCourseBasic(query) {
   return request({
