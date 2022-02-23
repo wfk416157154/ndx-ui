@@ -170,6 +170,7 @@
               :key="index"
               :label="dict.dictLabel"
               :value="dict.dictValue"
+              :disabled="dict.dictValue == '1' "
             ></el-option>
           </el-select>
         </el-form-item>
