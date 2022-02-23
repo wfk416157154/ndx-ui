@@ -352,7 +352,6 @@ export default {
     };
   },
   created() {
-    console.log("activated")
     this.getList();
     this.getDicts("sys_user_sex").then(response => {
       this.xbOptions = response.data;

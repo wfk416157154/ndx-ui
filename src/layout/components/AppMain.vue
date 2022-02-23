@@ -1,10 +1,11 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive :include="cachedViews">
-        <router-view :key="key" />
+      <keep-alive>
+        <router-view v-if="!$route.meta.noCache" />
       </keep-alive>
     </transition>
+    <router-view v-if="$route.meta.noCache" :key="key" />
   </section>
 </template>
 
