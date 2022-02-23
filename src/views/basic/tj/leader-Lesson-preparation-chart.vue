@@ -3,9 +3,9 @@
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="日期">
         <el-date-picker
-          value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd"
           v-model="formInline.fpsjArr"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
