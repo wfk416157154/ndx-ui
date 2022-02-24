@@ -595,8 +595,10 @@ export default {
         return copyCourseBasicApi(obj);
       }).then(res=>{
           this.msgSuccess(res.msg)
+          this.copyCancel()
       }).catch((e) => {
         console.log(e)
+        this.copyCancel()
       });
     },
     // 关闭复制课表的参数弹窗
@@ -693,13 +695,13 @@ export default {
         this.classCourseBasicList.forEach(value => {
           if (value.sfqy) {
             if (value.kzzd2 && value.kzzd3) {
-              this.kbyxqShow = false;
+              this.kbyxqShow = true;
               this.dateArr[0] = value.kzzd2;
               this.dateArr[1] = value.kzzd3;
             }
           } else {
             if (value.kzzd2 && value.kzzd3) {
-              this.kbyxqShow = true;
+              this.kbyxqShow = false;
               this.dateArr=[]
             }
           }
