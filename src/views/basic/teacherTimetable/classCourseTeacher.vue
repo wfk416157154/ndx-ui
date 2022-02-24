@@ -137,7 +137,7 @@
                     icon="el-icon-document-copy"
                     size="mini"
                     @click="showCopyDialog"
-                  >复制课表</el-button>
+                  >复制当前已启用的课表</el-button>
 
                   <el-button
                     type="danger"
@@ -363,21 +363,13 @@
 
     <!-- 添加或修改课程对话框 -->
     <el-dialog :title="copyTitle" :visible.sync="copyOpen" width="500px" append-to-body>
-      <p style="color:red;">（注意：该设置参数为复制后的年份和课表类型）</p>
-      <el-select
-        style="margin-right : 10px"
+      <p style="color:red;">（注意：本次复制的是现在已启用的课表，点击确定之后会直接生成新的课表需要老师进行修改其课表有效期或者按要求进行修改。）</p>
+      <el-date-picker
         v-model="chooseNianfen"
-        placeholder="请选择年份"
-        clearable
-        size="small"
-      >
-        <el-option
-          v-for="(item, index) in bjkbStartDate"
-          :label="item"
-          :value="item"
-          :key="index"
-        />
-      </el-select>
+        type="year"
+        :disabled="true"
+        placeholder="选择年">
+      </el-date-picker>
       <el-select
         style="margin-right : 10px"
         v-model="chooseKblx"
@@ -570,7 +562,8 @@ export default {
     /* ------------------------复制课表功能的部分代码----------------------------- */
     // 显示复制课表的弹窗
     showCopyDialog(){
-      this.chooseNianfen=null;
+      let year=new Date();
+      this.chooseNianfen=year;
       this.chooseKblx=null;
       this.copyOpen=true
     },
@@ -585,7 +578,7 @@ export default {
         kbType:this.queryParams.kbType,
         nd:this.queryParams.kzzd2,
         updateAfterKbType:this.chooseKblx,
-        updateAfterNd:this.chooseNianfen
+        updateAfterNd:new Date().getFullYear()
       }
       this.$confirm("此操作将复制当前启用的课表, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -596,6 +589,7 @@ export default {
       }).then(res=>{
           this.msgSuccess(res.msg)
           this.copyCancel()
+          this.getClassCourseBasicList(this.queryParams.bjid)
       }).catch((e) => {
         console.log(e)
         this.copyCancel()
