@@ -293,6 +293,7 @@ export default {
       }
       // 获取当前老师班级成绩
       this.queryList.lsid = this.$store.state.user.glrid;
+      console.log(this.queryList)
       listClassGrade(this.queryList).then(res => {
         if (res.code == 200) {
           this.listClassGradeItem = res.rows;

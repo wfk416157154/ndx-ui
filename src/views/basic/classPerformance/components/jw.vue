@@ -159,7 +159,7 @@
             <div
               :id="index"
               v-if="true"
-              style="width : 90%; height : 340px; display: inline-block;"
+              style="width : 90%; height : 500px; display: inline-block;"
             ></div>
             <div class="chart-nav">
               <h4 style="color: #FFCC00" @click="selectChart('bar')">柱状图</h4>
