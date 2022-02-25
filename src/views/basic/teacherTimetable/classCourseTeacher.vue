@@ -3,7 +3,11 @@
     <el-row :gutter="20">
       <el-col :span="6" :xs="24">
         <el-card>
-          <el-tabs type="card" v-model="activeTab" @tab-click="switchingClasses(activeTab)">
+          <el-tabs
+            type="card"
+            v-model="activeTab"
+            @tab-click="switchingClasses(activeTab)"
+          >
             <el-tab-pane
               v-for="item in listBjclass"
               :key="item.id"
@@ -12,29 +16,29 @@
             >
               <div class="wrap-info">
                 <ul class="list-group list-group-striped">
-                  <li style="padding-bottom : 10px; font-size : 14px">
+                  <li style="padding-bottom: 10px; font-size: 14px">
                     日语班级
-                    <div class="pull-right">{{item.rybjmc}}</div>
+                    <div class="pull-right">{{ item.rybjmc }}</div>
                   </li>
                   <li class="list-group-item">
                     姓名
-                    <div class="pull-right">{{item.lsxm}}</div>
+                    <div class="pull-right">{{ item.lsxm }}</div>
                   </li>
                   <li class="list-group-item">
                     校区
-                    <div class="pull-right">{{item.xqmc}}</div>
+                    <div class="pull-right">{{ item.xqmc }}</div>
                   </li>
                   <li class="list-group-item">
                     开班时间
-                    <div class="pull-right">{{item.kbsj}}</div>
+                    <div class="pull-right">{{ item.kbsj }}</div>
                   </li>
                   <li class="list-group-item">
                     班级人数
-                    <div class="pull-right">{{item.bjrs}}</div>
+                    <div class="pull-right">{{ item.bjrs }}</div>
                   </li>
                   <li class="list-group-item">
                     录入时间
-                    <div class="pull-right">{{item.kzzd3}}</div>
+                    <div class="pull-right">{{ item.kzzd3 }}</div>
                   </li>
                 </ul>
               </div>
@@ -44,15 +48,24 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span style="color: #00afff">课表</span>
-            <el-tooltip class="item" effect="dark" content="更多课表" placement="top-end">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="更多课表"
+              placement="top-end"
+            >
               <span
                 @click="switchingClasses(activeTab)"
-                style="float :right ;color: #00afff;cursor: pointer;"
+                style="float: right; color: #00afff; cursor: pointer"
                 class="el-icon-d-arrow-right"
               ></span>
             </el-tooltip>
           </div>
-          <div v-for="(item,index) in classCourseBasicList" :key="index" class="list-group-item">
+          <div
+            v-for="(item, index) in classCourseBasicList"
+            :key="index"
+            class="list-group-item"
+          >
             <el-switch
               v-model="item.sfqy"
               @change="setSfqy(item)"
@@ -60,8 +73,9 @@
               inactive-color="#ff4949"
             ></el-switch>
             <div style="float: right">
-              {{item.nd}} 年度-
-              {{item.kbTypeName}}
+              {{ item.nd }} 年度- {{ item.kbTypeName }}-{{ dateArr[0] }}/{{
+                dateArr[1]
+              }}
             </div>
           </div>
         </el-card>
@@ -69,309 +83,376 @@
       <el-col :span="18" :xs="24">
         <el-card>
           <div slot="header" class="clearfix">
-            <span>{{kbName}}</span>
+            <span>{{ kbName }}</span>
           </div>
-          <el-tabs v-model="tabsActiveTab">
-            <el-tab-pane label="班级课表" name="kb">
-              <div style="margin-bottom: 10px">
-                <el-form
-                  :model="queryParams"
-                  ref="queryForm"
-                  :rules="queryParamsRules"
-                  :inline="true"
-                  label-width="68px"
-                >
-                  <el-select
-                    style="margin-right : 10px"
-                    v-model="queryParams.kzzd2"
-                    placeholder="请选择年份"
-                    clearable
-                    size="small"
-                    @change="getCourse"
+          <el-button type="info" size="mini" @click="clickEdit"
+            >点击修改</el-button
+          >
+          <div ref="prent">
+            <el-tabs v-model="tabsActiveTab">
+              <el-tab-pane label="班级课表" name="kb">
+                <div style="margin-bottom: 10px">
+                  <el-form
+                    :model="queryParams"
+                    ref="queryForm"
+                    :rules="queryParamsRules"
+                    :inline="true"
+                    label-width="68px"
                   >
-                    <el-option
-                      v-for="(item, index) in bjkbStartDate"
-                      :label="item"
-                      :value="item"
-                      :key="index"
-                    />
-                  </el-select>
-                  <el-select
-                    style="margin-right : 10px"
-                    v-model="queryParams.kbType"
-                    placeholder="请选择课表类型"
-                    clearable
-                    size="small"
-                    @change="getCourse"
-                  >
-                    <el-option
-                      v-for="dict in kbTypeOptionsEL"
-                      :key="dict.dictValue"
-                      :label="dict.dictLabel"
-                      :value="dict.dictValue"
-                    />
-                  </el-select>
-                  <el-button
-                    type="primary"
-                    icon="el-icon-plus"
-                    size="mini"
-                    @click="insertTimetable"
-                  >新增课表</el-button>
-                  <el-button
-                    type="success"
-                    icon="el-icon-check"
-                    size="mini"
-                    :disabled="btnDisabled"
-                    @click="submitTimetable"
-                  >保存课表</el-button>
-                  <el-button
-                    type="warning"
-                    plain
-                    icon="el-icon-download"
-                    size="mini"
-                    @click="handleExport"
-                  >导出</el-button>
-                  <el-button
-                    type="primary"
-                    plain
-                    icon="el-icon-document-copy"
-                    size="mini"
-                    @click="showCopyDialog"
-                  >复制当前已启用的课表</el-button>
-
-                  <el-button
-                    type="danger"
-                    icon="el-icon-delete"
-                    size="mini"
-                    :disabled="btnDisabled"
-                    @click="deleteData"
-                  >删除选中行</el-button>
-                  <el-form-item label="课表有效期" label-width="100px">
-                    <el-date-picker
-                      v-model="dateArr"
-                      :disabled="kbyxqShow"
-                      type="daterange"
-                      value-format="yyyy-MM-dd"
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期"
-                    ></el-date-picker>
-                  </el-form-item>
-                  <el-form-item
-                    v-if="classCourseList.length > 0"
-                    label="有效课时"
-                    prop="kbType"
-                    label-width="100px"
-                  >
-                    <el-input-number v-model="yxsj" @change="submitTimetable" placeholder="请输入有效课时"></el-input-number>
-                  </el-form-item>
-                </el-form>
-              </div>
-
-              <el-table
-                v-if="classCourseList.length > 0"
-                ref="multipleTable"
-                :data="classCourseList"
-                tooltip-effect="dark"
-                style="width: 100%;font-size : 18px"
-                border
-                @selection-change="handleSelectionChange"
-                :cell-style="tableStyle"
-                :header-cell-style="tableStyle"
-                @cell-click="cellRow"
-              >
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column label="开始时间" width="120">
-                  <template slot-scope="scope">
-                    <el-time-select
-                      style="width : 100%"
-                      placeholder="开始时间"
-                      v-model="scope.row.kssj"
-                      :picker-options="chooseTimeObj"
-                    ></el-time-select>
-                  </template>
-                </el-table-column>
-                <el-table-column label="结束时间" width="120">
-                  <template slot-scope="scope">
-                    <el-time-select
-                      style="width : 100%"
-                      placeholder="结束时间"
-                      v-model="scope.row.jssj"
-                      @change="sjYZ(scope.row)"
-                      :picker-options="chooseTimeObj"
-                    ></el-time-select>
-                  </template>
-                </el-table-column>
-                <el-table-column label="课程类型" width="120">
-                  <template slot-scope="scope">
-                    <el-select v-model="scope.row.kcType" placeholder="请选择">
+                    <el-select
+                      style="margin-right: 10px"
+                      v-model="queryParams.kzzd2"
+                      placeholder="请选择年份"
+                      clearable
+                      size="small"
+                      @change="getCourse"
+                    >
                       <el-option
-                        v-for="item in kcType"
-                        :key="item.dictValue"
-                        :label="item.dictLabel"
-                        :value="item.dictValue"
-                      ></el-option>
+                        v-for="(item, index) in bjkbStartDate"
+                        :label="item"
+                        :value="item"
+                        :key="index"
+                      />
                     </el-select>
-                  </template>
-                </el-table-column>
-                <el-table-column ref="demo" label="周一" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.mondayDetails.length > 0">
-                      <div
-                        @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.mondayDetails"
-                        :key="index"
+                    <el-select
+                      style="margin-right: 10px"
+                      v-model="queryParams.kbType"
+                      placeholder="请选择课表类型"
+                      clearable
+                      size="small"
+                      @change="getCourse"
+                    >
+                      <el-option
+                        v-for="dict in kbTypeOptionsEL"
+                        :key="dict.dictValue"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                      />
+                    </el-select>
+                    <el-button
+                      type="primary"
+                      icon="el-icon-plus"
+                      size="mini"
+                      @click="insertTimetable"
+                      >新增课表</el-button
+                    >
+                    <el-button
+                      type="success"
+                      icon="el-icon-check"
+                      size="mini"
+                      :disabled="btnDisabled"
+                      @click="submitTimetable"
+                      >保存课表</el-button
+                    >
+                    <el-button
+                      type="warning"
+                      plain
+                      icon="el-icon-download"
+                      size="mini"
+                      @click="handleExport"
+                      >导出</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      plain
+                      icon="el-icon-document-copy"
+                      size="mini"
+                      @click="showCopyDialog"
+                      >复制当前已启用的课表</el-button
+                    >
+
+                    <el-button
+                      type="danger"
+                      icon="el-icon-delete"
+                      size="mini"
+                      :disabled="btnDisabled"
+                      @click="deleteData"
+                      >删除选中行</el-button
+                    >
+                    <el-form-item label="课表有效期" label-width="100px">
+                      <el-date-picker
+                        v-model="dateArr"
+                        :disabled="kbyxqShow"
+                        type="daterange"
+                        value-format="yyyy-MM-dd"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                      ></el-date-picker>
+                    </el-form-item>
+                    <el-form-item
+                      v-if="classCourseList.length > 0"
+                      label="有效课时"
+                      prop="kbType"
+                      label-width="100px"
+                    >
+                      <el-input-number
+                        v-model="yxsj"
+                        @change="submitTimetable"
+                        placeholder="请输入有效课时"
+                      ></el-input-number>
+                    </el-form-item>
+                  </el-form>
+                </div>
+
+                <el-table
+                  v-if="classCourseList.length > 0"
+                  ref="multipleTable"
+                  :data="classCourseList"
+                  tooltip-effect="dark"
+                  style="width: 100%; font-size: 18px"
+                  border
+                  @selection-change="handleSelectionChange"
+                  :cell-style="tableStyle"
+                  :header-cell-style="tableStyle"
+                  @cell-click="cellRow"
+                >
+                  <el-table-column
+                    type="selection"
+                    width="55"
+                  ></el-table-column>
+                  <el-table-column label="开始时间" width="120">
+                    <template slot-scope="scope">
+                      <el-time-select
+                        style="width: 100%"
+                        placeholder="开始时间"
+                        v-model="scope.row.kssj"
+                        :picker-options="chooseTimeObj"
+                      ></el-time-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="结束时间" width="120">
+                    <template slot-scope="scope">
+                      <el-time-select
+                        style="width: 100%"
+                        placeholder="结束时间"
+                        v-model="scope.row.jssj"
+                        @change="sjYZ(scope.row)"
+                        :picker-options="chooseTimeObj"
+                      ></el-time-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="课程类型" width="120">
+                    <template slot-scope="scope">
+                      <el-select
+                        v-model="scope.row.kcType"
+                        placeholder="请选择"
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                        <el-option
+                          v-for="item in kcType"
+                          :key="item.dictValue"
+                          :label="item.dictLabel"
+                          :value="item.dictValue"
+                        ></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column ref="demo" label="周一" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.mondayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.mondayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="周二" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.tuesdayDetails.length > 0">
-                      <div
+                      <el-link
+                        type="primary"
+                        v-else
                         @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.tuesdayDetails"
-                        :key="index"
+                        >未添加</el-link
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="周二" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.tuesdayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.tuesdayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="周三" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.wednesdayDetails.length > 0">
-                      <div
+                      <el-link
+                        type="primary"
+                        v-else
                         @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.wednesdayDetails"
-                        :key="index"
+                        >未添加</el-link
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="周三" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.wednesdayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.wednesdayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="周四" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.thursdayDetails.length > 0">
-                      <div
+                      <el-link
+                        type="primary"
+                        v-else
                         @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.thursdayDetails"
-                        :key="index"
+                        >未添加</el-link
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="周四" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.thursdayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.thursdayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="周五" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.fridayDetails.length > 0">
-                      <div
+                      <el-link
+                        type="primary"
+                        v-else
                         @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.fridayDetails"
-                        :key="index"
+                        >未添加</el-link
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="周五" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.fridayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.fridayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="周六" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.saturdayDetails.length > 0">
-                      <div
+                      <el-link
+                        type="primary"
+                        v-else
                         @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.saturdayDetails"
-                        :key="index"
+                        >未添加</el-link
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="周六" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.saturdayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.saturdayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="周日" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.sundayDetails.length > 0">
-                      <div
+                      <el-link
+                        type="primary"
+                        v-else
                         @click="addCourse(scope.$index)"
-                        v-for="(item,index) in scope.row.sundayDetails"
-                        :key="index"
+                        >未添加</el-link
                       >
-                        <el-link
-                          v-if="item.kzzd1 == 0"
-                          type="success"
-                        >{{item.ybj}} : 共 {{item.yjskrs}} 人</el-link>
-                        <el-link v-else type="success">全部</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="周日" width="120">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.sundayDetails.length > 0">
+                        <div
+                          @click="addCourse(scope.$index)"
+                          v-for="(item, index) in scope.row.sundayDetails"
+                          :key="index"
+                        >
+                          <el-link v-if="item.kzzd1 == 0" type="success"
+                            >{{ item.ybj }} : 共 {{ item.yjskrs }} 人</el-link
+                          >
+                          <el-link v-else type="success">全部</el-link>
+                        </div>
                       </div>
-                    </div>
-                    <el-link type="primary" v-else @click="addCourse(scope.$index)">未添加</el-link>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div v-else v-html="alertHtml"></div>
-            </el-tab-pane>
-          </el-tabs>
+                      <el-link
+                        type="primary"
+                        v-else
+                        @click="addCourse(scope.$index)"
+                        >未添加</el-link
+                      >
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div v-else v-html="alertHtml"></div>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
         </el-card>
       </el-col>
     </el-row>
 
     <!-- 添加或修改课程对话框 -->
-    <el-dialog :title="courseTitle" :visible.sync="courseOpen" width="500px" append-to-body>
-      <el-table :data="ybjQueryList" ref="ybjquery" @selection-change="courseHandleSelectionChange">
+    <el-dialog
+      :title="courseTitle"
+      :visible.sync="courseOpen"
+      width="500px"
+      append-to-body
+    >
+      <el-table
+        :data="ybjQueryList"
+        ref="ybjquery"
+        @selection-change="courseHandleSelectionChange"
+      >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column property="ybj" label="原班级"></el-table-column>
         <el-table-column property="rs" label="班级人数"></el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="courseSubmitForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="courseSubmitForm"
+          >确 定</el-button
+        >
         <el-button @click="courseCancel">取 消</el-button>
       </div>
     </el-dialog>
 
     <!-- 添加或修改课程对话框 -->
-    <el-dialog :title="copyTitle" :visible.sync="copyOpen" width="500px" append-to-body>
-      <p style="color:red;">（注意：本次复制的是现在已启用的课表，点击确定之后会直接生成新的课表需要老师进行修改其课表有效期或者按要求进行修改。）</p>
+    <el-dialog
+      :title="copyTitle"
+      :visible.sync="copyOpen"
+      width="500px"
+      append-to-body
+    >
+      <p style="color: red">
+        （注意：本次复制的是现在已启用的课表，点击确定之后会直接生成新的课表需要老师进行修改其课表有效期或者按要求进行修改。）
+      </p>
       <el-date-picker
         v-model="chooseNianfen"
         type="year"
         :disabled="true"
-        placeholder="选择年">
+        placeholder="选择年"
+      >
       </el-date-picker>
       <el-select
-        style="margin-right : 10px"
+        style="margin-right: 10px"
         v-model="chooseKblx"
         placeholder="请选择课表类型"
         clearable
@@ -385,11 +466,12 @@
         />
       </el-select>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="copySubmitForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="copySubmitForm"
+          >确 定</el-button
+        >
         <el-button @click="copyCancel">取 消</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -400,7 +482,7 @@ import {
   saveList,
   addClassCourse,
   updateClassCourse,
-  ybjQuery
+  ybjQuery,
 } from "@/api/basic/classCourse";
 import { listSchool } from "@/api/basic/school";
 import { delClassCourse, classCourseBasicSave } from "@/api/basic/classCourse";
@@ -410,8 +492,9 @@ import {
   delClassCourseBasic,
   addClassCourseBasic,
   updateClassCourseBasic,
-  copyCourseBasicApi
+  copyCourseBasicApi,
 } from "@/api/basic/classCourseBasic";
+import { parseTime } from "../../../utils/ruoyi";
 
 export default {
   data() {
@@ -456,7 +539,7 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
       },
       queryParamsRules: {
         xqid: [{ required: true, message: "请选择", trigger: "change" }],
@@ -464,16 +547,16 @@ export default {
           {
             required: true,
             message: "请选择该课表对应的年份",
-            trigger: "change"
-          }
+            trigger: "change",
+          },
         ],
         kbType: [
           {
             required: true,
             message: "请选择该课表对应的课表类型",
-            trigger: "change"
-          }
-        ]
+            trigger: "change",
+          },
+        ],
       },
       // 班级课程表格数据
       classCourseList: [],
@@ -490,7 +573,7 @@ export default {
         kbType: null,
         kzzd2: new Date().getFullYear(),
         bjid: null,
-        xqid: null
+        xqid: null,
       },
       // 年份字典
       yearList: [],
@@ -525,31 +608,31 @@ export default {
       chooseTimeObj: {
         start: "05:40",
         step: "00:05",
-        end: "23:00"
+        end: "23:00",
       },
       dateArr: [],
       kbyxqShow: false,
-      copyTitle:"复制课表的参数(复制后的)",
+      copyTitle: "复制课表的参数(复制后的)",
       // 默认是否展示
-      copyOpen:false,
-      chooseNianfen:null,
-      chooseKblx:null,
+      copyOpen: false,
+      chooseNianfen: null,
+      chooseKblx: null,
     };
   },
   created() {
-    this.getDicts("year-list").then(response => {
+    this.getDicts("year-list").then((response) => {
       this.yearList = response.data;
     });
-    this.getDicts("kb_type").then(response => {
+    this.getDicts("kb_type").then((response) => {
       this.kbTypeOptionsEL = response.data;
     });
-    this.getDicts("is_course").then(response => {
+    this.getDicts("is_course").then((response) => {
       this.isCourse = response.data;
     });
-    this.getDicts("kc_type").then(response => {
+    this.getDicts("kc_type").then((response) => {
       this.kcType = response.data;
     });
-    this.getConfigKey("bjkbStartDate").then(res => {
+    this.getConfigKey("bjkbStartDate").then((res) => {
       let date = new Date().getFullYear() + 1;
       for (let i = res.msg; i <= date; i++) {
         this.bjkbStartDate.push(i);
@@ -557,47 +640,56 @@ export default {
     });
     this.getList();
   },
+  mounted() {
+    this.$refs.prent.style.pointerEvents = "none";
+  },
   methods: {
-
+    // 点击修改
+    clickEdit() {
+      this.$refs.prent.style.pointerEvents = "";
+    },
     /* ------------------------复制课表功能的部分代码----------------------------- */
     // 显示复制课表的弹窗
-    showCopyDialog(){
-      let year=new Date();
-      this.chooseNianfen=year;
-      this.chooseKblx=null;
-      this.copyOpen=true
+    showCopyDialog() {
+      let year = new Date();
+      this.chooseNianfen = year;
+      this.chooseKblx = null;
+      this.copyOpen = true;
     },
     // 提交复制请求
-    copySubmitForm(){
-      if(!this.chooseKblx||!this.chooseNianfen){
-        this.msgError("复制课表的参数为必填项!")
-        return false
+    copySubmitForm() {
+      if (!this.chooseKblx || !this.chooseNianfen) {
+        this.msgError("复制课表的参数为必填项!");
+        return false;
       }
-      let obj={
-        bjid:this.queryParams.bjid,
-        kbType:this.queryParams.kbType,
-        nd:this.queryParams.kzzd2,
-        updateAfterKbType:this.chooseKblx,
-        updateAfterNd:new Date().getFullYear()
-      }
+      let obj = {
+        bjid: this.queryParams.bjid,
+        kbType: this.queryParams.kbType,
+        nd: this.queryParams.kzzd2,
+        updateAfterKbType: this.chooseKblx,
+        updateAfterNd: new Date().getFullYear(),
+      };
       this.$confirm("此操作将复制当前启用的课表, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        return copyCourseBasicApi(obj);
-      }).then(res=>{
-          this.msgSuccess(res.msg)
-          this.copyCancel()
-          this.getClassCourseBasicList(this.queryParams.bjid)
-      }).catch((e) => {
-        console.log(e)
-        this.copyCancel()
-      });
+        type: "warning",
+      })
+        .then(() => {
+          return copyCourseBasicApi(obj);
+        })
+        .then((res) => {
+          this.msgSuccess(res.msg);
+          this.copyCancel();
+          this.getClassCourseBasicList(this.queryParams.bjid);
+        })
+        .catch((e) => {
+          console.log(e);
+          this.copyCancel();
+        });
     },
     // 关闭复制课表的参数弹窗
-    copyCancel(){
-      this.copyOpen=false
+    copyCancel() {
+      this.copyOpen = false;
     },
     /* ------------------------复制课表功能的部分代码----------------------------- */
 
@@ -609,7 +701,7 @@ export default {
         {
           bjid,
           kbType,
-          nd: kzzd2
+          nd: kzzd2,
         },
         `${kzzd2}-${this.selectDictLabel(
           this.kbTypeOptionsEL,
@@ -617,10 +709,9 @@ export default {
         )}-课表.xlsx`
       );
     },
-    
     // 班级列表基础信息
     getList() {
-      listBjclass({ id: this.$route.query.bjid }).then(res => {
+      listBjclass({ id: this.$route.query.bjid }).then((res) => {
         this.listBjclass = res.rows;
         if (res.rows.length == 1) {
           // 当该老师只有一个日语班
@@ -632,7 +723,7 @@ export default {
     // 获取班级
     getSchoolListId(xqid) {
       xqid = xqid || this.queryParams.xqid;
-      listBjclass({ kzzd1: xqid }).then(res => {
+      listBjclass({ kzzd1: xqid }).then((res) => {
         this.listBjclass = res.rows;
         this.listBjclass.length == 1
           ? (this.queryParams.xqid = this.schoolList[0].id)
@@ -651,7 +742,7 @@ export default {
       }
       /** 查询班级课程列表 */
       this.loading = true;
-      listClassCourse(this.queryParams).then(response => {
+      listClassCourse(this.queryParams).then((response) => {
         this.classCourseList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -659,7 +750,7 @@ export default {
     },
     //查询课表
     handleQuery() {
-      this.$refs.queryForm.validate(res => {
+      this.$refs.queryForm.validate((res) => {
         if (res) {
           this.getList();
         } else {
@@ -678,16 +769,16 @@ export default {
         this.classCourseList = [];
       }
       let obj = {
-        bjid: rybjid
+        bjid: rybjid,
       };
       if (nd) {
         obj.nd = nd;
         obj.kbType = this.queryParams.kbType;
       }
-      listClassCourseBasic(obj).then(response => {
+      listClassCourseBasic(obj).then((response) => {
         this.classCourseBasicList = response.rows;
         this.dateArr = [];
-        this.classCourseBasicList.forEach(value => {
+        this.classCourseBasicList.forEach((value) => {
           if (value.sfqy) {
             if (value.kzzd2 && value.kzzd3) {
               this.kbyxqShow = true;
@@ -697,7 +788,7 @@ export default {
           } else {
             if (value.kzzd2 && value.kzzd3) {
               this.kbyxqShow = false;
-              this.dateArr=[]
+              this.dateArr = [];
             }
           }
         });
@@ -708,7 +799,7 @@ export default {
           return;
         }
         let arr = [];
-        this.classCourseBasicList.forEach(value => {
+        this.classCourseBasicList.forEach((value) => {
           value.sfqy = Boolean(value.sfqy);
           arr.push(value.sfqy);
           if (value.sfqy) {
@@ -732,7 +823,7 @@ export default {
           this.alertHtml = "";
         }
       });
-      ybjQuery(rybjid).then(res => {
+      ybjQuery(rybjid).then((res) => {
         this.ybjQueryList = res.rows;
       });
     },
@@ -745,8 +836,8 @@ export default {
         updateClassCourseBasic({
           id: value.id,
           bjid: value.bjid,
-          sfqy: Number(value.sfqy)
-        }).then(res => {
+          sfqy: Number(value.sfqy),
+        }).then((res) => {
           this.getClassCourseBasicList(value.bjid);
         });
       }
@@ -802,7 +893,7 @@ export default {
         sundayDetails: [],
         thursdayDetails: [],
         tuesdayDetails: [],
-        wednesdayDetails: []
+        wednesdayDetails: [],
       };
     },
     // 弹出添加课程表格
@@ -820,7 +911,7 @@ export default {
         id: row.id,
         kzzd2: this.queryParams.kzzd2,
         kbType: this.queryParams.kbType,
-        title: column.label
+        title: column.label,
       };
     },
     // 选中课程对话框数据
@@ -829,7 +920,7 @@ export default {
       if (selection && selection.length > 0) {
         this.courseHandleSelectionJson = {
           ybj: "",
-          yjskrs: 0
+          yjskrs: 0,
         };
         if (this.ybjQueryList.length == selection.length) {
           for (let i = 0; i < selection.length; i++) {
@@ -837,20 +928,22 @@ export default {
             this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
             this.courseHandleSelectionJson.yjskrs += selection[i].rs;
           }
-          this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
-            0,
-            this.courseHandleSelectionJson.ybj.length - 1
-          );
+          this.courseHandleSelectionJson.ybj =
+            this.courseHandleSelectionJson.ybj.slice(
+              0,
+              this.courseHandleSelectionJson.ybj.length - 1
+            );
         } else {
           for (let i = 0; i < selection.length; i++) {
             this.courseHandleSelectionJson.kzzd1 = 0;
             this.courseHandleSelectionJson.ybj += selection[i].ybj + ",";
             this.courseHandleSelectionJson.yjskrs += selection[i].rs;
           }
-          this.courseHandleSelectionJson.ybj = this.courseHandleSelectionJson.ybj.slice(
-            0,
-            this.courseHandleSelectionJson.ybj.length - 1
-          );
+          this.courseHandleSelectionJson.ybj =
+            this.courseHandleSelectionJson.ybj.slice(
+              0,
+              this.courseHandleSelectionJson.ybj.length - 1
+            );
         }
       }
     },
@@ -949,7 +1042,7 @@ export default {
         nd: this.queryParams.kzzd2,
         kbType: this.queryParams.kbType,
         sfqy: Number(value.sfqy),
-        id: value.id
+        id: value.id,
       };
       if (value.ifAddYxsj !== "sfqy") {
         json.kzzd1 = this.yxsj;
@@ -985,7 +1078,7 @@ export default {
             }
             this.multipleSelection[i].kzzd1 = result.data.id;
             if (this.multipleSelection[i].id) {
-              updateClassCourse(this.multipleSelection[i]).then(res => {
+              updateClassCourse(this.multipleSelection[i]).then((res) => {
                 if (res.code == 200) {
                   this.multipleSelection = [];
                   this.getClassCourseBasicList(
@@ -997,7 +1090,7 @@ export default {
                 }
               });
             } else {
-              addClassCourse(this.multipleSelection[i]).then(res => {
+              addClassCourse(this.multipleSelection[i]).then((res) => {
                 if (res.code == 200) {
                   this.multipleSelection = [];
                   this.getClassCourseBasicList(
@@ -1021,7 +1114,7 @@ export default {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
           this.btnDisabled = true;
@@ -1037,7 +1130,7 @@ export default {
             this.handleQuery();
             this.$message({
               type: "success",
-              message: "删除成功!"
+              message: "删除成功!",
             });
           }
         })
@@ -1045,7 +1138,7 @@ export default {
           this.courseHandleSelectionJson.kzzd1 = 1;
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消删除",
           });
         });
     },
@@ -1084,8 +1177,8 @@ export default {
         return "0" + num.toString();
       }
       return num;
-    }
-  }
+    },
+  },
 };
 </script>
 
