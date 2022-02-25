@@ -72,8 +72,8 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
             ></el-switch>
-            <div style="float: right" @click="getCourse(item.id)">
-              <el-link
+            <div style="float: right" @click="getCourse(item)">
+              <el-link type="primary"
                 >{{ item.nd }} 年度- {{ item.kbTypeName }}-{{
                   parseTime(item.kzzd2, "{y}-{m}-{d}")
                 }}/{{ parseTime(item.kzzd3, "{y}-{m}-{d}") }}</el-link
@@ -726,9 +726,11 @@ export default {
       });
     },
     // 获取课表详细数据
-    getCourse(id) {
-      if (id) {
-        this.courseId = id;
+    getCourse(item) {
+      if (item && item.id) {
+        this.courseId = item.id;
+        this.queryParams.kzzd2 = item.nd;
+        this.queryParams.kbType = item.kbType;
       }
       if (!this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
