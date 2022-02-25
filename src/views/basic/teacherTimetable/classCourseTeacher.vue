@@ -73,8 +73,8 @@
               inactive-color="#ff4949"
             ></el-switch>
             <div style="float: right">
-              {{ item.nd }} 年度- {{ item.kbTypeName }}-{{ dateArr[0] }}/{{
-                dateArr[1]
+              {{ item.nd }} 年度- {{ item.kbTypeName }}-{{ item.kzzd2 }}/{{
+                item.kzzd3
               }}
             </div>
           </div>
@@ -172,7 +172,7 @@
                     <el-form-item label="课表有效期" label-width="100px">
                       <el-date-picker
                         v-model="dateArr"
-                        :disabled="kbyxqShow"
+                        :disabled="true"
                         type="daterange"
                         value-format="yyyy-MM-dd"
                         range-separator="至"
@@ -611,7 +611,6 @@ export default {
         end: "23:00",
       },
       dateArr: [],
-      kbyxqShow: false,
       copyTitle: "复制课表的参数(复制后的)",
       // 默认是否展示
       copyOpen: false,
@@ -641,12 +640,19 @@ export default {
     this.getList();
   },
   mounted() {
-    this.$refs.prent.style.pointerEvents = "none";
+    this.$refs.prent.addEventListener("click", this.msgPrent, false);
   },
   methods: {
     // 点击修改
     clickEdit() {
+      this.msgSuccess("开启修改功能成功");
       this.$refs.prent.style.pointerEvents = "";
+      this.$refs.prent.removeEventListener("click", this.msgPrent, false);
+    },
+    // 消息提示
+    msgPrent() {
+      this.msgError("请点击 '点击修改' 后才可以编辑页面");
+      this.$refs.prent.style.pointerEvents = "none";
     },
     /* ------------------------复制课表功能的部分代码----------------------------- */
     // 显示复制课表的弹窗
@@ -781,14 +787,8 @@ export default {
         this.classCourseBasicList.forEach((value) => {
           if (value.sfqy) {
             if (value.kzzd2 && value.kzzd3) {
-              this.kbyxqShow = true;
               this.dateArr[0] = value.kzzd2;
               this.dateArr[1] = value.kzzd3;
-            }
-          } else {
-            if (value.kzzd2 && value.kzzd3) {
-              this.kbyxqShow = false;
-              this.dateArr = [];
             }
           }
         });
@@ -842,12 +842,10 @@ export default {
         });
       }
       if (value.sfqy) {
-        this.kbyxqShow = false;
         this.yxsj = value.kzzd1;
         this.getCourse();
         this.msgSuccess("启动成功");
       } else {
-        this.kbyxqShow = true;
         this.classCourseList = [];
         this.msgSuccess("关闭成功");
       }
@@ -1046,13 +1044,6 @@ export default {
       };
       if (value.ifAddYxsj !== "sfqy") {
         json.kzzd1 = this.yxsj;
-      }
-      if (this.dateArr.length > 0) {
-        json.kzzd2 = this.dateArr[0];
-        json.kzzd3 = this.dateArr[1];
-      } else {
-        this.msgError("请选择课表有效期");
-        return;
       }
       let result = await classCourseBasicSave(json);
       if (result.code == 200) {
