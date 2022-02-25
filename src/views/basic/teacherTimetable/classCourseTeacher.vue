@@ -72,10 +72,12 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
             ></el-switch>
-            <div style="float: right" @click="getCourse">
-              {{ item.nd }} 年度- {{ item.kbTypeName }}-{{
-                parseTime(item.kzzd2, "{y}-{m}-{d}")
-              }}/{{ parseTime(item.kzzd3, "{y}-{m}-{d}") }}
+            <div style="float: right" @click="getCourse(item.id)">
+              <el-link
+                >{{ item.nd }} 年度- {{ item.kbTypeName }}-{{
+                  parseTime(item.kzzd2, "{y}-{m}-{d}")
+                }}/{{ parseTime(item.kzzd3, "{y}-{m}-{d}") }}</el-link
+              >
             </div>
           </div>
         </el-card>
@@ -724,7 +726,10 @@ export default {
       });
     },
     // 获取课表详细数据
-    getCourse() {
+    getCourse(id) {
+      if (id) {
+        this.courseId = id;
+      }
       if (!this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
         return;
