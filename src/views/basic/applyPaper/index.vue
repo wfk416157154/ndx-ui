@@ -110,8 +110,8 @@
           <el-button
             type="danger"
             size="small"
-            v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1'"
-            slot="reference"
+            v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1' &&scope.row.kzzd2 !== '3'"
+          slot="reference"
             @click="backout(scope.row.id)"
           >撤回</el-button>
           <span v-if="scope.row.status == '2'">已撤回</span>
