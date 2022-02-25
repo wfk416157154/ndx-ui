@@ -617,6 +617,7 @@ export default {
         )}-课表.xlsx`
       );
     },
+    
     // 班级列表基础信息
     getList() {
       listBjclass({ id: this.$route.query.bjid }).then(res => {
