@@ -605,6 +605,7 @@ export default {
       chooseNianfen: null,
       chooseKblx: null,
       courseId: null,
+      courseBasicObj:null
     };
   },
   created() {
@@ -658,6 +659,7 @@ export default {
         return false;
       }
       let obj = {
+        id:this.courseBasicObj.id,
         bjid: this.queryParams.bjid,
         kbType: this.queryParams.kbType,
         nd: this.queryParams.kzzd2,
@@ -728,6 +730,7 @@ export default {
     // 获取课表详细数据
     getCourse(item) {
       if (item && item.id) {
+        this.courseBasicObj=item
         this.courseId = item.id;
         this.queryParams.kzzd2 = item.nd;
         this.queryParams.kbType = item.kbType;
@@ -793,6 +796,7 @@ export default {
             this.queryParams.kbType = value.kbType;
             this.yxsj = value.kzzd1;
             this.courseId = value.id;
+            this.courseBasicObj=value;
             if (!$sfqy) {
               this.getCourse();
             }
@@ -1028,6 +1032,7 @@ export default {
         kbType: this.queryParams.kbType,
         sfqy: Number(value.sfqy),
         id: value.id,
+        isUpdateCourse:true, // 后台接口使用的参数，用来判断是否是修改数据后手工进行提交的
       };
       if (value.ifAddYxsj !== "sfqy") {
         json.kzzd1 = this.yxsj;
