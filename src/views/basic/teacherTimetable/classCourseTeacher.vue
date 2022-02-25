@@ -72,10 +72,10 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
             ></el-switch>
-            <div style="float: right">
-              {{ item.nd }} 年度- {{ item.kbTypeName }}-{{ item.kzzd2 }}/{{
-                item.kzzd3
-              }}
+            <div style="float: right" @click="getCourse">
+              {{ item.nd }} 年度- {{ item.kbTypeName }}-{{
+                parseTime(item.kzzd2, "{y}-{m}-{d}")
+              }}/{{ parseTime(item.kzzd3, "{y}-{m}-{d}") }}
             </div>
           </div>
         </el-card>
@@ -105,7 +105,6 @@
                       placeholder="请选择年份"
                       clearable
                       size="small"
-                      @change="getCourse"
                     >
                       <el-option
                         v-for="(item, index) in bjkbStartDate"
@@ -120,7 +119,6 @@
                       placeholder="请选择课表类型"
                       clearable
                       size="small"
-                      @change="getCourse"
                     >
                       <el-option
                         v-for="dict in kbTypeOptionsEL"
@@ -169,17 +167,6 @@
                       @click="deleteData"
                       >删除选中行</el-button
                     >
-                    <el-form-item label="课表有效期" label-width="100px">
-                      <el-date-picker
-                        v-model="dateArr"
-                        :disabled="true"
-                        type="daterange"
-                        value-format="yyyy-MM-dd"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                      ></el-date-picker>
-                    </el-form-item>
                     <el-form-item
                       v-if="classCourseList.length > 0"
                       label="有效课时"
@@ -610,12 +597,12 @@ export default {
         step: "00:05",
         end: "23:00",
       },
-      dateArr: [],
       copyTitle: "复制课表的参数(复制后的)",
       // 默认是否展示
       copyOpen: false,
       chooseNianfen: null,
       chooseKblx: null,
+      courseId: null,
     };
   },
   created() {
@@ -746,6 +733,7 @@ export default {
         this.msgError("请选择该新增课表的课表类型！");
         return;
       }
+      this.queryParams.kzzd1 = this.courseId;
       /** 查询班级课程列表 */
       this.loading = true;
       listClassCourse(this.queryParams).then((response) => {
@@ -783,15 +771,6 @@ export default {
       }
       listClassCourseBasic(obj).then((response) => {
         this.classCourseBasicList = response.rows;
-        this.dateArr = [];
-        this.classCourseBasicList.forEach((value) => {
-          if (value.sfqy) {
-            if (value.kzzd2 && value.kzzd3) {
-              this.dateArr[0] = value.kzzd2;
-              this.dateArr[1] = value.kzzd3;
-            }
-          }
-        });
         if (this.classCourseBasicList.length == 0) {
           this.classCourseList = [];
           this.alertHtml =
@@ -806,6 +785,7 @@ export default {
             this.queryParams.kzzd2 = value.nd;
             this.queryParams.kbType = value.kbType;
             this.yxsj = value.kzzd1;
+            this.courseId = value.id;
             if (!$sfqy) {
               this.getCourse();
             }
