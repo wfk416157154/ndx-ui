@@ -135,6 +135,7 @@ export default {
         rybjid: "",
         xsxm: "",
         shzt: "",
+        xsbh:"",
         shztArr: []
       },
       total: 0,
@@ -203,6 +204,7 @@ export default {
     // 同意
     handleDdopt(i, row) {
       this.jsSuspensionReviewForm.id = row.id;
+      this.jsSuspensionReviewForm.xsbh = row.xsbh;
       this.jsSuspensionReviewForm.shzt = 2;
       updateXiuxue(this.jsSuspensionReviewForm).then(res => {
         if (res.code == 200) {
