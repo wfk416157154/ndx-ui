@@ -3,6 +3,9 @@
     <div class="top-info">
       <ul style="list-style:none;" class="clearfix">
         <li class="class-wrap" v-for="(item,index) in pageList" :key="index">
+          <img width="420px" height="280px" src="../../assets/images/67ba200c1c606bb9fcceee6cc0f8067.jpg" alt="">
+        </li>
+        <li class="class-wrap" v-for="(item,index) in pageList" :key="index">
           <h2 style="margin-top: 1px">{{item.rybjmc}}</h2>
           <p><span style="font-weight: bold">开班时间</span> : {{item.kbsj}}</p>
           <p><span style="font-weight: bold">开班人数</span> : {{item.bjrs}}</p>
