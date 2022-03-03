@@ -351,7 +351,7 @@
                 </template>
                 <template v-if="item.weekList && item.weekList.length > 0">
                   <div v-for="(list, j) in item.weekList" :key="j">
-                    <span>{{ list.dictLabel }}</span>
+                    <span>{{ list }}</span>
                   </div>
                 </template>
                 <template
