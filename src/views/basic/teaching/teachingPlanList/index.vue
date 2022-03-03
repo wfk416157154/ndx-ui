@@ -343,6 +343,21 @@
               </ul>
             </div>
             <div>
+              <div v-if="item.lessonProcessObjList.length > 0">
+                <ndx-progress :progressItem="item.lessonProcessObjList" />
+              </div>
+              <div v-else>
+                <div
+                  style="display: flex; margin: 10px; align-items: center"
+                  v-for="(row, j) in item.reviewProcessObjList"
+                  :key="j"
+                >
+                  <p style="margin-right: 30px; width: 100px">
+                    {{ row.reviewName }}
+                  </p>
+                  <ndx-progress :progressItem="row.reviewProcessList" />
+                </div>
+              </div>
               <div class="progress-title">
                 <template v-if="item.monthList && item.monthList.length > 0">
                   <div v-for="(list, j) in item.monthList" :key="j">
@@ -361,21 +376,6 @@
                     <span>{{ list.dictLabel }}</span>
                   </div>
                 </template>
-              </div>
-              <div v-if="item.lessonProcessObjList.length > 0">
-                <ndx-progress :progressItem="item.lessonProcessObjList" />
-              </div>
-              <div v-else>
-                <div
-                  style="display: flex; margin: 10px; align-items: center"
-                  v-for="(row, j) in item.reviewProcessObjList"
-                  :key="j"
-                >
-                  <p style="margin-right: 30px; width: 100px">
-                    {{ row.reviewName }}
-                  </p>
-                  <ndx-progress :progressItem="row.reviewProcessList" />
-                </div>
               </div>
             </div>
           </div>
