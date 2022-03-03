@@ -8,8 +8,8 @@
       label-width="68px"
     >
       <el-form-item>
-        <el-button type="success" size="mini" @click="getStatus([3])">已审核</el-button>
-        <el-button type="danger" size="mini" @click="getStatus([1,2])">未审核</el-button>
+        <el-button type="success" size="mini" @click="getStatus([2,3,4])">已审核</el-button>
+        <el-button type="danger" size="mini" @click="getStatus([1])">未审核</el-button>
       </el-form-item>
     </el-form>
 
@@ -205,7 +205,7 @@ export default {
     },
     // 状态
     getStatus(zt) {
-      this.queryParams.jashztArr = zt;
+      this.queryParams.shztArr = zt;
       this.getList();
     },
     // 教案审核状态字典翻译
