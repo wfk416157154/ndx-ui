@@ -346,12 +346,19 @@
               <div class="progress-title">
                 <template v-if="item.monthList && item.monthList.length > 0">
                   <div v-for="(list, j) in item.monthList" :key="j">
-                    <span>{{list}}</span>
+                    <span>{{ list }}</span>
                   </div>
                 </template>
                 <template v-if="item.weekList && item.weekList.length > 0">
                   <div v-for="(list, j) in item.weekList" :key="j">
-                    <span>{{list}}</span>
+                    <span>{{ list.dictLabel }}</span>
+                  </div>
+                </template>
+                <template
+                  v-if="item.termDictList && item.termDictList.length > 0"
+                >
+                  <div v-for="(list, j) in item.termDictList" :key="j">
+                    <span>{{ list.dictLabel }}</span>
                   </div>
                 </template>
               </div>
