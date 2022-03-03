@@ -74,6 +74,7 @@
       <el-table-column label="文件下载(点击文件)" align="center" prop="wjmc" >
         <template slot-scope="scope">
           <el-link
+            v-if="'1'==scope.row.clzt"
             type="danger"
             size="mini"
             icon="el-icon-bottom"
@@ -88,12 +89,12 @@
       </el-table-column>
       <el-table-column label="执行时间" align="center" prop="zxsj" width="180">
         <template slot-scope="scope">
-          {{parseTime(scope.row.zxsj,'{y}-{m}-{s} {h}:{i}:{s}')}}
+          {{parseTime(scope.row.zxsj,'{y}-{m}-{d} {h}:{i}:{s}')}}
         </template>
       </el-table-column>
       <el-table-column label="完成时间" align="center" prop="wcsj" width="180">
         <template slot-scope="scope">
-          {{parseTime(scope.row.wcsj,'{y}-{m}-{s} {h}:{i}:{s}')}}
+          {{parseTime(scope.row.wcsj,'{y}-{m}-{d} {h}:{i}:{s}')}}
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status" width="80">
@@ -154,6 +155,7 @@
           <el-input v-model="teacherFrom.lsxm" @input="getTeacher" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="选择老师" label-width="80px">
+          <el-button v-model="chooseAll" @click="getTeacher" type="success" size="mini" icon="el-icon-check" >勾选全部</el-button>
           <el-checkbox-group v-model="teacherCheckbox">
             <el-checkbox
               :label="item.id"
@@ -185,6 +187,7 @@ export default {
   },
   data() {
     return {
+      chooseAll:null,
       // 遮罩层
       loading: true,
       fullscreenLoading:false,
@@ -263,6 +266,9 @@ export default {
       this.teacherCheckbox = [];
       listTeacher(this.teacherFrom).then(response => {
         this.teacherList = response.rows;
+        this.teacherList.forEach(value => {
+          this.teacherCheckbox.push(value.id);
+        });
       });
     },
     // 取消按钮

@@ -1016,25 +1016,29 @@ export default {
       this.multipleSelection = val;
     },
     // 保存课表
-    async submitTimetable(value) {
+    async submitTimetable() {
       if (!this.isAdd) {
         this.msgError("错误: 开始时间不能大于结束时间");
         return;
       }
-      if (value) {
-        if (!this.queryParams.kbType || !this.queryParams.kzzd2) {
-          return this.msgError("请选择课表类型！");
-        }
+      if (!this.queryParams.kbType || !this.queryParams.kzzd2) {
+        return this.msgError("请选择课表类型！");
+      }
+      let sfqyNumber=1; // 默认启用
+      let basicId=null;
+      if(this.courseBasicObj){
+        sfqyNumber=this.courseBasicObj.sfqy
+        basicId=this.courseBasicObj.id
       }
       let json = {
         bjid: this.queryParams.bjid,
         nd: this.queryParams.kzzd2,
         kbType: this.queryParams.kbType,
-        sfqy: Number(value.sfqy),
-        id: value.id,
+        sfqy: Number(sfqyNumber),
+        id: basicId,
         isUpdateCourse:true, // 后台接口使用的参数，用来判断是否是修改数据后手工进行提交的
       };
-      if (value.ifAddYxsj !== "sfqy") {
+      if (this.yxsj) {// 有效课时
         json.kzzd1 = this.yxsj;
       }
       let result = await classCourseBasicSave(json);
