@@ -2,9 +2,13 @@
   <div class="teaching-plan-list">
     <el-form :inline="true" :model="queryParams" ref="teachingPlanForm">
       <el-form-item label="教材" prop="jcid">
-        <el-select filterable v-model="queryParams.jcid" placeholder="请选择教材">
+        <el-select
+          filterable
+          v-model="queryParams.jcid"
+          placeholder="请选择教材"
+        >
           <el-option
-            v-for="(item,index) in listTeachingMaterial"
+            v-for="(item, index) in listTeachingMaterial"
             :key="index"
             :label="item.jcmc"
             :value="item.id"
@@ -21,9 +25,13 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="学期" prop="kbxq">
-        <el-select filterable v-model="queryParams.kbxq" placeholder="请选择学期">
+        <el-select
+          filterable
+          v-model="queryParams.kbxq"
+          placeholder="请选择学期"
+        >
           <el-option
-            v-for="(item,index) in teachingTermConfig"
+            v-for="(item, index) in teachingTermConfig"
             :key="index"
             :label="item.dictLabel"
             :value="item.dictValue"
@@ -31,27 +39,48 @@
         </el-select>
       </el-form-item>
       <el-form-item label="届数" prop="rybjmc">
-        <el-input v-model="queryParams.rybjmc" placeholder="请输入所需天数"></el-input>
+        <el-input
+          v-model="queryParams.rybjmc"
+          placeholder="请输入所需天数"
+        ></el-input>
       </el-form-item>
       <el-form-item label="校区" prop="xqid">
-        <el-select filterable v-model="queryParams.xqid" @change="xqmcOnChange" placeholder="请选择校区">
-          <el-option v-for="item in schoolList" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+        <el-select
+          filterable
+          v-model="queryParams.xqid"
+          @change="xqmcOnChange"
+          placeholder="请选择校区"
+        >
+          <el-option
+            v-for="item in schoolList"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="班级" prop="rybjid">
-        <el-select filterable v-model="queryParams.rybjid" placeholder="请选择班级">
+        <el-select
+          filterable
+          v-model="queryParams.rybjid"
+          placeholder="请选择班级"
+        >
           <el-option
             :label="item.rybjmc"
             :value="item.id"
-            v-for="(item,index) in classList"
+            v-for="(item, index) in classList"
             :key="index"
           ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="老师" prop="lsid">
-        <el-select filterable v-model="queryParams.lsid" placeholder="请选择老师">
+        <el-select
+          filterable
+          v-model="queryParams.lsid"
+          placeholder="请选择老师"
+        >
           <el-option
-            v-for="(item,index) in teacherList"
+            v-for="(item, index) in teacherList"
             :key="index"
             :label="item.lsxm"
             :value="item.id"
@@ -61,7 +90,7 @@
       <el-form-item label="教学进度" prop="jxjd">
         <el-select filterable v-model="queryParams.jxjd" placeholder="请选择">
           <el-option
-            v-for="(item,index) in teachingProgress"
+            v-for="(item, index) in teachingProgress"
             :key="index"
             :label="item.dictLabel"
             :value="item.dictValue"
@@ -69,9 +98,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="课程类型" prop="kclx">
-        <el-select filterable v-model="queryParams.kclx" placeholder="请选择教学内容">
+        <el-select
+          filterable
+          v-model="queryParams.kclx"
+          placeholder="请选择教学内容"
+        >
           <el-option
-            v-for="(item,index) in kcType"
+            v-for="(item, index) in kcType"
             :key="index"
             :label="item.dictLabel"
             :value="item.dictValue"
@@ -79,7 +112,9 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getList"
+          >查询</el-button
+        >
         <el-button @click="resetForm('teachingPlanForm')">重置</el-button>
       </el-form-item>
     </el-form>
@@ -87,38 +122,78 @@
     <div class="central-navigation">
       <ul>
         <li>
-          <el-button type="primary" class="el-icon-plus" size="mini">新增教学计划</el-button>
+          <el-button type="primary" class="el-icon-plus" size="mini"
+            >新增教学计划</el-button
+          >
         </li>
         <li>
-          <el-button type="danger" class="el-icon-refresh-right" size="mini" @click="updateClassPlanClick">更新教学计划列表的数据</el-button>
+          <el-button
+            type="danger"
+            class="el-icon-refresh-right"
+            size="mini"
+            @click="updateClassPlanClick"
+            >更新教学计划列表的数据</el-button
+          >
         </li>
         <li>
-          <div style="display : flex;width : 100%">
-            <div style="width : 180px">进度条颜色标注</div>
+          <div style="display: flex; width: 100%">
+            <div style="width: 180px">进度条颜色标注</div>
             <ul class="navigation-title">
               <li>
                 <span
-                  style="display : inline-block;width : 10px;height : 10px;background : #409EFF;margin-right : 5px"
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    background: #409eff;
+                    margin-right: 5px;
+                  "
                 ></span>
-                <span style="isplay : inline-block;margin-right : 10px">正常</span>
+                <span style="isplay: inline-block; margin-right: 10px"
+                  >正常</span
+                >
               </li>
               <li>
                 <span
-                  style="display : inline-block;width : 10px;height : 10px;background : #67C23A;margin-right : 5px"
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    background: #67c23a;
+                    margin-right: 5px;
+                  "
                 ></span>
-                <span style="isplay : inline-block;margin-right : 10px">超前</span>
+                <span style="isplay: inline-block; margin-right: 10px"
+                  >超前</span
+                >
               </li>
               <li>
                 <span
-                  style="display : inline-block;width : 10px;height : 10px;background : #F56C6C;margin-right : 5px"
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    background: #f56c6c;
+                    margin-right: 5px;
+                  "
                 ></span>
-                <span style="isplay : inline-block;margin-right : 10px">滞后</span>
+                <span style="isplay: inline-block; margin-right: 10px"
+                  >滞后</span
+                >
               </li>
               <li>
                 <span
-                  style="display : inline-block;width : 10px;height : 10px;background : #E6A23C;margin-right : 5px"
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    background: #e6a23c;
+                    margin-right: 5px;
+                  "
                 ></span>
-                <span style="isplay : inline-block;margin-right : 10px">复习</span>
+                <span style="isplay: inline-block; margin-right: 10px"
+                  >复习</span
+                >
               </li>
             </ul>
           </div>
@@ -148,28 +223,31 @@
           </div>-->
         </li>
         <li>
-          <div style="display : flex; align-items: center;">
-            <div style="margin-right : 20px">
+          <div style="display: flex; align-items: center">
+            <div style="margin-right: 20px">
               <h5>教学计划</h5>
             </div>
             <div>
               <span
-                style="cursor: pointer;"
+                style="cursor: pointer"
                 :class="['MonthView' == ifContent ? 'active-color' : '']"
-                @click="toComponent('MonthView',1)"
-              >月</span>
+                @click="toComponent('MonthView', 1)"
+                >月</span
+              >
               <el-divider direction="vertical"></el-divider>
               <span
-                style="cursor: pointer;"
+                style="cursor: pointer"
                 :class="['SemesterView' == ifContent ? 'active-color' : '']"
-                @click="toComponent('SemesterView',2)"
-              >学期</span>
+                @click="toComponent('SemesterView', 2)"
+                >学期</span
+              >
               <el-divider direction="vertical"></el-divider>
               <span
-                style="cursor: pointer;"
+                style="cursor: pointer"
                 :class="['WholeView' == ifContent ? 'active-color' : '']"
-                @click="toComponent('WholeView',3)"
-              >全部</span>
+                @click="toComponent('WholeView', 3)"
+                >全部</span
+              >
             </div>
           </div>
         </li>
@@ -178,42 +256,47 @@
 
     <div class="teaching-plan-item">
       <ul class="teaching-list-content">
-        <li v-for="(item,index) in teachingPlanData" :key="index">
+        <li v-for="(item, index) in teachingPlanData" :key="index">
           <div class="content-top">
             <div class="content-top-left">
               <div class="info-left">
-                <h4>{{item.rybjmc}}</h4>
+                <h4>{{ item.rybjmc }}</h4>
                 <div>
                   <span>当前课程 :</span>
-                  <span>{{item.nowCourseName}}</span>
+                  <span>{{ item.nowCourseName }}</span>
                 </div>
                 <div>
                   <span>时间区间 :</span>
-                  <span>{{parseTime(item.kbsj,"{y}-{m}-{d}")}}至{{parseTime(item.gksj,"{y}-{m}-{d}")}}</span>
+                  <span
+                    >{{ parseTime(item.kbsj, "{y}-{m}-{d}") }}至{{
+                      parseTime(item.gksj, "{y}-{m}-{d}")
+                    }}</span
+                  >
                 </div>
                 <div>
-                  <span>老师: {{item.lsxm}}</span>
+                  <span>老师: {{ item.lsxm }}</span>
                 </div>
                 <div>
                   <span>教学进度:</span>
-                  <span>{{jxjd(item.jxjd)}}</span>
-                  <span v-if="item.jxjd == 0">{{item.errorMsg}}</span>
+                  <span>{{ jxjd(item.jxjd) }}</span>
+                  <span v-if="item.jxjd == 0">{{ item.errorMsg }}</span>
                 </div>
               </div>
               <div class="info-right">
                 <el-button
                   size="mini"
-                  style="width :80px"
-                  @click="toAddTeaching('addTeaching',item)"
-                >修正|查看</el-button>
+                  style="width: 80px"
+                  @click="toAddTeaching('addTeaching', item)"
+                  >修正|查看</el-button
+                >
                 <br />
-                <el-button size="mini" style="width :80px">调用</el-button>
+                <el-button size="mini" style="width: 80px">调用</el-button>
                 <br />
-                <el-button size="mini" style="width :80px">导出</el-button>
+                <el-button size="mini" style="width: 80px">导出</el-button>
               </div>
             </div>
             <div class="content-top-right">
-              <el-scrollbar style="height:100%">
+              <el-scrollbar style="height: 100%">
                 <!-- <ul>
                   <li v-for="(item,index) in 10" :key="index">
                     <h4>异常记录</h4>
@@ -238,33 +321,52 @@
             <div v-if="queryParams.kclx == 1" class="content-sj">
               <ul>
                 <template v-if="item.monthList && item.monthList.length > 0">
-                  <li v-for="(month,index) in item.monthList" :key="index">
-                    <el-divider>{{month}}</el-divider>
+                  <li v-for="(month, index) in item.monthList" :key="index">
+                    <el-divider>{{ month }}</el-divider>
                   </li>
                 </template>
                 <template v-if="item.weekList && item.weekList.length > 0">
-                  <li v-for="(week,index) in item.weekList" :key="index">
-                    <el-divider>{{week}}</el-divider>
+                  <li v-for="(week, index) in item.weekList" :key="index">
+                    <el-divider>{{ week }}</el-divider>
                   </li>
                 </template>
-                <template v-if="item.termDictList && item.termDictList.length > 0">
-                  <li v-for="(termDict,index) in item.termDictList" :key="index">
-                    <el-divider>{{termDict.dictLabel}}</el-divider>
+                <template
+                  v-if="item.termDictList && item.termDictList.length > 0"
+                >
+                  <li
+                    v-for="(termDict, index) in item.termDictList"
+                    :key="index"
+                  >
+                    <el-divider>{{ termDict.dictLabel }}</el-divider>
                   </li>
                 </template>
               </ul>
             </div>
             <div>
+              <div class="progress-title">
+                <template v-if="item.monthList && item.monthList.length > 0">
+                  <div v-for="(list, j) in item.monthList" :key="j">
+                    <span>{{list}}</span>
+                  </div>
+                </template>
+                <template v-if="item.weekList && item.weekList.length > 0">
+                  <div v-for="(list, j) in item.weekList" :key="j">
+                    <span>{{list}}</span>
+                  </div>
+                </template>
+              </div>
               <div v-if="item.lessonProcessObjList.length > 0">
                 <ndx-progress :progressItem="item.lessonProcessObjList" />
               </div>
               <div v-else>
                 <div
-                  style="display : flex;margin : 10px;align-items : center"
-                  v-for="(row,j) in item.reviewProcessObjList"
+                  style="display: flex; margin: 10px; align-items: center"
+                  v-for="(row, j) in item.reviewProcessObjList"
                   :key="j"
                 >
-                  <p style="margin-right : 30px;width : 100px">{{row.reviewName}}</p>
+                  <p style="margin-right: 30px; width: 100px">
+                    {{ row.reviewName }}
+                  </p>
                   <ndx-progress :progressItem="row.reviewProcessList" />
                 </div>
               </div>
@@ -274,7 +376,7 @@
       </ul>
 
       <pagination
-        v-show="total>0"
+        v-show="total > 0"
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
@@ -285,7 +387,7 @@
 </template>
 
 <script>
-import { adminList,updateClassPlanResult } from "@/api/teaching/classPlan";
+import { adminList, updateClassPlanResult } from "@/api/teaching/classPlan";
 import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
@@ -298,24 +400,24 @@ export default {
       list: [
         {
           type: "primary",
-          percentage: 10
+          percentage: 10,
         },
         {
           type: "success",
-          percentage: 20
+          percentage: 20,
         },
         {
           type: "info",
-          percentage: 50
+          percentage: 50,
         },
         {
           type: "warning",
-          percentage: 10
+          percentage: 10,
         },
         {
           type: "danger",
-          percentage: 30
-        }
+          percentage: 30,
+        },
       ],
       // 查询参数
       queryParams: {
@@ -332,7 +434,7 @@ export default {
         kclx: null,
         ksrq: null,
         jzrq: null,
-        queryType: 2
+        queryType: 2,
       },
       total: 0,
       // 学期
@@ -348,27 +450,26 @@ export default {
       // 班级
       classList: [],
       // 老师
-      teacherList: []
+      teacherList: [],
     };
   },
-  computed: {},
   created() {
-    this.getDicts("nianji").then(response => {
+    this.getDicts("nianji").then((response) => {
       this.teachingTermConfig = response.data;
     });
-    this.getDicts("teachingProgress").then(response => {
+    this.getDicts("teachingProgress").then((response) => {
       this.teachingProgress = response.data;
     });
-    this.getDicts("jfzl-kcjd").then(response => {
+    this.getDicts("jfzl-kcjd").then((response) => {
       this.kcType = response.data;
     });
-    listSchool().then(response => {
+    listSchool().then((response) => {
       this.schoolList = response.rows;
     });
-    listTeacher().then(response => {
+    listTeacher().then((response) => {
       this.teacherList = response.rows;
     });
-    listTeachingMaterial({ parentId: 0 }).then(res => {
+    listTeachingMaterial({ parentId: 0 }).then((res) => {
       this.listTeachingMaterial = res.data;
     });
   },
@@ -379,7 +480,7 @@ export default {
     // 进度转换
     jxjd(type) {
       let label = "";
-      this.teachingProgress.map(value => {
+      this.teachingProgress.map((value) => {
         if (value.dictValue == type) {
           label = value.dictLabel;
         }
@@ -390,7 +491,7 @@ export default {
     getList() {
       this.queryParams.ksrq = this.queryParams.sjall[0];
       this.queryParams.jzrq = this.queryParams.sjall[1];
-      adminList(this.queryParams).then(res => {
+      adminList(this.queryParams).then((res) => {
         this.teachingPlanData = res.rows;
         this.total = res.total;
       });
@@ -401,7 +502,7 @@ export default {
         this.classList = [];
         return;
       }
-      listBjclass({ kzzd1: xqid }).then(res => {
+      listBjclass({ kzzd1: xqid }).then((res) => {
         this.classList = res.rows;
       });
     },
@@ -418,22 +519,22 @@ export default {
     },
     // 修正按钮
     toAddTeaching(path, item) {
-      this.getConfigKey(path).then(res => {
+      this.getConfigKey(path).then((res) => {
         this.$router.push({
           path: res.msg,
           query: {
-            flag : "addTeachingPage",// 生成教学计划页面
+            flag: "addTeachingPage", // 生成教学计划页面
             [path]: item,
-          }
+          },
         });
       });
     },
-    updateClassPlanClick(){
-      updateClassPlanResult().then(res=>{
-        this.msgSuccess(res.msg)
+    updateClassPlanClick() {
+      updateClassPlanResult().then((res) => {
+        this.msgSuccess(res.msg);
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -597,9 +698,14 @@ export default {
               }
             }
           }
+          .progress-title {
+            display: flex;
+            justify-content: space-between;
+          }
         }
       }
     }
   }
 }
 </style>
+
