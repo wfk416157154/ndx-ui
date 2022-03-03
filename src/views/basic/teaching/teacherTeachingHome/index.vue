@@ -6,7 +6,7 @@
           <el-option
             :label="item.rybjmc"
             :value="item.id"
-            v-for="(item,index) in classList"
+            v-for="(item, index) in classList"
             :key="index"
           ></el-option>
         </el-select>
@@ -17,45 +17,51 @@
     </el-form>
     <div v-if="ifTemplate">
       <div class="wrap-header">
-        <h3 style="margin-right : 20px">教学计划</h3>
+        <h3 style="margin-right: 20px">教学计划</h3>
         <h3
-          style="cursor: pointer;"
+          style="cursor: pointer"
           :class="['defaults' == ifContent ? 'active-color' : '']"
-          @click="toComponent('defaults','1')"
-        >月</h3>
+          @click="toComponent('defaults', '1')"
+        >
+          月
+        </h3>
         <el-divider direction="vertical"></el-divider>
         <h3
-          style="cursor: pointer;"
+          style="cursor: pointer"
           :class="['SemesterView' == ifContent ? 'active-color' : '']"
-          @click="toComponent('SemesterView','2')"
-        >学期</h3>
+          @click="toComponent('SemesterView', '2')"
+        >
+          学期
+        </h3>
         <el-divider direction="vertical"></el-divider>
         <h3
-          style="cursor: pointer;"
+          style="cursor: pointer"
           :class="['WholeView' == ifContent ? 'active-color' : '']"
-          @click="toComponent('WholeView','3')"
-        >总</h3>
+          @click="toComponent('WholeView', '3')"
+        >
+          总
+        </h3>
       </div>
       <div v-if="!progressData.enterReview" class="wrap-information">
         <div class="main-left">
           <div class="class-name">
-            <h3>{{progressData.teachingClassInfo.bjmc}}</h3>
+            <h3>{{ progressData.teachingClassInfo.bjmc }}</h3>
           </div>
           <div class="course-information">
             <h3 class="title">当前课程 :</h3>
-            <h3>{{progressData.teachingClassInfo.dqkc}}</h3>
+            <h3>{{ progressData.teachingClassInfo.dqkc }}</h3>
           </div>
           <div class="time-frame">
             <span>时间区间 :</span>
-            <span>{{progressData.teachingClassInfo.sjqj}}</span>
+            <span>{{ progressData.teachingClassInfo.sjqj }}</span>
           </div>
           <div class="teacher-name">
             <span>老师 :</span>
-            <span>{{progressData.teachingClassInfo.lsxm}}</span>
+            <span>{{ progressData.teachingClassInfo.lsxm }}</span>
           </div>
           <div class="teaching-progress">
             <span>教学进度 :</span>
-            <span>{{progressData.teachingClassInfo.jxjd}}</span>
+            <span>{{ progressData.teachingClassInfo.jxjd }}</span>
           </div>
           <div class="adjustment-btn">
             <!-- <el-button type="primary" size="mini">调整</el-button> -->
@@ -68,9 +74,10 @@
               <div class="range-title">
                 <span
                   :style="parentStyle"
-                  v-for="(item,index) in progressData.zcjd"
+                  v-for="(item, index) in progressData.zcjd"
                   :key="index"
-                >{{item.name}}</span>
+                  >{{ item.name }}</span
+                >
               </div>
               <el-progress
                 :text-inside="true"
@@ -87,9 +94,10 @@
               <div class="range-title">
                 <span
                   :style="parentStyle"
-                  v-for="(item,index) in progressData.dqjd"
+                  v-for="(item, index) in progressData.dqjd"
                   :key="index"
-                >{{item.name}}</span>
+                  >{{ item.name }}</span
+                >
               </div>
               <el-progress
                 :text-inside="true"
@@ -104,18 +112,22 @@
       <div v-else class="wrap-information">
         <div class="main-left">
           <div class="class-name">
-            <h3>{{progressData.teachingClassInfo.bjmc}}</h3>
-            <div style="margin-top : 20px">
+            <h3>{{ progressData.teachingClassInfo.bjmc }}</h3>
+            <div style="margin-top: 20px">
               <span>老师 :</span>
-              <span>{{progressData.teachingClassInfo.lsxm}}</span>
+              <span>{{ progressData.teachingClassInfo.lsxm }}</span>
+            </div>
+            <div v-if="progressData.enterReview" style="margin-top: 20px">
+              <span>教学进度 :</span>
+              <span>复习</span>
             </div>
           </div>
         </div>
         <div class="main-right">
           <div>
             <div>
-              <div v-for="(key,j) in progressData.reviewList" :key="j">
-                <p>{{key.reviewName}}</p>
+              <div v-for="(key, j) in progressData.reviewList" :key="j">
+                <p>{{ key.reviewName }}</p>
                 <el-progress
                   :text-inside="true"
                   :stroke-width="22"
@@ -129,9 +141,21 @@
       </div>
       <div class="wrap-footer">
         <el-card class="box-card">
-          <defaults :item="form" v-if="ifContent == 'defaults'" ref="defaults" />
-          <SemesterView :item="form" v-if="ifContent == 'SemesterView'" ref="SemesterView" />
-          <WholeView :item="form" v-if="ifContent == 'WholeView'" ref="WholeView" />
+          <defaults
+            :item="form"
+            v-if="ifContent == 'defaults'"
+            ref="defaults"
+          />
+          <SemesterView
+            :item="form"
+            v-if="ifContent == 'SemesterView'"
+            ref="SemesterView"
+          />
+          <WholeView
+            :item="form"
+            v-if="ifContent == 'WholeView'"
+            ref="WholeView"
+          />
         </el-card>
       </div>
     </div>
@@ -151,33 +175,33 @@ export default {
       arr: [
         {
           num: 100,
-          name: "第一课"
+          name: "第一课",
         },
         {
           num: 100,
-          name: "第二课第二课第二课第二课第二课第二课第二课第二课第二课"
+          name: "第二课第二课第二课第二课第二课第二课第二课第二课第二课",
         },
         {
           num: 100,
-          name: "第三课"
+          name: "第三课",
         },
         {
           num: 100,
-          name: "第四课"
-        }
+          name: "第四课",
+        },
       ],
       form: {
         bjid: null,
-        lx: "1"
+        lx: "1",
       },
       bjclassList: [],
       classList: [],
       progressData: {
         dqjd: [],
         teachingClassInfo: {},
-        zcjd: []
+        zcjd: [],
       },
-      ifTemplate: false
+      ifTemplate: false,
     };
   },
   computed: {
@@ -185,15 +209,15 @@ export default {
       let styles = {};
       styles.width = 100 / this.arr.length + "%";
       return styles;
-    }
+    },
   },
   components: {
     defaults,
     SemesterView,
-    WholeView
+    WholeView,
   },
   created() {
-    listBjclass().then(res => {
+    listBjclass().then((res) => {
       this.classList = res.rows;
     });
     if (this.$route.query.bjid) {
@@ -213,7 +237,7 @@ export default {
     },
     // 获取数据
     getList() {
-      topHalfQuery(this.form).then(res => {
+      topHalfQuery(this.form).then((res) => {
         if (res.code == 200) {
           this.progressData = res.data;
           if (this.progressData) {
@@ -233,15 +257,15 @@ export default {
     },
     // 切换班级
     rybjOnChange(id) {
-      this.bjclassList.forEach(value => {
+      this.bjclassList.forEach((value) => {
         if (value.id == id) {
           this.form.bjid = value.id;
           this.form.jcid = value.uname;
           this.getList();
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
