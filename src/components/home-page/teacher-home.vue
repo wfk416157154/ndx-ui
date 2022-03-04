@@ -2,7 +2,7 @@
   <div class="teacher-home">
     <div class="top-info">
       <ul style="list-style:none;" class="clearfix">
-        <li class="class-wrap" v-for="(item,index) in pageList" :key="index">
+        <li class="class-wrap">
           <img width="420px" height="280px" src="../../assets/images/67ba200c1c606bb9fcceee6cc0f8067.jpg" alt="">
         </li>
         <li class="class-wrap" v-for="(item,index) in pageList" :key="index">
