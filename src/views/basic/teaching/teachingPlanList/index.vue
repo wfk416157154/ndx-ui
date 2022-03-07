@@ -41,7 +41,7 @@
       <el-form-item label="届数" prop="rybjmc">
         <el-input
           v-model="queryParams.rybjmc"
-          placeholder="请输入所需天数"
+          placeholder="请输入届数"
         ></el-input>
       </el-form-item>
       <el-form-item label="校区" prop="xqid">
@@ -472,6 +472,9 @@ export default {
     });
     listSchool().then((response) => {
       this.schoolList = response.rows;
+    });
+    listBjclass().then((res) => {
+      this.classList = res.rows;
     });
     listTeacher().then((response) => {
       this.teacherList = response.rows;
