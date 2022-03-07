@@ -26,7 +26,7 @@ import RightToolbar from "@/components/RightToolbar"
 import Editor from "@/components/Editor"
 // 进度条
 import Progress from "@/components/progress"
-import NdxProgress from "@/components/ndx-progress"
+import NdxProgress from "@/components/ndx-progress/upgrade-progress"
 import NdxVideo from "@/components/ndx-video"
 import calendar from "@/components/calendar"
 import yNoticeBar from "@/components/yNoticeBar"
