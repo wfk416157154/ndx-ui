@@ -1262,6 +1262,5 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-@import "./logFormStyle.scss";
+<style lang="scss" scoped src="./logFormStyle.scss">
 </style>
