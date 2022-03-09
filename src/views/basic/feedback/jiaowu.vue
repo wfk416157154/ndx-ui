@@ -448,7 +448,8 @@ export default {
     /** 下载模板操作 */
     downloadFileName(fileName) {
       this.download('file/filetable/download', {
-        wjmc:fileName
+        wjmc:fileName,
+        ssmk: "教务列表模块",
       }, fileName)
     },
 
