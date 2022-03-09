@@ -63,6 +63,15 @@
           v-hasPermi="['basic:statisticsTask:remove']"
         >删除</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-thumb"
+          size="mini"
+          @click="handleTask"
+        >立即执行</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -99,10 +108,11 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status" width="80">
         <template slot-scope="scope">
-          <span v-if="'1'==scope.row.status">立即执行</span>
+          <span v-if="'1'==scope.row.status">待手工执行</span>
           <span v-else>定时执行</span>
         </template>
       </el-table-column>
+      <el-table-column label="处理信息" align="center" prop="kzzd1" />
       <el-table-column label="提交人ID" align="center" prop="userId" v-if="false" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -138,7 +148,7 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="何时执行" label-width="80px">
           <el-radio-group v-model="form.status" @change="chooseInvokeType">
-            <el-radio :label="1">立即执行</el-radio>
+            <el-radio :label="1">手工执行</el-radio>
             <el-radio :label="2">定时执行</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -178,7 +188,7 @@
 </template>
 
 <script>
-import { listStatisticsTask, getStatisticsTask, delStatisticsTask, addStatisticsTask, updateStatisticsTask } from "@/api/basic/statisticsTask";
+import { listStatisticsTask, getStatisticsTask, delStatisticsTask, addStatisticsTask, updateStatisticsTask,handleStatisticsTask } from "@/api/basic/statisticsTask";
 import { getToken } from "@/utils/auth";
 import { listTeacher } from "@/api/basic/teacher";
 export default {
@@ -233,7 +243,7 @@ export default {
       teacherFrom: {
         kzzd4:"1" // 默认查询在职状态的老师
       },
-      invokeFlag:false,// 默认为 立即执行
+      invokeFlag:false,// 默认为 手工执行
     };
   },
   created() {
@@ -243,6 +253,24 @@ export default {
     });
   },
   methods: {
+    handleTask(){
+      let that=this
+      this.$confirm('是否现在执行?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function() {
+        let obj={
+          status:"1",// 手工执行的状态
+          clzt:"0" // 待处理状态
+        }
+        handleStatisticsTask(obj).then(res=>{
+          that.msgSuccess(res.msg)
+        });
+      }).catch((e)=>{
+        console.log(e);
+      })
+    },
     /** 查询老师日志考勤结果统计任务列表 */
     getList() {
       this.loading = true;
@@ -291,7 +319,7 @@ export default {
         zxsj: null,
         wcsj: null,
         userId: null,
-        status: 1,// 默认 立即执行
+        status: 1,// 默认 手工执行
         dataOrder: null,
         createTime: null,
         kzzd1: null,

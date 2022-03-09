@@ -9,6 +9,15 @@ export function listStatisticsTask(query) {
   })
 }
 
+// 手工执行老师日志考勤结果统计任务
+export function handleStatisticsTask(query) {
+  return request({
+    url: '/basic/statisticsTask/handleTask',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询老师日志考勤结果统计任务详细
 export function getStatisticsTask(id) {
   return request({
