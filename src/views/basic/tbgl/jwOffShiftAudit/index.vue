@@ -85,14 +85,22 @@
       </el-table-column>
       <el-table-column prop="tbsqzlTpidArr" label="审核资料" align="center">
         <template slot-scope="scope">
-          <el-button
+<!--          <el-button
             size="mini"
             type="text"
             v-for="(item,index) in scope.row.tbsqzlTpidArr"
             :key="index"
             @click="downloadFileName(item.wjmc)"
           >{{item.wjmc}}
-          </el-button>
+          </el-button>-->
+          <el-image
+            style="width: 100px; height: 100px"
+            v-for="(item,index) in scope.row.tbsqzlTpidArr"
+            :key="index"
+            :src="item.wjlj"
+            :preview-src-list="previewPhoto(item.wjlj)"
+            >
+          </el-image>
         </template>
       </el-table-column>
       <el-table-column prop="shzt" label="审核状态" align="center">
@@ -232,9 +240,16 @@
       this.getDicts("tbgzlx").then(response => {
         this.tbgzlxOption = response.data;
       });
+
       this.queryShenpi("1,3") // 默认查询 1=已申请-待初审，3=学生同意
     },
     methods: {
+      // 预览头像
+      previewPhoto(url){
+        let arr=[]
+        arr.push(url)
+        return arr
+      },
       // 选择校区触发
       xqmcOnChange(id) {
         listBjclass({kzzd1: id}).then(response => {
