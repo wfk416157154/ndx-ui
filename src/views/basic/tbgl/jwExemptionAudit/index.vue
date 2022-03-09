@@ -91,7 +91,7 @@
       :total="total"
       :page.sync="exemptionListForm.pageNum"
       :limit.sync="exemptionListForm.pageSize"
-      @pagination="getList"
+      @pagination="getListForPage"
     />
 
     <el-dialog title="免责驳回" :visible.sync="dialogVisible" width="30%">
@@ -155,6 +155,13 @@ export default {
       } else {
         this.exemptionListForm.shztArr = [];
       }
+      listMianze(this.exemptionListForm).then(res => {
+        this.offShiftListList = res.rows;
+        this.total = res.total;
+      });
+    },
+    // 数据
+    getListForPage() {
       listMianze(this.exemptionListForm).then(res => {
         this.offShiftListList = res.rows;
         this.total = res.total;

@@ -177,6 +177,12 @@ export default {
         this.total = res.total;
       });
     },
+    getListForPage(shztArr = false) {
+      listXiuxue(this.jsSuspensionReviewForm).then(res => {
+        this.offShiftListList = res.rows;
+        this.total = res.total;
+      });
+    },
     // 驳回
     handleDelete(i, row) {
       this.__row = row;
