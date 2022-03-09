@@ -96,7 +96,7 @@
             v-for="(item,index) in scope.row.tbsqzlTpidArr"
             :key="index"
             :src="item.wjlj"
-            :preview-src-list="previewPhoto(item.wjlj)"
+            :preview-src-list="[item.wjlj]"
           >
           </el-image>
         </template>
@@ -209,11 +209,6 @@
       this.getList()
     },
     methods: {
-      previewPhoto(url){
-        let arr=[]
-        arr.push(url)
-        return arr
-      },
       // 选择校区触发
       xqmcOnChange(id) {
         listBjclass({kzzd1: id}).then(response => {

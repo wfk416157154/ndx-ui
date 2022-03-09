@@ -98,7 +98,7 @@
             v-for="(item,index) in scope.row.tbsqzlTpidArr"
             :key="index"
             :src="item.wjlj"
-            :preview-src-list="previewPhoto(item.wjlj)"
+            :preview-src-list="[item.wjlj]"
             >
           </el-image>
         </template>
@@ -244,12 +244,6 @@
       this.queryShenpi("1,3") // 默认查询 1=已申请-待初审，3=学生同意
     },
     methods: {
-      // 预览头像
-      previewPhoto(url){
-        let arr=[]
-        arr.push(url)
-        return arr
-      },
       // 选择校区触发
       xqmcOnChange(id) {
         listBjclass({kzzd1: id}).then(response => {
