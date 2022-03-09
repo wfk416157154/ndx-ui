@@ -339,6 +339,7 @@
       /** 下载文件操作 */
       downloadFileName(fileName) {
         this.download('file/filetable/download', {
+          ssmk: "退班审核模块",
           wjmc: fileName
         }, fileName)
       },

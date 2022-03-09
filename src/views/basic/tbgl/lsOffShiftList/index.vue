@@ -286,7 +286,8 @@
       /** 下载文件操作 */
       downloadFileName(fileName) {
         this.download('file/filetable/download', {
-          wjmc:fileName
+          wjmc:fileName,
+          ssmk: "退班列表模块",
         }, fileName)
       },
 
