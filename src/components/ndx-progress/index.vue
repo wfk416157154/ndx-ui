@@ -41,7 +41,7 @@
                   alignItems: 'center',
                 }"
               >
-                <span style="line-heihgt: 40px"> 进入复习时间: {{parseTime(fxPercent.reviewStartDate,'{y}-{m}-{d}')}} </span>
+                <span style="line-heihgt: 40px"  v-if="fxPercent"> 进入复习时间: {{parseTime(fxPercent.reviewStartDate,'{y}-{m}-{d}')}} </span>
               </div>
             </div>
           </div>
