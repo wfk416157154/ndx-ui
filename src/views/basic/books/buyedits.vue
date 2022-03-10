@@ -180,25 +180,29 @@ export default {
       this.$refs["formData"].validate(valid => {
         this.formData.basicPostMaterialList = this.basicList;
         if (valid) {
-          if (this.formData.id != null) {
-            updatePost(this.formData).then(response => {
-              if (response.code == 200) {
-                this.msgSuccess("修改成功");
-                this.$router.push("/buy/buylist");
-              }
-            });
-          } else {
-            addPost(this.formData).then(response => {
-              this.msgSuccess("新增成功");
-              this.$router.push("/buy/buylist");
-            });
-          }
+          let router="";
+          this.getConfigKey("Mail-purchase-Information-list").then(resp => {
+            router = resp.msg;
+            if (this.formData.id != null) {
+              updatePost(this.formData).then(response => {
+                if (response.code == 200) {
+                  this.msgSuccess("修改成功");
+                  this.$router.push(router);
+                }
+              });
+            } else {
+              addPost(this.formData).then(response => {
+                this.msgSuccess("新增成功");
+                this.$router.push(router);
+              });
+            }
+          })
         }
       });
     },
     // 取消按钮
     cancel() {
-      this.$router.push("/buy/buylist");
+      this.$router.go(-1)
     }
   }
 };

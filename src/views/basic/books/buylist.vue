@@ -181,8 +181,10 @@ export default {
     },
     // 日期时间
     changeDataArr(date) {
-      this.queryParams.ksrq = parseTime(date[0], "{y}-{m}-{d}");
-      this.queryParams.jzrq = parseTime(date[1], "{y}-{m}-{d}");
+      if(date&&date.length>1){
+        this.queryParams.ksrq = parseTime(date[0], "{y}-{m}-{d}");
+        this.queryParams.jzrq = parseTime(date[1], "{y}-{m}-{d}");
+      }
     },
     // 查询按钮操作
     async getList() {
@@ -198,27 +200,33 @@ export default {
     },
     // 新增按钮跳转操作
     toEdits() {
-      this.$router.push({
-        path: "/buy/buyedits"
-      });
+      this.getConfigKey("Mail-purchase-Information-form").then(resp => {
+        let router = resp.msg;
+        this.$router.push({
+          path: router
+        });
+      })
     },
     // 导出按钮操作
     postExport() {
       this.download(
         "basic/post/export",
         {
-          ...this.tableData
+          ...this.queryParams
         },
         `邮寄表.xlsx`
       );
     },
-    // 修改按钮操作 
+    // 修改按钮操作
     update(row) {
       postDetails(row.id).then(response => {
-        this.$router.push({
-          path: "/buy/buyedits",
-          query: response.data
-        });
+        this.getConfigKey("Mail-purchase-Information-form").then(resp => {
+          let router = resp.msg;
+          this.$router.push({
+            path: router,
+            query: response.data
+          });
+        })
       });
     },
     // 不同意按钮操作
