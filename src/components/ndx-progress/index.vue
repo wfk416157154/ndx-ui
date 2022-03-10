@@ -41,7 +41,7 @@
                   alignItems: 'center',
                 }"
               >
-                <span style="line-heihgt: 40px"  v-if="fxPercent"> 进入复习时间: {{parseTime(fxPercent.reviewStartDate,'{y}-{m}-{d}')}} </span>
+                <span style="line-heihgt: 40px"  v-show="JSON.stringify(fxPercent) != '{}'"> 进入复习时间: {{parseTime(fxPercent.reviewStartDate,'{y}-{m}-{d}')}} </span>
               </div>
             </div>
           </div>
@@ -96,13 +96,7 @@ export default {
     };
   },
   props: ["propressItem"],
-  // watch: {
-  //   propressItem() {
-  //     // this.getData();
-  //   },
-  // },
   mounted() {
-    // this.getData();
     this.propressItem.then((res) => {
       console.log(res);
       this.fxPercent = res.data.fxPercent;
@@ -112,44 +106,6 @@ export default {
       this.xkStartDate = res.data.xkStartDate;
       this.fxInfo = res.data.fxInfo;
     });
-  },
-  methods: {
-    // getData() {
-    //   let countArr = [];
-    //   this.progressItem.forEach((value, index) => {
-    //     value.style = {};
-    //     countArr.push(value.type);
-    //     value.show = false;
-    //     value.typeShow = false;
-    //     if (this.titletype.indexOf(value.type) != -1) {
-    //       value.typeShow = true;
-    //     }
-    //     this.typeList.forEach((el) => {
-    //       if (countArr.lastIndexOf(el) > -1) {
-    //         this.progressItem[countArr.lastIndexOf(el)].show = true;
-    //       }
-    //       value.style = this.getStyle(value, index);
-    //     });
-    //   });
-    //   this.nodeStartDate = this.progressItem[0].nodeStartDate;
-    //   this.nodeEndDate =
-    //     this.progressItem[this.progressItem.length - 1].nodeStartDate;
-    // },
-    // getStyle(item, index) {
-    //   let style = {
-    //     width: `${item.percentage}%`,
-    //   };
-    //   if (item && item.show) {
-    //     style.borderRight = "1px solid #000";
-    //   }
-    //   if (index == 0) {
-    //     style.borderLeft = "1px solid #000";
-    //   }
-    //   if (index == this.progressItem.length - 1) {
-    //     style.borderRight = "1px solid #000";
-    //   }
-    //   return style;
-    // },
   },
 };
 </script>
