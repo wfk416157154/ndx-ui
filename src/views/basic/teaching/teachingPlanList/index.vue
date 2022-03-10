@@ -349,6 +349,8 @@
                   :propressTitle="
                     [].concat(item.monthList, item.weekList, item.termList)
                   "
+                  :nowCourseName="item.nowCourseName"
+                  :jcmc="item.normalClassPlanObj.sxmc"
                 />
               </div>
               <div v-else>
@@ -367,11 +369,13 @@
                       ...item.weekList,
                       ...item.termList,
                     ]"
+                    :nowCourseName="item.nowCourseName"
+                    :jcmc="item.normalClassPlanObj.sxmc"
                   />
                 </div>
               </div>
               <!-- <div class="progress-title"> -->
-                <!-- <template v-if="item.monthList && item.monthList.length > 0">
+              <!-- <template v-if="item.monthList && item.monthList.length > 0">
                   <div v-for="(list, j) in item.monthList" :key="j">
                     <span>{{ list }}</span>
                   </div>
