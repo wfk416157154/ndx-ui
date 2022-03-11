@@ -218,7 +218,7 @@ export default {
         position: relative;
         span {
           position: absolute;
-          top: -150%;
+          top: -120%;
           right: 0;
           transform: translateX(50%);
           // transform: translateY(50%);

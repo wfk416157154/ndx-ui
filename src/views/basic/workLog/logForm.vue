@@ -1,7 +1,11 @@
 <template>
   <div class="work-log" ref="prent">
     <el-form ref="forms" :inline="true" label-width="80px">
-      <el-form-item label="请选择班级" label-width="100px" v-if="!ifRoleHasPerms">
+      <el-form-item
+        label="请选择班级"
+        label-width="100px"
+        v-if="!ifRoleHasPerms"
+      >
         <el-select v-model="bjNameId" @change="getWorkLogTemplateQuery">
           <el-option
             v-for="(item, index) in getListBjclass"
@@ -11,15 +15,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-checkbox
-          v-model="sfbrz"
-          :disabled="sfbrz"
-          @change="chooseBrz"
-          v-if="!ifRoleHasPerms"
-        >补日志</el-checkbox>
-      </el-form-item>
-      <el-form-item label="选择日期" v-if="showxzrq">
+      <el-form-item label="选择日期">
         <el-date-picker
           v-model="logTiem"
           value-format="yyyy-MM-dd"
@@ -66,9 +62,20 @@
           <span>总复习</span>
         </div>
         <div class="log-content">
-          <el-tooltip class="item" effect="dark" content="请先填写课程" placement="top-start">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="请先填写课程"
+            placement="top-start"
+          >
             <div>
-              <el-button type="primary" size="mini" :disabled="!ruleForm.id" @click="selectZfx">总复习</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                :disabled="!ruleForm.id"
+                @click="selectZfx"
+                >总复习</el-button
+              >
             </div>
           </el-tooltip>
         </div>
@@ -140,9 +147,9 @@
         </div>
       </div>-->
       <!-- 是否辅导 -->
-      <div class="in-class clearfix" v-if=" ruleForm.kc && bkBcrz == '0'">
+      <div class="in-class clearfix" v-if="ruleForm.kc && bkBcrz == '0'">
         <div class="in-class-title clearfix">
-          <span>{{ruleForm.kc.sxmc}}</span>
+          <span>{{ ruleForm.kc.sxmc }}</span>
         </div>
         <div class="in-class-list">
           <div class="in-class-content">
@@ -153,7 +160,8 @@
                     :label="itemname.id"
                     v-for="(itemname, index) in ruleForm.kcapList"
                     :key="index"
-                  >{{itemname.jdmc}}</el-checkbox>
+                    >{{ itemname.jdmc }}</el-checkbox
+                  >
                 </el-checkbox-group>
               </li>
             </ul>
@@ -168,19 +176,30 @@
         <div class="in-class-list">
           <div class="in-class-content">
             <ul>
-              <div style="display : flex;align-items : center">
-                <el-button type="primary" size="mini" @click="uploadVideo">视频上传</el-button>
-                <div style="margin-left : 20px">
+              <div style="display: flex; align-items: center">
+                <el-button type="primary" size="mini" @click="uploadVideo"
+                  >视频上传</el-button
+                >
+                <div style="margin-left: 20px">
                   <p
                     style
-                    v-for="(item,index) in ruleForm.spFileList"
+                    v-for="(item, index) in ruleForm.spFileList"
                     :key="index"
-                  >{{++index}} ) {{item.name}}</p>
+                  >
+                    {{ ++index }} ) {{ item.name }}
+                  </p>
                 </div>
               </div>
-              <li v-for="(item, index) in ruleForm.basicTeacherWorkLogLessonList" :key="index">
+              <li
+                v-for="(item, index) in ruleForm.basicTeacherWorkLogLessonList"
+                :key="index"
+              >
                 <el-form-item :label="item.courseTypeName">
-                  <el-input v-model="ruleForm.basicTeacherWorkLogLessonList[index].content"></el-input>
+                  <el-input
+                    v-model="
+                      ruleForm.basicTeacherWorkLogLessonList[index].content
+                    "
+                  ></el-input>
                 </el-form-item>
               </li>
             </ul>
@@ -243,7 +262,11 @@
             <div v-if="ifExamination" class="examination-upload">
               <div style="width: 500px; display: inline-block">
                 <el-form-item label-width="100px" label="考试名称">
-                  <el-select v-model="ruleForm.kzzd4" @change="ksmcChange" placeholder="请选择考试名称">
+                  <el-select
+                    v-model="ruleForm.kzzd4"
+                    @change="ksmcChange"
+                    placeholder="请选择考试名称"
+                  >
                     <el-option
                       v-for="(item, index) in getListExaminationPaper"
                       :key="index"
@@ -254,7 +277,11 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label-width="100px" label="考试类型">
-                  <el-select v-model="ruleForm.kzzd3" placeholder="不可选" :disabled="true">
+                  <el-select
+                    v-model="ruleForm.kzzd3"
+                    placeholder="不可选"
+                    :disabled="true"
+                  >
                     <el-option
                       v-for="(item, index) in getExaminationType"
                       :key="index"
@@ -263,8 +290,16 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label-width="100px" label="考试状态" aria-disabled>
-                  <el-select v-model="ruleForm.kzzd2" placeholder="不可选" :disabled="true">
+                <el-form-item
+                  label-width="100px"
+                  label="考试状态"
+                  aria-disabled
+                >
+                  <el-select
+                    v-model="ruleForm.kzzd2"
+                    placeholder="不可选"
+                    :disabled="true"
+                  >
                     <el-option
                       v-for="(item, index) in getExaminationStatus"
                       :key="index"
@@ -281,7 +316,8 @@
                   size="mini"
                   @click="handleImport"
                   v-has-role="['teacher']"
-                >导入成绩</el-button>
+                  >导入成绩</el-button
+                >
               </div>
             </div>
           </div>
@@ -308,7 +344,10 @@
               </el-form-item>
               <div class="lsxm">
                 <el-form-item label="未上传原因">
-                  <el-input v-model="ruleForm.lsxm" placeholder="请输入原因"></el-input>
+                  <el-input
+                    v-model="ruleForm.lsxm"
+                    placeholder="请输入原因"
+                  ></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -353,8 +392,10 @@
           <span>提交</span>
         </div>
         <div class="in-class-list">
-          <div class="in-class-content" style="text-align : center">
-            <el-button type="primary" v-prevent-re-click @click="sendOut">保存日志</el-button>
+          <div class="in-class-content" style="text-align: center">
+            <el-button type="primary" v-prevent-re-click @click="sendOut"
+              >保存日志</el-button
+            >
           </div>
         </div>
       </div>
@@ -372,7 +413,13 @@
         :on-success="handleFileSuccess"
         :on-error="handleFileError"
         :auto-upload="false"
-        :data="{ ksmc: getKsName, kslx: ruleForm.kzzd3, kssj: getKssj ,bjid: bjNameId,workLogId: rzid }"
+        :data="{
+          ksmc: getKsName,
+          kslx: ruleForm.kzzd3,
+          kssj: getKssj,
+          bjid: bjNameId,
+          workLogId: rzid,
+        }"
         drag
       >
         <i class="el-icon-upload"></i>
@@ -381,9 +428,13 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+          <el-link type="info" style="font-size: 12px" @click="importTemplate"
+            >下载模板</el-link
+          >
         </div>
-        <div class="el-upload__tip" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+        <div class="el-upload__tip" slot="tip">
+          提示：仅允许导入“xls”或“xlsx”格式文件！
+        </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFileForm">确 定</el-button>
@@ -391,7 +442,12 @@
       </div>
     </el-dialog>
     <!-- 考试成绩分析总结 -->
-    <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzj" width="60%">
+    <el-dialog
+      title="考试分析总结"
+      :close-on-click-modal="false"
+      :visible.sync="kscjzj"
+      width="60%"
+    >
       <el-form label-width="120px">
         <el-form-item label="考试总结">
           <editor v-model="getKscjzj" :item="items" :min-height="130" />
@@ -433,7 +489,9 @@
         <div>请确保视频格式为以下mp4 avi rmvb mov</div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="vsubmitFileForm"
+          >确 定</el-button
+        >
         <el-button @click="dialogUploadVideoisible = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -445,7 +503,7 @@ import {
   addSave,
   updateBasicTeacherWorkLog,
   workLogTemplateQuery,
-  workLogStatusQuery
+  workLogStatusQuery,
 } from "@/api/basic/basicTeacherWorkLog";
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
@@ -453,7 +511,7 @@ import { secretKey } from "@/utils/tools";
 import {
   updateExaminationPaper,
   listExaminationPaper,
-  getExaminationPaper
+  getExaminationPaper,
 } from "@/api/basic/examinationPaper";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listClassCourse } from "@/api/basic/classCourse";
@@ -461,23 +519,22 @@ import { addExamSummary } from "@/api/basic/examSummary";
 import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
 import { planIsFinish } from "@/api/basic/teachingReview";
 import FxForm from "./fxForm";
+import { parseTime } from '../../../utils/ruoyi';
 export default {
   data() {
     return {
-      sfbrz: false, // 是否补日志
-      showxzrq: false, // 显示【选择日期】
       ifRoleHasPerms: false,
       ksmcdisable: false,
       enableBos: false,
       //日志集合
       ruleForm: {
         sendUserArr: [],
-        gxidList: []
+        gxidList: [],
       },
       kcapList: [],
       ifsfyks: false,
       rules: {
-        kczj: [{ required: true, message: "请填写课程日志", trigger: "blur" }]
+        kczj: [{ required: true, message: "请填写课程日志", trigger: "blur" }],
       },
       // 文件图片上传
       upload: {
@@ -496,7 +553,7 @@ export default {
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
       },
       items: "height : 150px",
       // 教室图片
@@ -528,7 +585,7 @@ export default {
       // 老师所带班级
       bjNameId: null,
       // 日志填写时间
-      logTiem: null,
+      logTiem: parseTime(new Date()),
       // 班级名称
       bjName: "",
       // 班级信息数据
@@ -558,12 +615,12 @@ export default {
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e7;
-        }
-      }
+        },
+      },
     };
   },
   components: {
-    FxForm
+    FxForm,
   },
   created() {
     let dataRoleId = this.$store.state.user.dataRoleWeightId;
@@ -571,16 +628,16 @@ export default {
       // 角色权重不等于50，表示该角色无权上传图片
       this.ifRoleHasPerms = true;
     }
-    this.getDicts("kc_type").then(response => {
+    this.getDicts("kc_type").then((response) => {
       this.kcType = response.data;
     });
-    this.getDicts("examination_status").then(response => {
+    this.getDicts("examination_status").then((response) => {
       this.getExaminationStatus = response.data;
     });
-    this.getDicts("examination_type").then(response => {
+    this.getDicts("examination_type").then((response) => {
       this.getExaminationType = response.data;
     });
-    this.getConfigKey("zipFile").then(res => {
+    this.getConfigKey("zipFile").then((res) => {
       this.upload.type = res.msg;
     });
   },
@@ -595,7 +652,7 @@ export default {
           lock: true,
           text: "Loading",
           spinner: "el-icon-loading",
-          background: "rgba(0, 0, 0, 0.7)"
+          background: "rgba(0, 0, 0, 0.7)",
         });
       }
     },
@@ -629,7 +686,7 @@ export default {
         let data = response.data;
         data.kzzd1 = this.ruleForm.id;
         this.ruleForm.id = data.kzzd1;
-        addImg(data).then(res => {
+        addImg(data).then((res) => {
           file.id = res.data.id;
           this.dialogUploadVideoisible = false;
           this.getList();
@@ -646,7 +703,7 @@ export default {
     },
     selectZfx() {
       // 判断该班级教学计划是否全部完成 完成才能点击
-      planIsFinish(this.bjNameId).then(res => {
+      planIsFinish(this.bjNameId).then((res) => {
         if (1 === res.data) {
           this.sffx = true;
         } else {
@@ -659,13 +716,13 @@ export default {
     },
     initBjClassList() {
       // 获取班级信息
-      listBjclass().then(res => {
+      listBjclass().then((res) => {
         this.getListBjclass = res.rows;
         if (res.rows.length == 1) {
           this.isLoad = true;
           this.openFullScreen();
           this.bjNameId = res.rows[0].id;
-          planIsFinish(this.bjNameId).then(res => {
+          planIsFinish(this.bjNameId).then((res) => {
             if (1 === res.data) {
               this.showFx = true;
             }
@@ -688,19 +745,11 @@ export default {
       let json = {
         jwsjzt: "1", //教务试卷状态(0未发送1已发送)
         kzzd2: "9", //未上传的考卷
-        bjid: this.bjNameId //班级
+        bjid: this.bjNameId, //班级
       };
-      listExaminationPaper(json).then(res => {
+      listExaminationPaper(json).then((res) => {
         this.getListExaminationPaper = res.rows;
       });
-    },
-    chooseBrz() {
-      // 当选择补日志时：true
-      if (this.sfbrz) {
-        this.showxzrq = true;
-      } else {
-        this.showxzrq = false;
-      }
     },
     onLogTime(val) {
       this.getWorkLogTemplateQuery();
@@ -710,15 +759,17 @@ export default {
     getList($false) {
       // 当从主页面点击查看详情时跳转过来时
       if (this.$route.params.id && this.$route.params.id != ":id") {
-        homePageQuery({ teacherWorkLogId: this.$route.params.id }).then(res => {
-          if (res.rows[0].isRead == 1) {
-            this.msgError("当前日志只能预览,不可编辑");
-            this.$refs.prent.style.pointerEvents = "none";
+        homePageQuery({ teacherWorkLogId: this.$route.params.id }).then(
+          (res) => {
+            if (res.rows[0].isRead == 1) {
+              this.msgError("当前日志只能预览,不可编辑");
+              this.$refs.prent.style.pointerEvents = "none";
+            }
+            this.bjNameId = res.rows[0].bjid;
           }
-          this.bjNameId = res.rows[0].bjid;
-        });
+        );
         this.rzid = this.$route.params.id;
-        workLogListQuery({ id: this.rzid }).then(res => {
+        workLogListQuery({ id: this.rzid }).then((res) => {
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data[0];
@@ -753,7 +804,7 @@ export default {
     },
     // 填写日志进来的页面，需要根据班级id查询该班级启用的课表
     getWorkLogTemplateQuery($false) {
-      planIsFinish(this.bjNameId).then(res => {
+      planIsFinish(this.bjNameId).then((res) => {
         if (1 === res.data) {
           this.showFx = true;
         }
@@ -772,7 +823,7 @@ export default {
       this.getselectFileList = [];
       let json = {
         bjid: this.bjNameId,
-        lsid: this.$store.state.user.glrid
+        lsid: this.$store.state.user.glrid,
       };
       for (let i = 0; i < this.getListBjclass.length; i++) {
         if (this.getListBjclass[i].id === this.bjNameId) {
@@ -783,7 +834,7 @@ export default {
       if (this.logTiem) {
         json.date = this.logTiem;
       }
-      workLogStatusQuery(json).then(res => {
+      workLogStatusQuery(json).then((res) => {
         switch (res.logStatus) {
           case 1:
             this.findTemplateQuery(json.date); // 查询课表的课中模板
@@ -792,7 +843,7 @@ export default {
             this.$confirm(`是否修改《${rybjName}》当前日志?`, "提示", {
               confirmButtonText: "返回主页",
               cancelButtonText: "修改日志",
-              type: "warning"
+              type: "warning",
             })
               .then(() => {
                 this.skipToLogHomePage();
@@ -809,7 +860,7 @@ export default {
               {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                type: "warning"
+                type: "warning",
               }
             )
               .then(() => {
@@ -833,8 +884,8 @@ export default {
       workLogTemplateQuery({
         bjid: this.bjNameId,
         date,
-        lsid: this.$store.state.user.glrid
-      }).then(res => {
+        lsid: this.$store.state.user.glrid,
+      }).then((res) => {
         if (res.data.length != 0) {
           this.ifForm = true;
           this.ruleForm = res.data;
@@ -859,7 +910,7 @@ export default {
     },
     // 获取页面中参数配置的路由
     skipToLogHomePage() {
-      this.getConfigKey("logHomePage").then(resp => {
+      this.getConfigKey("logHomePage").then((resp) => {
         this.$router.push({ path: resp.msg });
       });
     },
@@ -869,7 +920,7 @@ export default {
         if (!bjid) {
           this.$notify({
             message: "请选择班级和日期",
-            type: "warning"
+            type: "warning",
           });
           return;
         }
@@ -877,7 +928,7 @@ export default {
         let json = {
           lsid: this.$store.state.user.glrid, // 老师id
           kzzd1: bjid, // 班级 id
-          date: date // 时间
+          date: date, // 时间
         };
         if (typeof json.date != "string" && json.date) {
           json.date =
@@ -888,12 +939,12 @@ export default {
             date.getDate();
         }
         this.ruleForm = json;
-        workLogListQuery(json).then(res => {
+        workLogListQuery(json).then((res) => {
           // 获取日志信息
           if (res.data.length != 0) {
             this.rzid = res.data[0].id;
             this.ruleForm.id = this.rzid;
-            selectFileList({ kzzd1: this.rzid }).then(res => {
+            selectFileList({ kzzd1: this.rzid }).then((res) => {
               if (200 == res.code) {
                 this.getselectFileList = res.rows;
               }
@@ -932,12 +983,12 @@ export default {
           }
         });
       } else {
-        workLogListQuery({ id: rzid }).then(res => {
+        workLogListQuery({ id: rzid }).then((res) => {
           // 获取日志信息
           if (res.data.length != 0) {
             this.rzid = res.data[0].id;
             this.ruleForm.id = this.rzid;
-            selectFileList({ kzzd1: this.rzid }).then(res => {
+            selectFileList({ kzzd1: this.rzid }).then((res) => {
               if (200 == res.code) {
                 this.getselectFileList = res.rows;
               }
@@ -981,13 +1032,13 @@ export default {
     handleImport() {
       let obj = {
         ksfw: this.ruleForm.kzzd4,
-        bjid: this.bjNameId
+        bjid: this.bjNameId,
       };
-      listExaminationPaper(obj).then(res => {
+      listExaminationPaper(obj).then((res) => {
         if (res.rows[0].kzzd2 === "3") {
           this.$notify({
             message: "该成绩已上传,不可重复上传",
-            type: "error"
+            type: "error",
           });
         } else {
           this.upload.title = "考试成绩导入";
@@ -1030,9 +1081,9 @@ export default {
           kzzd2: "3",
           kzzd3: this.ruleForm.kzzd3,
           //之所以不直接用this.ruleForm.kzzd4是因为上传后getListExaminationPaper就没有对应值了
-          kzzd4: this.getKsName
+          kzzd4: this.getKsName,
         };
-        updateBasicTeacherWorkLog(rzjson).then(res => {
+        updateBasicTeacherWorkLog(rzjson).then((res) => {
           if (res.code == 200) {
             this.kscjzj = true;
           }
@@ -1058,7 +1109,7 @@ export default {
     },
     //考试名称筛选
     ksmcChange(value) {
-      getExaminationPaper(value).then(res => {
+      getExaminationPaper(value).then((res) => {
         this.ruleForm.kzzd2 = res.data.kzzd2;
         this.ruleForm.kzzd3 = res.data.kslx;
         this.ruleForm.kzzd4 = res.data.ksfw;
@@ -1071,11 +1122,11 @@ export default {
     },
     //图片删除
     handleRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -1087,7 +1138,7 @@ export default {
       if (response.code == 500) {
         this.$notify({
           message: "上传失败",
-          type: "error"
+          type: "error",
         });
         return;
       }
@@ -1095,7 +1146,7 @@ export default {
       data.kzzd1 = this.ruleForm.jswsFile || secretKey();
       this.ruleForm.jswsFile = data.kzzd1;
       this.photoNum1 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum1);
       });
@@ -1106,7 +1157,7 @@ export default {
       data.kzzd1 = this.ruleForm.xsbxFile || secretKey();
       this.ruleForm.xsbxFile = data.kzzd1;
       this.photoNum2 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum2);
       });
@@ -1116,33 +1167,27 @@ export default {
       if (num >= this.maxPhotoNum) {
         this.$message({
           message: "最多上传 5 张图片",
-          type: "warning"
+          type: "warning",
         });
       } else {
         this.$message({
           message: "图片上传成功",
-          type: "success"
+          type: "success",
         });
       }
     },
     // 查询照片
     selectPhotoList(glid, file) {
       let kzzdJson = {
-        kzzd1: glid
+        kzzd1: glid,
       };
-      selectFileList(kzzdJson).then(res => {
+      selectFileList(kzzdJson).then((res) => {
         this[file] = res.rows;
       });
     },
     // 保存
     sendOut($if) {
-      if (true == this.sfbrz) {
-        if (null == this.logTiem) {
-          this.msgError("请选择补哪一天的日志！");
-          return;
-        }
-      }
-      this.$refs["ruleForm"].validate(valid => {
+      this.$refs["ruleForm"].validate((valid) => {
         if (valid) {
           this.ruleForm.bkBcrz = this.bkBcrz;
           this.addWorkLog($if);
@@ -1158,12 +1203,7 @@ export default {
       this.ruleForm.kzzd1 = this.bjNameId;
       this.ruleForm.date = this.logTiem;
       this.ruleForm.lsid = this.$store.state.user.glrid;
-      if (this.sfbrz) {
-        this.ruleForm.status = 0;
-      } else {
-        this.ruleForm.status = 1;
-      }
-      addSave(this.ruleForm).then(async res => {
+      addSave(this.ruleForm).then(async (res) => {
         this.rzid = res.data.id;
         this.ruleForm.id = this.rzid;
         await this.getWorkLogListQuery(
@@ -1177,7 +1217,7 @@ export default {
             // 选择考试范围
             let jsonObj = {
               id: this.ruleForm.kzzd4,
-              kzzd3: res.data.id
+              kzzd3: res.data.id,
             };
             // 保存日志id到对应试卷
             await updateExaminationPaper(jsonObj);
@@ -1190,10 +1230,10 @@ export default {
     },
     // 获取页面中参数配置的路由
     skipLogHome() {
-      this.getConfigKey("logHomePage").then(resp => {
+      this.getConfigKey("logHomePage").then((resp) => {
         this.router = resp.msg;
         this.$router.push({
-          path: this.router
+          path: this.router,
         });
       });
     },
@@ -1202,20 +1242,20 @@ export default {
       let json = {
         teacherWorklogId: this.rzid,
         examPaperId: this.ruleForm.kzzd4,
-        ksfxzj: this.getKscjzj
+        ksfxzj: this.getKscjzj,
       };
-      addExamSummary(json).then(res => {
+      addExamSummary(json).then((res) => {
         if (res.code == 200) {
           this.$notify({
             message: res.msg,
-            type: "success"
+            type: "success",
           });
           this.ruleForm.kzzd2 = "3";
           this.kscjzj = false;
         } else {
           this.$notify({
             message: res.msg,
-            type: "error"
+            type: "error",
           });
         }
       });
@@ -1248,18 +1288,18 @@ export default {
       this.$notify({
         title: "成功",
         message: "上传文件成功",
-        type: "success"
+        type: "success",
       });
       data.kzzd1 = this.rzid;
       // 保存文件上传地址
-      addFile(data).then(res => {});
+      addFile(data).then((res) => {});
       this.getList();
     },
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped src="./logFormStyle.scss">
