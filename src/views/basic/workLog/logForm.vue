@@ -1191,9 +1191,10 @@ export default {
       let _that = this;
       let fullYear = new Date(this.logTiem).getFullYear();
       let month = new Date(this.logTiem).getMonth() + 1;
+      let date = new Date(this.logTiem).getDate();
       let day = new Date(this.logTiem).getDay();
       this.$confirm(
-        `<strong>确定要保存 <i>${fullYear}</i> 年 <i>${month}</i>  月 <i style="color:red;font-size:25px">${day}</i> 日 的日志吗?</strong>`,
+        `<strong>确定要保存 <i>${fullYear}</i> 年 <i>${month}</i>  月 <i style="color:red;font-size:25px">${date}</i> 日 <i>星期${day}</i>的日志吗?</strong>`,
         "提示",
         {
           confirmButtonText: "确定",
