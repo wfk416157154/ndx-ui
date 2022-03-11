@@ -1194,7 +1194,7 @@ export default {
       let date = new Date(this.logTiem).getDate();
       let day = new Date(this.logTiem).getDay();
       this.$confirm(
-        `<strong>确定要保存 <i>${fullYear}</i> 年 <i>${month}</i>  月 <i style="color:red;font-size:25px">${date}</i> 日 <i>星期${day}</i>的日志吗?</strong>`,
+        `<strong>您当前填写的是 <i>${fullYear}</i> 年 <i>${month}</i>  月 <i style="color:red;font-size:25px">${date}</i> 日 <i>星期${day}</i>的日志</strong>`,
         "提示",
         {
           confirmButtonText: "确定",
@@ -1209,7 +1209,7 @@ export default {
               _that.ruleForm.bkBcrz = _that.bkBcrz;
               _that.addWorkLog($if);
             } else {
-              this.$notify({ message: "请先填写日志内容", type: "error" });
+              _that.$notify({ message: "请先填写日志内容", type: "error" });
               return false;
             }
           });
