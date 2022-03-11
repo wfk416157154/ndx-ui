@@ -519,7 +519,7 @@ import { addExamSummary } from "@/api/basic/examSummary";
 import { homePageQuery } from "@/api/basic/basicTeacherWorkLog";
 import { planIsFinish } from "@/api/basic/teachingReview";
 import FxForm from "./fxForm";
-import { parseTime } from '../../../utils/ruoyi';
+import { parseTime } from "../../../utils/ruoyi";
 export default {
   data() {
     return {
@@ -585,7 +585,7 @@ export default {
       // 老师所带班级
       bjNameId: null,
       // 日志填写时间
-      logTiem: parseTime(new Date()),
+      logTiem: parseTime(new Date(), "{y}-{m}-{d}"),
       // 班级名称
       bjName: "",
       // 班级信息数据
@@ -773,6 +773,7 @@ export default {
           if (res.data.length != 0) {
             this.ifForm = true;
             this.ruleForm = res.data[0];
+            this.logTiem = this.ruleForm.date;
             this.ruleForm.basicTeacherWorkLogLessonList.map((value, index) => {
               for (let i = 0; i < this.kcType.length; i++) {
                 if (this.kcType[i].dictValue == value.courseType) {
@@ -1187,15 +1188,37 @@ export default {
     },
     // 保存
     sendOut($if) {
-      this.$refs["ruleForm"].validate((valid) => {
-        if (valid) {
-          this.ruleForm.bkBcrz = this.bkBcrz;
-          this.addWorkLog($if);
-        } else {
-          this.$notify({ message: "请先填写日志内容", type: "error" });
-          return false;
+      let _that = this;
+      let fullYear = new Date(this.logTiem).getFullYear();
+      let month = new Date(this.logTiem).getMonth() + 1;
+      let day = new Date(this.logTiem).getDay();
+      this.$confirm(
+        `<strong>确定要保存 <i>${fullYear}</i> 年 <i>${month}</i>  月 <i style="color:red;font-size:25px">${day}</i> 日 的日志吗?</strong>`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          dangerouslyUseHTMLString: true,
+          type: "warning",
         }
-      });
+      )
+        .then(() => {
+          _that.$refs["ruleForm"].validate((valid) => {
+            if (valid) {
+              _that.ruleForm.bkBcrz = _that.bkBcrz;
+              _that.addWorkLog($if);
+            } else {
+              this.$notify({ message: "请先填写日志内容", type: "error" });
+              return false;
+            }
+          });
+        })
+        .catch(() => {
+          _that.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     // 第一次添加日志时， this.rzid为空
     addWorkLog($if) {

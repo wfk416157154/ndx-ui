@@ -2,8 +2,6 @@
 export default {
   props:["propressItem"],
   render(h) {
-      console.log(1111111111111111111111111111111111)
-    console.log(this.propressItem);
     const VNODE_LIST = [];
     this.propressItem.forEach((el) => {
       VNODE_LIST.push(
