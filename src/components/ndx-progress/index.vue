@@ -2,8 +2,10 @@
   <div class="wrap-propress">
     <h2>{{ dqkcmc }}</h2>
     <br />
-    <div style="display: flex; align-items: center;position:relative">
-      <div style="width: 100px;position:absolute;top:65px;left:-80px">{{ xkStartDate }}</div>
+    <div style="display: flex; align-items: center; position: relative">
+      <div style="width: 100px; position: absolute; top: 65px; left: -80px">
+        {{ xkStartDate }}
+      </div>
       <div class="propress">
         <div>
           <div class="wrap-date">
@@ -41,7 +43,13 @@
                   alignItems: 'center',
                 }"
               >
-                <span style="line-heihgt: 40px"  v-show="JSON.stringify(fxPercent) != '{}'"> 进入复习时间: {{parseTime(fxPercent.reviewStartDate,'{y}-{m}-{d}')}} </span>
+                <span
+                  style="line-heihgt: 40px"
+                  v-show="JSON.stringify(fxPercent) != '{}'"
+                >
+                  进入复习时间:
+                  {{ parseTime(fxPercent.reviewStartDate, "{y}-{m}-{d}") }}
+                </span>
               </div>
             </div>
           </div>
@@ -89,22 +97,23 @@ export default {
     return {
       fxPercent: {},
       xkPercent: {},
-      dqkcmc: null,
-      xkStartDate: null,
-      fxInfo: null,
+      dqkcmc: "",
+      xkStartDate: "",
+      fxInfo: "",
       classSemesterPlanlist: [],
     };
   },
   props: ["propressItem"],
   mounted() {
     this.propressItem.then((res) => {
-      console.log(res);
-      this.fxPercent = res.data.fxPercent;
-      this.xkPercent = res.data.xkPercent;
-      this.dqkcmc = res.data.dqkcmc;
-      this.classSemesterPlanlist = res.data.classSemesterPlanlist;
-      this.xkStartDate = res.data.xkStartDate;
-      this.fxInfo = res.data.fxInfo;
+      if (res.data && res.data.classSemesterPlanlist) {
+        this.fxPercent = res.data.fxPercent;
+        this.xkPercent = res.data.xkPercent;
+        this.dqkcmc = res.data.dqkcmc;
+        this.classSemesterPlanlist = res.data.classSemesterPlanlist;
+        this.xkStartDate = res.data.xkStartDate;
+        this.fxInfo = res.data.fxInfo;
+      }
     });
   },
 };
@@ -132,8 +141,6 @@ export default {
 .wrap-propress {
   width: 100%;
   height: 100%;
-  // display: flex;
-  // align-items: center;
   padding: 40px 45px;
   .propress {
     width: 100%;
@@ -154,7 +161,6 @@ export default {
       display: flex;
       justify-content: space-between;
       .propress-line {
-        // width: 1px;
         height: 20px;
         border-left: 1px solid #000;
         text-align: right;
@@ -164,7 +170,6 @@ export default {
           bottom: -150%;
           right: 0;
           transform: translateX(50%);
-          // transform: translateY(50%);
         }
       }
       .propress-line:last-child {
@@ -178,7 +183,6 @@ export default {
       display: flex;
       justify-content: space-between;
       .propress-line {
-        // width: 1px;
         height: 20px;
         border-left: 1px solid #000;
         text-align: right;
@@ -188,14 +192,12 @@ export default {
           top: -400%;
           right: 0;
           transform: translateX(50%);
-          // transform: translateY(50%);
         }
         .jzrq {
           position: absolute;
           top: -200%;
           right: 0;
           transform: translateX(50%);
-          // transform: translateY(50%);
         }
       }
       .propress-line:last-child {
