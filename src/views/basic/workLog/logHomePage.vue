@@ -82,7 +82,7 @@
             <div class="log-header">
               <div class="log-header-left __float">
                 <span>日期 :</span>
-                <span>{{item.date}}</span>
+                <span>{{item.date}} 星期 {{new Date(item.date).getDay()}}</span>
               </div>
               <div class="log-header-right __float" v-if="dataRoleWeightId > 50">
                 <el-tag type="success" v-if="item.isRead == '0'">未读</el-tag>
