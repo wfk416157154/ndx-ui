@@ -1,7 +1,7 @@
 <template>
   <div class="teacher-home">
     <div class="top-info">
-      <div style="display:flex;justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between">
         <div class="class-wrap">
           <img
             width="420px"
@@ -46,42 +46,50 @@
       <ul style="list-style: none" class="clearfix">
         <li class="class-wrap" v-for="(item, index) in pageList" :key="index">
           <h2 style="margin-top: 1px">{{ item.rybjmc }}</h2>
-          <p>
-            <span style="font-weight: bold">开班时间</span> : {{ item.kbsj }}
-          </p>
-          <p>
-            <span style="font-weight: bold">开班人数</span> : {{ item.bjrs }}
-          </p>
-          <p>
-            <span style="font-weight: bold">教材</span> :{{ item.jcmc }}
-            <el-button
-              style="margin-left: 44%"
-              type="primary"
-              icon="el-icon-date"
-              @click="toPage('teacherTeachingHome', item.id)"
-              >教学计划</el-button
-            >
-          </p>
-          <div>
-            <p><span style="font-weight: bold">开班照</span></p>
-            <div>
-              <el-image
-                v-for="(list, j) in item.kbzArr"
-                :key="j"
-                style="width: 50px; height: 50px; margin: 5px"
-                :src="list"
-                :preview-src-list="item.kbzArr"
-              ></el-image>
+          <div
+            style="display: flex;align-items:center;justify:content:space-between"
+          >
+            <div style="margin-right: 40px">
+              <span style="font-weight: bold">开班时间</span> : {{ item.kbsj }}
             </div>
-            <p><span style="font-weight: bold">英语成绩</span></p>
-            <div>
-              <el-image
-                v-for="(list, i) in item.jtzArr"
-                :key="i"
-                style="width: 50px; height: 50px; margin: 5px"
-                :src="list"
-                :preview-src-list="item.jtzArr"
-              ></el-image>
+            <div style="margin-right: 40px">
+              <span style="font-weight: bold">开班人数</span> : {{ item.bjrs }}
+            </div>
+            <div style="display: flex; margin-right: 40px">
+              <span style="font-weight: bold">教材</span> : {{ item.jcmc }}
+              <el-link
+                style="margin-left: 20px"
+                type="primary"
+                icon="el-icon-date"
+                @click="toPage('teacherTeachingHome', item.id)"
+                >教学计划</el-link
+              >
+            </div>
+            <div style="display: flex; margin-right: 40px">
+              <p><span style="font-weight: bold">开班照</span></p>
+              <div>
+                <el-image
+                  v-for="(list, j) in item.kbzArr"
+                  :key="j"
+                  style="width: 50px; height: 50px; margin: 5px"
+                  :src="list"
+                  :preview-src-list="item.kbzArr"
+                ></el-image>
+              </div>
+              <p>
+                <span style="font-weight: bold; margin-left: 40px"
+                  >英语成绩</span
+                >
+              </p>
+              <div>
+                <el-image
+                  v-for="(list, i) in item.jtzArr"
+                  :key="i"
+                  style="width: 50px; height: 50px; margin: 5px"
+                  :src="list"
+                  :preview-src-list="item.jtzArr"
+                ></el-image>
+              </div>
             </div>
           </div>
           <div>

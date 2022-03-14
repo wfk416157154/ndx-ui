@@ -141,7 +141,7 @@ export default {
 .wrap-propress {
   width: 100%;
   height: 100%;
-  padding: 40px 45px;
+  padding: 0px 45px;
   .propress {
     width: 100%;
     height: 100%;

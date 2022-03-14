@@ -1186,13 +1186,31 @@ export default {
         this[file] = res.rows;
       });
     },
+    dateConversion(item) {
+      switch (item) {
+        case 0:
+          return "日";
+        case 1:
+          return "一";
+        case 2:
+          return "二";
+        case 3:
+          return "三";
+        case 4:
+          return "四";
+        case 5:
+          return "五";
+        case 6:
+          return "六";
+      }
+    },
     // 保存
     sendOut($if) {
       let _that = this;
       let fullYear = new Date(this.logTiem).getFullYear();
       let month = new Date(this.logTiem).getMonth() + 1;
       let date = new Date(this.logTiem).getDate();
-      let day = new Date(this.logTiem).getDay();
+      let day = this.dateConversion(new Date(this.logTiem).getDay());
       this.$confirm(
         `<strong>您当前填写的是 <i>${fullYear}</i> 年 <i>${month}</i>  月 <i style="color:red;font-size:25px">${date}</i> 日 <i>星期${day}</i>的日志</strong>`,
         "提示",

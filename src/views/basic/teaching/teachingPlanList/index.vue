@@ -281,6 +281,16 @@
                   <span>{{ jxjd(item.jxjd) }}</span>
                   <span v-if="item.jxjd == 0">{{ item.errorMsg }}</span>
                 </div>
+
+                <div>
+                  <span>正常教学计划 :</span>
+                  <span v-if="item.kclx == '1'">{{ item.nowCourseName }}</span>
+                  <span v-else> 已进入总复习 {{ item.startReviewDate }}</span>
+                </div>
+                <div>
+                  <span>教材名称 :</span>
+                  <span>{{ item.jcmc }}</span>
+                </div>
               </div>
               <div class="info-right">
                 <el-button
