@@ -84,13 +84,21 @@
       </el-table-column>
       <el-table-column prop="tbsqzlTpidArr" label="审核资料" align="center">
         <template slot-scope="scope">
-          <el-button
+<!--          <el-button
             size="mini"
             type="text"
             v-for="(item,index) in scope.row.tbsqzlTpidArr"
             :key="index"
             @click="downloadFileName(item.wjmc)"
-          >{{item.wjmc}}</el-button>
+          >{{item.wjmc}}</el-button>-->
+          <el-image
+            style="width: 100px; height: 100px"
+            v-for="(item,index) in scope.row.tbsqzlTpidArr"
+            :key="index"
+            :src="item.wjlj"
+            :preview-src-list="[item.wjlj]"
+          >
+          </el-image>
         </template>
       </el-table-column>
       <el-table-column prop="shzt" label="审核状态" align="center">
@@ -286,7 +294,8 @@
       /** 下载文件操作 */
       downloadFileName(fileName) {
         this.download('file/filetable/download', {
-          wjmc:fileName
+          wjmc:fileName,
+          ssmk: "退班列表模块",
         }, fileName)
       },
 

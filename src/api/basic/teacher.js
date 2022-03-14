@@ -43,6 +43,15 @@ export function getTeacher(id) {
     method: 'get'
   })
 }
+
+// 首页班级教学计划进度
+export function homePageClassTeachingPlan(id) {
+  return request({
+    url: '/basic/planProgress/homePageClassTeachingPlan/' + id,
+    method: 'get'
+  })
+}
+
 // 获取老师详情页面
 export function getTeacherDetail(id) {
   return request({

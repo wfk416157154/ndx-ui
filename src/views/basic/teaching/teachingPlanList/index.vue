@@ -41,7 +41,7 @@
       <el-form-item label="届数" prop="rybjmc">
         <el-input
           v-model="queryParams.rybjmc"
-          placeholder="请输入所需天数"
+          placeholder="请输入届数"
         ></el-input>
       </el-form-item>
       <el-form-item label="校区" prop="xqid">
@@ -281,6 +281,16 @@
                   <span>{{ jxjd(item.jxjd) }}</span>
                   <span v-if="item.jxjd == 0">{{ item.errorMsg }}</span>
                 </div>
+
+                <div>
+                  <span>正常教学计划 :</span>
+                  <span v-if="item.kclx == '1'">{{ item.nowCourseName }}</span>
+                  <span v-else> 已进入总复习 {{ item.startReviewDate }}</span>
+                </div>
+                <div>
+                  <span>教材名称 :</span>
+                  <span>{{ item.jcmc }}</span>
+                </div>
               </div>
               <div class="info-right">
                 <el-button
@@ -344,38 +354,43 @@
             </div>
             <div>
               <div v-if="item.lessonProcessObjList.length > 0">
-                <ndx-progress :progressItem="item.lessonProcessObjList" />
+                <ndx-progress
+                  v-if="item.normalClassPlanObj"
+                  :progressItem="item.lessonProcessObjList"
+                  :propressTitle="
+                    [].concat(item.monthList, item.weekList, item.termList)
+                  "
+                  :nowCourseName="item.nowCourseName"
+                  :jcmc="item.normalClassPlanObj.sxmc"
+                />
               </div>
               <div v-else>
-                <div
-                  style="display: flex; margin: 10px; align-items: center"
-                  v-for="(row, j) in item.reviewProcessObjList"
-                  :key="j"
+                <el-button type="success" @click="dialogVisxibleFx = true"
+                  >查看复习进度</el-button
                 >
-                  <p style="margin-right: 30px; width: 100px">
-                    {{ row.reviewName }}
-                  </p>
-                  <ndx-progress :progressItem="row.reviewProcessList" />
-                </div>
-              </div>
-              <div class="progress-title">
-                <template v-if="item.monthList && item.monthList.length > 0">
-                  <div v-for="(list, j) in item.monthList" :key="j">
-                    <span>{{ list }}</span>
-                  </div>
-                </template>
-                <template v-if="item.weekList && item.weekList.length > 0">
-                  <div v-for="(list, j) in item.weekList" :key="j">
-                    <span>{{ list }}</span>
-                  </div>
-                </template>
-                <template
-                  v-if="item.termDictList && item.termDictList.length > 0"
+                <el-dialog
+                  title="查看复习进度"
+                  :visible.sync="dialogVisxibleFx"
+                  width="80%"
+                  :before-close="handleClose"
                 >
-                  <div v-for="(list, j) in item.termDictList" :key="j">
-                    <span>{{ list.dictLabel }}</span>
+                  <div v-for="(row, j) in item.reviewProcessObjList" :key="j">
+                    <p style="margin-right: 30px; width: 100%">
+                      {{ row.reviewName }}
+                    </p>
+                    <el-progress
+                      :text-inside="true"
+                      :stroke-width="22"
+                      :percentage="row.reviewProcessList[0].percentage"
+                      status="warning"
+                    ></el-progress>
                   </div>
-                </template>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisxibleFx = false"
+                      >取 消</el-button
+                    >
+                  </span>
+                </el-dialog>
               </div>
             </div>
           </div>
@@ -399,6 +414,7 @@ import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
 import { listSchool } from "@/api/basic/school";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listTeacher } from "@/api/basic/teacher";
+import NewPropress from "@/components/ndx-progress/new-propress";
 export default {
   data() {
     return {
@@ -426,6 +442,7 @@ export default {
           percentage: 30,
         },
       ],
+      dialogVisxibleFx: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -460,6 +477,9 @@ export default {
       teacherList: [],
     };
   },
+  components: {
+    NewPropress,
+  },
   created() {
     this.getDicts("nianji").then((response) => {
       this.teachingTermConfig = response.data;
@@ -472,6 +492,9 @@ export default {
     });
     listSchool().then((response) => {
       this.schoolList = response.rows;
+    });
+    listBjclass().then((res) => {
+      this.classList = res.rows;
     });
     listTeacher().then((response) => {
       this.teacherList = response.rows;

@@ -692,17 +692,15 @@ export default {
 
     // 导出
     handleExport() {
-      let { bjid, kbType, kzzd2 } = this.queryParams;
       this.download(
         "basic/classCourse/exportClassCourse",
         {
-          bjid,
-          kbType,
-          nd: kzzd2,
+          courseBasicId:this.courseBasicObj.id,
+          bjid:this.courseBasicObj.bjid
         },
-        `${kzzd2}-${this.selectDictLabel(
+        `${this.queryParams.kzzd2}-${this.selectDictLabel(
           this.kbTypeOptionsEL,
-          kbType
+          this.queryParams.kbType
         )}-课表.xlsx`
       );
     },

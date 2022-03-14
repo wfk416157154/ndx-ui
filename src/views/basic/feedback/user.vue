@@ -505,7 +505,8 @@
       /** 下载模板操作 */
       downloadFileName(fileName) {
         this.download('file/filetable/download', {
-          wjmc:fileName
+          wjmc:fileName,
+          ssmk: "退班列表-老师模块",
         }, fileName)
       },
       // 查看解决办法

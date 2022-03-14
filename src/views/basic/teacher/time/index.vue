@@ -108,7 +108,8 @@ export default {
     /** 下载文件操作 */
     downloadFileName(fileName,name) {
       this.download('file/filetable/download', {
-        wjmc:fileName
+        wjmc:fileName,
+        ssmk: "教师复试模块",
       }, name)
     },
   }

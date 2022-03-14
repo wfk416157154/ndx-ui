@@ -2,9 +2,14 @@
   <div class="Log-home-page">
     <el-form ref="queryForm" :inline="true" :model="queryParams">
       <el-form-item label="校区" v-if="xqIsShow" prop="xqid">
-        <el-select v-model="queryParams.xqid" filterable @change="getSchoolId" placeholder="请选择校区">
+        <el-select
+          v-model="queryParams.xqid"
+          filterable
+          @change="getSchoolId"
+          placeholder="请选择校区"
+        >
           <el-option
-            v-for="(item,index) in getListSchool"
+            v-for="(item, index) in getListSchool"
             :label="item.xxmc"
             :value="item.id"
             :key="index"
@@ -12,9 +17,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="rybid">
-        <el-select v-model="queryParams.rybid" filterable placeholder="请选择班级">
+        <el-select
+          v-model="queryParams.rybid"
+          filterable
+          placeholder="请选择班级"
+        >
           <el-option
-            v-for="(item,index) in getBjClass"
+            v-for="(item, index) in getBjClass"
             :label="item.rybjmc"
             :value="item.id"
             :key="index"
@@ -22,7 +31,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="老师姓名" prop="lsxm">
-        <el-input v-model="queryParams.lsxm" placeholder="请输入老师姓名"></el-input>
+        <el-input
+          v-model="queryParams.lsxm"
+          placeholder="请输入老师姓名"
+        ></el-input>
       </el-form-item>
       <el-form-item label="日志日期" prop="sj">
         <el-date-picker
@@ -35,17 +47,49 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="排序方式" prop="orderChoose">
-        <el-radio v-model="queryParams.orderChoose" label="0" border @change="getList">升序</el-radio>
-        <el-radio v-model="queryParams.orderChoose" label="1" border @change="getList">倒序</el-radio>
+        <el-radio
+          v-model="queryParams.orderChoose"
+          label="0"
+          border
+          @change="getList"
+          >升序</el-radio
+        >
+        <el-radio
+          v-model="queryParams.orderChoose"
+          label="1"
+          border
+          @change="getList"
+          >倒序</el-radio
+        >
       </el-form-item>
 
       <el-form-item label="选项" prop="isRead">
-        <el-radio v-model="queryParams.isRead" label="0" border @change="getList">未读</el-radio>
-        <el-radio v-model="queryParams.isRead" label="1" border @change="getList">已读</el-radio>
+        <el-radio
+          v-model="queryParams.isRead"
+          label="0"
+          border
+          @change="getList"
+          >未读</el-radio
+        >
+        <el-radio
+          v-model="queryParams.isRead"
+          label="1"
+          border
+          @change="getList"
+          >已读</el-radio
+        >
       </el-form-item>
 
-      <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
-      <el-button type="primary" icon="el-icon-download" disabled @click="handleExport">导出日志</el-button>
+      <el-button type="primary" icon="el-icon-search" @click="getList"
+        >查询</el-button
+      >
+      <el-button
+        type="primary"
+        icon="el-icon-download"
+        disabled
+        @click="handleExport"
+        >导出日志</el-button
+      >
       <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
 
       <!--<el-button
@@ -57,24 +101,24 @@
     </el-form>
     <div class="wrap-log-list">
       <ul>
-        <li v-for="(item,index) in allLogs" :key="index">
+        <li v-for="(item, index) in allLogs" :key="index">
           <div class="personal-information __float">
             <div class="personal-information-content">
               <div class="information-box">
                 <span>姓名 :</span>
-                <span>{{item.lsxm}}</span>
+                <span>{{ item.lsxm }}</span>
               </div>
             </div>
             <div class="personal-information-content">
               <div class="information-box">
                 <span>日语班级 :</span>
-                <span>{{item.rybjmc}}</span>
+                <span>{{ item.rybjmc }}</span>
               </div>
             </div>
             <div class="personal-information-content">
               <div class="information-box">
                 <span>校区 :</span>
-                <span>{{item.xxmc}}</span>
+                <span>{{ item.xxmc }}</span>
               </div>
             </div>
           </div>
@@ -82,49 +126,76 @@
             <div class="log-header">
               <div class="log-header-left __float">
                 <span>日期 :</span>
-                <span>{{item.date}}</span>
+                <span
+                  >{{ item.date }} 星期
+                  {{ dateConversion(new Date(item.date).getDay()) }}</span
+                >
               </div>
-              <div class="log-header-right __float" v-if="dataRoleWeightId > 50">
+              <div
+                class="log-header-right __float"
+                v-if="dataRoleWeightId > 50"
+              >
                 <el-tag type="success" v-if="item.isRead == '0'">未读</el-tag>
                 <el-tag type="info" v-if="item.isRead == '1'">已读</el-tag>
               </div>
             </div>
             <div>
               <span>填写时间 :</span>
-              <span>{{item.createTime}}</span>
-              <span style="color:red" v-if="item.status == '0'">补</span>
+              <span>{{ item.createTime }}</span>
+              <span style="color: red" v-if="item.status == '0'">补</span>
             </div>
             <div class="title-content">
               <span>工作日志</span>
             </div>
             <div>
               <span>课程内容 :</span>
-              <span>{{item.kczj}}</span>
+              <span>{{ item.kczj }}</span>
             </div>
             <div>
               <span>课中内容 :</span>
-              <span v-for="(list,j) in item.teacherWorkLogLessonList" :key="j">{{list.content}}</span>
+              <span
+                v-for="(list, j) in item.teacherWorkLogLessonList"
+                :key="j"
+                >{{ list.content }}</span
+              >
               <br />
             </div>
             <div>
               <span>课后内容 :</span>
-              <span>{{item.khBcrz}}</span>
+              <span>{{ item.khBcrz }}</span>
             </div>
             <div class="button">
               <el-button
                 type="success"
-                :disabled="item.spFileList == null || item.spFileList.length == 0"
+                :disabled="
+                  item.spFileList == null || item.spFileList.length == 0
+                "
                 @click="toFileVideo(item.spFileList)"
-              >视频</el-button>
-              <el-button type="warning" plain @click="toDetails(item.teacherWorkLogId)">查看详情</el-button>
-              <el-button type="success" plain @click="downloadZipFile(item.teacherWorkLogId)">下载压缩包</el-button>
+                >视频</el-button
+              >
+              <el-button
+                type="warning"
+                plain
+                @click="toDetails(item.teacherWorkLogId)"
+                >查看详情</el-button
+              >
+              <el-button
+                type="success"
+                plain
+                @click="downloadZipFile(item.teacherWorkLogId)"
+                >下载压缩包</el-button
+              >
             </div>
           </div>
           <div class="img-list __float">
             <div class="jswsImg">
-              <div class="img-item" v-for="(jsImgList,key) in item.jswsFileList" :key="key">
+              <div
+                class="img-item"
+                v-for="(jsImgList, key) in item.jswsFileList"
+                :key="key"
+              >
                 <el-image
-                  style="width : 100%"
+                  style="width: 100%"
                   :src="jsImgList.wjlj"
                   :preview-src-list="item.jswsImg"
                 ></el-image>
@@ -133,18 +204,28 @@
                 v-if="dataRoleWeightId > 50"
                 v-model="item.isJswsHg"
                 label="1"
-                @change="jianYan(true,item)"
-              >合格</el-radio>
+                @change="jianYan(true, item)"
+                >合格</el-radio
+              >
               <el-radio
                 v-if="dataRoleWeightId > 50"
                 v-model="item.isJswsHg"
                 label="0"
-                @change="jianYan(false,item)"
-              >不合格</el-radio>
+                @change="jianYan(false, item)"
+                >不合格</el-radio
+              >
             </div>
             <div class="xsbxImg">
-              <div class="img-item" v-for="(xsImgList,key) in item.xsbxFileList" :key="key">
-                <el-image style="width : 100%" :src="xsImgList.url" :preview-src-list="xsbxImg"></el-image>
+              <div
+                class="img-item"
+                v-for="(xsImgList, key) in item.xsbxFileList"
+                :key="key"
+              >
+                <el-image
+                  style="width: 100%"
+                  :src="xsImgList.url"
+                  :preview-src-list="xsbxImg"
+                ></el-image>
               </div>
             </div>
           </div>
@@ -152,7 +233,7 @@
       </ul>
     </div>
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -163,8 +244,10 @@
       <div class="wrap-box">
         <div class="left-list">
           <ul>
-            <li v-for="(item,index) in videoList" :key="index">
-              <el-link @click="getVideoUrl(item.url)" type="primary">{{++index}} ) {{item.name}}</el-link>
+            <li v-for="(item, index) in videoList" :key="index">
+              <el-link @click="getVideoUrl(item.url)" type="primary"
+                >{{ ++index }} ) {{ item.name }}</el-link
+              >
             </li>
           </ul>
         </div>
@@ -175,7 +258,7 @@
             height="100%"
             :src="videoUrl"
             autoplay="autoplay"
-            style="opacity: 1;"
+            style="opacity: 1"
             controls
           ></video>
         </div>
@@ -193,7 +276,7 @@ import { listBjclass } from "@/api/basic/bjclass";
 import { selectFileList } from "@/api/tool/common";
 import {
   homePageQuery,
-  updateBasicTeacherWorkLog
+  updateBasicTeacherWorkLog,
 } from "@/api/basic/basicTeacherWorkLog";
 import { updateClassroom, addClassroom } from "@/api/basic/classroom";
 import { getVideo } from "@/api/tool/common";
@@ -213,7 +296,7 @@ export default {
         xqid: null,
         rybid: null,
         lsxm: null,
-        sj: []
+        sj: [],
       },
       // 总条数
       total: 0,
@@ -227,11 +310,11 @@ export default {
       // session键、保存的查询参数
       sessionKey: "logHomePageQueryParams",
       videoUrl: "",
-      videoList: []
+      videoList: [],
     };
   },
   created() {
-    listBjclass().then(res => {
+    listBjclass().then((res) => {
       this.getBjClass = res.rows;
       if (res.rows.length == 1) {
         this.queryParams.rybid = res.rows[0].id;
@@ -248,6 +331,24 @@ export default {
     this.getList();
   },
   methods: {
+    dateConversion(item) {
+      switch (item) {
+        case 0:
+          return "日";
+        case 1:
+          return "一";
+        case 2:
+          return "二";
+        case 3:
+          return "三";
+        case 4:
+          return "四";
+        case 5:
+          return "五";
+        case 6:
+          return "六";
+      }
+    },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
@@ -255,7 +356,7 @@ export default {
     },
     // 获取校区
     getSchool() {
-      listSchool().then(res => {
+      listSchool().then((res) => {
         this.getListSchool = res.rows;
         if (res.code == 200 && res.rows.length == 1) {
           this.queryParams.xqid = res.rows[0].id;
@@ -267,7 +368,7 @@ export default {
     getList() {
       if (null != this.queryParams.sj && this.queryParams.sj.length == 2) {
         let dateArr = [];
-        this.queryParams.sj.forEach(date => {
+        this.queryParams.sj.forEach((date) => {
           if (date.toString().indexOf("-") < 0) {
             // 如果是未格式化的时间则进行格式化
             dateArr.push(
@@ -284,23 +385,23 @@ export default {
         });
         this.queryParams.sj = dateArr;
       }
-      homePageQuery(this.queryParams).then(response => {
+      homePageQuery(this.queryParams).then((response) => {
         this.allLogs = response.rows;
         this.total = response.total;
         if (this.allLogs.length == 0) {
           this.allLogs = null;
           return;
         }
-        this.allLogs.forEach(value => {
+        this.allLogs.forEach((value) => {
           value.jswsImg = [];
           value.xsbxImg = [];
           if (value.jswsFileList) {
-            value.jswsFileList.forEach(img => {
+            value.jswsFileList.forEach((img) => {
               value.jswsImg.push(img.url);
             });
           }
           if (value.xsbxFileList) {
-            value.xsbxFileList.forEach(img => {
+            value.xsbxFileList.forEach((img) => {
               value.xsbxImg.push(img.url);
             });
           }
@@ -317,7 +418,7 @@ export default {
     // 获取班级
     getSchoolId(schoolId) {
       this.queryParams.rybid = null;
-      listBjclass({ kzzd1: schoolId }).then(res => {
+      listBjclass({ kzzd1: schoolId }).then((res) => {
         this.getBjClass = res.rows;
         if (res.rows.length == 1) {
           this.queryParams.rybid = res.rows[0].id;
@@ -330,14 +431,14 @@ export default {
           ryb: logItem.bjid,
           rylsxm: logItem.lsid,
           kzzd1: logItem.teacherWorkLogId,
-          status: ""
+          status: "",
         };
         if (bol) {
           jsonInsert.status = 1;
         } else {
           jsonInsert.status = 0;
         }
-        addClassroom(jsonInsert).then(res => {
+        addClassroom(jsonInsert).then((res) => {
           if (res.code == 200) {
             this.getList();
             this.msgSuccess("操作成功");
@@ -346,14 +447,14 @@ export default {
       } else {
         let json = {
           status: "",
-          id: logItem.classroomId
+          id: logItem.classroomId,
         };
         if (bol) {
           json.status = 1;
         } else {
           json.status = 0;
         }
-        updateClassroom(json).then(res => {
+        updateClassroom(json).then((res) => {
           if (res.code == 200) {
             this.getList();
             this.msgSuccess("操作成功");
@@ -366,7 +467,7 @@ export default {
       this.download(
         "basic/teacher/export",
         {
-          ...this.queryParams
+          ...this.queryParams,
         },
         `basic_teacher.xlsx`
       );
@@ -389,19 +490,19 @@ export default {
       }
     },
     getRout(key, id) {
-      this.getConfigKey(key).then(resp => {
+      this.getConfigKey(key).then((resp) => {
         this.router = resp.msg;
         this.$router.push({
-          path: this.router + id
+          path: this.router + id,
         });
       });
     },
     downloadZipFile(id) {
       let param = {
-        kzzd1: id
+        kzzd1: id,
       };
       // 查询文件表的文件名称
-      selectFileList(param).then(res => {
+      selectFileList(param).then((res) => {
         if (200 == res.code) {
           if (res.rows.length > 0) {
             this.download("file/filetable/download", param, res.rows[0].name);
@@ -421,8 +522,8 @@ export default {
     },
     cancelVideo() {
       this.dialogVideoFileVisible = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
