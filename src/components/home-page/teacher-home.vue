@@ -57,13 +57,6 @@
             </div>
             <div style="display: flex; margin-right: 40px">
               <span style="font-weight: bold">教材</span> : {{ item.jcmc }}
-              <el-link
-                style="margin-left: 20px"
-                type="primary"
-                icon="el-icon-date"
-                @click="toPage('teacherTeachingHome', item.id)"
-                >教学计划</el-link
-              >
             </div>
             <div style="display: flex; margin-right: 40px">
               <p><span style="font-weight: bold">开班照</span></p>
@@ -116,6 +109,13 @@
               type="danger"
               @click="toPage('classPerformance', item.id)"
               >班级成绩</el-button
+            >
+            <el-button
+              style="margin-left: 20px"
+              type="primary"
+              icon="el-icon-date"
+              @click="toPage('teacherTeachingHome', item.id)"
+              >教学计划</el-button
             >
           </div>
           <div>
