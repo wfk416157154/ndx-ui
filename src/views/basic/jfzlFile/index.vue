@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="书名" prop="bookName">
+      <el-form-item v-if="$store.state.user.dataRoleWeightId != 50"  label="书名" prop="bookName">
         <el-input
           v-model="queryParams.bookName"
           placeholder="请输入书名"
@@ -16,7 +16,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="课程进度" prop="kcjd">
+      <el-form-item v-if="$store.state.user.dataRoleWeightId != 50" label="课程进度" prop="kcjd">
         <el-select v-model="queryParams.kcjd" placeholder="请选择课程进度" clearable size="small">
           <el-option
             v-for="dict in kcjdOptions"
@@ -26,7 +26,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="资料标题" prop="zlbt">
+      <el-form-item  v-if="$store.state.user.dataRoleWeightId != 50" label="资料标题" prop="zlbt">
         <el-input
           v-model="queryParams.zlbt"
           placeholder="请输入资料标题"
@@ -35,7 +35,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="$store.state.user.dataRoleWeightId != 50" >
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         <el-button type="success" size="mini" v-has-role="['admin','academicAdministrator']" @click="seeHistorical">查看下载历史</el-button>
