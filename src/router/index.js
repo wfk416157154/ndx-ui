@@ -74,7 +74,7 @@ export const constantRoutes = [
         path: 'profile',
         component: (resolve) => require(['@/views/system/user/profile/index'], resolve),
         name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
+        meta: { title: '个人中心', icon: 'user',noCache: true }
       }
     ]
   },
@@ -113,7 +113,7 @@ export const constantRoutes = [
         path: 'type/data/:dictId(\\d+)',
         component: (resolve) => require(['@/views/system/dict/data'], resolve),
         name: 'Data',
-        meta: { title: '字典数据', icon: '' }
+        meta: { title: '字典数据', icon: '',noCache: true }
       }
     ]
   },
@@ -126,7 +126,7 @@ export const constantRoutes = [
         path: 'log',
         component: (resolve) => require(['@/views/monitor/job/log'], resolve),
         name: 'JobLog',
-        meta: { title: '调度日志' }
+        meta: { title: '调度日志',noCache: true }
       }
     ]
   },
@@ -139,7 +139,7 @@ export const constantRoutes = [
         path: 'edit/:tableId(\\d+)',
         component: (resolve) => require(['@/views/tool/gen/editTable'], resolve),
         name: 'GenEdit',
-        meta: { title: '修改生成配置' }
+        meta: { title: '修改生成配置' ,noCache: true}
       }
     ]
   }
