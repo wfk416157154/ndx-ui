@@ -45,7 +45,9 @@
       </div>
       <ul style="list-style: none" class="clearfix">
         <li class="class-wrap" v-for="(item, index) in pageList" :key="index">
-          <h2 style="margin-top: 1px">{{ item.rybjmc }}</h2>
+          <h2 style="margin-top: 1px">
+            {{ item.rybjmc }} &nbsp;&nbsp;&nbsp; 当前课程 : {{ item.dqkcmc }}
+          </h2>
           <div
             style="display: flex;align-items:center;justify:content:space-between"
           >
@@ -57,13 +59,6 @@
             </div>
             <div style="display: flex; margin-right: 40px">
               <span style="font-weight: bold">教材</span> : {{ item.jcmc }}
-              <el-link
-                style="margin-left: 20px"
-                type="primary"
-                icon="el-icon-date"
-                @click="toPage('teacherTeachingHome', item.id)"
-                >教学计划</el-link
-              >
             </div>
             <div style="display: flex; margin-right: 40px">
               <p><span style="font-weight: bold">开班照</span></p>
@@ -116,6 +111,13 @@
               type="danger"
               @click="toPage('classPerformance', item.id)"
               >班级成绩</el-button
+            >
+            <el-button
+              style="margin-left: 20px"
+              type="primary"
+              icon="el-icon-date"
+              @click="toPage('teacherTeachingHome', item.id)"
+              >教学计划</el-button
             >
           </div>
           <div>

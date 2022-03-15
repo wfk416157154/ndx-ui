@@ -90,6 +90,14 @@
           <el-button type="info" size="mini" @click="clickEdit"
             >点击修改</el-button
           >
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-document-copy"
+            size="mini"
+            @click="showCopyDialog"
+            >复制当前已启用的课表</el-button
+          >
           <div ref="prent">
             <el-tabs v-model="tabsActiveTab">
               <el-tab-pane label="班级课表" name="kb">
@@ -152,15 +160,6 @@
                       @click="handleExport"
                       >导出</el-button
                     >
-                    <el-button
-                      type="primary"
-                      plain
-                      icon="el-icon-document-copy"
-                      size="mini"
-                      @click="showCopyDialog"
-                      >复制当前已启用的课表</el-button
-                    >
-
                     <el-button
                       type="danger"
                       icon="el-icon-delete"
@@ -605,7 +604,7 @@ export default {
       chooseNianfen: null,
       chooseKblx: null,
       courseId: null,
-      courseBasicObj:null
+      courseBasicObj: null,
     };
   },
   created() {
@@ -647,7 +646,18 @@ export default {
     /* ------------------------复制课表功能的部分代码----------------------------- */
     // 显示复制课表的弹窗
     showCopyDialog() {
+      let newDate = new Date(this.courseBasicObj.kzzd2);
+      let count = 1000 * 60 * 60 * 24 * 3;
       let year = new Date();
+      if (year.getTime() - newDate.getTime() < count) {
+        this.msgError(
+          `${this.parseTime(
+            newDate.getTime() + count,
+            "{y} {m} {d}"
+          )}以后才可以复制课表`
+        );
+        return;
+      }
       this.chooseNianfen = year;
       this.chooseKblx = null;
       this.copyOpen = true;
@@ -659,7 +669,7 @@ export default {
         return false;
       }
       let obj = {
-        id:this.courseBasicObj.id,
+        id: this.courseBasicObj.id,
         bjid: this.queryParams.bjid,
         kbType: this.queryParams.kbType,
         nd: this.queryParams.kzzd2,
@@ -695,8 +705,8 @@ export default {
       this.download(
         "basic/classCourse/exportClassCourse",
         {
-          courseBasicId:this.courseBasicObj.id,
-          bjid:this.courseBasicObj.bjid
+          courseBasicId: this.courseBasicObj.id,
+          bjid: this.courseBasicObj.bjid,
         },
         `${this.queryParams.kzzd2}-${this.selectDictLabel(
           this.kbTypeOptionsEL,
@@ -728,7 +738,7 @@ export default {
     // 获取课表详细数据
     getCourse(item) {
       if (item && item.id) {
-        this.courseBasicObj=item
+        this.courseBasicObj = item;
         this.courseId = item.id;
         this.queryParams.kzzd2 = item.nd;
         this.queryParams.kbType = item.kbType;
@@ -794,7 +804,7 @@ export default {
             this.queryParams.kbType = value.kbType;
             this.yxsj = value.kzzd1;
             this.courseId = value.id;
-            this.courseBasicObj=value;
+            this.courseBasicObj = value;
             if (!$sfqy) {
               this.getCourse();
             }
@@ -1022,11 +1032,11 @@ export default {
       if (!this.queryParams.kbType || !this.queryParams.kzzd2) {
         return this.msgError("请选择课表类型！");
       }
-      let sfqyNumber=1; // 默认启用
-      let basicId=null;
-      if(this.courseBasicObj){
-        sfqyNumber=this.courseBasicObj.sfqy
-        basicId=this.courseBasicObj.id
+      let sfqyNumber = 1; // 默认启用
+      let basicId = null;
+      if (this.courseBasicObj) {
+        sfqyNumber = this.courseBasicObj.sfqy;
+        basicId = this.courseBasicObj.id;
       }
       let json = {
         bjid: this.queryParams.bjid,
@@ -1034,9 +1044,10 @@ export default {
         kbType: this.queryParams.kbType,
         sfqy: Number(sfqyNumber),
         id: basicId,
-        isUpdateCourse:true, // 后台接口使用的参数，用来判断是否是修改数据后手工进行提交的
+        isUpdateCourse: true, // 后台接口使用的参数，用来判断是否是修改数据后手工进行提交的
       };
-      if (this.yxsj) {// 有效课时
+      if (this.yxsj) {
+        // 有效课时
         json.kzzd1 = this.yxsj;
       }
       let result = await classCourseBasicSave(json);
