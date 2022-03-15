@@ -1,6 +1,6 @@
 <template>
   <div class="wrap-propress">
-    <h2>当前课程 : {{ dqkcmc }}</h2>
+    <!-- <h2>当前课程 : {{ dqkcmc }}</h2> -->
     <br />
     <div style="display: flex; align-items: center; position: relative">
       <div style="width: 100px; position: absolute; top: 65px; left: -80px">
@@ -141,7 +141,7 @@ export default {
 .wrap-propress {
   width: 100%;
   height: 100%;
-  padding: 0px 45px;
+  padding: 20px 45px;
   .propress {
     width: 100%;
     height: 100%;

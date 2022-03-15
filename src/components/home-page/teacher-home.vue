@@ -45,7 +45,9 @@
       </div>
       <ul style="list-style: none" class="clearfix">
         <li class="class-wrap" v-for="(item, index) in pageList" :key="index">
-          <h2 style="margin-top: 1px">{{ item.rybjmc }}</h2>
+          <h2 style="margin-top: 1px">
+            {{ item.rybjmc }} &nbsp;&nbsp;&nbsp; 当前课程 : {{ item.dqkcmc }}
+          </h2>
           <div
             style="display: flex;align-items:center;justify:content:space-between"
           >
