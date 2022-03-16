@@ -206,6 +206,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 5,
+        sfcxgr: "1",
       },
       total: 0,
       messageDetails: "",
