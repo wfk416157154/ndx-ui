@@ -284,7 +284,9 @@
 
                 <div>
                   <span>正常教学计划 :</span>
-                  <span v-if="item.kclx == '1'">{{ item.nowCourseName }}</span>
+                  <span v-if="item.kclx == '1'">{{
+                    item.normalClassPlanObj.sxmc
+                  }}</span>
                   <span v-else> 已进入总复习 {{ item.startReviewDate }}</span>
                 </div>
                 <div>
