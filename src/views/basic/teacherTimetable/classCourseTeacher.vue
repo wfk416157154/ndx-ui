@@ -61,6 +61,64 @@
               ></span>
             </el-tooltip>
           </div>
+          <div>
+            <el-button
+              type="success"
+              size="mini"
+              @click="addKbDialogFormVisible = true"
+              >新增课表</el-button
+            >
+            <el-dialog title="课表新增" :visible.sync="addKbDialogFormVisible">
+              <el-form
+                :model="queryParams"
+                ref="queryForm"
+                :rules="queryParamsRules"
+                :inline="true"
+                label-width="68px"
+              >
+                <el-form-item label="年份">
+                  <el-select
+                    style="margin-right: 10px"
+                    v-model="queryParams.kzzd2"
+                    placeholder="请选择年份"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="(item, index) in bjkbStartDate"
+                      :label="item"
+                      :value="item"
+                      :key="index"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="课表类型">
+                  <el-select
+                    style="margin-right: 10px"
+                    v-model="queryParams.kbType"
+                    placeholder="请选择课表类型"
+                    clearable
+                    size="small"
+                  >
+                    <el-option
+                      v-for="dict in kbTypeOptionsEL"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="addKbDialogFormVisible = false"
+                  >取 消</el-button
+                >
+                <el-button type="primary" @click="handleClassCourseTemplateAdd"
+                  >确 定</el-button
+                >
+              </div>
+            </el-dialog>
+          </div>
           <div
             v-for="(item, index) in classCourseBasicList"
             :key="index"
@@ -72,6 +130,59 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
             ></el-switch>
+            <div>
+              <el-link
+                type="success"
+                style="margin-right: 10px"
+                @click="getCopyContent(item)"
+              >
+                复制课表
+              </el-link>
+              <el-dialog title="复制课表" :visible.sync="copyDialogFormVisible">
+                <el-form :model="copyKbForm">
+                  <el-form-item label="年度">
+                    <el-select
+                      style="margin-right: 10px"
+                      v-model="copyKbForm.updateAfterNd"
+                      placeholder="请选择年份"
+                      clearable
+                      size="small"
+                    >
+                      <el-option
+                        v-for="(item, index) in bjkbStartDate"
+                        :label="item"
+                        :value="item"
+                        :key="index"
+                      />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="课表类型">
+                    <el-select
+                      style="margin-right: 10px"
+                      v-model="copyKbForm.updateAfterKbType"
+                      placeholder="请选择课表类型"
+                      clearable
+                      size="small"
+                    >
+                      <el-option
+                        v-for="dict in kbTypeOptionsEL"
+                        :key="dict.dictValue"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="copyDialogFormVisible = false"
+                    >取 消</el-button
+                  >
+                  <el-button type="primary" @click="copySubmit(item)"
+                    >确 定</el-button
+                  >
+                </div>
+              </el-dialog>
+            </div>
             <div style="float: right" @click="getCourse(item)">
               <el-link type="primary"
                 >{{ item.nd }} 年度- {{ item.kbTypeName }}-{{
@@ -95,6 +206,7 @@
             plain
             icon="el-icon-document-copy"
             size="mini"
+            v-if="false"
             @click="showCopyDialog"
             >复制当前已启用的课表</el-button
           >
@@ -109,40 +221,12 @@
                     :inline="true"
                     label-width="68px"
                   >
-                    <el-select
-                      style="margin-right: 10px"
-                      v-model="queryParams.kzzd2"
-                      placeholder="请选择年份"
-                      clearable
-                      size="small"
-                    >
-                      <el-option
-                        v-for="(item, index) in bjkbStartDate"
-                        :label="item"
-                        :value="item"
-                        :key="index"
-                      />
-                    </el-select>
-                    <el-select
-                      style="margin-right: 10px"
-                      v-model="queryParams.kbType"
-                      placeholder="请选择课表类型"
-                      clearable
-                      size="small"
-                    >
-                      <el-option
-                        v-for="dict in kbTypeOptionsEL"
-                        :key="dict.dictValue"
-                        :label="dict.dictLabel"
-                        :value="dict.dictValue"
-                      />
-                    </el-select>
                     <el-button
                       type="primary"
                       icon="el-icon-plus"
                       size="mini"
                       @click="insertTimetable"
-                      >新增课表</el-button
+                      >新增课程</el-button
                     >
                     <el-button
                       type="success"
@@ -480,7 +564,10 @@ import {
   delClassCourseBasic,
   addClassCourseBasic,
   updateClassCourseBasic,
+  enableClassCourseTemplate,
   copyCourseBasicApi,
+  classCourseTemplateAdd,
+  copyCourseTemplate,
 } from "@/api/basic/classCourseBasic";
 import { parseTime } from "../../../utils/ruoyi";
 
@@ -491,6 +578,8 @@ export default {
       courseOpen: false,
       startTime: "",
       btnDisabled: true,
+      addKbDialogFormVisible: false,
+      copyDialogFormVisible: false,
       // 班级id
       activeTab: "",
       // 班级课表选择
@@ -605,6 +694,12 @@ export default {
       chooseKblx: null,
       courseId: null,
       courseBasicObj: null,
+      copyKbForm: {
+        updateAfterKbType: null,
+        updateAfterNd: new Date().getFullYear(),
+        basicId: null,
+        bjid: null,
+      },
     };
   },
   created() {
@@ -632,6 +727,47 @@ export default {
     this.$refs.prent.addEventListener("click", this.msgPrent, false);
   },
   methods: {
+    // 获取课表内容
+    getCopyContent(item) {
+      this.copyDialogFormVisible = true;
+      this.copyKbForm.bjid = item.bjid;
+      this.copyKbForm.basicId = item.id;
+    },
+    // 复制课表
+    copySubmit(item) {
+      if (!this.copyKbForm.updateAfterNd) {
+        this.msgError("请选择该新增课表的所属年份！");
+        return;
+      }
+      if (!this.copyKbForm.updateAfterKbType) {
+        this.msgError("请选择该新增课表的课表类型！");
+        return;
+      }
+      copyCourseTemplate(this.copyKbForm).then((res) => {
+        this.msgSuccess("操作成功");
+        this.copyDialogFormVisible = false;
+      });
+    },
+    //增加课表模板
+    handleClassCourseTemplateAdd() {
+      if (!this.queryParams.kzzd2) {
+        this.msgError("请选择该新增课表的所属年份！");
+        return;
+      }
+      if (!this.queryParams.kbType) {
+        this.msgError("请选择该新增课表的课表类型！");
+        return;
+      }
+      let json = {
+        nd: this.queryParams.kzzd2,
+        kbType: this.queryParams.kbType,
+        bjid: this.queryParams.bjid,
+      };
+      classCourseTemplateAdd(json).then((res) => {
+        this.msgSuccess("操作成功");
+        this.addKbDialogFormVisible = false;
+      });
+    },
     // 点击修改
     clickEdit() {
       this.msgSuccess("开启修改功能成功");
@@ -743,14 +879,6 @@ export default {
         this.queryParams.kzzd2 = item.nd;
         this.queryParams.kbType = item.kbType;
       }
-      if (!this.queryParams.kzzd2) {
-        this.msgError("请选择该新增课表的所属年份！");
-        return;
-      }
-      if (!this.queryParams.kbType) {
-        this.msgError("请选择该新增课表的课表类型！");
-        return;
-      }
       this.queryParams.kzzd1 = this.courseId;
       /** 查询班级课程列表 */
       this.loading = true;
@@ -782,6 +910,7 @@ export default {
       }
       let obj = {
         bjid: rybjid,
+        kzzd4: 1,
       };
       if (nd) {
         obj.nd = nd;
@@ -832,10 +961,9 @@ export default {
         this.queryParams.kzzd2 = value.nd;
         this.queryParams.kbType = value.kbType;
         value.ifAddYxsj = "sfqy";
-        updateClassCourseBasic({
-          id: value.id,
-          bjid: value.bjid,
-          sfqy: Number(value.sfqy),
+        enableClassCourseTemplate({
+          basicId: value.id,
+          sfqy: +value.sfqy,
         }).then((res) => {
           this.getClassCourseBasicList(value.bjid);
         });
@@ -851,6 +979,7 @@ export default {
     },
     //新增课表
     insertTimetable() {
+      console.log(this.queryParams);
       if (!this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
         return;

@@ -68,6 +68,15 @@ export function batchCheckIn(data) {
   })
 }
 
+// 新增课表模板
+export function classCourseTemplateAdd(data) {
+  return request({
+    url: '/basic/classCourseBasic/classCourseTemplateAdd',
+    method: 'post',
+    data: data
+  })
+}
+
 // 签到异常
 export function batchYiChang(data) {
   return request({
@@ -81,6 +90,25 @@ export function batchYiChang(data) {
 export function addClassCourseBasic(data) {
   return request({
     url: '/basic/classCourseBasic',
+    method: 'post',
+    data: data
+  })
+}
+
+
+// 复制课表
+export function copyCourseTemplate(data) {
+  return request({
+    url: '/basic/classCourseBasic/copyCourseTemplate',
+    method: 'post',
+    data: data
+  })
+}
+
+// 开启课表
+export function enableClassCourseTemplate(data) {
+  return request({
+    url: '/basic/classCourseBasic/enableClassCourseTemplate',
     method: 'post',
     data: data
   })
