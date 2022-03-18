@@ -964,17 +964,21 @@ export default {
         enableClassCourseTemplate({
           basicId: value.id,
           sfqy: +value.sfqy,
-        }).then((res) => {
-          this.getClassCourseBasicList(value.bjid);
-        });
-      }
-      if (value.sfqy) {
-        this.yxsj = value.kzzd1;
-        this.getCourse();
-        this.msgSuccess("启动成功");
-      } else {
-        this.classCourseList = [];
-        this.msgSuccess("关闭成功");
+        })
+          .then((res) => {
+            if (value.sfqy) {
+              this.yxsj = value.kzzd1;
+              this.getCourse();
+              this.msgSuccess("启动成功");
+            } else {
+              this.classCourseList = [];
+              this.msgSuccess("关闭成功");
+            }
+            this.getClassCourseBasicList(value.bjid);
+          })
+          .catch((err) => {
+            this.switchingClasses(value.bjid);
+          });
       }
     },
     //新增课表
