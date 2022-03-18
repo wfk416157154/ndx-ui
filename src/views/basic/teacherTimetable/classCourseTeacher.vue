@@ -122,7 +122,7 @@
           <div
             v-for="(item, index) in classCourseBasicList"
             :key="index"
-            class="list-group-item"
+            class="list-kb-item"
           >
             <el-switch
               v-model="item.sfqy"
@@ -746,6 +746,7 @@ export default {
       copyCourseTemplate(this.copyKbForm).then((res) => {
         this.msgSuccess("操作成功");
         this.copyDialogFormVisible = false;
+        this.getClassCourseBasicList(item.bjid);
       });
     },
     //增加课表模板
@@ -766,6 +767,7 @@ export default {
       classCourseTemplateAdd(json).then((res) => {
         this.msgSuccess("操作成功");
         this.addKbDialogFormVisible = false;
+        this.getClassCourseBasicList(this.queryParams.bjid);
       });
     },
     // 点击修改
@@ -912,10 +914,11 @@ export default {
         bjid: rybjid,
         kzzd4: 1,
       };
-      if (nd) {
-        obj.nd = nd;
-        obj.kbType = this.queryParams.kbType;
-      }
+      // 每次查询一个开启班级
+      // if (nd) {
+      //   obj.nd = nd;
+      //   obj.kbType = this.queryParams.kbType;
+      // }
       listClassCourseBasic(obj).then((response) => {
         this.classCourseBasicList = response.rows;
         if (this.classCourseBasicList.length == 0) {
@@ -958,6 +961,7 @@ export default {
     // 是否启用
     setSfqy(value) {
       if (value) {
+        this.courseId = value.id;
         this.queryParams.kzzd2 = value.nd;
         this.queryParams.kbType = value.kbType;
         value.ifAddYxsj = "sfqy";
@@ -983,7 +987,6 @@ export default {
     },
     //新增课表
     insertTimetable() {
-      console.log(this.queryParams);
       if (!this.queryParams.kzzd2) {
         this.msgError("请选择该新增课表的所属年份！");
         return;
@@ -1183,60 +1186,61 @@ export default {
         // 有效课时
         json.kzzd1 = this.yxsj;
       }
-      let result = await classCourseBasicSave(json);
-      if (result.code == 200) {
-        this.getClassCourseBasicList(
-          this.activeTab,
-          this.queryParams.kzzd2,
-          true
-        );
-        if (this.multipleSelection && this.multipleSelection.length > 0) {
-          let num = 0;
-          for (let i = 0; i < this.multipleSelection.length; i++) {
-            if (!this.multipleSelection[i].kcType) {
-              this.msgError("请选择课程类型！");
-              continue;
-            }
-            if (!this.multipleSelection[i].kssj) {
-              this.msgError("请选择开始时间！");
-              continue;
-            }
-            if (!this.multipleSelection[i].jssj) {
-              this.msgError("请选择结束时间！");
-              continue;
-            }
-            this.multipleSelection[i].kzzd1 = result.data.id;
-            if (this.multipleSelection[i].id) {
-              updateClassCourse(this.multipleSelection[i]).then((res) => {
-                if (res.code == 200) {
-                  this.multipleSelection = [];
-                  this.getClassCourseBasicList(
-                    this.activeTab,
-                    this.queryParams.kzzd2
-                  );
-                  this.btnDisabled = true;
-                  num++;
-                }
-              });
-            } else {
-              addClassCourse(this.multipleSelection[i]).then((res) => {
-                if (res.code == 200) {
-                  this.multipleSelection = [];
-                  this.getClassCourseBasicList(
-                    this.activeTab,
-                    this.queryParams.kzzd2
-                  );
-                  this.btnDisabled = true;
-                  num++;
-                }
-              });
-            }
+      // let result = await classCourseBasicSave(json);
+      // if (result.code == 200) {
+      this.getClassCourseBasicList(
+        this.activeTab,
+        this.queryParams.kzzd2,
+        true
+      );
+      if (this.multipleSelection && this.multipleSelection.length > 0) {
+        let num = 0;
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          if (!this.multipleSelection[i].kcType) {
+            this.msgError("请选择课程类型！");
+            continue;
           }
-          if (this.multipleSelection.length === num) {
-            this.msgSuccess("保存成功");
+          if (!this.multipleSelection[i].kssj) {
+            this.msgError("请选择开始时间！");
+            continue;
+          }
+          if (!this.multipleSelection[i].jssj) {
+            this.msgError("请选择结束时间！");
+            continue;
+          }
+          this.multipleSelection[i].kzzd1 = this.courseId;
+          if (this.multipleSelection[i].id) {
+            updateClassCourse(this.multipleSelection[i]).then((res) => {
+              if (res.code == 200) {
+                this.multipleSelection = [];
+                this.getClassCourseBasicList(
+                  this.activeTab,
+                  this.queryParams.kzzd2
+                );
+                this.btnDisabled = true;
+                num++;
+              }
+            });
+          } else {
+            addClassCourse(this.multipleSelection[i]).then((res) => {
+              if (res.code == 200) {
+                this.multipleSelection = [];
+                this.getClassCourseBasicList(
+                  this.activeTab,
+                  this.queryParams.kzzd2
+                );
+                this.btnDisabled = true;
+                num++;
+              }
+            });
           }
         }
+        if (this.multipleSelection.length === num) {
+          this.getCourse();
+          this.msgSuccess("保存成功");
+        }
       }
+      // }
     },
     // 删除选中行
     deleteData() {
@@ -1311,6 +1315,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.list-kb-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  margin: 10px 0px;
+}
 </style>
 
