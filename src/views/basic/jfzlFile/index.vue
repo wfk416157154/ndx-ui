@@ -639,6 +639,7 @@ export default {
     getExaminationPaperList(){
       listExaminationPaper(this.examQueryParams).then(res => {
         if(res.total<1){
+          this.examForm.kskssj = new Date()
           addExaminationPaper(this.examForm).then(res => {
             this.msgSuccess("考卷新增成功");
           });
