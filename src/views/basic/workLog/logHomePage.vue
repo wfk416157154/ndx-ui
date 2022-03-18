@@ -164,6 +164,10 @@
               <span>课后内容 :</span>
               <span>{{ item.khBcrz }}</span>
             </div>
+            <div>
+              <span>备注 :</span>
+              <span>{{ item.remark }}</span>
+            </div>
             <div class="button">
               <el-button
                 type="success"
