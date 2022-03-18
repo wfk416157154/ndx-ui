@@ -141,7 +141,7 @@
 
     <div class="outline">
       <h4>课程大纲</h4>
-      <div>
+      <div v-if="false">
         <el-button size="mini" type="primary">课程补充</el-button>
         <el-button size="mini" type="danger">删除补充</el-button>
         <el-button size="mini" type="info">默认课程</el-button>
