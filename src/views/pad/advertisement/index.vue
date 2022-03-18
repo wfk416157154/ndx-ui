@@ -20,7 +20,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">
+      <!-- <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">
         <el-input
           v-model="queryParams.sffbsy"
           placeholder="请输入是否发送所有(0:否 1:是)"
@@ -28,17 +28,17 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="备注" prop="remake">
+      </el-form-item> -->
+      <!-- <el-form-item label="备注" prop="remake">
         <el-input
           v-model="queryParams.remake"
           placeholder="请输入备注"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="发送者id" prop="userId">
+        /> -->
+      <!-- </el-form-item> -->
+      <!-- <el-form-item label="发送者id" prop="userId">
         <el-input
           v-model="queryParams.userId"
           placeholder="请输入发送者id"
@@ -46,8 +46,8 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="校区id" prop="xqid">
+      </el-form-item> -->
+      <!-- <el-form-item label="校区id" prop="xqid">
         <el-input
           v-model="queryParams.xqid"
           placeholder="请输入校区id"
@@ -55,8 +55,8 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="发送者姓名" prop="userName">
+      </el-form-item> -->
+      <!-- <el-form-item label="发送者姓名" prop="userName">
         <el-input
           v-model="queryParams.userName"
           placeholder="请输入发送者姓名"
@@ -78,7 +78,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -146,9 +146,9 @@
       <el-table-column label="广告标题" align="center" prop="advertisementTitle" />
       <el-table-column label="广告内容" align="center" prop="advertisementContent" />
       <el-table-column label="是否发送所有(0:否 1:是)" align="center" prop="sffbsy" />
-      <el-table-column label="备注" align="center" prop="remake" />
+      <!-- <el-table-column label="备注" align="center" prop="remake" />
       <el-table-column label="校区id" align="center" prop="xqid" />
-      <el-table-column label="发送者姓名" align="center" prop="userName" />
+      <el-table-column label="发送者姓名" align="center" prop="userName" /> -->
       <el-table-column label="状态" align="center" prop="status" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -195,7 +195,7 @@
         <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">
           <el-input v-model="form.sffbsy" placeholder="请输入是否发送所有(0:否 1:是)" />
         </el-form-item>
-        <el-form-item label="备注" prop="remake">
+        <!-- <el-form-item label="备注" prop="remake">
           <el-input v-model="form.remake" placeholder="请输入备注" />
         </el-form-item>
         <el-form-item label="发送者id" prop="userId">
@@ -229,7 +229,7 @@
         </el-form-item>
         <el-form-item label="扩展字段5" prop="kzzd5">
           <el-input v-model="form.kzzd5" placeholder="请输入扩展字段5" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
