@@ -8,13 +8,22 @@
           placeholder="请选择校区名称"
           @change="xqmcOnChange"
         >
-          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="班级">
-        <el-select v-model="queryParams.bjid" filterable placeholder="请选择日语班级">
+        <el-select
+          v-model="queryParams.bjid"
+          filterable
+          placeholder="请选择日语班级"
+        >
           <el-option
-            v-for="item in bjclassList "
+            v-for="item in bjclassList"
             :key="item.id"
             :label="item.rybjmc"
             :value="item.id"
@@ -24,21 +33,57 @@
       <el-form-item label="老师">
         <el-input v-model="queryParams.lsxm" placeholder="老师"></el-input>
       </el-form-item>
+      <el-form-item label="滞后时间">
+        <el-select
+          v-model="queryParams.zhsjsx"
+          filterable
+          placeholder="滞后时间"
+        >
+          <el-option label="0到7天" value="1"></el-option>
+          <el-option label="8到15天" value="2"></el-option>
+          <el-option label="16到30天" value="3"></el-option>
+          <el-option label="30天以上" value="4"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="getList">查询</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getList"
+          >查询</el-button
+        >
+        <el-button v-if="false" type="success" @click="handleRemind(scope.row)"
+          >一 键 提 醒</el-button
+        >
       </el-form-item>
     </el-form>
 
-    <el-table ref="singleTable" :data="scoreUploadStatisticsList" style="width: 100%" border>
+    <el-table
+      ref="singleTable"
+      :data="scoreUploadStatisticsList"
+      style="width: 100%"
+      border
+    >
       <el-table-column type="index" label="序号" width="50"></el-table-column>
       <el-table-column label="日语班级" align="center" prop="bjmc" />
       <el-table-column label="老师" align="center" prop="lsxm" />
       <el-table-column label="教材" align="center" prop="jcmc" />
-      <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
-      <el-table-column label="考试范围" align="center" prop="ksfw"></el-table-column>
-      <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
+      <el-table-column
+        label="考试类型"
+        align="center"
+        :formatter="getKslx"
+        prop="kslx"
+      />
+      <el-table-column
+        label="考试范围"
+        align="center"
+        prop="ksfw"
+      ></el-table-column>
+      <el-table-column
+        label="考试时间"
+        align="center"
+        prop="kskssj"
+        width="120"
+      >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.kskssj, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column property="address" label="滞后时间" prop="zhts">
@@ -46,25 +91,68 @@
           <span>{{ scope.row.zhts }} 天</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column property="remindCount" label="提醒次数" prop="zhts">
         <template slot-scope="scope">
-          <el-button size="mini" type="danger" @click="handleRemind(scope.row)">提 醒</el-button>
+          <span>{{ scope.row.remindCount }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        property="lastRemindDays"
+        label="距离上一次提醒天数"
+        prop="zhts"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.lastRemindDays }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="200px">
+        <template slot-scope="scope">
+          <el-button
+            v-if="scope.row.remindCount == 0"
+            size="mini"
+            type="danger"
+            @click="handleRemind(scope.row)"
+            >提 醒</el-button
+          >
+          <el-button
+            v-else
+            size="mini"
+            type="danger"
+            @click="handleRemind(scope.row)"
+            >再 次 提 醒</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
 
-    <el-dialog title="提醒" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog
+      :title="`第${getListMessage.remindCount + 1}次提醒`"
+      :visible.sync="open"
+      width="800px"
+      append-to-body
+    >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <h4
+          v-if="
+            getListMessage.lastRemindDays || getListMessage.lastRemindDays == 0
+          "
+        >
+          距离上一次提醒 : {{ getListMessage.lastRemindDays }} 天
+        </h4>
         <el-form-item label="消息标题" prop="xxbt">
-          <el-input v-model="form.xxbt" maxlength="100" placeholder="请输入消息标题" />
+          <el-input
+            v-model="form.xxbt"
+            maxlength="100"
+            placeholder="请输入消息标题"
+          />
         </el-form-item>
         <el-form-item label="消息内容" prop="xxnr">
           <editor v-model="form.xxnr" :min-height="192" />
@@ -75,12 +163,15 @@
               v-for="dict in xxqrlxOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
+              >{{ dict.dictLabel }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitForm">确 定</el-button>
+        <el-button type="primary" v-prevent-re-click @click="submitForm"
+          >确 定</el-button
+        >
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -94,7 +185,7 @@ import {
   delMessage,
   addMessage,
   updateMessage,
-  listNoReplyMessage
+  listNoReplyMessage,
 } from "@/api/basic/message";
 import { listTeacher } from "@/api/basic/teacher";
 import { listBjclass } from "@/api/basic/bjclass";
@@ -107,7 +198,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         status: 1,
-        kzzd2: 9
+        kzzd2: 9,
       },
       total: 0,
       selectXqmc: [],
@@ -134,7 +225,7 @@ export default {
         kzzd3: null,
         kzzd4: null,
         kzzd5: null,
-        jsrArr: []
+        jsrArr: [],
       },
       xxlxOptions: [],
       sfqbfsOptions: [],
@@ -146,40 +237,41 @@ export default {
         xxlx: [{ required: true, message: "必填项", trigger: "change" }],
         xxbt: [{ required: true, message: "必填项", trigger: "blur" }],
         sfqbfs: [{ required: true, message: "必填项", trigger: "change" }],
-        xxqrlx: [{ required: true, message: "必填项", trigger: "change" }]
-      }
+        xxqrlx: [{ required: true, message: "必填项", trigger: "change" }],
+      },
+      getListMessage: {},
     };
   },
   created() {
-    this.getDicts("examination_type").then(response => {
+    this.getDicts("examination_type").then((response) => {
       this.kslxOptions = response.data;
     });
-    this.getDicts("messageType").then(response => {
+    this.getDicts("messageType").then((response) => {
       this.xxlxOptions = response.data;
     });
-    this.getDicts("isOrNot").then(response => {
+    this.getDicts("isOrNot").then((response) => {
       this.sfqbfsOptions = response.data;
     });
-    this.getDicts("messageConfirmWay").then(response => {
+    this.getDicts("messageConfirmWay").then((response) => {
       this.xxqrlxOptions = response.data;
     });
-    listSchool().then(response => {
+    listSchool().then((response) => {
       this.selectXqmc = response.rows;
     });
   },
   mounted() {},
   methods: {
     xqmcOnChange(id) {
-      listBjclass({ kzzd1: id }).then(response => {
+      listBjclass({ kzzd1: id }).then((response) => {
         this.bjclassList = response.rows;
       });
       this.lsphone = null;
-      listTeacher({ xqmc: id }).then(response => {
+      listTeacher({ xqmc: id }).then((response) => {
         this.teacherList = response.rows;
       });
     },
     getList() {
-      queryNotUploadGradeExamlist(this.queryParams).then(res => {
+      queryNotUploadGradeExamlist(this.queryParams).then((res) => {
         this.scoreUploadStatisticsList = res.rows;
         this.total = res.total;
       });
@@ -188,34 +280,29 @@ export default {
       return this.selectDictLabel(this.kslxOptions, row.kslx);
     },
     handleRemind(row) {
-      listMessage({ kzzd2: row.id }).then(response => {
-        if (response.rows.length === 0) {
-          this.reset();
-          this.form.jsrArr[0] = row.lsxm + "-" + row.dhhm;
-          this.form.kzzd2 = row.id;
-          this.open = true;
-        } else {
-          this.msgError("您已填写过提醒消息,请勿重复操作");
-        }
-      });
+      this.getListMessage = row;
+      this.reset();
+      this.form.jsrArr[0] = row.lsxm + "-" + row.dhhm;
+      this.form.kzzd2 = row.id;
+      this.open = true;
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if ("1" == this.form.sfqbfs) {
             // 如果发送给全部用户，则接收人数组置空
             this.form.jsrArr = [];
           }
           if (this.form.id != null) {
-            updateMessage(this.form).then(response => {
+            updateMessage(this.form).then((response) => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             this.form.id = this.wjid;
-            addMessage(this.form).then(response => {
+            addMessage(this.form).then((response) => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -249,11 +336,11 @@ export default {
         kzzd3: null,
         kzzd4: null,
         kzzd5: null,
-        jsrArr: []
+        jsrArr: [],
       };
       this.resetForm("form");
-    }
-  }
+    },
+  },
 };
 </script>
 
