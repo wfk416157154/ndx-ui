@@ -46,7 +46,7 @@
       <ul style="list-style: none" class="clearfix">
         <li class="class-wrap" v-for="(item, index) in pageList" :key="index">
           <h2 style="margin-top: 1px">
-            {{ item.rybjmc }} &nbsp;&nbsp;&nbsp; 当前课程 : {{ dqkcmc }}
+            {{ item.rybjmc }} &nbsp;&nbsp;&nbsp;
           </h2>
           <div
             style="display: flex;align-items:center;justify:content:space-between"
@@ -229,6 +229,7 @@ export default {
     getList() {
       getPageList({ lsid: this.$store.state.user.glrid }).then((res) => {
         this.pageList = res.rows;
+        console.log(this.pageList)
       });
       getMessageList(this.queryParams).then((res) => {
         this.messageList = res.rows;
@@ -238,6 +239,7 @@ export default {
     getHomePageClassTeachingPlan(id) {
       let result = homePageClassTeachingPlan(id);
       result.then((res) => {
+        console.log(res)
         this.dqkcmc = res.data.dqkcmc;
       });
       return result;
