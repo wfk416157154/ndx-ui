@@ -18,6 +18,7 @@
       <el-form-item label="开班时间" prop="sjall">
         <el-date-picker
           v-model="queryParams.sjall"
+          value-format="yyyy-MM-dd"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -266,14 +267,6 @@
                   <span>{{ item.nowCourseName }}</span>
                 </div>
                 <div>
-                  <span>时间区间 :</span>
-                  <span
-                    >{{ parseTime(item.kbsj, "{y}-{m}-{d}") }}至{{
-                      parseTime(item.gksj, "{y}-{m}-{d}")
-                    }}</span
-                  >
-                </div>
-                <div>
                   <span>老师: {{ item.lsxm }}</span>
                 </div>
                 <div>
@@ -284,7 +277,7 @@
 
                 <div>
                   <span>正常教学计划 :</span>
-                  <span v-if="item.kclx == '1'">{{
+                  <span v-if="item.kclx == '1' && item.normalClassPlanObj">{{
                     item.normalClassPlanObj.sxmc
                   }}</span>
                   <span v-else> 已进入总复习 {{ item.startReviewDate }}</span>
@@ -292,6 +285,14 @@
                 <div>
                   <span>教材名称 :</span>
                   <span>{{ item.jcmc }}</span>
+                </div>
+                <div>
+                  <span>时间区间 :</span>
+                  <span
+                    >{{ parseTime(item.kbsj, "{y}-{m}-{d}") }}至{{
+                      parseTime(item.gksj, "{y}-{m}-{d}")
+                    }}</span
+                  >
                 </div>
               </div>
               <div class="info-right">
@@ -330,7 +331,7 @@
             </div>
           </div>
           <div class="content-bottom">
-            <div v-if="queryParams.kclx == 1" class="content-sj">
+            <!-- <div v-if="queryParams.kclx == 1" class="content-sj">
               <ul>
                 <template v-if="item.monthList && item.monthList.length > 0">
                   <li v-for="(month, index) in item.monthList" :key="index">
@@ -353,7 +354,7 @@
                   </li>
                 </template>
               </ul>
-            </div>
+            </div> -->
             <div>
               <div v-if="item.lessonProcessObjList.length > 0">
                 <ndx-progress
@@ -374,7 +375,6 @@
                   title="查看复习进度"
                   :visible.sync="dialogVisxibleFx"
                   width="80%"
-                  :before-close="handleClose"
                 >
                   <div v-for="(row, j) in item.reviewProcessObjList" :key="j">
                     <p style="margin-right: 30px; width: 100%">
@@ -422,28 +422,6 @@ export default {
     return {
       teachingPlanData: [],
       ifContent: "SemesterView",
-      list: [
-        {
-          type: "primary",
-          percentage: 10,
-        },
-        {
-          type: "success",
-          percentage: 20,
-        },
-        {
-          type: "info",
-          percentage: 50,
-        },
-        {
-          type: "warning",
-          percentage: 10,
-        },
-        {
-          type: "danger",
-          percentage: 30,
-        },
-      ],
       dialogVisxibleFx: false,
       // 查询参数
       queryParams: {
@@ -625,7 +603,7 @@ export default {
           display: flex;
           align-items: center;
           .content-top-left {
-            width: 40%;
+            width: 45%;
             height: 100%;
             display: flex;
             padding: 20px;
