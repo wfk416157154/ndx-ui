@@ -18,6 +18,7 @@
       <el-form-item label="开班时间" prop="sjall">
         <el-date-picker
           v-model="queryParams.sjall"
+          value-format="yyyy-MM-dd"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -266,14 +267,6 @@
                   <span>{{ item.nowCourseName }}</span>
                 </div>
                 <div>
-                  <span>时间区间 :</span>
-                  <span
-                    >{{ parseTime(item.kbsj, "{y}-{m}-{d}") }}至{{
-                      parseTime(item.gksj, "{y}-{m}-{d}")
-                    }}</span
-                  >
-                </div>
-                <div>
                   <span>老师: {{ item.lsxm }}</span>
                 </div>
                 <div>
@@ -292,6 +285,14 @@
                 <div>
                   <span>教材名称 :</span>
                   <span>{{ item.jcmc }}</span>
+                </div>
+                <div>
+                  <span>时间区间 :</span>
+                  <span
+                    >{{ parseTime(item.kbsj, "{y}-{m}-{d}") }}至{{
+                      parseTime(item.gksj, "{y}-{m}-{d}")
+                    }}</span
+                  >
                 </div>
               </div>
               <div class="info-right">
@@ -421,28 +422,6 @@ export default {
     return {
       teachingPlanData: [],
       ifContent: "SemesterView",
-      list: [
-        {
-          type: "primary",
-          percentage: 10,
-        },
-        {
-          type: "success",
-          percentage: 20,
-        },
-        {
-          type: "info",
-          percentage: 50,
-        },
-        {
-          type: "warning",
-          percentage: 10,
-        },
-        {
-          type: "danger",
-          percentage: 30,
-        },
-      ],
       dialogVisxibleFx: false,
       // 查询参数
       queryParams: {
@@ -624,7 +603,7 @@ export default {
           display: flex;
           align-items: center;
           .content-top-left {
-            width: 40%;
+            width: 45%;
             height: 100%;
             display: flex;
             padding: 20px;

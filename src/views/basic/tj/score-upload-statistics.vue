@@ -3,7 +3,7 @@
     <el-form :inline="true" :model="queryParams" class="demo-form-inline">
       <el-form-item label="学校">
         <el-select
-          v-model="queryParams.xqmc"
+          v-model="queryParams.xqid"
           filterable
           placeholder="请选择校区名称"
           @change="xqmcOnChange"
@@ -28,6 +28,20 @@
             :label="item.rybjmc"
             :value="item.id"
           ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="考试类型" prop="kslx">
+        <el-select
+          v-model="queryParams.kslxArr"
+          placeholder="请选择考试类型"
+          multiple
+        >
+          <el-option
+            v-for="(dict, index) in getExaminationType"
+            :key="index"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="老师">
@@ -240,6 +254,7 @@ export default {
         xxqrlx: [{ required: true, message: "必填项", trigger: "change" }],
       },
       getListMessage: {},
+      getExaminationType: [],
     };
   },
   created() {
@@ -254,6 +269,9 @@ export default {
     });
     this.getDicts("messageConfirmWay").then((response) => {
       this.xxqrlxOptions = response.data;
+    });
+    this.getDicts("examination_type").then((response) => {
+      this.getExaminationType = response.data;
     });
     listSchool().then((response) => {
       this.selectXqmc = response.rows;
