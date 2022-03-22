@@ -141,7 +141,7 @@
 
     <el-table v-loading="loading" :height="$root.tableHeight" border :data="advertisementList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
+<!--      <el-table-column label="主键" align="center" prop="id" />-->
       <el-table-column label="广告类型" align="center" prop="advertisementType" :formatter="advertisementFormat"/>
       <el-table-column label="广告标题" align="center" prop="advertisementTitle" />
       <el-table-column label="广告内容" align="center" prop="advertisementContent" />
