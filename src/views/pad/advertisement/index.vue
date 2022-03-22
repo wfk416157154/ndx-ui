@@ -145,11 +145,11 @@
       <el-table-column label="广告类型" align="center" prop="advertisementType" :formatter="advertisementFormat"/>
       <el-table-column label="广告标题" align="center" prop="advertisementTitle" />
       <el-table-column label="广告内容" align="center" prop="advertisementContent" />
-      <el-table-column label="是否发送所有(0:否 1:是)" align="center" prop="sffbsy" />
+<!--      <el-table-column label="是否发送所有(0:否 1:是)" align="center" prop="sffbsy" />-->
       <!-- <el-table-column label="备注" align="center" prop="remake" />
       <el-table-column label="校区id" align="center" prop="xqid" />
       <el-table-column label="发送者姓名" align="center" prop="userName" /> -->
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="状态" align="center" prop="status" :formatter="typeFormat"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -308,6 +308,7 @@ export default {
       total: 0,
       // 广告表格数据
       advertisementList: [],
+      // 广告类型字典数据
       advertisementOptions: [],
       // 弹出层标题
       title: "",
@@ -365,6 +366,10 @@ export default {
       this.advertisementOptions = response.data;
       console.log(this.advertisementOptions)
     });
+    this.getDicts("sys_common_status").then(response => {
+      this.typeOptions = response.data;
+      console.log(this.typeOptions)
+    });
   },
   methods: {
     /** 查询广告列表 */
@@ -418,6 +423,10 @@ export default {
     // 广告类型字典翻译
     advertisementFormat(row, column) {
       return this.selectDictLabel(this.advertisementOptions, row.advertisementType);
+    },
+    // 广告类型字典翻译
+    typeFormat(row, column) {
+      return this.selectDictLabel(this.typeOptions, row.status);
     },
     // 多选框选中数据
     handleSelectionChange(selection) {

@@ -82,6 +82,7 @@
       </el-table-column>
       <el-table-column label="菜单类型 " align="center" prop="menuType" :formatter="menusFormat"/>
       <el-table-column label="菜单显示 " align="center" prop="visible" :formatter="visibleFormat"/>
+      <el-table-column prop="orderNum" label="排序" width="60"></el-table-column>
       <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column label="菜单状态 " align="center" prop="status" :formatter="statusFormat" />
       <el-table-column label="权限标识" align="center" prop="perms" />
@@ -189,6 +190,9 @@
               :label="dict.dictValue"
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="显示排序" prop="orderNum">
+          <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item v-if="false" prop="path">
               <span slot="label">
