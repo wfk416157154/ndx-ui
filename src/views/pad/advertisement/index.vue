@@ -142,7 +142,7 @@
     <el-table v-loading="loading" :height="$root.tableHeight" border :data="advertisementList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="广告类型" align="center" prop="advertisementType" />
+      <el-table-column label="广告类型" align="center" prop="advertisementType" :formatter="advertisementFormat"/>
       <el-table-column label="广告标题" align="center" prop="advertisementTitle" />
       <el-table-column label="广告内容" align="center" prop="advertisementContent" />
       <el-table-column label="是否发送所有(0:否 1:是)" align="center" prop="sffbsy" />
@@ -183,7 +183,12 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="广告类型" prop="advertisementType">
           <el-select v-model="form.advertisementType" placeholder="请选择广告类型">
-            <el-option label="请选择字典生成" value="" />
+            <el-option
+              v-for="dict in advertisementOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue">
+              </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="广告标题" prop="advertisementTitle">
@@ -192,9 +197,9 @@
         <el-form-item label="广告内容">
           <editor v-model="form.advertisementContent" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">
-          <el-input v-model="form.sffbsy" placeholder="请输入是否发送所有(0:否 1:是)" />
-        </el-form-item>
+<!--        <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">-->
+<!--          <el-input v-model="form.sffbsy" placeholder="请输入是否发送所有(0:否 1:是)" />-->
+<!--        </el-form-item>-->
         <!-- <el-form-item label="备注" prop="remake">
           <el-input v-model="form.remake" placeholder="请输入备注" />
         </el-form-item>
@@ -303,6 +308,7 @@ export default {
       total: 0,
       // 广告表格数据
       advertisementList: [],
+      advertisementOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -326,11 +332,14 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+        advertisementType: [
+          { required: true, message: "广告类型不能为空", trigger: "blur" }
         ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+        advertisementTitle: [
+          { required: true, message: "广告标题不能为空", trigger: "blur" }
+        ],
+        advertisementContent: [
+          { required: true, message: "广告内不能为空", trigger: "blur" }
         ],
       },
       // 导入参数
@@ -352,6 +361,10 @@ export default {
   },
   created() {
     this.getList();
+    this.getDicts("pad_advertisement_type").then(response => {
+      this.advertisementOptions = response.data;
+      console.log(this.advertisementOptions)
+    });
   },
   methods: {
     /** 查询广告列表 */
@@ -401,6 +414,10 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
+    },
+    // 广告类型字典翻译
+    advertisementFormat(row, column) {
+      return this.selectDictLabel(this.advertisementOptions, row.advertisementType);
     },
     // 多选框选中数据
     handleSelectionChange(selection) {

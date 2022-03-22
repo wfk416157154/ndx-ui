@@ -146,7 +146,7 @@
             <el-radio label="F">按钮功能</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="form.menuType != 'F'" label="菜单图标">
+        <el-form-item v-if="false" label="菜单图标">
           <el-popover
             placement="bottom-start"
             width="460"
@@ -190,7 +190,7 @@
             >{{dict.dictLabel}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="form.menuType != 'F'" prop="path">
+        <el-form-item v-if="false" prop="path">
               <span slot="label">
                 <el-tooltip content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头" placement="top">
                   <i class="el-icon-question"></i>
@@ -275,6 +275,8 @@ export default {
           { required: true, message: "菜单顺序不能为空", trigger: "blur" }
         ],
         path: [{ required: true, message: "路由地址不能为空", trigger: "blur" }]
+        ,
+        component: [{ required: true, message: "组件路径不能为空", trigger: "blur" }]
       }
     };
   },
