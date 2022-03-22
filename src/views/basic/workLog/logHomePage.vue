@@ -124,12 +124,37 @@
           </div>
           <div class="log-information __float">
             <div class="log-header">
-              <div class="log-header-left __float">
+              <div class="log-header-left __float" style="display:flex">
                 <span>日期 :</span>
                 <span
                   >{{ item.date }} 星期
                   {{ dateConversion(new Date(item.date).getDay()) }}</span
                 >
+                <div style="margin-left:20px">
+                  <el-button
+                    type="success"
+                    size="mini"
+                    :disabled="
+                      item.spFileList == null || item.spFileList.length == 0
+                    "
+                    @click="toFileVideo(item.spFileList)"
+                    >视频</el-button
+                  >
+                  <el-button
+                    type="warning"
+                    size="mini"
+                    plain
+                    @click="toDetails(item.teacherWorkLogId)"
+                    >查看详情</el-button
+                  >
+                  <el-button
+                    type="success"
+                    size="mini"
+                    plain
+                    @click="downloadZipFile(item.teacherWorkLogId)"
+                    >下载压缩包</el-button
+                  >
+                </div>
               </div>
               <div
                 class="log-header-right __float"
@@ -168,28 +193,7 @@
               <span>备注 :</span>
               <span>{{ item.remark }}</span>
             </div>
-            <div class="button">
-              <el-button
-                type="success"
-                :disabled="
-                  item.spFileList == null || item.spFileList.length == 0
-                "
-                @click="toFileVideo(item.spFileList)"
-                >视频</el-button
-              >
-              <el-button
-                type="warning"
-                plain
-                @click="toDetails(item.teacherWorkLogId)"
-                >查看详情</el-button
-              >
-              <el-button
-                type="success"
-                plain
-                @click="downloadZipFile(item.teacherWorkLogId)"
-                >下载压缩包</el-button
-              >
-            </div>
+            <div class="button"></div>
           </div>
           <div class="img-list __float">
             <div class="jswsImg">
@@ -552,7 +556,7 @@ export default {
       li {
         list-style: none;
         width: 100%;
-        height: 200px;
+        height: 300px;
         // color: #fff;
         color: #000;
         margin-bottom: 20px;

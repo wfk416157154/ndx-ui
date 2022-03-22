@@ -331,7 +331,7 @@
             </div>
           </div>
           <div class="content-bottom">
-            <div v-if="queryParams.kclx == 1" class="content-sj">
+            <!-- <div v-if="queryParams.kclx == 1" class="content-sj">
               <ul>
                 <template v-if="item.monthList && item.monthList.length > 0">
                   <li v-for="(month, index) in item.monthList" :key="index">
@@ -354,7 +354,7 @@
                   </li>
                 </template>
               </ul>
-            </div>
+            </div> -->
             <div>
               <div v-if="item.lessonProcessObjList.length > 0">
                 <ndx-progress
