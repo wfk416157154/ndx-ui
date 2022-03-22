@@ -179,8 +179,8 @@
     />
 
     <!-- 添加或修改广告对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="广告类型" prop="advertisementType">
           <el-select v-model="form.advertisementType" placeholder="请选择广告类型">
             <el-option
@@ -195,7 +195,7 @@
           <el-input v-model="form.advertisementTitle" placeholder="请输入广告标题" />
         </el-form-item>
         <el-form-item label="广告内容">
-          <editor v-model="form.advertisementContent" :min-height="192"/>
+          <editor v-model="form.advertisementContent" :min-height="220"/>
         </el-form-item>
 <!--        <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">-->
 <!--          <el-input v-model="form.sffbsy" placeholder="请输入是否发送所有(0:否 1:是)" />-->
