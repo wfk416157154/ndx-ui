@@ -284,7 +284,7 @@
 
                 <div>
                   <span>正常教学计划 :</span>
-                  <span v-if="item.kclx == '1'">{{
+                  <span v-if="item.kclx == '1' && item.normalClassPlanObj">{{
                     item.normalClassPlanObj.sxmc
                   }}</span>
                   <span v-else> 已进入总复习 {{ item.startReviewDate }}</span>
@@ -374,7 +374,6 @@
                   title="查看复习进度"
                   :visible.sync="dialogVisxibleFx"
                   width="80%"
-                  :before-close="handleClose"
                 >
                   <div v-for="(row, j) in item.reviewProcessObjList" :key="j">
                     <p style="margin-right: 30px; width: 100%">
