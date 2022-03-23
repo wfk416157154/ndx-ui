@@ -360,9 +360,7 @@
                 <ndx-progress
                   v-if="item.normalClassPlanObj"
                   :progressItem="item.lessonProcessObjList"
-                  :propressTitle="
-                    [].concat(item.monthList, item.weekList, item.termList)
-                  "
+                  :propressTitle="item.classPlanNodeInfoList"
                   :nowCourseName="item.nowCourseName"
                   :jcmc="item.normalClassPlanObj.sxmc"
                 />
