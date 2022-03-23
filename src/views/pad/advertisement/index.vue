@@ -197,9 +197,44 @@
         <el-form-item label="广告内容">
           <editor v-model="form.advertisementContent" :min-height="220"/>
         </el-form-item>
-<!--        <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">-->
-<!--          <el-input v-model="form.sffbsy" placeholder="请输入是否发送所有(0:否 1:是)" />-->
-<!--        </el-form-item>-->
+        <el-form-item label="是否发送所有(0:否 1:是)" prop="sffbsy">
+          <el-select v-model="form.sffbsy" placeholder="请选择是否发送给所有用户"  >
+            <el-option
+              v-for="dict in sffbsyOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="接收人" prop="jsrArr" v-if="form.sffbsy=='0'">
+          <el-select
+            v-model="form.xqid"
+            filterable
+            placeholder="请选择校区名称"
+            @change="xqmcOnChange"
+          >
+            <el-option v-for="(item,index) in selectXqmc" :key="index" :label="item.xxmc" :value="item.id"></el-option>
+          </el-select>
+          <el-select
+            v-model="lsphone"
+            filterable
+            placeholder="请选择老师"
+            @change="teacherOnChange"
+          >
+            <el-option v-for="(item,index) in teacherList" :key="index" :label="item.lsxm+'-'+item.dhhm"
+                       :value="item.lsxm+'-'+item.dhhm"></el-option>
+          </el-select>
+
+          <el-checkbox-group v-model="form.jsrArr">
+            <el-checkbox
+              v-for="(item,index) in teacherList"
+              :key="index"
+              :label="item.lsxm+'-'+item.dhhm"
+              name="jsrArr"
+            ></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
         <!-- <el-form-item label="备注" prop="remake">
           <el-input v-model="form.remake" placeholder="请输入备注" />
         </el-form-item>
@@ -285,6 +320,8 @@
 <script>
 import { listAdvertisement, getAdvertisement, delAdvertisement, addAdvertisement, updateAdvertisement } from "@/api/pad/advertisement";
 import { getToken } from "@/utils/auth";
+import {listSchool} from "@/api/basic/school";
+import {listTeacher} from "@/api/basic/teacher";
 
 export default {
   name: "Advertisement",
@@ -310,6 +347,8 @@ export default {
       advertisementList: [],
       // 广告类型字典数据
       advertisementOptions: [],
+      //是否发布所有字典数据
+      sffbsyOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -358,6 +397,15 @@ export default {
           // 上传的地址
           url: process.env.VUE_APP_BASE_API + "/pad/advertisement/importData"
       },
+      // 老师列表
+      teacherList: [],
+      //校区名称
+      selectXqmc: [],
+      // 校区id
+      xqid: null,
+      wjid: null,
+      //老师电话
+      lsphone: null
     };
   },
   created() {
@@ -369,6 +417,14 @@ export default {
     this.getDicts("sys_common_status").then(response => {
       this.typeOptions = response.data;
       console.log(this.typeOptions)
+    });
+    this.getDicts("isOrNot").then(response => {
+      this.sffbsyOptions = response.data;
+      console.log(this.sffbsyOptions)
+    });
+    // 获取校区
+    listSchool().then(response => {
+      this.selectXqmc = response.rows;
     });
   },
   methods: {
@@ -448,6 +504,17 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改广告";
+      });
+    },
+    // 选择老师触发
+    teacherOnChange(lsdh) {
+      this.form.jsrArr = [lsdh]
+    },
+    // 选择校区触发
+    xqmcOnChange(xqid) {
+      this.lsphone = null
+      listTeacher({xqmc: xqid}).then(response => {
+        this.teacherList = response.rows;
       });
     },
     /** 提交按钮 */

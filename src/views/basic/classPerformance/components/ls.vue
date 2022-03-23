@@ -12,7 +12,7 @@
             placeholder="请选择班级"
           >
             <el-option
-              v-for="(item,index) in getBjClass"
+              v-for="(item, index) in getBjClass"
               :label="item.rybjmc"
               :value="item.id"
               :key="index"
@@ -29,7 +29,12 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="考试范围" prop="ksfw" v-if="false" label-width="120px">
+        <el-form-item
+          label="考试范围"
+          prop="ksfw"
+          v-if="false"
+          label-width="120px"
+        >
           <el-select
             width="100px"
             height="“10px"
@@ -38,7 +43,7 @@
             placeholder="请选择考试范围"
           >
             <el-option
-              v-for="(item,index) in getExaminationPaper"
+              v-for="(item, index) in getExaminationPaper"
               :label="item.ksfw"
               :value="item.id"
               :key="index"
@@ -52,9 +57,19 @@
           <el-input v-model="form.minfs" placeholder="请输入最低分"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="el-btn" plain @click="getAchievement()">查询</el-button>
-          <el-button type="primary" class="el-btn" plain @click="handleExport">导出成绩</el-button>
-          <el-button icon="el-icon-refresh" @click="resetQuery()">重置</el-button>
+          <el-button
+            type="primary"
+            class="el-btn"
+            plain
+            @click="getAchievement()"
+            >查询</el-button
+          >
+          <el-button type="primary" class="el-btn" plain @click="handleExport"
+            >导出成绩</el-button
+          >
+          <el-button icon="el-icon-refresh" @click="resetQuery()"
+            >重置</el-button
+          >
         </el-form-item>
         <el-form-item>
           <!-- <el-button
@@ -65,36 +80,47 @@
             plain
             @click="getAchievement(item.dictValue)"
           >{{item.dictLabel}}</el-button>-->
-          <el-tooltip :content="'分制: ' + form.studentGradeType" placement="top">
+          <el-tooltip
+            :content="'分制: ' + form.studentGradeType"
+            placement="top"
+          >
             <el-switch
               v-model="form.studentGradeType"
               @change="getAchievement(form.studentGradeType)"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              active-value="150"
-              inactive-value="100"
+              active-value="100"
+              inactive-value="150"
             ></el-switch>
           </el-tooltip>
         </el-form-item>
       </el-form>
     </div>
     <ul class="wrap-achievement clearfix">
-      <li v-for="(item,index) in listClassGradeItem" :key="index">
+      <li v-for="(item, index) in listClassGradeItem" :key="index">
         <div class="wrap-left">
           <div class="student-information">
-            <h4>所属校区 :</h4>&nbsp;
-            <span>{{item.xqmc}}</span>
+            <h4>所属校区 :</h4>
+            &nbsp;
+            <span>{{ item.xqmc }}</span>
           </div>
           <div class="student-information">
-            <h4>日语班级 :</h4>&nbsp;
-            <span>{{item.rybj}}</span>
+            <h4>日语班级 :</h4>
+            &nbsp;
+            <span>{{ item.rybj }}</span>
           </div>
           <div class="student-information">
-            <h4>进班平均英语成绩 :</h4>&nbsp;
-            <span>{{item.jbpjyycj}}</span>
+            <h4>进班平均英语成绩 :</h4>
+            &nbsp;
+            <span>{{ item.jbpjyycj }}</span>
           </div>
-          <div class="student-information" style="float :right">
-            <el-button type="primary" plain @click="toPerformanceAnalysis(item.bjid)">成绩分析</el-button>
+          <div class="student-information" style="float: right">
+            <el-button
+              type="primary"
+              plain
+              @click="toPerformanceAnalysis(item.bjid)"
+              >成绩分析</el-button
+            >
           </div>
         </div>
         <div class="wrap-right">
@@ -124,11 +150,15 @@
             <div
               :id="index"
               v-if="true"
-              style="width : 90%; height : 500px; display: inline-block;"
+              style="width: 90%; height: 500px; display: inline-block"
             ></div>
             <div class="chart-nav">
-              <h4 style="color: #FFCC00" @click="selectChart('bar' ,index)">柱状图</h4>
-              <h4 style="color: #33CC00" @click="selectChart('line' ,index)">折线图</h4>
+              <h4 style="color: #ffcc00" @click="selectChart('bar', index)">
+                柱状图
+              </h4>
+              <h4 style="color: #33cc00" @click="selectChart('line', index)">
+                折线图
+              </h4>
             </div>
           </div>
         </div>
@@ -167,7 +197,7 @@ export default {
         ksfw: null,
         maxfs: null,
         minfs: null,
-        studentGradeType: 150 // 默认150分
+        studentGradeType: 150, // 默认150分
       },
       itemList: [1, 2, 3],
       // 统计图数据模板
@@ -176,46 +206,46 @@ export default {
           trigger: "axis",
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
-            type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
-          }
+            type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+          },
         },
         grid: {
           left: "3%",
           right: "4%",
           bottom: "3%",
-          containLabel: true
+          containLabel: true,
         },
         xAxis: [
           {
             type: "category",
             data: [],
             axisTick: {
-              alignWithLabel: true
+              alignWithLabel: true,
             },
             axisLabel: {
               interval: 0,
-              rotate: 45
-            }
-          }
+              rotate: 45,
+            },
+          },
         ],
         yAxis: [
           {
-            type: "value"
-          }
+            type: "value",
+          },
         ],
         series: [
           {
             name: "",
             type: "line",
             stack: "总量",
-            data: []
-          }
-        ]
+            data: [],
+          },
+        ],
       },
       //请求数据页码参数
       queryList: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
         // xsxm: null,
         // rybj: null,
         // wl: null,
@@ -234,26 +264,26 @@ export default {
       // echart 图形化实例
       obj: {},
       studentGradeTypeList: [],
-      getExaminationType: []
+      getExaminationType: [],
     };
   },
   props: {
     bjid: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   created() {
-    this.getDicts("year-list").then(response => {
+    this.getDicts("year-list").then((response) => {
       this.getYear = response.data;
     });
-    this.getDicts("nianji").then(response => {
+    this.getDicts("nianji").then((response) => {
       this.selectNj = response.data;
     });
-    this.getDicts("studentGradeType").then(response => {
+    this.getDicts("studentGradeType").then((response) => {
       this.studentGradeTypeList = response.data;
     });
-    this.getDicts("examination_type").then(response => {
+    this.getDicts("examination_type").then((response) => {
       this.getExaminationType = response.data;
     });
     if (this.bjid) {
@@ -268,7 +298,7 @@ export default {
   methods: {
     // 获取班级
     getSchoolId() {
-      listBjclass().then(res => {
+      listBjclass().then((res) => {
         this.getBjClass = res.rows;
         if (res.rows.length == 1) {
           this.form.bjid = res.rows[0].id;
@@ -279,8 +309,8 @@ export default {
     getClassId(classId) {
       listExaminationPaper({
         bjid: classId,
-        lsid: this.$store.state.user.glrid
-      }).then(res => {
+        lsid: this.$store.state.user.glrid,
+      }).then((res) => {
         this.getExaminationPaper = res.rows;
       });
     },
@@ -293,8 +323,7 @@ export default {
       }
       // 获取当前老师班级成绩
       this.queryList.lsid = this.$store.state.user.glrid;
-      console.log(this.queryList)
-      listClassGrade(this.queryList).then(res => {
+      listClassGrade(this.queryList).then((res) => {
         if (res.code == 200) {
           this.listClassGradeItem = res.rows;
           this.pagination.total = res.total;
@@ -302,7 +331,7 @@ export default {
         } else {
           this.$notify.error({
             title: "错误",
-            message: getClassGrade.msg
+            message: getClassGrade.msg,
           });
         }
       });
@@ -321,7 +350,7 @@ export default {
       this.getChart(this.listClassGradeItem, index);
     },
     // 可视化统计图
-    getChart(item, index) {
+    getChart(item) {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
           this.obj[i] = this.option;
@@ -330,7 +359,7 @@ export default {
           this.obj[i].series[0].data = [];
           this.obj[i].series[0].label = {
             show: true,
-            position: "top"
+            position: "top",
           };
           let chartDom = document.getElementById(i);
           this.obj[i + "a"] = echarts.init(chartDom);
@@ -348,6 +377,10 @@ export default {
               );
               this.obj[i].series[0].name = `(${item[i].rybj})班平均分`;
             }
+            this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
+          } else {
+            this.obj[i].series[0].data = [];
+            this.obj[i].series[0].name = `0 班平均分`;
             this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
           }
         }
@@ -380,7 +413,7 @@ export default {
       this.download(
         "basic/everytime/export",
         {
-          ...this.queryParams
+          ...this.queryParams,
         },
         `班级成绩表.xlsx`
       );
@@ -388,9 +421,9 @@ export default {
     // 成绩分析
     toPerformanceAnalysis(bjid) {
       // 动态获取路由地址
-      this.getConfigKey("classPerformanceDetails").then(res => {
+      this.getConfigKey("classPerformanceDetails").then((res) => {
         this.$router.push({
-          path: res.msg + bjid
+          path: res.msg + bjid,
         });
       });
     },
@@ -398,8 +431,8 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.getListClassGrade();
-    }
-  }
+    },
+  },
 };
 </script>
 
