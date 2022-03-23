@@ -7,17 +7,16 @@
       <div class="wrap-date">
         <div class="propress-item">
           <div
-            v-for="(item, index) in progressItem"
+            class="propress-top-title"
+            v-for="(item, index) in propressTitle"
             :key="index"
-            :style="item.style"
-            class="show"
+            :style="{ width: `${item.termPercent}%` }"
           >
-            <span v-if="item.typeShow && item.show && item.type == 'primary'">
-              {{ nowCourseName }}
-            </span>
-            <span v-if="item.typeShow && item.show && item.type == 'danger'">
-              {{ jcmc }}
-            </span>
+            <div style="text-align: center">
+              <span>{{ item.ksrq }} - {{ item.jzrq }}</span>
+              <br />
+              <span>{{ item.firstKcmc }} - {{ item.lastKcmc }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -37,17 +36,17 @@
             class="propress-line"
             v-for="(title, j) in propressTitle"
             :key="j"
-            :style="{ width: `${100 / propressTitle.length}%` }"
+            :style="{ width: `${title.termPercent}%` }"
           >
             <span>
-              {{ title }}
+              {{ title.xqmc }}
             </span>
           </div>
         </template>
       </div>
     </div>
     <div style="width: 100px">
-      {{ parseTime(nodeStartDate, "{y}-{m}-{d}") }}
+      {{ parseTime(nodeEndDate, "{y}-{m}-{d}") }}
     </div>
   </div>
 </template>
@@ -116,9 +115,9 @@ export default {
       this.progressItem.forEach((value, index) => {
         value.style = this.getStyle(value, index);
       });
-      this.nodeStartDate = this.progressItem[0].nodeStartDate;
+      this.nodeStartDate = this.propressTitle[0].ksrq;
       this.nodeEndDate =
-        this.progressItem[this.progressItem.length - 1].nodeStartDate;
+        this.propressTitle[this.propressTitle.length - 1].jzrq;
     },
     getStyle(item, index) {
       let style = {
@@ -204,12 +203,17 @@ export default {
     }
     .wrap-date {
       width: 100%;
-      height: 30px;
+      height: 60px;
       .propress-item {
         width: 100%;
         height: 100%;
         display: flex;
-        // border-left: 1px solid #000;
+        .propress-top-title {
+          border-left: 1px solid #000;
+        }
+        .propress-top-title:last-child {
+          border-right: 1px solid #000;
+        }
       }
       .show {
         border: none;
