@@ -350,7 +350,7 @@ export default {
       this.getChart(this.listClassGradeItem, index);
     },
     // 可视化统计图
-    getChart(item, index) {
+    getChart(item) {
       this.$nextTick(() => {
         for (let i = 0; i < item.length; i++) {
           this.obj[i] = this.option;
