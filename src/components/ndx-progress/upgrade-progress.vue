@@ -191,7 +191,6 @@ export default {
           bottom: -150%;
           right: 0;
           transform: translateX(50%);
-          // transform: translateY(50%);
         }
       }
       .propress-line:last-child {
@@ -208,6 +207,7 @@ export default {
         width: 100%;
         height: 100%;
         display: flex;
+        justify-content: space-between;
         .propress-top-title {
           border-left: 1px solid #000;
         }

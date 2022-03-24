@@ -1,7 +1,7 @@
 <template>
   <div class="score-upload-statistics">
-    <el-form :inline="true" :model="queryParams" class="demo-form-inline">
-      <el-form-item label="学校">
+    <el-form :inline="true" ref="queryParams" :model="queryParams" class="demo-form-inline">
+      <el-form-item label="学校" prop="xqid">
         <el-select
           v-model="queryParams.xqid"
           filterable
@@ -16,7 +16,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="班级">
+      <el-form-item label="班级" prop="bjid">
         <el-select
           v-model="queryParams.bjid"
           filterable
@@ -30,7 +30,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="考试类型" prop="kslx">
+      <el-form-item label="考试类型" prop="kslxArr">
         <el-select
           v-model="queryParams.kslxArr"
           placeholder="请选择考试类型"
@@ -44,10 +44,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="老师">
+      <el-form-item label="老师" prop="lsxm">
         <el-input v-model="queryParams.lsxm" placeholder="老师"></el-input>
       </el-form-item>
-      <el-form-item label="滞后时间">
+      <el-form-item label="滞后时间" prop="zhsjsx">
         <el-select
           v-model="queryParams.zhsjsx"
           filterable
@@ -62,6 +62,9 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getList"
           >查询</el-button
+        >
+        <el-button icon="el-icon-refresh" @click="resetQuery"
+          >重置</el-button
         >
         <el-button v-if="false" type="success" @click="handleRemind(scope.row)"
           >一 键 提 醒</el-button
@@ -213,6 +216,11 @@ export default {
         pageSize: 10,
         status: 1,
         kzzd2: 9,
+        xqid:"",
+        bjid:"",
+        kslxArr:[],
+        lsxm:"",
+        zhsjsx:""
       },
       total: 0,
       selectXqmc: [],
@@ -279,6 +287,10 @@ export default {
   },
   mounted() {},
   methods: {
+    // 重置
+    resetQuery() {
+      this.resetForm("queryParams");
+    },
     xqmcOnChange(id) {
       listBjclass({ kzzd1: id }).then((response) => {
         this.bjclassList = response.rows;
