@@ -37,7 +37,12 @@
         />
       </el-form-item>
       <el-form-item label="性别" prop="xb">
-        <el-select v-model="queryParams.xb" placeholder="请选择性别" clearable size="small">
+        <el-select
+          v-model="queryParams.xb"
+          placeholder="请选择性别"
+          clearable
+          size="small"
+        >
           <el-option
             v-for="dict in xbOptions"
             :key="dict.dictValue"
@@ -47,7 +52,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label-width="100px" label="是否在职" prop="kzzd4">
-        <el-select v-model="queryParams.kzzd4" placeholder="请选择" clearable size="small">
+        <el-select
+          v-model="queryParams.kzzd4"
+          placeholder="请选择"
+          clearable
+          size="small"
+        >
           <el-option
             v-for="dict in zaizhiStatusOptions"
             :key="dict.dictValue"
@@ -67,7 +77,12 @@
         </el-select>
       </el-form-item>-->
       <el-form-item label="毕业状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择毕业状态" clearable size="small">
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择毕业状态"
+          clearable
+          size="small"
+        >
           <el-option
             v-for="dict in statusOptions"
             :key="dict.dictValue"
@@ -77,8 +92,16 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -123,9 +146,13 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['basic:teacher:export']"
-        >导出Excel</el-button>
+          >导出Excel</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
     <el-table
@@ -134,55 +161,110 @@
       :height="$root.tableHeight"
       :data="teacherList"
       @selection-change="handleSelectionChange"
-      style="width: 100%;font-size : 18px"
+      style="width: 100%; font-size: 18px"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false" />
-      <el-table-column label="老师头像" align="center" width="150px" prop="lstx">
+      <el-table-column
+        label="老师头像"
+        align="center"
+        width="150px"
+        prop="lstx"
+      >
         <template slot-scope="scope">
-          <div class="block" style="display : flex; width : 100% ; height : 100%">
+          <div class="block" style="display: flex; width: 150px height: 100%">
             <el-image
-              v-if="scope.row.lstx!=null&&scope.row.lstx!=''"
+              style="height: 150px"
+              v-if="scope.row.lstx != null && scope.row.lstx != ''"
               :src="scope.row.lstx"
               :preview-src-list="previewPhoto(scope.row.lstx)"
             ></el-image>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="校区名称" align="center" prop="xqmc" v-if="false" />
+      <el-table-column
+        label="校区名称"
+        align="center"
+        prop="xqmc"
+        v-if="false"
+      />
       <el-table-column label="老师姓名" align="center" prop="lsxm" />
-      <el-table-column label="性别" align="center" prop="xb" :formatter="xbFormat" />
+      <el-table-column
+        label="性别"
+        align="center"
+        prop="xb"
+        :formatter="xbFormat"
+      />
       <el-table-column label="代课日语班级" align="center" prop="dkrybj" />
       <el-table-column label="已代毕业班" align="center" prop="ydrybj" />
-      <el-table-column label="入职时间" align="center" prop="rzsj" width="180" />
+      <el-table-column
+        label="入职时间"
+        align="center"
+        prop="rzsj"
+        width="180"
+      />
       <el-table-column label="工龄(月)" align="center" prop="rzgl" />
-      <el-table-column label="身份证号" align="center" prop="sfzh" v-if="false" />
+      <el-table-column
+        label="身份证号"
+        align="center"
+        prop="sfzh"
+        v-if="false"
+      />
       <el-table-column label="电话号码" align="center" prop="dhhm" />
-      <el-table-column label="家庭地址" align="center" prop="jtzz" v-if="false" />
+      <el-table-column
+        label="家庭地址"
+        align="center"
+        prop="jtzz"
+        v-if="false"
+      />
       <el-table-column label="现住址" align="center" prop="xzz" v-if="false" />
-      <el-table-column label="紧急联系人" align="center" prop="jjlxr" v-if="false" />
-      <el-table-column label="紧急联系人电话" align="center" prop="jjlxrdh" v-if="false" />
+      <el-table-column
+        label="紧急联系人"
+        align="center"
+        prop="jjlxr"
+        v-if="false"
+      />
+      <el-table-column
+        label="紧急联系人电话"
+        align="center"
+        prop="jjlxrdh"
+        v-if="false"
+      />
       <el-table-column label="毕业学校" align="center" prop="byxx" />
       <el-table-column label="日语等级证书" align="center" prop="kzzd3" />
-      <el-table-column label="毕业专业" align="center" prop="byzy" v-if="false" />
+      <el-table-column
+        label="毕业专业"
+        align="center"
+        prop="byzy"
+        v-if="false"
+      />
       <el-table-column
         label="教师资格证"
         align="center"
         prop="jszgzArr"
-        :width="flexColumnWidth('jszgzArr',teacherList)"
+        :width="flexColumnWidth('jszgzArr', teacherList)"
       >
         <template slot-scope="scope">
-          <div class="block" style="display : flex; width : 100% ; height : 100%">
+          <div class="block" style="display: flex; width: 100%; height: 100%">
             <el-image
-              style="width: 60px; height: 60px; margin : 0px 5px"
-              v-for="(item,index) in scope.row.jszgzArr"
+              style="width: 60px; height: 60px; margin: 0px 5px"
+              v-for="(item, index) in scope.row.jszgzArr"
               :key="index"
               :src="item"
               :preview-src-list="scope.row.jszgzArr"
             >
               <div
                 slot="error"
-                style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
+                  background: #eee;
+                  font-size: 12px;
+                  justify-content: center;
+                  color: #c0c4cc;
+                "
                 class="image-slot"
               >
                 <span>加载失败</span>
@@ -196,23 +278,34 @@
           <dict-tag :options="zaizhiStatusOptions" :value="scope.row.kzzd4" />
         </template>
       </el-table-column>
-      <el-table-column label="离职时间" align="center" prop="kzzd5" v-if="lzShow" />
+      <el-table-column
+        label="离职时间"
+        align="center"
+        prop="kzzd5"
+        v-if="lzShow"
+      />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-upload"
             @click="uploadTeacherFilePage(scope.row.id)"
-          >上传资料</el-button>
+            >上传资料</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-view"
             @click="teacherDetails(scope.row.id)"
             v-hasPermi="['basic:teacher:query']"
-          >查看更多</el-button>
+            >查看更多</el-button
+          >
           <!--<el-button
             size="mini"
             type="text"
@@ -232,7 +325,7 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -247,7 +340,7 @@ import {
   getTeacher,
   delTeacher,
   addTeacher,
-  updateTeacher
+  updateTeacher,
 } from "@/api/basic/teacher";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
@@ -292,7 +385,7 @@ export default {
         xb: null,
         sfyjszgz: null,
         status: "1", // 默认未毕业
-        kzzd4: "1" //默认在职
+        kzzd4: "1", //默认在职
       },
       // 表单参数
       form: {
@@ -332,7 +425,7 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
       },
       // 表单校验
       rules: {},
@@ -348,27 +441,27 @@ export default {
       selectXqmc: [],
       // 班级选择
       bjclassList: [],
-      zaizhiStatusOptions: []
+      zaizhiStatusOptions: [],
     };
   },
   created() {
     this.getList();
-    this.getDicts("sys_user_sex").then(response => {
+    this.getDicts("sys_user_sex").then((response) => {
       this.xbOptions = response.data;
     });
-    this.getDicts("sys_yes_no").then(response => {
+    this.getDicts("sys_yes_no").then((response) => {
       this.sfyjszgzOptions = response.data;
     });
-    this.getDicts("graduateStatus").then(response => {
+    this.getDicts("graduateStatus").then((response) => {
       this.statusOptions = response.data;
     });
-    this.getDicts("zaizhiStatus").then(response => {
+    this.getDicts("zaizhiStatus").then((response) => {
       this.zaizhiStatusOptions = response.data;
     });
-    listSchool().then(response => {
+    listSchool().then((response) => {
       this.selectXqmc = response.rows;
     });
-    listBjclass().then(response => {
+    listBjclass().then((response) => {
       this.bjclassList = response.rows;
     });
   },
@@ -376,7 +469,7 @@ export default {
     /** 查询老师信息列表 */
     getList() {
       this.loading = true;
-      listHomepage(this.queryParams).then(response => {
+      listHomepage(this.queryParams).then((response) => {
         this.teacherList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -438,7 +531,7 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
       };
       this.resetForm("form");
     },
@@ -459,7 +552,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
+      this.ids = selection.map((item) => item.id);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -469,35 +562,35 @@ export default {
       this.open = true;
       this.title = "添加老师信息";
       // 获取页面中参数配置的路由
-      this.getConfigKey("addTeacher").then(resp => {
+      this.getConfigKey("addTeacher").then((resp) => {
         this.router = resp.msg;
         this.$router.push({
-          path: this.router
+          path: this.router,
         });
       });
     },
     /** 修改按钮操作 */
     handleUpdate(id) {
       this.$router.push({
-        path: "/teacherForm/" + id
+        path: "/teacherForm/" + id,
       });
     },
     // 老师详细信息
     teacherDetails(id) {
       // 获取页面中参数配置的路由
-      this.getConfigKey("checkTeacherInformationPage").then(resp => {
+      this.getConfigKey("checkTeacherInformationPage").then((resp) => {
         this.router = resp.msg;
         this.$router.push({
-          path: this.router + id
+          path: this.router + id,
         });
       });
     },
     // 上传老师证件照资料的页面
     uploadTeacherFilePage(id) {
       // 获取页面中参数配置的路由
-      this.getConfigKey("teacherForm").then(resp => {
+      this.getConfigKey("teacherForm").then((resp) => {
         this.$router.push({
-          path: resp.msg + id
+          path: resp.msg + id,
         });
       });
     },
@@ -510,17 +603,17 @@ export default {
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning"
+          type: "warning",
         }
       )
-        .then(function() {
+        .then(function () {
           return delTeacher(ids);
         })
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
@@ -529,7 +622,7 @@ export default {
       this.download(
         "basic/teacher/export",
         {
-          ...this.queryParams
+          ...this.queryParams,
         },
         `basic_teacher.xlsx`
       );
@@ -539,7 +632,7 @@ export default {
       let arr = [];
       for (let i = 0; i < tableData.length; i++) {
         if (tableData[i] && tableData[i][str] && tableData[i][str].length > 0) {
-          tableData.forEach(obj => {
+          tableData.forEach((obj) => {
             if (obj[str] && obj[str].length) arr.push(obj[str].length);
           });
         } else {
@@ -553,8 +646,8 @@ export default {
       let arr = [];
       arr.push(lstx);
       return arr;
-    }
-  }
+    },
+  },
 };
 </script>
 

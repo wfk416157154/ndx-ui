@@ -124,13 +124,13 @@
           </div>
           <div class="log-information __float">
             <div class="log-header">
-              <div class="log-header-left __float" style="display:flex">
+              <div class="log-header-left __float" style="display: flex">
                 <span>日期 :</span>
                 <span
                   >{{ item.date }} 星期
                   {{ dateConversion(new Date(item.date).getDay()) }}</span
                 >
-                <div style="margin-left:20px">
+                <div style="margin-left: 20px">
                   <el-button
                     type="success"
                     size="mini"
@@ -289,6 +289,7 @@ import {
 import { updateClassroom, addClassroom } from "@/api/basic/classroom";
 import { getVideo } from "@/api/tool/common";
 export default {
+  inject: ["reload"],
   data() {
     return {
       //是否显示校区
@@ -321,6 +322,20 @@ export default {
       videoList: [],
     };
   },
+  // watch: {
+  //   "queryParams.xqid": function () {
+  //     this.queryParams.pageNum = 1;
+  //   },
+  //   "queryParams.rybid": function () {
+  //     this.queryParams.pageNum = 1;
+  //   },
+  //   "queryParams.lsxm": function () {
+  //     this.queryParams.pageNum = 1;
+  //   },
+  //   "queryParams.sj": function () {
+  //     this.queryParams.pageNum = 1;
+  //   },
+  // },
   created() {
     listBjclass().then((res) => {
       this.getBjClass = res.rows;
