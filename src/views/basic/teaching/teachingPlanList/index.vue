@@ -138,7 +138,7 @@
         </li>
         <li>
           <div style="display: flex; width: 100%">
-            <div style="width: 180px">进度条颜色标注</div>
+            <div style="width: 200px">进度条颜色标注</div>
             <ul class="navigation-title">
               <li>
                 <span
@@ -194,6 +194,20 @@
                 ></span>
                 <span style="isplay: inline-block; margin-right: 10px"
                   >复习</span
+                >
+              </li>
+              <li>
+                <span
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    background: gray;
+                    margin-right: 5px;
+                  "
+                ></span>
+                <span style="isplay: inline-block; margin-right: 10px;"
+                >跳过时间</span
                 >
               </li>
             </ul>
@@ -264,7 +278,7 @@
                 <h4>{{ item.rybjmc }}</h4>
                 <div>
                   <span>当前课程 :</span>
-                  <span>{{ item.nowCourseName }}</span>
+                  <span>{{ item.nowCourseName }}-{{ parseTime(item.nowProcessDate, "{y}-{m}-{d}") }}</span>
                 </div>
                 <div>
                   <span>老师: {{ item.lsxm }}</span>
@@ -562,7 +576,7 @@ export default {
       align-items: center;
       padding: 0 40px;
       li {
-        width: 30%;
+        width: 50%;
         .navigation-title {
           width: 100%;
           li {

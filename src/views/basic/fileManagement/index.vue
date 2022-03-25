@@ -299,7 +299,7 @@ export default {
       // 文件id数组
       wjidFile: [],
       // 最多上传的图片数量
-      maxPhotoNum: 3,
+      maxPhotoNum: 10,
       // 文件所属模块
       filessmk: "试卷管理",
       dialogFormVisible: false
