@@ -1,6 +1,11 @@
 <template>
   <div class="score-upload-statistics">
-    <el-form :inline="true" ref="queryParams" :model="queryParams" class="demo-form-inline">
+    <el-form
+      :inline="true"
+      ref="queryParams"
+      :model="queryParams"
+      class="demo-form-inline"
+    >
       <el-form-item label="学校" prop="xqid">
         <el-select
           v-model="queryParams.xqid"
@@ -63,10 +68,11 @@
         <el-button type="primary" icon="el-icon-search" @click="getList"
           >查询</el-button
         >
-        <el-button icon="el-icon-refresh" @click="resetQuery"
-          >重置</el-button
-        >
-        <el-button v-if="false" type="success" @click="handleRemind(scope.row)"
+        <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+        <el-button
+          type="success"
+          :disabled="multipleSelection.length == 0"
+          @click="handleOneKeyRemind()"
           >一 键 提 醒</el-button
         >
       </el-form-item>
@@ -77,7 +83,9 @@
       :data="scoreUploadStatisticsList"
       style="width: 100%"
       border
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column type="index" label="序号" width="50"></el-table-column>
       <el-table-column label="日语班级" align="center" prop="bjmc" />
       <el-table-column label="老师" align="center" prop="lsxm" />
@@ -201,6 +209,7 @@ import {
   getMessage,
   delMessage,
   addMessage,
+  oneKeyRemind,
   updateMessage,
   listNoReplyMessage,
 } from "@/api/basic/message";
@@ -216,11 +225,11 @@ export default {
         pageSize: 10,
         status: 1,
         kzzd2: 9,
-        xqid:"",
-        bjid:"",
-        kslxArr:[],
-        lsxm:"",
-        zhsjsx:""
+        xqid: "",
+        bjid: "",
+        kslxArr: [],
+        lsxm: "",
+        zhsjsx: "",
       },
       total: 0,
       selectXqmc: [],
@@ -263,6 +272,7 @@ export default {
       },
       getListMessage: {},
       getExaminationType: [],
+      multipleSelection: [],
     };
   },
   created() {
@@ -287,6 +297,20 @@ export default {
   },
   mounted() {},
   methods: {
+    // 一键提醒获取数据
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    // 一键提醒
+    handleOneKeyRemind() {
+      oneKeyRemind(this.multipleSelection).then((res) => {
+        if (res.code == 200) {
+          this.msgSuccess(res.msg);
+          this.multipleSelection = [];
+          this.getList();
+        }
+      });
+    },
     // 重置
     resetQuery() {
       this.resetForm("queryParams");

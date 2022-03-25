@@ -35,6 +35,15 @@ export function addMessage(data) {
   })
 }
 
+// 一键提醒
+export function oneKeyRemind(data) {
+  return request({
+    url: '/basic/examinationPaper/oneKeyRemind',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改消息管理
 export function updateMessage(data) {
   return request({

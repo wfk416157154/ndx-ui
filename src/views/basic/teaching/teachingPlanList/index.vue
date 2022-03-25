@@ -268,7 +268,7 @@
                 </div>
                 <div>
                   <span>老师: {{ item.lsxm }}</span>
-                </div>
+                </div>   
                 <div>
                   <span>教学进度:</span>
                   <span>{{ jxjd(item.jxjd) }}</span>
@@ -365,7 +365,7 @@
                   :jcmc="item.normalClassPlanObj.sxmc"
                 />
               </div>
-              <div v-else>
+              <!-- <div  v-if="item.reviewProcessObjList.length > 0">
                 <el-button type="success" @click="dialogVisxibleFx = true"
                   >查看复习进度</el-button
                 >
@@ -391,7 +391,7 @@
                     >
                   </span>
                 </el-dialog>
-              </div>
+              </div> -->
             </div>
           </div>
         </li>
@@ -601,7 +601,7 @@ export default {
           display: flex;
           align-items: center;
           .content-top-left {
-            width: 45%;
+            width: 35%;
             height: 100%;
             display: flex;
             padding: 20px;
@@ -611,7 +611,7 @@ export default {
             border-top: none;
             border-bottom: none;
             .info-left {
-              width: 65%;
+              width: 80%;
               height: 100%;
               h4 {
                 margin: 5px 0px;
@@ -623,7 +623,7 @@ export default {
               }
             }
             .info-right {
-              width: 40%;
+              width: 20%;
               height: 100%;
               display: flex;
               flex-direction: column;
@@ -631,7 +631,7 @@ export default {
             }
           }
           .content-top-right {
-            width: 100%;
+            width: 60%;
             height: 100%;
             // border-bottom: 2px solid #ccc;
             padding-top: 10px;
