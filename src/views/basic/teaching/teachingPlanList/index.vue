@@ -122,12 +122,10 @@
 
     <div class="central-navigation">
       <ul>
-        <li>
+        <li style="width: 350px">
           <el-button type="primary" class="el-icon-plus" size="mini"
             >新增教学计划</el-button
           >
-        </li>
-        <li>
           <el-button
             type="danger"
             class="el-icon-refresh-right"
@@ -136,8 +134,8 @@
             >更新教学计划列表的数据</el-button
           >
         </li>
-        <li>
-          <div style="display: flex; width: 100%">
+        <li style="width: 600px">
+          <div style="display: flex; width: 100%; align-items: center">
             <div style="width: 200px">进度条颜色标注</div>
             <ul class="navigation-title">
               <li>
@@ -206,8 +204,8 @@
                     margin-right: 5px;
                   "
                 ></span>
-                <span style="isplay: inline-block; margin-right: 10px;"
-                >跳过时间</span
+                <span style="isplay: inline-block; margin-right: 10px"
+                  >跳过时间</span
                 >
               </li>
             </ul>
@@ -278,11 +276,15 @@
                 <h4>{{ item.rybjmc }}</h4>
                 <div>
                   <span>当前课程 :</span>
-                  <span>{{ item.nowCourseName }}-{{ parseTime(item.nowProcessDate, "{y}-{m}-{d}") }}</span>
+                  <span
+                    >{{ item.nowCourseName }}-{{
+                      parseTime(item.nowProcessDate, "{y}-{m}-{d}")
+                    }}</span
+                  >
                 </div>
                 <div>
                   <span>老师: {{ item.lsxm }}</span>
-                </div>   
+                </div>
                 <div>
                   <span>教学进度:</span>
                   <span>{{ jxjd(item.jxjd) }}</span>
@@ -372,14 +374,12 @@
             <div>
               <div v-if="item.lessonProcessObjList.length > 0">
                 <ndx-progress
-                  v-if="item.normalClassPlanObj"
                   :progressItem="item.lessonProcessObjList"
                   :propressTitle="item.classPlanNodeInfoList"
                   :nowCourseName="item.nowCourseName"
-                  :jcmc="item.normalClassPlanObj.sxmc"
                 />
               </div>
-              <!-- <div  v-if="item.reviewProcessObjList.length > 0">
+              <div  v-if=" item.reviewProcessObjList && item.reviewProcessObjList.length > 0">
                 <el-button type="success" @click="dialogVisxibleFx = true"
                   >查看复习进度</el-button
                 >
@@ -405,7 +405,7 @@
                     >
                   </span>
                 </el-dialog>
-              </div> -->
+              </div>
             </div>
           </div>
         </li>
