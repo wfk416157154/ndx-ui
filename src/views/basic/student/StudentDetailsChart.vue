@@ -1,7 +1,7 @@
 <template>
   <div class="score-chart">
     <div>
-      <el-table :data="listAll" border style="width: 100%;font-size : 18px">
+      <el-table :data="listAllData" border style="width: 100%;font-size : 18px">
         <el-table-column
           :fixed="item.fixed"
           :label="item.label"
@@ -224,10 +224,6 @@
             }
           ]
         },
-        // 动态table-column
-        columnNameList: [],
-        // 获取学生成绩表
-        listAll: [],
         // 饼状图数据统计
         chartList: {},
         // 详细数据
@@ -239,7 +235,7 @@
         // 动态table-column
         columnNameList: [],
         // 获取学生成绩表
-        listAll: [],
+        listAllData: [],
         obj: {},
         myChart: {}
       };
@@ -252,8 +248,7 @@
         }
         // 学生成绩表数据
         listAll({xsbh: this.query}).then(res => {
-          this.listAll = res.rows;
-          this.total = res.total;
+          this.listAllData = res.data.avgStugradeInfo;
         });
         // 学生成绩表title列
         getColumnNameList({xsbh: this.query}).then(res => {
