@@ -117,6 +117,16 @@
         label="银行账号"
         align="center"
       ></el-table-column>
+      <el-table-column
+        prop="thje"
+        label="退还金额"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="thgz"
+        label="退还规则"
+        align="center"
+      ></el-table-column>
       <el-table-column prop="tblx" label="退班规则" align="center">
         <template slot-scope="scope">
           <dict-tag :options="tbgzlxOption" :value="scope.row.tblx" />
