@@ -321,7 +321,12 @@
                 <br />
                 <el-button size="mini" style="width: 80px">调用</el-button>
                 <br />
-                <el-button size="mini" style="width: 80px">导出</el-button>
+                <el-button
+                  size="mini"
+                  style="width: 80px"
+                  @click="handleExport(item.rybjid)"
+                  >导出</el-button
+                >
               </div>
             </div>
             <div class="content-top-right">
@@ -379,7 +384,12 @@
                   :nowCourseName="item.nowCourseName"
                 />
               </div>
-              <div  v-if=" item.reviewProcessObjList && item.reviewProcessObjList.length > 0">
+              <div
+                v-if="
+                  item.reviewProcessObjList &&
+                  item.reviewProcessObjList.length > 0
+                "
+              >
                 <el-button type="success" @click="dialogVisxibleFx = true"
                   >查看复习进度</el-button
                 >
@@ -499,6 +509,16 @@ export default {
     //this.getList();
   },
   methods: {
+    // 教学计划导出
+    handleExport(rybjid) {
+      this.download(
+        "basic/queryTerm/export",
+        {
+          rybjid,
+        },
+        `教学计划.xlsx`
+      );
+    },
     // 进度转换
     jxjd(type) {
       let label = "";
