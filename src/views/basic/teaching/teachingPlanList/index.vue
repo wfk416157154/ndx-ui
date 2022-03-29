@@ -390,7 +390,9 @@
                   item.reviewProcessObjList.length > 0
                 "
               >
-                <el-button type="success" @click="dialogVisxibleFx = true"
+                <el-button
+                  type="success"
+                  @click="getReviewProcessList(item.reviewProcessObjList)"
                   >查看复习进度</el-button
                 >
                 <el-dialog
@@ -398,7 +400,7 @@
                   :visible.sync="dialogVisxibleFx"
                   width="80%"
                 >
-                  <div v-for="(row, j) in item.reviewProcessObjList" :key="j">
+                  <div v-for="(row, j) in reviewProcessList" :key="j">
                     <p style="margin-right: 30px; width: 100%">
                       {{ row.reviewName }}
                     </p>
@@ -477,6 +479,8 @@ export default {
       classList: [],
       // 老师
       teacherList: [],
+      // 复习数据
+      reviewProcessList: [],
     };
   },
   components: {
@@ -509,6 +513,11 @@ export default {
     //this.getList();
   },
   methods: {
+    // 获取复习数据
+    getReviewProcessList(item) {
+      this.reviewProcessList = item || [];
+      this.dialogVisxibleFx = true;
+    },
     // 教学计划导出
     handleExport(rybjid) {
       this.download(
