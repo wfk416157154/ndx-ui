@@ -828,7 +828,6 @@ export default {
           this.getClassCourseBasicList(this.queryParams.bjid);
         })
         .catch((e) => {
-          console.log(e);
           this.copyCancel();
         });
     },
@@ -1188,11 +1187,13 @@ export default {
       }
       // let result = await classCourseBasicSave(json);
       // if (result.code == 200) {
-      this.getClassCourseBasicList(
-        this.activeTab,
-        this.queryParams.kzzd2,
-        true
-      );
+
+      // this.getClassCourseBasicList(
+      //   this.activeTab,
+      //   this.queryParams.kzzd2,
+      //   true
+      // );
+      
       if (this.multipleSelection && this.multipleSelection.length > 0) {
         let num = 0;
         for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -1212,35 +1213,30 @@ export default {
           if (this.multipleSelection[i].id) {
             updateClassCourse(this.multipleSelection[i]).then((res) => {
               if (res.code == 200) {
-                this.multipleSelection = [];
-                this.getClassCourseBasicList(
-                  this.activeTab,
-                  this.queryParams.kzzd2
-                );
-                this.btnDisabled = true;
-                num++;
+                ++num;
+                this.allCompleted(num);
               }
             });
           } else {
             addClassCourse(this.multipleSelection[i]).then((res) => {
               if (res.code == 200) {
-                this.multipleSelection = [];
-                this.getClassCourseBasicList(
-                  this.activeTab,
-                  this.queryParams.kzzd2
-                );
-                this.btnDisabled = true;
-                num++;
+                ++num;
+                this.allCompleted(num);
               }
             });
           }
         }
-        if (this.multipleSelection.length === num) {
-          this.getCourse();
-          this.msgSuccess("保存成功");
-        }
       }
       // }
+    },
+    // 是否全部保存
+    allCompleted(num) {
+      if (this.multipleSelection.length === num) {
+        this.btnDisabled = true;
+        this.multipleSelection = [];
+        this.getCourse();
+        this.msgSuccess("保存成功");
+      }
     },
     // 删除选中行
     deleteData() {
@@ -1257,10 +1253,7 @@ export default {
               return;
             }
             delClassCourse(value.id).then((res) => {
-              this.getClassCourseBasicList(
-                this.activeTab,
-                this.queryParams.kzzd2
-              );
+              this.getCourse();
             });
             num = index;
           });
