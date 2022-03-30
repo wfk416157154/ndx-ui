@@ -371,6 +371,7 @@ export default {
       } else if (pageNum && typeof pageNum == "object") {
         this.queryList = pageNum;
       }
+      this.queryList.sjArr = this.dcForm.sjArr
       listClassGrade(this.queryList).then((res) => {
         if (res.code == 200) {
           this.listClassGradeItem = res.rows;
