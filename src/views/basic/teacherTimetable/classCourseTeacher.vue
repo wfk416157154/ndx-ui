@@ -1256,7 +1256,12 @@ export default {
             if (!value.id) {
               return;
             }
-            delClassCourse(value.id);
+            delClassCourse(value.id).then((res) => {
+              this.getClassCourseBasicList(
+                this.activeTab,
+                this.queryParams.kzzd2
+              );
+            });
             num = index;
           });
           if (num === this.multipleSelection.length - 1) {
