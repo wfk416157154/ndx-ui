@@ -1193,7 +1193,7 @@ export default {
       //   this.queryParams.kzzd2,
       //   true
       // );
-      
+
       if (this.multipleSelection && this.multipleSelection.length > 0) {
         let num = 0;
         for (let i = 0; i < this.multipleSelection.length; i++) {

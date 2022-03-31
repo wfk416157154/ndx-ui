@@ -1,10 +1,22 @@
 <template>
   <div class="studentAttendance">
-    <h2 style="color : #606266">课表</h2>
-    <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport">课表导出</el-button>
+    <h2 style="color: #606266">课表</h2>
+    <el-button
+      type="warning"
+      plain
+      icon="el-icon-download"
+      size="mini"
+      @click="handleExport"
+      >课表导出</el-button
+    >
     <el-form>
       <el-form-item label="日语班" label-width="100px">
-        <el-select v-model="queryParams.bjid" @change="getList" filterable placeholder="请选择班级名称">
+        <el-select
+          v-model="queryParams.bjid"
+          @change="getList"
+          filterable
+          placeholder="请选择班级名称"
+        >
           <el-option
             v-for="item in listBjclass"
             :key="item.id"
@@ -16,60 +28,88 @@
     </el-form>
     <el-table
       :data="listClassEnableCourse"
-      border
-      style="width: 100%;font-size : 18px"
-      :header-cell-style="{textAlign: 'center'}"
+      style="width: 100%; font-size: 18px"
+      :header-cell-style="{ textAlign: 'center' }"
       :cell-style="{ textAlign: 'center' }"
+      :row-class-name="tableRowClassName"
+      border
     >
-      <el-table-column prop="kssj" label="开始时间" width="180"></el-table-column>
-      <el-table-column prop="jssj" label="结束时间" width="180"></el-table-column>
-      <el-table-column prop="kcTypeName" label="课程类型" :formatter="statusFormat" width="180"></el-table-column>
+      <el-table-column
+        prop="kssj"
+        label="开始时间"
+        width="180"
+      ></el-table-column>
+      <el-table-column
+        prop="jssj"
+        label="结束时间"
+        width="180"
+      ></el-table-column>
+      <el-table-column
+        prop="kcTypeName"
+        label="课程类型"
+        :formatter="statusFormat"
+        width="180"
+      ></el-table-column>
       <el-table-column prop="monday" title="周一" label="周一" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.monday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.one}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.one
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="tuesday" label="周二" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.tuesday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.two}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.two
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="wednesday" label="周三" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.wednesday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.three}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.three
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="thursday" label="周四" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.thursday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.four}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.four
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="friday" label="周五" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.friday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.five}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.five
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="saturday" label="周六" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.saturday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.six}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.six
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="sunday" label="周日" width="180">
         <template slot-scope="scope">
           <div v-if="scope.row.sunday">
-            <el-link type="success" style="color : #67C23A">{{scope.row.seven}}</el-link>
+            <el-link type="success" style="color: #67c23a">{{
+              scope.row.seven
+            }}</el-link>
           </div>
         </template>
       </el-table-column>
@@ -89,16 +129,16 @@ export default {
       kcType: [],
       listBjclass: [],
       queryParams: {
-        bjid: this.$route.query.bjid
+        bjid: this.$route.query.bjid,
       },
-      classNmae:""
+      classNmae: "",
     };
   },
   created() {
-    this.getDicts("kc_type").then(response => {
+    this.getDicts("kc_type").then((response) => {
       this.kcType = response.data;
     });
-    listBjclass().then(res => {
+    listBjclass().then((res) => {
       this.listBjclass = res.rows;
     });
   },
@@ -106,8 +146,18 @@ export default {
     this.getList();
   },
   methods: {
+    tableRowClassName({ row, rowIndex }) {
+      // console.log(row)
+      // console.log(rowIndex);
+      // if (++rowIndex % 2 == 0) {
+      //   return "warning-row";
+      // } else if (rowIndex % 2 != 0) {
+      //   return "success-row";
+      // }
+      // return "";
+    },
     getList() {
-      getClassEnableCourse(this.queryParams.bjid).then(res => {
+      getClassEnableCourse(this.queryParams.bjid).then((res) => {
         this.listClassEnableCourse = res.data;
       });
     },
@@ -115,21 +165,21 @@ export default {
       return this.selectDictLabel(this.kcType, row.kcType);
     },
     handleExport() {
-      this.listBjclass.forEach(value=>{
-        if(value.id == this.$route.query.bjid){
-           this.classNmae = value.rybjmc
+      this.listBjclass.forEach((value) => {
+        if (value.id == this.$route.query.bjid) {
+          this.classNmae = value.rybjmc;
         }
-      })
+      });
       this.download(
         "basic/classCourse/exportClassCourse",
         {
           bjid: this.$route.query.bjid,
-          enableOnly: 1
+          enableOnly: 1,
         },
         `${this.classNmae}-课表.xlsx`
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -141,4 +191,30 @@ export default {
   box-sizing: border-box;
   //   cursor: pointer;
 }
+// ::v-deep .el-table .warning-row {
+//   background: #111542;
+// }
+
+// ::v-deep .el-table .success-row {
+//   background: #313460;
+// }
+// ::v-deep .el-table_1_column_4 {
+//   // background: red;
+// }
+// ::v-deep .el-table th.is-leaf,
+// .el-table td {
+//   background: #111542;
+//   color: #fff;
+//   border: none;
+// }
+// ::v-deep .el-table td {
+//   border: none;
+// }
+// ::v-deep .el-table__row {
+//   // background: #313460;
+//   color: #fff;
+// }
+// ::v-deep tbody tr:hover > td {
+//   background: #114270 !important;
+// }
 </style>
