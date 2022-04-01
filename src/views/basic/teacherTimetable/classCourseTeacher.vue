@@ -48,7 +48,7 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span style="color: #00afff">课表</span>
-            <el-tooltip
+            <!-- <el-tooltip
               class="item"
               effect="dark"
               content="更多课表"
@@ -59,7 +59,7 @@
                 style="float: right; color: #00afff; cursor: pointer"
                 class="el-icon-d-arrow-right"
               ></span>
-            </el-tooltip>
+            </el-tooltip> -->
           </div>
           <div>
             <el-button
