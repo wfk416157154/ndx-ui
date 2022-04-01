@@ -1002,6 +1002,10 @@ export default {
         this.msgError("请选择对应班级！");
         return;
       }
+      if (!this.courseId) {
+        this.msgError("请选择要添加课程的课表");
+        return;
+      }
       this.classCourseList.push(this.record());
     },
     // 新增加一行表格
