@@ -1,14 +1,19 @@
 <template>
   <div class="contaiiner">
     <h3>申请填写</h3>
-    <el-form ref="formData" :model="formData" :rules="rules" label-width="120px">
+    <el-form
+      ref="formData"
+      :model="formData"
+      :rules="rules"
+      label-width="120px"
+    >
       <el-form-item label="邮寄时间">
         <el-col :span="11">
           <el-date-picker
             type="date"
             placeholder="选择日期"
             v-model="formData.postDate"
-            style="width:100%;"
+            style="width: 100%"
           ></el-date-picker>
         </el-col>
       </el-form-item>
@@ -27,14 +32,20 @@
 
       <!-- 资料名称 -->
       <el-form-item label="资料名称" id="zl">
-        <div id="zlk" v-for="(item,index) in basicList" :key="index">
-          <el-select v-model="item.kzzd1" clearable placeholder="请选择" class="sel">
+        <div id="zlk" v-for="(item, index) in basicList" :key="index">
+          <el-select
+            v-model="item.kzzd1"
+            clearable
+            placeholder="请选择"
+            class="sel"
+            @change="getBookDetails(index)"
+          >
             <el-option
-              v-for="dict in materialName"
-              :label="dict.dictLabel"
-              :key="dict.dictValue"
-              :value="dict.dictValue"
-            />
+              v-for="(list, j) in inventoryRegistrationData"
+              :key="j"
+              :label="list.bookName"
+              :value="list.id"
+            ></el-option>
           </el-select>
           <el-input-number
             v-model="item.materialCount"
@@ -45,11 +56,25 @@
             class="numbox"
           ></el-input-number>
           <el-button icon="el-icon-plus" circle @click="addBar"></el-button>
-          <el-button icon="el-icon-minus" circle @click="delBar(index)"></el-button>
+          <el-button
+            icon="el-icon-minus"
+            circle
+            @click="delBar(index)"
+          ></el-button>
+          <el-tag
+            style="margin-left: 20px"
+            v-if="item.stock || item.stock == 0"
+            >{{ item.stock }}</el-tag
+          >
         </div>
       </el-form-item>
       <el-form-item label="快递" prop="postType">
-        <el-select v-model="formData.postType" clearable placeholder="请选择快递方式" class="sel">
+        <el-select
+          v-model="formData.postType"
+          clearable
+          placeholder="请选择快递方式"
+          class="sel"
+        >
           <el-option
             v-for="dict in postType"
             :label="dict.dictLabel"
@@ -59,7 +84,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label="分类" prop="materialType">
-        <el-select v-model="formData.materialType" clearable placeholder="请选择类型" class="sel">
+        <el-select
+          v-model="formData.materialType"
+          clearable
+          placeholder="请选择类型"
+          class="sel"
+        >
           <el-option
             v-for="dict in materialType"
             :label="dict.dictLabel"
@@ -81,6 +111,7 @@
 
 <script>
 import { addPost, updatePost } from "../../../api/basic/buydata";
+import { listBook, bookDetalis } from "@/api/basic/InventoryRegistration";
 export default {
   data() {
     return {
@@ -99,53 +130,59 @@ export default {
         materialCount: 1, //资料数量
         kzzd1: "",
         basicPostMaterialList: [],
-        status: "1"
+        status: "1",
       },
       // 表单验证必填
       rules: {
         className: [
-          { required: true, trigger: blur, message: "此为必填项，请输入班级" }
+          { required: true, trigger: blur, message: "此为必填项，请输入班级" },
         ],
         recipientName: [
           {
             required: true,
             trigger: blur,
-            message: "此为必填项，请输入收件人姓名"
-          }
+            message: "此为必填项，请输入收件人姓名",
+          },
         ],
         recipientAddress: [
           {
             required: true,
             trigger: blur,
-            message: "此为必填项，请输入收件人地址"
-          }
+            message: "此为必填项，请输入收件人地址",
+          },
         ],
         postType: [
           {
             required: true,
             trigger: blur,
-            message: "此为必填项，请选择邮寄方式"
-          }
+            message: "此为必填项，请选择邮寄方式",
+          },
         ],
         materialType: [
-          { required: true, trigger: blur, message: "此为必填项，请选择分类" }
-        ]
-      }
+          { required: true, trigger: blur, message: "此为必填项，请选择分类" },
+        ],
+      },
+      inventoryRegistrationData: [],
     };
   },
   created() {
     this.basicList.push(this.addRow());
     // 快递方式使用字典选择下拉框内容
-    this.getDicts("express_type").then(response => {
+    this.getDicts("express_type").then((response) => {
       this.postType = response.data;
     });
     // 资料分类使用字典选择下拉框内容
-    this.getDicts("post_material_tpye").then(response => {
+    this.getDicts("post_material_tpye").then((response) => {
       this.materialType = response.data;
     });
     // 资料名称使用字典选择下拉框内容
-    this.getDicts("material_price_list").then(response => {
+    this.getDicts("material_price_list").then((response) => {
       this.materialName = response.data;
+    });
+    listBook().then((res) => {
+      if (res.code == 200) {
+        this.inventoryRegistrationData = res.rows;
+      }
     });
   },
   mounted() {
@@ -155,6 +192,11 @@ export default {
     }
   },
   methods: {
+    getBookDetails(index) {
+      bookDetalis(this.basicList[index].kzzd1).then((res) => {
+        this.basicList[index].stock = res.data.stock;
+      });
+    },
     // 添加多行条例
     addBar() {
       this.basicList.push(this.addRow());
@@ -162,7 +204,8 @@ export default {
     addRow() {
       return {
         materialCount: 0, //资料数量
-        materialName: "" //资料名称
+        materialName: "", //资料名称
+        stock: 0,
       };
     },
     // 删除指定行
@@ -177,34 +220,34 @@ export default {
     // 提交按钮
     onSubmit() {
       this.formData.status = "1";
-      this.$refs["formData"].validate(valid => {
+      this.$refs["formData"].validate((valid) => {
         this.formData.basicPostMaterialList = this.basicList;
         if (valid) {
-          let router="";
-          this.getConfigKey("Mail-purchase-Information-list").then(resp => {
+          let router = "";
+          this.getConfigKey("Mail-purchase-Information-list").then((resp) => {
             router = resp.msg;
             if (this.formData.id != null) {
-              updatePost(this.formData).then(response => {
+              updatePost(this.formData).then((response) => {
                 if (response.code == 200) {
                   this.msgSuccess("修改成功");
                   this.$router.push(router);
                 }
               });
             } else {
-              addPost(this.formData).then(response => {
+              addPost(this.formData).then((response) => {
                 this.msgSuccess("新增成功");
                 this.$router.push(router);
               });
             }
-          })
+          });
         }
       });
     },
     // 取消按钮
     cancel() {
-      this.$router.go(-1)
-    }
-  }
+      this.$router.go(-1);
+    },
+  },
 };
 </script>
 

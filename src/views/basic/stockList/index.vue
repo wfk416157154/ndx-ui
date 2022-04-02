@@ -48,6 +48,13 @@
         width="180"
       >
       </el-table-column>
+      <el-table-column
+        prop="registerTypeData"
+        label="登记类型"
+        :formatter="registerTypeDataFormat"
+        width="180"
+      >
+      </el-table-column>
       <el-table-column prop="bookName" label="资料名称" width="180">
       </el-table-column>
       <el-table-column prop="provenance" label="资料出处"> </el-table-column>
@@ -58,7 +65,10 @@
       </el-table-column>
       <el-table-column prop="address" label="操作">
         <template slot-scope="scope">
-          <el-button slot="reference" @click="editStock(scope.row)"
+          <el-button
+            slot="reference"
+            :disabled="scope.row.registerTypeData == '6'"
+            @click="editStock(scope.row)"
             >编辑</el-button
           >
         </template>
@@ -96,7 +106,10 @@
               "
             >
               <div style="margin-right: 20px">
-                <el-select v-model="handleRegisterForm.registerType">
+                <el-select
+                  @change="registerTypeChange"
+                  v-model="handleRegisterForm.registerType"
+                >
                   <el-option
                     v-for="(dic, index) in bookRegisterTpye"
                     :key="index"
@@ -161,9 +174,11 @@
                   class="el-icon-delete"
                   @click="dropDataName(index)"
                 ></el-button>
-                <el-tag style="margin-left: 20px" v-if="item.stock">{{
-                  item.stock
-                }}</el-tag>
+                <el-tag
+                  style="margin-left: 20px"
+                  v-if="item.stock || item.stock == 0"
+                  >{{ item.stock }}</el-tag
+                >
               </div>
             </td>
           </tr>
@@ -231,7 +246,7 @@ export default {
       handleRegisterForm: {
         basicBookRegisterDetailList: [
           {
-            stock: null,
+            stock: 0,
           },
         ],
       },
@@ -260,20 +275,53 @@ export default {
     },
     handleRegister() {
       this.handleRegisterForm = {
-        basicBookRegisterDetailList: [{}],
+        basicBookRegisterDetailList: [
+          {
+            stock: 0,
+          },
+        ],
       };
       this.handleRegisterVisible = true;
     },
+    registerTypeChange() {
+      if (this.handleRegisterForm.registerTypeData) {
+        this.handleRegisterForm.registerTypeData = "";
+      }
+    },
     handleRegisterSubmit() {
-      if (this.andleRegisterForm.registerTypeData.length == 0) {
-        this.msgError("至少添加一条资料名称数据");
+      if (!this.handleRegisterForm.registerType) {
+        this.msgError("请填写登记类型数据");
         return;
+      }
+      if (!this.handleRegisterForm.registerTypeData) {
+        this.msgError("请填写登记类型数据");
+        return;
+      }
+      if (this.handleRegisterForm.basicBookRegisterDetailList.length >= 1) {
+        for (
+          let i = 0;
+          i < this.handleRegisterForm.basicBookRegisterDetailList.length;
+          i++
+        ) {
+          if (!this.handleRegisterForm.basicBookRegisterDetailList[i].bookId) {
+            this.msgError("至少添加一条资料名称数据");
+            return;
+          }
+          if (
+            !this.handleRegisterForm.basicBookRegisterDetailList[i]
+              .registerCount
+          ) {
+            this.msgError("至少添加一条资料名称数据");
+            return;
+          }
+        }
       }
       if (this.handleRegisterForm.id) {
         updateRegister(this.handleRegisterForm).then((res) => {
           if (res.code == 200) {
             this.msgSuccess("修改成功");
             this.handleRegisterVisible = false;
+            this.getList();
           }
         });
       } else {
@@ -281,10 +329,10 @@ export default {
           if (res.code == 200) {
             this.msgSuccess("新增成功");
             this.handleRegisterVisible = false;
+            this.getList();
           }
         });
       }
-      this.handleRegisterVisible = false;
     },
     editStock(row) {
       registerDetalis(row.id).then((res) => {
@@ -307,6 +355,9 @@ export default {
     registerTypeFormat(row) {
       return this.selectDictLabel(this.bookRegisterTpye, row.registerType);
     },
+    registerTypeDataFormat(row) {
+      return this.selectDictLabel(this.bookRegisterData, row.registerTypeData);
+    },
     dropDataName(index) {
       this.handleRegisterForm.basicBookRegisterDetailList.splice(index, 1);
     },
@@ -315,9 +366,9 @@ export default {
     },
     handleExportStockData() {
       this.download(
-        "basic/examSummary/export",
+        "basic/register/exportRegisterInfo",
         {
-          ...this.inventoryRegistrationData,
+          sjArr: this.stockForm.sjArr,
         },
         `导出库存数据.xlsx`
       );
