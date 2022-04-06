@@ -190,6 +190,14 @@ export default {
       this.addDataVisible = true;
     },
     addDataSubmit() {
+      if (!this.addDataForm.bookName) {
+        this.msgError("请填写资料名称的内容");
+        return;
+      }
+      if (!this.addDataForm.bookPrice) {
+        this.msgError("请填写资料价格的内容");
+        return;
+      }
       if (this.addDataForm.id) {
         updateBook(this.addDataForm).then((res) => {
           if (res.code == 200) {
