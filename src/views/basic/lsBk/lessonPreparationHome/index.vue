@@ -340,24 +340,6 @@ export default {
         children: "children",
         label: "name"
       },
-      arr1: [
-        {
-          num: 10,
-          name: "第一课"
-        },
-        {
-          num: 50,
-          name: "第二课"
-        },
-        {
-          num: 100,
-          name: "第三课"
-        },
-        {
-          num: 100,
-          name: "第四课"
-        }
-      ],
       bjclassList: [],
       bjkbStartDate: [],
       nianji: [],

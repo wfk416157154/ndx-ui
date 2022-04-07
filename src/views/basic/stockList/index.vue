@@ -266,6 +266,9 @@ export default {
       }
     });
   },
+  mounted(){
+    this.getList()
+  },
   methods: {
     getList() {
       listRegister(this.stockForm).then((res) => {

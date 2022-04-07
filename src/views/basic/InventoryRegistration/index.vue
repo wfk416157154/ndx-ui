@@ -175,7 +175,9 @@ export default {
       this.bookRegisterTpye = response.data;
     });
   },
-  mounted() {},
+  mounted() {
+    this.getList();
+  },
   methods: {
     getList() {
       listBook(this.inventoryRegistrationForm).then((res) => {
