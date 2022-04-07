@@ -293,7 +293,7 @@
 
                 <div>
                   <span>正常教学计划 :</span>
-                  <span v-if="item.normalClassPlanObj.qbsw == '1'">{{
+                  <span v-if="item.normalClassPlanObj.qbsw != '1'">{{
                     item.normalClassPlanObj.sxmc
                   }}</span>
                   <span v-else> 已进入总复习 {{ item.startReviewDate }}</span>
