@@ -901,6 +901,7 @@ export default {
     },
     // 切换班级课表
     switchingClasses(bjid, nd) {
+      this.courseId = "";
       this.queryParams.bjid = bjid;
       this.getClassCourseBasicList(bjid);
     },

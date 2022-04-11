@@ -22,7 +22,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="supervisorClassInfoData" style="width: 100%">
+    <el-table :data="supervisorClassInfoData" border style="width: 100%">
       <el-table-column prop="rybjmc" label="班级" width="180">
       </el-table-column>
       <el-table-column prop="lsxm" label="老师" width="180"> </el-table-column>
