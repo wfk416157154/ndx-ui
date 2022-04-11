@@ -25,9 +25,9 @@
     <el-table :data="supervisorClassInfoData" border style="width: 100%">
       <el-table-column prop="rybjmc" label="班级" width="180">
       </el-table-column>
+      <el-table-column prop="deptName" label="组名称"> </el-table-column>
       <el-table-column prop="lsxm" label="老师" width="180"> </el-table-column>
       <el-table-column prop="jcmc" label="教材"> </el-table-column>
-      <el-table-column prop="deptName" label="组名称"> </el-table-column>
       <el-table-column prop="zckcmc" label="教学计划进度"> </el-table-column>
       <el-table-column prop="dqkcmc" label="老师上课进度"> </el-table-column>
       <el-table-column prop="jxjd" label="课程状态"> </el-table-column>
