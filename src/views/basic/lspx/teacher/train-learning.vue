@@ -156,6 +156,11 @@ export default {
       this.answerStatus = true;
       if (res.rows.length > 0) {
         this.learnRecordForm = res.rows[0];
+        if (this.learnRecordForm.spjd == "1") {
+          this.executeDocument.disabledProgress = false;
+        } else {
+          this.executeDocument.disabledProgress = true;
+        }
       }
     });
   },
