@@ -24,12 +24,14 @@
           </el-form-item>
           <el-form-item label="进度">
             <el-select v-model="queryParams.spjd" placeholder="请选择进度">
-              <el-option
+              <!-- <el-option
                 v-for="dict in prepareStatsProgress"
                 :key="dict.dictValue"
                 :label="dict.dictLabel"
                 :value="dict.dictValue"
-              />
+              /> -->
+              <el-option label="完成" value="1" />
+              <el-option label="未完成" value="0" />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -254,7 +256,8 @@ export default {
       });
     },
     splxFormat(row, column) {
-      return this.selectDictLabel(this.videoTypeOptions, row.splb);
+      // return this.selectDictLabel(this.videoTypeOptions, row.splb);
+      return row.splb;
     },
     handleNotice(row) {
       this.getImgList = [];
