@@ -36,7 +36,7 @@ export function addLearnRecord(data) {
 }
 
 
-// 新增培训学习记录
+// 修改培训学习记录
 export function updateLearnRecord(data) {
   return request({
     url: '/basic/learnRecord',

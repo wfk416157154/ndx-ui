@@ -216,7 +216,7 @@ export default {
       });
     },
     splxFormat(row, column) {
-      return this.selectDictLabel(this.videoTypeOptions, row.splx);
+      return this.selectDictLabel(this.videoTypeOptions, row.splb);
     },
     handleNotice(row) {
       this.getImgList = [];

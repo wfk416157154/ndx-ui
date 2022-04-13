@@ -13,7 +13,7 @@
         ></ndx-video>
       </div>
       <div class="jd">
-        <span>学习进度: {{rateOfIearning}}%</span>
+        <span>学习进度: {{ rateOfIearning }}%</span>
       </div>
     </div>
     <div class="content">
@@ -33,8 +33,10 @@
           <img width="100%" :src="dialogImageUrl" alt />
         </el-dialog>
       </div>
-      <div style="padding : 20px">
-        <el-button type="primary" :disabled="!answerStatus" @click="saveSubimit">保存</el-button>
+      <div style="padding: 20px">
+        <el-button type="primary" :disabled="!answerStatus" @click="saveSubimit"
+          >保存</el-button
+        >
       </div>
     </div>
 
@@ -48,28 +50,34 @@
       <div class="question-board">
         <ul>
           <li>
-            <div v-for="(item,index) in videoQuestionData" :key="index">
-              <div style="padding : 20px 0px">{{++index}}, {{item.topic}}</div>
+            <div v-for="(item, index) in videoQuestionData" :key="index">
+              <div style="padding: 20px 0px">
+                {{ ++index }}, {{ item.topic }}
+              </div>
               <el-radio
                 v-model="item[index]"
-                @change="toAnswer(item[index],item.answer)"
+                @change="toAnswer(item[index], item.answer, index)"
                 label="A"
-              >A, {{item.optionA}}</el-radio>
+                >A, {{ item.optionA }}</el-radio
+              >
               <el-radio
                 v-model="item[index]"
-                @change="toAnswer(item[index],item.answer)"
+                @change="toAnswer(item[index], item.answer, index)"
                 label="B"
-              >B, {{item.optionB}}</el-radio>
+                >B, {{ item.optionB }}</el-radio
+              >
               <el-radio
                 v-model="item[index]"
-                @change="toAnswer(item[index],item.answer)"
+                @change="toAnswer(item[index], item.answer, index)"
                 label="C"
-              >C, {{item.optionC}}</el-radio>
+                >C, {{ item.optionC }}</el-radio
+              >
               <el-radio
                 v-model="item[index]"
-                @change="toAnswer(item[index],item.answer)"
+                @change="toAnswer(item[index], item.answer, index)"
                 label="D"
-              >D, {{item.optionD}}</el-radio>
+                >D, {{ item.optionD }}</el-radio
+              >
             </div>
           </li>
         </ul>
@@ -87,7 +95,7 @@ import {
   learnRecordList,
   videoQuestionList,
   addLearnRecord,
-  updateLearnRecord
+  updateLearnRecord,
 } from "@/api/basic/train-index";
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
@@ -98,7 +106,7 @@ export default {
       executeDocument: {
         videoUrl: "",
         disabledProgress: true,
-        stopTime: []
+        stopTime: [],
       },
       dialogFormVisible: false,
       dialogImageUrl: "",
@@ -122,27 +130,29 @@ export default {
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
       },
       dialogImageUrl: "",
       dialogVisible: false,
       learnRecordForm: {},
-      rateOfIearning: 0
+      rateOfIearning: 0,
     };
   },
   created() {
     this.studyList = JSON.parse(this.$route.query.list);
-    selectFileList({ kzzd1: this.studyList.videoFileId }).then(async res => {
+    selectFileList({ kzzd1: this.studyList.videoFileId }).then(async (res) => {
       // this.executeDocument.videoUrl = res.rows[0].url;
       this.executeDocument.videoUrl = `${
         process.env.VUE_APP_BASE_API
-      }/file/play?fileId=${res.rows[0].id}&Authorization=${"Bearer " +
-        getToken()}`;
+      }/file/play?fileId=${res.rows[0].id}&Authorization=${
+        "Bearer " + getToken()
+      }`;
     });
     learnRecordList({
       lsid: this.studyList.lsid,
-      spid: this.studyList.spid
-    }).then(res => {
+      spid: this.studyList.spid,
+      kzzd1: this.studyList.allocateId,
+    }).then((res) => {
       this.answerStatus = true;
       if (res.rows.length > 0) {
         this.learnRecordForm = res.rows[0];
@@ -150,24 +160,46 @@ export default {
     });
   },
   methods: {
+    onUpdateLearnRecord() {
+      this.learnRecordForm.spjd = "1";
+      updateLearnRecord(this.learnRecordForm).then((res) => {
+        console.log(res);
+      });
+    },
     testQuestions(data) {
-      videoQuestionList({ trainVideoId: this.studyList.spid }).then(res => {
+      videoQuestionList({ trainVideoId: this.studyList.spid }).then((res) => {
         this.videoQuestionData = res.rows;
-        this.dialogFormVisible = true;
+        if (this.videoQuestionData.length == 0) {
+          this.onUpdateLearnRecord();
+        } else {
+          this.dialogFormVisible = true;
+        }
       });
     },
     cancel() {
       this.dialogFormVisible = false;
     },
     answerOver() {
-      this.dialogFormVisible = false;
+      let correctV = this.videoQuestionData.filter((val) => {
+        if (val.correct) {
+          return val;
+        } else {
+          return val;
+        }
+      });
+      if (correctV.length == this.videoQuestionData.length) {
+        this.onUpdateLearnRecord();
+        this.dialogFormVisible = false;
+      }
     },
-    toAnswer(target, origin) {
+    toAnswer(target, origin, index) {
       target = target.toLowerCase();
       origin = origin.toLowerCase();
       if (target == origin) {
+        this.videoQuestionData[--index].correct = true;
         this.answerStatus = true;
       } else {
+        this.videoQuestionData[--index].correct = false;
         this.answerStatus = false;
         this.dialogFormVisible = false;
         this.$refs.video.resetVideo();
@@ -179,11 +211,11 @@ export default {
       this.dialogVisible = true;
     },
     bjRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -194,7 +226,7 @@ export default {
       let data = response.data;
       data.kzzd1 = this.learnRecordForm.bjtpid || secretKey();
       this.learnRecordForm.bjtpid = data.kzzd1;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.msgSuccess("上传成功");
       });
@@ -223,18 +255,18 @@ export default {
         return;
       }
       if (this.learnRecordForm.id) {
-        updateLearnRecord(this.learnRecordForm).then(res => {
+        updateLearnRecord(this.learnRecordForm).then((res) => {
           this.msgSuccess(res.msg);
           this.$router.go(-1);
         });
       } else {
-        addLearnRecord(this.learnRecordForm).then(res => {
+        addLearnRecord(this.learnRecordForm).then((res) => {
           this.msgSuccess(res.msg);
           this.$router.go(-1);
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
