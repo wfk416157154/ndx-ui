@@ -57,6 +57,7 @@
     <!-- 所有数据 -->
     <div v-if="allData">
       <el-table
+        ref="listAllTable"
         :data="listAll"
         border
         :summary-method="getSummaries"
@@ -77,6 +78,7 @@
           </template>
         </el-table-column>
         <el-table-column
+
           :fixed="item.fixed"
           :label="item.label"
           align="center"
@@ -114,6 +116,7 @@
         </el-table-column>
       </el-table>
       <el-table
+        ref="listAllPjfTable"
         :data="listAllPjf"
         border
         :summary-method="getSummaries"
@@ -322,6 +325,8 @@
         isKslx: false,
         ksfwOption: [],
         listAllPjf: [],
+        listAllTableDom:null,
+        listAllPjfTableDom:null,
       };
     },
     created() {
@@ -346,8 +351,19 @@
       scoreChart
     },
     mounted() {
+      if(this.allData){// 如果是查看所有数据则进行下main操作获取table节点
+        this.listAllTableDom=this.$refs.listAllTable.bodyWrapper;
+        this.listAllPjfTableDom=this.$refs.listAllPjfTable.bodyWrapper;
+        this.listenerTableScroll()
+      }
     },
     methods: {
+      listenerTableScroll() {
+        this.listAllTableDom.addEventListener('scroll', () => {
+          // 横滚
+          this.listAllPjfTableDom.scrollLeft = this.listAllTableDom.scrollLeft
+        })
+      },
       /** 查询学生成绩基础表列表 */
       getList() {
         this.loading = true;

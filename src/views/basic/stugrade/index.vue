@@ -103,6 +103,7 @@
     </el-row>
     <div>
       <el-table
+        ref="listAllTable"
         :data="listAll"
         border
         :summary-method="getSummaries"
@@ -148,7 +149,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-table :data="listAllPjf" border>
+      <el-table ref="listAllPjfTable" :data="listAllPjf" border>
         <el-table-column
           :fixed="item.fixed"
           align="center"
@@ -403,7 +404,9 @@ export default {
       fullscreenLoading: false,
       iflineChart: null,
       // 日语班级名称
-      rybjmc: null
+      rybjmc: null,
+      listAllTableDom:null,
+      listAllPjfTableDom:null,
     };
   },
   created() {
@@ -429,8 +432,17 @@ export default {
   mounted() {
     // this.getList();
     // console.log(this.$route.query.bjid)
+    this.listAllTableDom=this.$refs.listAllTable.bodyWrapper;
+    this.listAllPjfTableDom=this.$refs.listAllPjfTable.bodyWrapper;
+    this.listenerTableScroll()
   },
   methods: {
+    listenerTableScroll() {
+      this.listAllTableDom.addEventListener('scroll', () => {
+        // 横滚
+        this.listAllPjfTableDom.scrollLeft = this.listAllTableDom.scrollLeft
+      })
+    },
     // 当选择一个学生进行点击时，查看该学生的成绩分析
     chooseStudent(row) {
       this.tableHeight = 250;
