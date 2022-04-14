@@ -15,7 +15,12 @@
           @change="xqmcOnChange"
           filterable
         >
-          <el-option v-for="item in selectXqmc" :key="item.id" :label="item.xxmc" :value="item.id"></el-option>
+          <el-option
+            v-for="item in selectXqmc"
+            :key="item.id"
+            :label="item.xxmc"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日语班级" prop="kzzd1">
@@ -53,9 +58,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="考试类型" prop="kslx">
-        <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" multiple>
+        <el-select
+          v-model="queryParams.kslx"
+          placeholder="请选择考试类型"
+          multiple
+        >
           <el-option
-            v-for="(dict,index) in getExaminationType"
+            v-for="(dict, index) in getExaminationType"
             :key="index"
             :label="dict.dictLabel"
             :value="dict.dictValue"
@@ -63,9 +72,17 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">查询</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >查询</el-button
+        >
         <el-button type="primary" size="mini" @click="getWhole">全部</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -75,9 +92,10 @@
           type="info"
           icon="el-icon-upload2"
           size="mini"
-          v-has-role="['admin','academicAdministrator']"
+          v-has-role="['admin', 'academicAdministrator']"
           @click="handleImport"
-        >导入</el-button>
+          >导入</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -87,7 +105,8 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['basic:stugrade:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -97,9 +116,13 @@
           size="mini"
           @click="tongbuData"
           v-hasPermi="['basic:stugrade:syncKsmcToExaminationPaper']"
-        >同步考试名称至考卷表</el-button>
+          >同步考试名称至考卷表</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
     <div>
       <el-table
@@ -109,42 +132,66 @@
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
         :height="$root.tableHeight"
-        style="width: 100%;font-size : 18px"
+        style="width: 100%; font-size: 18px"
       >
         <el-table-column
           :fixed="item.fixed"
           :label="item.label"
           align="center"
-          v-for="(item,index) in columnNameList"
+          v-for="(item, index) in columnNameList"
           :key="index"
           :prop="item.prop"
         >
           <template slot-scope="scope">
-            <span v-if="item.prop == 'rybj'  || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+            <span v-if="item.prop == 'rybj' || item.prop == 'zhcj'">{{
+              scope.row[item.prop]
+            }}</span>
             <span v-else-if="item.prop == 'xsxm'">
-              <el-link
-                type="primary"
-                @click.stop="chooseStudent(scope.row)"
-              >{{scope.row[item.prop]}}</el-link>
+              <el-link type="primary" @click.stop="chooseStudent(scope.row)">{{
+                scope.row[item.prop]
+              }}</el-link>
             </span>
             <span v-else-if="item.prop == 'wl'">
-              <div>{{scope.row[item.prop]}}</div>
+              <div>{{ scope.row[item.prop] }}</div>
             </span>
             <div v-else>
               <div
                 v-if="scope.row[item.colour] == 1"
-                style="background : #67C23A; display : inline-block ; width :100%;color : #fff"
-              >{{scope.row[item.prop]}}</div>
+                style="
+                  background: #67c23a;
+                  display: inline-block;
+                  width: 100%;
+                  color: #fff;
+                "
+              >
+                {{ scope.row[item.prop] }}
+              </div>
               <span
                 v-if="scope.row[item.colour] == 2"
-                style="background : #E6A23C; display : inline-block ; width :100%;color : #fff"
-              >{{scope.row[item.prop]}}</span>
+                style="
+                  background: #e6a23c;
+                  display: inline-block;
+                  width: 100%;
+                  color: #fff;
+                "
+                >{{ scope.row[item.prop] }}</span
+              >
               <span
                 v-if="scope.row[item.colour] == 3"
-                style="background : red; display : inline-block ; width :100%;color : #fff"
-              >{{scope.row[item.prop]}}</span>
-              <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
-              <span v-if="scope.row[item.colour] == 5">{{scope.row[item.prop]}}</span>
+                style="
+                  background: red;
+                  display: inline-block;
+                  width: 100%;
+                  color: #fff;
+                "
+                >{{ scope.row[item.prop] }}</span
+              >
+              <span v-if="scope.row[item.colour] == 4">{{
+                scope.row[item.prop]
+              }}</span>
+              <span v-if="scope.row[item.colour] == 5">{{
+                scope.row[item.prop]
+              }}</span>
             </div>
           </template>
         </el-table-column>
@@ -153,36 +200,60 @@
         <el-table-column
           :fixed="item.fixed"
           align="center"
-          v-for="(item,index) in columnNameList"
+          v-for="(item, index) in columnNameList"
           :key="index"
           :prop="item.prop"
         >
           <template slot-scope="scope">
-            <span v-if="item.prop == 'rybj'  || item.prop == 'zhcj'">{{scope.row[item.prop]}}</span>
+            <span v-if="item.prop == 'rybj' || item.prop == 'zhcj'">{{
+              scope.row[item.prop]
+            }}</span>
             <span v-else-if="item.prop == 'xsxm'">
-              <el-link
-                type="primary"
-                @click.stop="chooseStudent(scope.row)"
-              >{{scope.row[item.prop]}}</el-link>
+              <el-link type="primary" @click.stop="chooseStudent(scope.row)">{{
+                scope.row[item.prop]
+              }}</el-link>
             </span>
             <span v-else-if="item.prop == 'wl'">
-              <div>{{scope.row[item.prop]}}</div>
+              <div>{{ scope.row[item.prop] }}</div>
             </span>
             <div v-else>
               <div
                 v-if="scope.row[item.colour] == 1"
-                style="background : #67C23A; display : inline-block ; width :100%;color : #fff"
-              >{{scope.row[item.prop]}}</div>
+                style="
+                  background: #67c23a;
+                  display: inline-block;
+                  width: 100%;
+                  color: #fff;
+                "
+              >
+                {{ scope.row[item.prop] }}
+              </div>
               <span
                 v-if="scope.row[item.colour] == 2"
-                style="background : #E6A23C; display : inline-block ; width :100%;color : #fff"
-              >{{scope.row[item.prop]}}</span>
+                style="
+                  background: #e6a23c;
+                  display: inline-block;
+                  width: 100%;
+                  color: #fff;
+                "
+                >{{ scope.row[item.prop] }}</span
+              >
               <span
                 v-if="scope.row[item.colour] == 3"
-                style="background : red; display : inline-block ; width :100%;color : #fff"
-              >{{scope.row[item.prop]}}</span>
-              <span v-if="scope.row[item.colour] == 4">{{scope.row[item.prop]}}</span>
-              <span v-if="scope.row[item.colour] == 5">{{scope.row[item.prop]}}</span>
+                style="
+                  background: red;
+                  display: inline-block;
+                  width: 100%;
+                  color: #fff;
+                "
+                >{{ scope.row[item.prop] }}</span
+              >
+              <span v-if="scope.row[item.colour] == 4">{{
+                scope.row[item.prop]
+              }}</span>
+              <span v-if="scope.row[item.colour] == 5">{{
+                scope.row[item.prop]
+              }}</span>
             </div>
           </template>
         </el-table-column>
@@ -224,10 +295,11 @@
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
-              v-for="(dict,index) in statusOptions"
+              v-for="(dict, index) in statusOptions"
               :key="index"
               :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
+              >{{ dict.dictLabel }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -267,12 +339,15 @@
           <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
           <el-link
             type="info"
-            style="font-size:12px"
+            style="font-size: 12px"
             :disabled="enabledImportTemplate"
             @click="importTemplate"
-          >下载模板</el-link>
+            >下载模板</el-link
+          >
         </div>
-        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+        <div class="el-upload__tip" style="color: red" slot="tip">
+          提示：仅允许导入“xls”或“xlsx”格式文件！
+        </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
         <el-button
@@ -280,7 +355,8 @@
           v-prevent-re-click
           :disabled="importBtn"
           @click="submitFileForm"
-        >确 定</el-button>
+          >确 定</el-button
+        >
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -297,7 +373,7 @@ import {
   listAll,
   getColumnNameList,
   generateTemplate,
-  syncKsmcToExaminationPaper
+  syncKsmcToExaminationPaper,
 } from "@/api/basic/stugrade";
 import { listBjclass } from "@/api/basic/bjclass";
 import { listSchool } from "@/api/basic/school";
@@ -343,7 +419,7 @@ export default {
         kzzd1: null,
         kslx: [],
         wl: null,
-        status: null
+        status: null,
       },
       enabledImportTemplate: true,
       // 表单参数
@@ -363,7 +439,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/basic/stugrade/importData"
+        url: process.env.VUE_APP_BASE_API + "/basic/stugrade/importData",
       },
       rules: {
         yyfs: [
@@ -371,17 +447,17 @@ export default {
             required: false,
             message: "格式不对,只能填写数字",
             trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
+            pattern: /^[0-9]+$/,
+          },
         ],
         zhcj: [
           {
             required: false,
             message: "格式不对,只能填写数字",
             trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
-        ]
+            pattern: /^[0-9]+$/,
+          },
+        ],
       },
       // 动态table-column
       columnNameList: [],
@@ -405,43 +481,46 @@ export default {
       iflineChart: null,
       // 日语班级名称
       rybjmc: null,
-      listAllTableDom:null,
-      listAllPjfTableDom:null,
+      listAllTableDom: null,
+      listAllPjfTableDom: null,
     };
   },
   created() {
-    this.getDicts("basic_status").then(response => {
+    this.getDicts("basic_status").then((response) => {
       this.statusOptions = response.data;
     });
-    this.getDicts("examination_type").then(response => {
+    this.getDicts("examination_type").then((response) => {
       this.getExaminationType = response.data;
     });
-    this.getDicts("xkType").then(response => {
+    this.getDicts("xkType").then((response) => {
       this.wlOption = response.data;
     });
-    listBjclass({ id: this.$route.query.bjid }).then(res => {
-      this.queryParams.kzzd1 = this.$route.query.bjid;
-      this.queryParams.xqmc = res.rows[0].kzzd1;
-      this.getListSchool(this.queryParams.xqmc);
-    });
+    if (this.$route.query.bjid) {
+      listBjclass({ id: this.$route.query.bjid }).then((res) => {
+        this.queryParams.xqmc = res.rows[0].kzzd1;
+        this.getListSchool();
+      });
+    } else {
+      this.getListSchool();
+    }
   },
   components: {
     chart,
-    lineChart
+    lineChart,
   },
   mounted() {
     // this.getList();
     // console.log(this.$route.query.bjid)
-    this.listAllTableDom=this.$refs.listAllTable.bodyWrapper;
-    this.listAllPjfTableDom=this.$refs.listAllPjfTable.bodyWrapper;
-    this.listenerTableScroll()
+    this.listAllTableDom = this.$refs.listAllTable.bodyWrapper;
+    this.listAllPjfTableDom = this.$refs.listAllPjfTable.bodyWrapper;
+    this.listenerTableScroll();
   },
   methods: {
     listenerTableScroll() {
-      this.listAllTableDom.addEventListener('scroll', () => {
+      this.listAllTableDom.addEventListener("scroll", () => {
         // 横滚
-        this.listAllPjfTableDom.scrollLeft = this.listAllTableDom.scrollLeft
-      })
+        this.listAllPjfTableDom.scrollLeft = this.listAllTableDom.scrollLeft;
+      });
     },
     // 当选择一个学生进行点击时，查看该学生的成绩分析
     chooseStudent(row) {
@@ -454,10 +533,10 @@ export default {
       });
       let json = {
         kzzd1: this.queryParams.kzzd1,
-        xsxm: this.queryParams.xsxm
+        xsxm: this.queryParams.xsxm,
       };
       // 学生基础数据表
-      listStudent(json).then(res => {
+      listStudent(json).then((res) => {
         if (res.rows.length > 0) {
           this.queryParams.xsbh = res.rows[0].xsbh;
           this.getList();
@@ -473,14 +552,12 @@ export default {
       return str;
     },
     // 获取校区
-    getListSchool(xqid) {
-      listSchool({ id: xqid }).then(response => {
+    getListSchool() {
+      listSchool().then((response) => {
         this.selectXqmc = response.rows;
-        // if (response.rows.length == 1) {
-        //   // 当只查询到一条数据，则直接给这个选择框赋值
-        //   // this.queryParams.xqmc = response.rows[0].id;
-        this.xqmcOnChange(); // 给日语班级赋值
-        // }
+        this.xqmcOnChange();
+        this.queryParams.kzzd1 = this.$route.query.bjid;
+        this.rybjDisabled = false;
       });
     },
     /** 查询学生成绩基础表列表 */
@@ -495,16 +572,15 @@ export default {
         kzzd1: this.queryParams.kzzd1,
         xqmc: this.queryParams.xqmc,
         xsxm: this.queryParams.xsxm,
-        kslx: one
+        kslx: one,
       };
       // 学生成绩表数据
-      listAll(listAllJson).then(res => {
-
+      listAll(listAllJson).then((res) => {
         if (res.data) {
           this.listAll = res.data.avgStugradeInfo;
           this.listAllPjf = res.data.tableDataInfo;
           // this.total = res.total;
-          this.listAll.forEach(value => {
+          this.listAll.forEach((value) => {
             if (value.xsbh == this.queryParams.xsbh) {
               this.allData = true;
               this.allData ? this.monitor() : null;
@@ -517,12 +593,12 @@ export default {
           }
           this.$notify.error({
             title: "错误",
-            message: `不存在编号为"${this.queryParams.xsbh}"的学生`
+            message: `不存在编号为"${this.queryParams.xsbh}"的学生`,
           });
         }
       });
       // 学生成绩表title列
-      getColumnNameList(listAllJson).then(res => {
+      getColumnNameList(listAllJson).then((res) => {
         this.columnNameList = res.data;
         for (let i = 0; i < 5; i++) {
           this.columnNameList[i].fixed = true;
@@ -542,7 +618,7 @@ export default {
       return this.selectDictLabel(this.statusOptions, row.status);
     },
     xqmcOnChange() {
-      listBjclass({ id: this.queryParams.kzzd1 }).then(response => {
+      listBjclass({ kzzd1: this.queryParams.xqmc }).then((response) => {
         this.bjclassList = response.rows;
         this.getList();
       });
@@ -584,7 +660,7 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
       };
       this.rybjmc = null;
       this.resetForm("form");
@@ -606,7 +682,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
+      this.ids = selection.map((item) => item.id);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -620,7 +696,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
-      getStugrade(id).then(response => {
+      getStugrade(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改学生成绩基础表";
@@ -628,16 +704,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateStugrade(this.form).then(response => {
+            updateStugrade(this.form).then((response) => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addStugrade(this.form).then(response => {
+            addStugrade(this.form).then((response) => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -655,10 +731,10 @@ export default {
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning"
+          type: "warning",
         }
       )
-        .then(function() {
+        .then(function () {
           return delStugrade(ids);
         })
         .then(() => {
@@ -671,7 +747,7 @@ export default {
       this.download(
         "basic/stugrade/export",
         {
-          ...this.queryParams
+          ...this.queryParams,
         },
         `学生成绩基础表.xlsx`
       );
@@ -687,7 +763,7 @@ export default {
         // 页面元素加载完成后执行该方法
         this.$refs.upload.clearFiles();
       });
-      generateTemplate().then(resp => {
+      generateTemplate().then((resp) => {
         if (1 == resp) {
           this.msgSuccess("模板已成功生成！请点击下载模板");
           this.enabledImportTemplate = false;
@@ -701,7 +777,7 @@ export default {
       this.download(
         "basic/stugrade/importTemplate",
         {
-          ...this.queryParams
+          ...this.queryParams,
         },
         `学生成绩基础表-导入模板.xlsx`
       );
@@ -745,7 +821,7 @@ export default {
         rybj: null,
         kzzd1: null,
         wl: null,
-        status: null
+        status: null,
       }),
         (this.studentsList = null);
       this.getList();
@@ -763,8 +839,8 @@ export default {
           sums[index] = "平均分";
           return;
         }
-        const values = data.map(item => Number(item[column.property]));
-        if (!values.every(value => isNaN(value))) {
+        const values = data.map((item) => Number(item[column.property]));
+        if (!values.every((value) => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);
             if (!isNaN(value)) {
@@ -791,10 +867,10 @@ export default {
       this.queryParams.xsxm = xsxm;
       let json = {
         kzzd1: this.queryParams.kzzd1,
-        xsxm: this.queryParams.xsxm
+        xsxm: this.queryParams.xsxm,
       };
       // 学生基础数据表
-      listStudent(json).then(res => {
+      listStudent(json).then((res) => {
         this.studentsList = res.rows;
       });
     },
@@ -804,15 +880,15 @@ export default {
         this.msgError("请选择日语班级再点击同步按钮！");
         return;
       }
-      syncKsmcToExaminationPaper({ rybjmc: this.rybjmc }).then(res => {
+      syncKsmcToExaminationPaper({ rybjmc: this.rybjmc }).then((res) => {
         if (undefined != res.code && res.code == 500) {
           this.msgError(res.msg);
         } else {
           this.msgSuccess(res.msg);
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">
