@@ -39,7 +39,7 @@
             <el-table-column label="作文类型" align="center" prop="type" />
             <el-table-column label="文件" align="center" prop="kzzd1">
                 <template slot-scope="scope">
-                    <a :href="scope.row.kzzd1" download>点击下载</a>
+                    <a :href="scope.row.kzzd1" style="color:#409EFF" download>点击下载</a>
                 </template>
             </el-table-column>
             <el-table-column label="上传日期" align="center" prop="scrq" />
