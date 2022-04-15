@@ -37,7 +37,11 @@
             <el-table-column label="班级名称" align="center" prop="bjmc" />
             <el-table-column label="老师姓名" align="center" prop="lsxm" />
             <el-table-column label="作文类型" align="center" prop="type" />
-            <el-table-column label="文件" align="center" prop="wjid" />
+            <el-table-column label="文件" align="center" prop="kzzd1">
+                <template slot-scope="scope">
+                    <a :href="scope.row.kzzd1" download>点击下载</a>
+                </template>
+            </el-table-column>
             <el-table-column label="上传日期" align="center" prop="scrq" />
             <el-table-column label="备注" align="center" prop="remark" />
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -162,7 +166,6 @@ export default {
         listBjclass(classJson).then((response) => {
             this.bjclassList = response.rows;
         });
-        console.log(this.$store.state.user.nickName)
     },
     methods: {
         /** 查询作文列表 */
@@ -209,6 +212,7 @@ export default {
                 let data = response.data;
                 data.kzzd1 = secretKey();
                 this.form.wjid = data.kzzd1;
+                this.form.kzzd1 = data.wjlj;
                 this.form.scrq = this.parseTime(new Date(), "{y}-{m}-{d}");
                 addImg(data).then((res) => {
                     if (res.code == 200) {
