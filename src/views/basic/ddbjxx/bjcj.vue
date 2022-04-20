@@ -166,12 +166,6 @@ export default {
             getExaminationType: [],
         };
     },
-    props: {
-        bjid: {
-            type: String,
-            default: null,
-        },
-    },
     created() {
         this.getDicts("year-list").then((response) => {
             this.getYear = response.data;
@@ -186,12 +180,13 @@ export default {
             this.getExaminationType = response.data;
         });
         this.getList();
-        listBjclass({ id: this.bjid }).then((res) => {
+        listBjclass({ id: this.$route.query.bjid }).then((res) => {
             this.form.xqid = res.rows[0].kzzd1;
-            this.form.bjid = this.bjid;
+            this.form.bjid = this.$route.query.bjid;
             this.getSchoolId(this.form.xqid);
             this.getAchievement();
         });
+        
     },
     mounted() {
         /* 默认进入页面查询成绩*/
