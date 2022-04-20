@@ -643,7 +643,7 @@ export default {
   },
   mounted() {
     this.initBjClassList();
-    this.initGetListExaminationPaper();
+    //this.initGetListExaminationPaper();
   },
   methods: {
     openFullScreen() {
