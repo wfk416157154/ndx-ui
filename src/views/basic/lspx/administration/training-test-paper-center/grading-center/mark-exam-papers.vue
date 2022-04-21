@@ -8,11 +8,11 @@
           </div>
           <br />
           <div>
-            <h3>填写答案</h3>
+            <h4>填写答案</h4>
             <editor :disabled="true" v-model="item.txda" :min-height="200" />
           </div>
           <div class="score">
-            <h3>评分</h3>
+            <h4>评分</h4>
             <el-form label-width="80px" :rules="rules" :model="formLabelAlign">
               <el-form-item label="得分" prop="df">
                 <el-input v-model="item.score"></el-input>

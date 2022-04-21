@@ -22,10 +22,10 @@
                   <span>填写答案 :</span>
                   <span>{{item.txda}}</span>
                 </div>
-                <div style="margin: 10px 0px">
+                <!-- <div style="margin: 10px 0px">
                   <span>正确答案 :</span>
                   <span>{{item.tmda}}</span>
-                </div>
+                </div> -->
               </div>
             </li>
           </ul>
@@ -51,10 +51,10 @@
                   <span>填写答案 :</span>
                   <span>{{item.txda}}</span>
                 </div>
-                <div style="margin: 10px 0px">
+                <!-- <div style="margin: 10px 0px">
                   <span>正确答案 :</span>
                   <span>{{item.tmda}}</span>
-                </div>
+                </div> -->
               </div>
             </li>
           </ul>
@@ -75,9 +75,9 @@
                           <el-form-item :label="list.kzzd1" label-width="70px">
                             <el-input v-model="list.txda" placeholder="未答" disabled></el-input>
                           </el-form-item>
-                          <el-form-item label="正确答案" label-width="70px">
+                          <!-- <el-form-item label="正确答案" label-width="70px">
                             <el-input v-model="list.xxda" placeholder="未答" disabled></el-input>
-                          </el-form-item>
+                          </el-form-item> -->
                         </div>
                       </el-form>
                     </div>
