@@ -208,7 +208,7 @@ export default {
         this.answerStatus = false;
         this.dialogFormVisible = false;
         this.$refs.video.resetVideo();
-        this.msgError("答题错误请重新观看视频");
+        this.msgError("您的答题错误，需重新进行视频学习");
       }
     },
     bjPreview(file) {
