@@ -271,7 +271,7 @@ export default {
         },
         testPaperSubmit() {
             this.getTrainPaperTopicListTem.wenda.forEach(value => {
-                if (value.content) {
+                if (value.kzzd5) {
                     this.getTrainPaperTopicListTemForm.wenda.push({
                         content: value.kzzd5,
                         tmid: value.id,
@@ -306,7 +306,7 @@ export default {
                 this.reset();
                 this.$router.go(-1);
             });
-            // }
+
         },
         getNewDate() {
             let time = new Date().getTime();
