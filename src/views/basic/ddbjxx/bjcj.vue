@@ -274,7 +274,7 @@ export default {
                             obj[i].series[0].data.push(
                                 item[i].everyTimeGradeInfoQueries[j].pjfs
                             );
-                            obj[i].series[0].name = `(${item[i].rybj})班-最高分(${item[i].everyTimeGradeInfoQueries[j].kscjMax});最低分(${item[i].everyTimeGradeInfoQueries[j].kscjMax});考试人数${item[i].everyTimeGradeInfoQueries[j].ksrs};平均分`;
+                            obj[i].series[0].name = `(${item[i].rybj})班-最高分(${item[i].everyTimeGradeInfoQueries[j].kscjMax});最低分(${item[i].everyTimeGradeInfoQueries[j].kscjMin});考试人数${item[i].everyTimeGradeInfoQueries[j].ksrs};平均分`;
                         }
                     }
                     obj[i] && obj[i + "a"].setOption(obj[i]);
