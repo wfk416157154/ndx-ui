@@ -369,7 +369,7 @@ import {
   listSkiptime,
   generateTeachingHandle
 } from "@/api/teaching/generate";
-import { listClassCourse } from "@/api/basic/classCourse";
+import { classEnableCourseQuery } from "@/api/basic/classCourse";
 import { listClassPlan } from "@/api/teaching/classPlan";
 import { listTeachingReview } from "@/api/basic/teachingReview";
 export default {
@@ -501,7 +501,7 @@ export default {
         return;
       }
       // 查课表数据
-      listClassCourse({ bjid }).then(response => {
+      classEnableCourseQuery(bjid).then(response => {
         this.classCourseList = response.rows;
         this.dialogTableVisible = true;
       });
