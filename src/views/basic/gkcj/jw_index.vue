@@ -38,6 +38,9 @@
             <el-table-column prop="address" label="状态">
             </el-table-column>
             <el-table-column prop="address" label="导出">
+                <template slot-scope="scope">
+                    <el-button @click="onExport(scope.row)">导出</el-button>
+                </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="180">
                 <template slot-scope="scope">
@@ -82,7 +85,6 @@ export default {
             gkcjList: [],
             form: {},
             dialogFormVisible: false,
-            dialogImageUrl: '',
             dialogVisible: false,
             total: 0,
             queryParams: {
@@ -107,6 +109,11 @@ export default {
         })
     },
     methods: {
+        onExport(row) {
+            this.download('basic/collegeEntranceExam/exportCollegeEntranceExam', {
+                bjid: row.bjid
+            }, `班级高考成绩.xlsx`)
+        },
         // 选择老师
         onSelectClass() {
             this.getList()
@@ -136,16 +143,6 @@ export default {
                 this.dialogFormVisible = false;
                 this.msgSuccess(res.msg)
             })
-        },
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-        },
-        handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
-        },
-        onSubmit() {
-
         },
         handleViews(row) {
             this.getConfigKey("teacher_index").then(res => {

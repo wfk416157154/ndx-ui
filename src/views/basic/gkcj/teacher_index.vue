@@ -234,7 +234,9 @@ export default {
         },
         //导出
         onExport() {
-
+            this.download('basic/collegeEntranceExam/exportCollegeEntranceExam', {
+                bjid : this.queryParams.bjid
+            }, `班级高考成绩.xlsx`)
         },
         // 添加
         onAddGkcj() {
@@ -247,7 +249,6 @@ export default {
             this.getList()
         },
         getList() {
-            console.log(this.queryParams)
             listForTeacher({ bjid: this.queryParams.bjid, isUpload: this.queryParams.isUpload }).then(res => {
                 console.log(res)
                 this.gkcjList = res.rows
