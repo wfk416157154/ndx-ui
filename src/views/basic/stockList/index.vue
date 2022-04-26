@@ -167,7 +167,7 @@
                   v-model="item.registerCount"
                   @change="handleChange"
                   :min="1"
-                  :max="1000"
+                  :max="3000"
                   label="描述文字"
                 ></el-input-number>
                 <el-button
