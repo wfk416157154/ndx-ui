@@ -49,11 +49,9 @@
           </el-select>
           <el-input-number
             v-model="item.materialCount"
-            @change="handleChange"
             :min="0"
-            label="描述文字"
-            size="mini"
-            class="numbox"
+            :max="item.stock"
+            size="small"
           ></el-input-number>
           <el-button icon="el-icon-plus" circle @click="addBar"></el-button>
           <el-button
