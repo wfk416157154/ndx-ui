@@ -123,7 +123,7 @@
                                         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport">导出</el-button>
                                         <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="btnDisabled" @click="deleteData">删除选中行</el-button>
                                         <el-form-item v-if="classCourseList.length > 0" label="有效课时" prop="kbType" label-width="100px">
-                                            <el-input-number v-model="yxsj" @change="submitTimetable" placeholder="请输入有效课时"></el-input-number>
+                                            <el-input-number v-model="yxsj" @change="yxksSubmit" placeholder="请输入有效课时"></el-input-number>
                                         </el-form-item>
                                     </el-form>
                                 </div>
@@ -444,6 +444,12 @@ export default {
         this.$refs.prent.addEventListener("click", this.msgPrent, false);
     },
     methods: {
+        // 保存有效科室
+        yxksSubmit() {
+            updateClassCourseBasic({ kzzd1: this.yxsj, id: this.courseId }).then(res => {
+                this.msgSuccess("修改有效课时")
+            })
+        },
         // 获取课表内容
         getCopyContent(item) {
             this.copyDialogFormVisible = true;
