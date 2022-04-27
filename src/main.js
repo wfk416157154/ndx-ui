@@ -9,6 +9,7 @@ import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'
 import store from './store'
+import axios from "axios"
 import router from './router'
 import directive from './directive' //directive
 import { download } from '@/utils/request'
@@ -53,6 +54,7 @@ Vue.prototype.resetForm = resetForm
 Vue.prototype.addDateRange = addDateRange
 Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.selectDictLabels = selectDictLabels
+Vue.prototype.$axios = axios
 Vue.prototype.renderDict = renderDict
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
