@@ -229,13 +229,14 @@ export default {
         },
         // 查看
         handleClick(row) {
-            this.form = row
+            this.form = row;
+            this.form.id = row.gkId
             this.dialogFormVisible = true
         },
         //导出
         onExport() {
             this.download('basic/collegeEntranceExam/exportCollegeEntranceExam', {
-                bjid : this.queryParams.bjid
+                bjid: this.queryParams.bjid
             }, `班级高考成绩.xlsx`)
         },
         // 添加
