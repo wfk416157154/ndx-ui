@@ -25,3 +25,20 @@ export default  {
   }
 }
 </script>
+<style>
+  /* 表格 */
+  .tablebox {
+    width: 800px;
+    /* height: 600px; */
+    border: 1px solid #000;
+    margin: 15px auto;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  tr,
+  td {
+    /* height: 25px; */
+    border: 1px solid;
+    padding: 5px 10px;
+  }
+</style>
