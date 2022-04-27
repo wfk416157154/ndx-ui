@@ -187,7 +187,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .contaiiner {
   width: 100%;
   margin: 0 auto;

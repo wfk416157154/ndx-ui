@@ -252,7 +252,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .el-form-item__label {
   text-align: right;
 }
