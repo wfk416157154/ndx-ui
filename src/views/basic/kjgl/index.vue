@@ -31,7 +31,7 @@
 <script>
   import {queryKjTreeList, queryTeachingTemplateList} from "@/api/basic/kjgl";
   import {listTeachingMaterial} from "@/api/basic/teachingMaterial";
-
+  let Base64=require("js-base64").Base64;
   export default {
     data() {
       return {
@@ -56,7 +56,11 @@
     methods: {
       /* 查询树结构的某个节点 */
       searchTreeList() {
-        this.$refs['tree' + this.activeTab][0].filter(this.inputContent);
+        let url="https://ndx-file.nandouxingriyu.com/statics/2021/11/05/378a42f4-bb55-489d-b426-e8d64cc5d972.pptx";
+        let encodeurl=Base64.encode(url);
+        console.log("encode:",encodeurl)
+        window.open('http://192.168.0.129:8012/onlinePreview?url='+encodeURIComponent(encodeurl));
+        //this.$refs['tree' + this.activeTab][0].filter(this.inputContent);
       },
       /* 过滤节点的函数 */
       filterNode(value, data) {
