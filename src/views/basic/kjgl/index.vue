@@ -17,10 +17,10 @@
         <div style="width: 50%;margin-top: 20px;float: left;border: 2px solid gray;border-radius: 5px;">
           <div style="margin:10px 0px 10px 10px" v-for="(vo,index) in kcrwList">{{vo.jdmc}}
             <el-button style="margin-left: 20px" type="primary" size="small" round @click="checkKj(vo)"
-                       v-if="'1'==vo.courseware.status">上传修改课件
+                       v-if="vo.courseware.status&&'0'!=vo.courseware.status">上传修改课件
             </el-button>
             <el-button style="margin-left: 20px" type="success" size="small" @click="previewPPT(vo.courseware.ybkjUrl)"
-                       v-if="'1'==vo.courseware.status">查看原版课件
+                       v-if="vo.courseware.status&&'0'!=vo.courseware.status">查看原版课件
             </el-button>
             <el-button style="margin-left: 20px" type="warning" size="small" @click="showUpload(vo.id)" circle
                        v-if="null==vo.courseware.status">上传原版课件
@@ -62,36 +62,6 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="修改原版课件" :visible.sync="updateKjdialogShow" width="30%">
-      <div>
-        <el-upload
-          ref="xgkjUpload"
-          :limit="1"
-          accept="*"
-          :headers="upload.headers"
-          :action="upload.url"
-          :on-remove="handleRemove"
-          :on-progress="handleFileUploadProgress"
-          :on-success="handleXgkjSuccess"
-          :auto-upload="true"
-          :file-list="xgkjWjidFile"
-          drag
-          v-loading="fullscreenLoading"
-          element-loading-text="正在进行上传·······"
-          element-loading-spinner="el-icon-loading"
-          element-loading-background="rgba(0, 0, 0, 0.8)"
-        >
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">
-            将文件拖到此处，或
-            <em>点击上传</em>
-          </div>
-        </el-upload>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="ybdialogShow = false">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 
 
@@ -111,7 +81,6 @@
       return {
         fullscreenLoading: false,
         ybdialogShow: false,// 是否显示上传原版课件的弹窗
-        updateKjdialogShow: false,// 是否显示修改后的课件弹窗
         kjTreeList: [],// 课件树结构列表
         materaialList: [],// 教材列表
         inputContent: "",// 输入的课程内容
@@ -138,12 +107,9 @@
         },
         // 文件id数组
         ybWjidFile: [],
-        xgkjWjidFile: [],// 修改后的课件列表
         ybkjWjid: secretKey(),// 原版课件id
-        xgkjWjid: secretKey(),// 修改后的课件id
         kcrwId: "",// 课程任务id
         currentChooseKcId: "",// 当前选择的课程id
-        currentClickKjObj: null,// 当前点击的课件对象
       };
     },
     created() {
@@ -157,7 +123,12 @@
     methods: {
       /* 查看课件 */
       checkKj(vo) {
-        this.currentClickKjObj = vo;
+        this.getConfigKey("kjglForm").then(resp => {
+          this.$router.push({
+            path: resp.msg,
+            query: vo
+          });
+        })
       },
       /* 显示上传控件 */
       showUpload(kcrwId) {
@@ -240,33 +211,6 @@
           status: "1",// 原版课件已上传
         }
         addCourseware(obj).then(res => {
-          this.handleNodeClick({id: this.currentChooseKcId})
-        });
-      },
-      // 修改后的课件上传成功的回调
-      handleXgkjSuccess(response, file, fileList) {
-        this.upload.open = false;
-        this.upload.isUploading = false;
-        let data = response.data;
-        data.kzzd1 = this.xgkjWjid;
-        addFile(data).then(res => {
-          file.id = res.data.id;
-          this.msgSuccess("文件上传成功");
-          this.xgkjWjidFile = fileList;
-          this.updateKjdialogShow = false;
-          this.saveCourseware(data);
-        });
-        this.$refs.xgkjUpload.clearFiles();
-      },
-      /* 修改课件信息 */
-      updateCourseware(data) {
-        let obj = {
-          kcrwId: this.kcrwId,// 课程任务id
-          ybkjWjid: this.ybkjWjid,// 原版课件-文件id
-          ybkjUrl: data.url,// 原版课件-文件路径
-          status: "1",// 原版课件已上传
-        }
-        updateCourseware(obj).then(res => {
           this.handleNodeClick({id: this.currentChooseKcId})
         });
       },
