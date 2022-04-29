@@ -3,11 +3,11 @@
 
         <el-table :data="distributionTableData" border style="width: 100%">
             <el-table-column type="index" label="序号" width="55" />
-            <el-table-column prop="address" label="角色">
+            <el-table-column prop="type" label="角色">
             </el-table-column>
-            <el-table-column prop="address" label="姓名/称呼">
+            <el-table-column prop="name" label="姓名/称呼">
             </el-table-column>
-            <el-table-column prop="address" label="手机号">
+            <el-table-column prop="phone" label="手机号">
             </el-table-column>
             <el-table-column prop="address" label="操作" width="200px">
                 <template slot-scope="scope">
@@ -17,7 +17,7 @@
             </el-table-column>
         </el-table>
 
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
+        <!-- <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" /> -->
 
         <el-dialog title="分配班级" :visible.sync="dialogFormVisible">
             <el-form :model="form" :inline="true">
@@ -35,13 +35,34 @@
                 </el-form-item>
             </el-form>
             <div style="width:100%;background:#eee;">
-                <el-radio-group v-model="form.radio">
+                <el-radio-group v-model="form.kzzd4">
                     <el-radio style="padding: 20px" :label="item.id" v-for="(item,index) in classTemplateList" :key="index">{{item.rybjmc}}</el-radio>
                 </el-radio-group>
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="onHandleSubmit">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="分配班级" :visible.sync="viewDialogFormVisible">
+            <el-form :model="form" :inline="true">
+                <el-form-item label="角色" label-width="120px">
+                    <el-input v-model="this.form.type" disabled />
+                </el-form-item>
+                <el-form-item label="姓名" label-width="120px">
+                    <el-input v-model="this.form.name" disabled />
+                </el-form-item>
+                <el-form-item label="电话" label-width="120px">
+                    <el-input v-model="this.form.phone" disabled />
+                </el-form-item>
+                <el-form-item label="班级" label-width="120px">
+                    <el-input v-model="this.form.kzzd5" disabled />
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="viewDialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="viewDialogFormVisible = false; form = {}">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -65,6 +86,7 @@ export default {
             form: {},
             total: 0,
             dialogFormVisible: false,
+            viewDialogFormVisible: false,
             classList: [],
             schoolList: [],
             classTemplateList: []
@@ -77,19 +99,33 @@ export default {
         listSchool().then(res => {
             this.schoolList = res.rows
         })
+        this.$axios.get("/wxapi/weChar/getList").then(res => {
+            if (res.data.code == 200) {
+                this.distributionTableData = res.data.rows;
+            }
+        })
     },
     methods: {
         // 分配
         ondistribution(row) {
+            this.form = row;
+            this.classTemplateList = []
             this.dialogFormVisible = true
         },
         // 查看
         onView(row) {
-
+            this.form = row
+            this.viewDialogFormVisible = true
         },
         // 确定分配
         onHandleSubmit() {
-            this.dialogFormVisible = false
+            this.$axios.post("/wxapi/weChar/apport", this.form).then(res => {
+                if (res.data.code == 200) {
+                    this.dialogFormVisible = false
+                    this.msgSuccess("操作成功")
+                    this.form = {}
+                }
+            })
         },
         onChangeSchool() {
             this.form.bjid = null
