@@ -205,11 +205,6 @@ export default {
                 this.form.gradeSynthesis = null
                 return
             }
-            // if (typeof this.form.fullMarks == "string") {
-            //     this.msgError("成绩只能输入数字")
-            //     this.form.fullMarks = null
-            //     return
-            // }
             if (this.form.gradeChinese && this.form.gradeMath && this.form.gradeJapanese && this.form.gradeSynthesis) {
                 this.form.fullMarks = this.form.gradeChinese + this.form.gradeMath + this.form.gradeJapanese + this.form.gradeSynthesis
             } else {

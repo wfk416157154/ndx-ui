@@ -114,6 +114,9 @@
                             <div class="img-item" v-for="(jsImgList, key) in item.jswsFileList" :key="key">
                                 <el-image style="width: 100%" :src="jsImgList.wjlj" :preview-src-list="item.jswsImg"></el-image>
                             </div>
+                            <div>
+                                {{item.reason}}
+                            </div>
                             <el-radio v-if="dataRoleWeightId > 50" v-model="item.isJswsHg" label="1" @change="jianYan(true, item)">合格</el-radio>
                             <el-radio v-if="dataRoleWeightId > 50" v-model="item.isJswsHg" label="0" @change="jianYan(false, item)">不合格</el-radio>
                         </div>
