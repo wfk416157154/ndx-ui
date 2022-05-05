@@ -7,7 +7,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="学生">
-                <el-select v-model="queryParams.studentId" filterable="" placeholder="学生">
+                <el-select v-model="queryParams.studentId" filterable @change="onSelectClass" placeholder="学生">
                     <el-option v-for="item in getListStudent " :key="item.id" :label="item.xsxm" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
@@ -256,7 +256,7 @@ export default {
             this.getList()
         },
         getList() {
-            listForTeacher({ bjid: this.queryParams.bjid, isUpload: this.queryParams.isUpload }).then(res => {
+            listForTeacher({ bjid: this.queryParams.bjid, isUpload: this.queryParams.isUpload, studentId: this.queryParams.studentId }).then(res => {
                 this.gkcjList = res.rows
             })
         },

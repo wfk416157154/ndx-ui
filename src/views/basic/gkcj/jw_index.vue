@@ -7,7 +7,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="老师">
-                <el-select v-model="queryParams.lsid" filterable="" placeholder="老师">
+                <el-select v-model="queryParams.lsid" filterable placeholder="老师">
                     <el-option v-for="item in getListTeacher " :key="item.id" :label="item.lsxm" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
