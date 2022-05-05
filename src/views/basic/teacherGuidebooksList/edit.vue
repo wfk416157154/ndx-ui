@@ -104,6 +104,7 @@ export default {
             } else {
                 this.templateItem = JSON.parse(tab.name)
             }
+            this.getList()
         },
         // 启用教参
         handelEnableReference(status) {
