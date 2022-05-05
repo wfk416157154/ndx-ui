@@ -67,6 +67,7 @@
 
 </template>
 
+
 <script>
   import {queryKjTreeList, queryTeachingTemplateList} from "@/api/basic/kjgl";
   import {listTeachingMaterial} from "@/api/basic/teachingMaterial";
@@ -74,7 +75,7 @@
   import {addFile, selectFileList, delFile} from "@/api/tool/common";
   import {secretKey} from "@/utils/tools";
   import {listCourseware, getCourseware, delCourseware, addCourseware, updateCourseware} from "@/api/basic/courseware";
-
+  import { addOperatingRecord } from "@/api/basic/operatingRecord";
   let Base64 = require("js-base64").Base64;
   export default {
     data() {
@@ -199,6 +200,17 @@
           this.ybWjidFile = fileList;
           this.ybdialogShow = false;
           this.saveCourseware(data);
+        });
+        let record={
+          glid:this.kcrwId,// 课程任务id
+          ssmk:"课件模块",
+          cznrms:"上传原版课件",
+          czrid:this.$store.state.user.userId,
+          czrsjh:this.$store.state.user.name,
+          czrxm:this.$store.state.user.nickName,
+        }
+        /* 添加到操作记录 */
+        addOperatingRecord(record).then(res=>{
         });
         this.$refs.kjUpload.clearFiles();
       },
