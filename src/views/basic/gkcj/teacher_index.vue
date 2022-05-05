@@ -31,6 +31,11 @@
             </el-table-column>
             <el-table-column prop="fullMarks" label="满分">
             </el-table-column>
+            <el-table-column prop="kzzd1" label="高考截图">
+                <template slot-scope="scope">
+                    <el-image style="width: 100px; height: 100px" :src="scope.row.kzzd1" :preview-src-list="[scope.row.kzzd1]"></el-image>
+                </template>
+            </el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.row)" type="text" size="small">查看并编辑</el-button>
@@ -218,6 +223,7 @@ export default {
                 let data = response.data;
                 data.kzzd1 = this.form.photoFileId || secretKey();
                 this.form.photoFileId = data.kzzd1;
+                this.form.kzzd1 = data.url;
                 addImg(data).then((res) => {
                     file.id = res.data.id;
                     this.getList();
@@ -251,7 +257,6 @@ export default {
         },
         getList() {
             listForTeacher({ bjid: this.queryParams.bjid, isUpload: this.queryParams.isUpload }).then(res => {
-                console.log(res)
                 this.gkcjList = res.rows
             })
         },
