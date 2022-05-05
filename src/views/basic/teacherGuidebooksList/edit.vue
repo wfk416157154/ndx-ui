@@ -36,8 +36,8 @@
                         </div>
                     </div>
                     <div style="width:100%;height:60px;margin-top:20px">
-                        <el-button type="primary" size="mini" style="float:right;margin-left:20px" @click="handelEnableReference('1')" v-if=" templateItem && templateItem.enableStatus == '0'">启用</el-button>
-                        <el-button type="danger" size="mini" style="float:right;margin-left:20px" @click="handelEnableReference('0')" v-if=" templateItem && templateItem.enableStatus == '1'">关闭</el-button>
+                        <el-button type="primary" size="mini" style="float:right;margin-left:20px" @click="handelEnableReference('1')" v-if=" templateItem && templateItem.enableStatus == '0' && templateItem.status != '1'">启用</el-button>
+                        <el-button type="danger" size="mini" style="float:right;margin-left:20px" @click="handelEnableReference('0')" v-if=" templateItem && templateItem.enableStatus == '1' && templateItem.status != '1'">关闭</el-button>
                         <el-button type="primary" size="mini" style="float:right" @click="saveSubmit" v-if="(referenceList.length == 2 && templateItem && templateItem.status == '2') || (referenceList.length == 1 && templateItem && templateItem.status == '1') ">保 存</el-button>
                     </div>
                 </div>
