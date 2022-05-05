@@ -26,10 +26,10 @@ export default {
 }
 </script>
 <style>
-/* 表格 */
+/*!* 表格 *!
 .tablebox {
     width: 800px;
-    /* height: 600px; */
+    !* height: 600px; *!
     border: 1px solid #000;
     margin: 15px auto;
     border-collapse: collapse;
@@ -37,11 +37,11 @@ export default {
 }
 
 td {
-    /* height: 25px; */
-    /* border: 1px solid; */
-    /* padding: 5px 10px; */
+    !* height: 25px; *!
+    !* border: 1px solid; *!
+    !* padding: 5px 10px; *!
 }
-/* .el-table {
+!* .el-table {
     border: 1px solid;
-} */
+} *!*/
 </style>
