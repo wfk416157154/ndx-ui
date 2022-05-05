@@ -30,22 +30,19 @@
                             <editor v-model="templateItem.referenceContent" :min-height="300" />
                         </div>
                         <div v-if="recordList.length > 0 && !templateItem">
-                            <!-- <div v-for="(item,index) in recordList" :key="index">
-                                <p>{{item.userName}} {{item.createTime}}</p>
-                                <p>{{item.userName}} {{item.createTime}}</p>
-                            </div> -->
                             <el-collapse>
                                 <el-collapse-item :title="`${item.userName} ${item.createTime} `" v-for="(item,index) in recordList" :key="index">
                                     <template slot="title">
                                         <div>
                                             <span style="margin-right : 10px"> {{item.userName}} {{item.createTime}} </span>
                                             <el-tag size="mini" type="success" v-if="item.kzzd1 == '1'">启 用</el-tag>
-                                            <el-tag size="mini" type="danger" v-else>关 闭</el-tag>
+                                            <el-tag size="mini" type="danger" v-else-if="item.kzzd1 == '0'">关 闭</el-tag>
+                                            <el-tag size="mini" type="info" v-else>修 改</el-tag>
                                         </div>
                                     </template>
                                     <div>
                                         <h4>教参内容</h4>
-                                        <div v-html="item.referenceContent"></div>
+                                        <div style="margin-left : 20px" v-html="item.referenceContent"></div>
                                     </div>
                                 </el-collapse-item>
                             </el-collapse>
