@@ -46,7 +46,11 @@
             </el-table-column>
             <el-table-column label="分配时间" align="center" prop="fpsj" />
             <el-table-column label="审核时间" align="center" prop="shsj" />
-            <el-table-column label="上传时间" align="center" prop="createTime"/>
+            <el-table-column label="上传时间" align="center" prop="createTime" width="120px">
+                <template slot-scope="scope">
+                    {{parseTime(scope.row.createTime,"{y}-{m}-{d}")}}
+                </template>
+            </el-table-column>
             <el-table-column label="分配人" align="center" prop="fplsxm" />
             <el-table-column label="审核人" align="center" prop="shlsxm" />
             <el-table-column label="教案审核状态" align="center" :formatter="getPrepareLessonAuditStatus" prop="jashzt" />
