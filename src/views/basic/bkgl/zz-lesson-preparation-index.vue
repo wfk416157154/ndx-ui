@@ -38,6 +38,7 @@
           <span>{{scope.row.kcrwmc}} {{scope.row.zsdmc}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="上传时间" align="center" prop="createTime"/>
       <el-table-column
         label="教案审核状态"
         align="center"
