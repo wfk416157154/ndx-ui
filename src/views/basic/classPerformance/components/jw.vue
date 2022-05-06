@@ -158,6 +158,24 @@ export default {
                         stack: "总量",
                         data: [],
                     },
+                    {
+                        name: "最高分",
+                        symbolSize: 0,
+                        type: "scatter",
+                        data: [],
+                    },
+                    {
+                        name: "最低分",
+                        symbolSize: 0,
+                        type: "scatter",
+                        data: [],
+                    },
+                    {
+                        name: "考试人数",
+                        symbolSize: 0,
+                        type: "scatter",
+                        data: [],
+                    },
                 ],
             },
             //请求数据页码参数
@@ -296,7 +314,16 @@ export default {
                             obj[i].series[0].data.push(
                                 item[i].everyTimeGradeInfoQueries[j].pjfs
                             );
-                            obj[i].series[0].name = `(${item[i].rybj})班-最高分(${item[i].everyTimeGradeInfoQueries[j].kscjMax});最低分(${item[i].everyTimeGradeInfoQueries[j].kscjMin});考试人数${item[i].everyTimeGradeInfoQueries[j].ksrs};平均分`;
+                            obj[i].series[1].data.push(
+                                item[i].everyTimeGradeInfoQueries[j].kscjMax
+                            );
+                            obj[i].series[2].data.push(
+                                item[i].everyTimeGradeInfoQueries[j].kscjMin
+                            );
+                            obj[i].series[3].data.push(
+                                item[i].everyTimeGradeInfoQueries[j].ksrs
+                            );
+                            obj[i].series[0].name = `(${item[i].rybj})班-平均分`;
                         }
                     }
                     obj[i] && obj[i + "a"].setOption(obj[i]);
