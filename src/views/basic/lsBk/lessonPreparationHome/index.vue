@@ -256,7 +256,7 @@ export default {
             }
         });
     },
-    mounted() { },
+    mounted() {},
     methods: {
         getList() {
             treeListTeacher(this.form).then(res => {

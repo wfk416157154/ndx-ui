@@ -9,3 +9,12 @@ export function leaderPrepareLessonsStatistics(query) {
   })
 }
 
+// 课程进度
+export function ListPlanProgress(query) {
+  return request({
+    url: '/basic/planProgress/list',
+    method: 'get',
+    params: query
+  })
+}
+
