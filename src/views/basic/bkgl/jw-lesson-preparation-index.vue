@@ -6,6 +6,11 @@
                     <el-option :label="item.leader" :value="item.lsid" v-for="(item,index) in assignorList" :key="index"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="老师">
+                <el-select v-model="queryParams.lsid" filterable placeholder="老师">
+                    <el-option v-for="item in getListTeacher " :key="item.id" :label="item.lsxm" :value="item.id"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="教案状态" prop="shzt">
                 <el-select v-model="queryParams.shzt" placeholder="请选择教案状态" clearable size="small">
                     <el-option v-for="dict in preparelesoonsStatus" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
@@ -146,6 +151,7 @@
 <script>
 import { getToken } from "@/utils/auth";
 import { secretKey } from "@/utils/tools";
+import { listTeacher } from "@/api/basic/teacher"
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 import {
     listAcdemicDean,
@@ -181,6 +187,7 @@ export default {
             // 查看编辑
             viewDialogFormVisible: false,
             assignorList: [],
+            getListTeacher: [],
             // 审核状态
             shzt: ""
         };
@@ -197,6 +204,9 @@ export default {
         this.getDicts("prepareLessonAuditStatus").then(response => {
             this.prepareLessonAuditStatus = response.data;
         });
+        listTeacher({ rybj: this.queryParams.bjid }).then(res => {
+            this.getListTeacher = res.rows
+        })
 
         // 分配人
         getSubLeaderIds({}).then(res => {
