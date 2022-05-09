@@ -11,6 +11,9 @@
                     <el-option v-for="item in queryBjclassList " :key="item.id" :label="item.rybjmc" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="届数" prop="rybjmc">
+                <el-input v-model="queryParams.rybjmc" />
+            </el-form-item>
             <el-form-item label="开班学期" prop="nj">
                 <el-select v-model="queryParams.nj" placeholder="请选择开班学期">
                     <el-option v-for="item in selectNj" :key="item.dictValue" :label="item.dictLabel" :value="item.dictLabel"></el-option>
