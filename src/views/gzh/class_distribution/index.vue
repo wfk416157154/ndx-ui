@@ -79,7 +79,7 @@ import { wxUserList, updateWxUser } from "@/api/basic/weixin"
 export default {
     data() {
         return {
-            distributionTableData: [{}],
+            distributionTableData: [],
             queryParams: {
                 pageNum: 1,
                 pageSize: 10,
@@ -115,7 +115,6 @@ export default {
         // 分配
         ondistribution(row) {
             this.form = row;
-            console.log(this.form)
             this.classTemplateList = []
             this.dialogFormVisible = true
         },

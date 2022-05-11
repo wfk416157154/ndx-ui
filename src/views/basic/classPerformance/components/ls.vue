@@ -293,19 +293,19 @@ export default {
                                 ) +
                                 item[i].everyTimeGradeInfoQueries[j].kssj
                             );
-                            obj[i].series[0].data.push(
+                            this.obj[i].series[0].data.push(
                                 item[i].everyTimeGradeInfoQueries[j].pjfs
                             );
-                            obj[i].series[1].data.push(
+                            this.obj[i].series[1].data.push(
                                 item[i].everyTimeGradeInfoQueries[j].kscjMax
                             );
-                            obj[i].series[2].data.push(
+                            this.obj[i].series[2].data.push(
                                 item[i].everyTimeGradeInfoQueries[j].kscjMin
                             );
-                            obj[i].series[3].data.push(
+                            this.obj[i].series[3].data.push(
                                 item[i].everyTimeGradeInfoQueries[j].ksrs
                             );
-                            obj[i].series[0].name = `(${item[i].rybj})班-平均分`;
+                            this.obj[i].series[0].name = `(${item[i].rybj})班-平均分`;
                         }
                         this.obj[i] && this.obj[i + "a"].setOption(this.obj[i]);
                     } else {
