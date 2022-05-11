@@ -14,7 +14,10 @@
                 <el-input v-model="queryParams.userId" placeholder="学号"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="onQuerySubmit">查询</el-button>
+                <el-button type="primary" @click="onQuerySubmit('0')">查询</el-button>
+                <el-button type="success" @click="onQuerySubmit('1')">通过</el-button>
+                <el-button type="danger" @click="onQuerySubmit('2')">驳回</el-button>
+                <el-button type="info" @click="onQuerySubmit('0')">待审核</el-button>
             </el-form-item>
         </el-form>
 
@@ -22,7 +25,7 @@
             <el-table-column type="index" label="序号" width="55" />
             <el-table-column prop="openId" label="微信id" width="180">
             </el-table-column>
-            <el-table-column prop="wxNickName" label="微信昵称" width="180">
+            <el-table-column prop="kzzd4" label="微信昵称" width="180">
             </el-table-column>
             <el-table-column prop="type" label="角色">
             </el-table-column>
@@ -32,12 +35,12 @@
             </el-table-column>
             <el-table-column prop="phone" label="家长手机号">
             </el-table-column>
-            <el-table-column prop="kzzd3" label="系统匹配数据">
-            </el-table-column>
+            <!-- <el-table-column prop="kzzd3" label="系统匹配数据">
+            </el-table-column> -->
             <el-table-column prop="address" label="是否通过" width="200px">
                 <template slot-scope="scope">
-                    <el-button type="success" size="mini" @click="onAgree(scope.row)" :disabled="scope.row.status == '1'">同 意</el-button>
-                    <el-button type="danger" size="mini" @click="onReject(scope.row)" v-if="scope.row.status != '1'">驳 回</el-button>
+                    <el-button type="success" size="mini" @click="onAgree(scope.row)" :disabled="scope.row.status == '1'" v-if="scope.row.status == '1'">同 意</el-button>
+                    <el-button type="danger" size="mini" @click="onReject(scope.row)" :disabled="scope.row.status == '2'" v-if="scope.row.status == '2'">驳 回</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -59,6 +62,7 @@
 </template>
 
 <script>
+import { wxUserList, updateWxUser } from "@/api/basic/weixin"
 export default {
     data() {
         return {
@@ -77,20 +81,19 @@ export default {
     },
     methods: {
         // 查询列表数据
-        onQuerySubmit() {
-            this.$axios.get("/wxapi/weChar/getUserList", {
-                params: this.queryParams
-            }).then(res => {
-                if (res.data.code == 200) {
-                    this.examineTableData = res.data.rows;
-                    this.total = res.data.total
+        onQuerySubmit(status) {
+            this.queryParams.status = status
+            wxUserList(this.queryParams).then(res => {
+                if (res.code == 200) {
+                    this.examineTableData = res.rows;
+                    this.total = res.total
                 }
             })
         },
         // 同意
         onAgree(row) {
             row.status = "1"
-            this.$axios.post("/wxapi/weChar/checkUser", row).then(res => {
+            updateWxUser(row).then(res => {
                 if (res.data.code == 200) {
                     this.msgSuccess("操作成功")
                 }
@@ -103,9 +106,9 @@ export default {
         },
         // 驳回确定按钮
         onHandleSubmit() {
-            this.form.status = "0"
-            this.$axios.post("/wxapi/weChar/checkUser", this.form).then(res => {
-                if (res.data.code == 200) {
+            this.form.status = "2"
+            updateWxUser(this.form).then(res => {
+                if (res.code == 200) {
                     this.msgSuccess("操作成功")
                     this.dialogFormVisible = false
                 }

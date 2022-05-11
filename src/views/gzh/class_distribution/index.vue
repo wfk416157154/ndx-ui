@@ -17,25 +17,25 @@
             </el-table-column>
         </el-table>
 
-        <!-- <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" /> -->
+        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
 
         <el-dialog title="分配班级" :visible.sync="dialogFormVisible">
             <el-form :model="form" :inline="true">
                 <el-form-item label="校区" label-width="120px">
-                    <el-select v-model="form.xqid" filterable placeholder="请选择" clearable @change="onChangeSchool">
+                    <el-select v-model="form.kzzd1" filterable placeholder="请选择" clearable @change="onChangeSchool">
                         <el-option v-for="item in schoolList" :key="item.value" :label="item.xxmc" :value="item.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="班级" label-width="120px">
+                <el-form-item label="班级" label-width="120px" v-if="form.type != '5'">
                     <el-select v-model="form.bjid" filterable placeholder="请选择" clearable @change="onChangeClass">
                         <el-option v-for="item in classList" :key="item.value" :label="item.rybjmc" :value="item.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
-            <div style="width:100%;background:#eee;">
-                <el-radio-group v-model="form.kzzd4">
+            <div style="width:100%;background:#eee;" v-if="form.type != '5'">
+                <el-radio-group v-model="form.kzzd3">
                     <el-radio style="padding: 20px" :label="item.id" v-for="(item,index) in classTemplateList" :key="index">{{item.rybjmc}}</el-radio>
                 </el-radio-group>
             </div>
@@ -75,6 +75,7 @@ import {
 import {
     listSchool,
 } from "@/api/basic/school";
+import { wxUserList, updateWxUser } from "@/api/basic/weixin"
 export default {
     data() {
         return {
@@ -82,6 +83,7 @@ export default {
             queryParams: {
                 pageNum: 1,
                 pageSize: 10,
+                type: "5"
             },
             form: {},
             total: 0,
@@ -99,16 +101,21 @@ export default {
         listSchool().then(res => {
             this.schoolList = res.rows
         })
-        this.$axios.get("/wxapi/weChar/getList").then(res => {
-            if (res.data.code == 200) {
-                this.distributionTableData = res.data.rows;
-            }
-        })
+        this.getList()
     },
     methods: {
+        getList() {
+            wxUserList(this.queryParams).then(res => {
+                if (res.code == 200) {
+                    this.distributionTableData = res.rows;
+                    this.total = res.total;
+                }
+            })
+        },
         // 分配
         ondistribution(row) {
             this.form = row;
+            console.log(this.form)
             this.classTemplateList = []
             this.dialogFormVisible = true
         },
@@ -119,8 +126,8 @@ export default {
         },
         // 确定分配
         onHandleSubmit() {
-            this.$axios.post("/wxapi/weChar/apport", this.form).then(res => {
-                if (res.data.code == 200) {
+            updateWxUser(this.form).then(res => {
+                if (res.code == 200) {
                     this.dialogFormVisible = false
                     this.msgSuccess("操作成功")
                     this.form = {}

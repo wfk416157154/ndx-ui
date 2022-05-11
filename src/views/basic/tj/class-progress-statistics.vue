@@ -19,6 +19,7 @@
                 <el-button type="primary" @click="getList">查询</el-button>
             </el-form-item>
         </el-form>
+
         <el-table :data="progressStatisticsList" border style="width: 100%">
             <el-table-column prop="rybjmc" label="班级" width="200">
             </el-table-column>
@@ -40,7 +41,7 @@
 </template>
 
 <script>
-import { listBjclass } from "@/api/basic/bjclass";
+import { listBjclass } from "@/api/basic/bjclass"
 import { listTeacher } from "@/api/basic/teacher"
 import { ListPlanProgress } from "@/api/basic/tj"
 export default {
