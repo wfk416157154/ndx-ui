@@ -163,6 +163,10 @@ export default {
         },
         // 保存
         onSaveSubmit() {
+            if (!this.form.kzzd1) {
+                this.msgError("请上传高考成绩截图")
+                return
+            }
             this.$refs["bkForm"].validate((valid) => {
                 if (valid) {
                     this.form.bjid = this.queryParams.bjid
