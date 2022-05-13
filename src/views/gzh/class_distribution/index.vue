@@ -3,7 +3,7 @@
 
         <el-table :data="distributionTableData" border style="width: 100%">
             <el-table-column type="index" label="序号" width="55" />
-            <el-table-column prop="type" label="角色">
+            <el-table-column prop="typeName" label="角色">
             </el-table-column>
             <el-table-column prop="name" label="姓名/称呼">
             </el-table-column>
@@ -48,16 +48,16 @@
         <el-dialog title="分配班级" :visible.sync="viewDialogFormVisible">
             <el-form :model="form" :inline="true">
                 <el-form-item label="角色" label-width="120px">
-                    <el-input v-model="this.form.type" disabled />
+                    <el-input v-model="form.type" disabled />
                 </el-form-item>
                 <el-form-item label="姓名" label-width="120px">
-                    <el-input v-model="this.form.name" disabled />
+                    <el-input v-model="form.name" disabled />
                 </el-form-item>
                 <el-form-item label="电话" label-width="120px">
-                    <el-input v-model="this.form.phone" disabled />
+                    <el-input v-model="form.phone" disabled />
                 </el-form-item>
                 <el-form-item label="班级" label-width="120px">
-                    <el-input v-model="this.form.kzzd5" disabled />
+                    <el-input v-model="form.kzzd5" disabled />
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
