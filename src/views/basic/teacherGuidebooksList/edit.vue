@@ -9,7 +9,7 @@
             <div class="view-item">
                 <div>
                     <h2>建议</h2>
-                    <el-collapse>
+                    <el-collapse v-model="activeName" accordion>
                         <el-collapse-item title="建议列表" name="1">
                             <div class="item-content" v-for="(item,index) in suggestList" :key="index">
                                 <span>{{item.userName}} {{item.suggestContent}} {{item.createTime}}</span>
@@ -70,7 +70,8 @@ export default {
             referenceList: [],
             recordList: [],
             tabsContent: "",
-            templateItem: null
+            templateItem: null,
+            activeName:"1"
         }
     },
     created() {

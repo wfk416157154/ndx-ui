@@ -2,7 +2,7 @@
   <div class="InventoryRegistration">
     <el-form :inline="true" :model="inventoryRegistrationForm">
       <el-form-item label="资料名称">
-        <el-input v-model="inventoryRegistrationForm.bookName" />
+        <el-input clearable v-model="inventoryRegistrationForm.bookName" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getList">查询</el-button>
