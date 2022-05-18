@@ -5,20 +5,29 @@
         <el-input v-model="queryParams.name" placeholder="姓名"></el-input>
       </el-form-item>
       <el-form-item label="手机号">
-        <el-input v-model="queryParams.user" placeholder="手机号"></el-input>
+        <el-input v-model="queryParams.phone" placeholder="手机号"></el-input>
       </el-form-item>
       <el-form-item label="家长手机号">
-        <el-input v-model="queryParams.phone" placeholder="家长手机号"></el-input>
+        <el-input v-model="queryParams.parentTel" placeholder="家长手机号"></el-input>
       </el-form-item>
       <el-form-item label="学号">
         <el-input v-model="queryParams.userId" placeholder="学号"></el-input>
       </el-form-item>
+
+      <el-form-item label="班级">
+        <el-select v-model="queryParams.rybjidArr" filterable placeholder="请选择" multiple clearable >
+          <el-option v-for="item in classList" :key="item.value" :label="item.rybjmc" :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="onQuerySubmit('0')">查询</el-button>
         <el-button type="success" @click="onQuerySubmit('1')">通过</el-button>
         <el-button type="danger" @click="onQuerySubmit('2')">驳回</el-button>
         <el-button type="info" @click="onQuerySubmit('0')">待审核</el-button>
         (默认查询待审核的数据)
+        <el-button type="primary" @click="exportWxUser">导出微信用户</el-button>
       </el-form-item>
     </el-form>
 
@@ -29,6 +38,10 @@
       <el-table-column prop="kzzd4" label="微信昵称" width="180">
       </el-table-column>
       <el-table-column prop="typeName" label="角色">
+      </el-table-column>
+      <el-table-column prop="rybjmc" label="班级名称">
+      </el-table-column>
+      <el-table-column prop="xqmc" label="校区名称">
       </el-table-column>
       <el-table-column prop="name" label="姓名/称呼">
       </el-table-column>
@@ -74,7 +87,9 @@
 
 <script>
   import {wxUserList, updateWxUser} from "@/api/basic/weixin"
-
+  import {
+    listBjclass,
+  } from "@/api/basic/bjclass";
   export default {
     data() {
       return {
@@ -84,12 +99,16 @@
         },
         form: {},
         total: 0,
+        classList: [],
         examineTableData: [],
         dialogFormVisible: false,
       }
     },
     created() {
       this.onQuerySubmit(0)
+      listBjclass().then(res => {
+        this.classList = res.rows
+      })
     },
     methods: {
       // 查询列表数据
@@ -125,6 +144,13 @@
             this.dialogFormVisible = false
           }
         })
+      },
+      exportWxUser(){
+        this.download(
+          "basic/wxUser/wxUserExport",
+          {},
+          `微信用户信息.xlsx`
+        );
       }
     }
   }
