@@ -110,7 +110,7 @@
           <el-button
             type="danger"
             size="small"
-            v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1' &&scope.row.kzzd2 !== '3'"
+            v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1' &&scope.row.kzzd2 !== '3'&&scope.row.kslx !== '1'"
           slot="reference"
             @click="backout(scope.row.id)"
           >撤回</el-button>
