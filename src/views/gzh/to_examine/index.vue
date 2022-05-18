@@ -69,7 +69,7 @@
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
-                @pagination="onQuerySubmit"/>
+                @pagination="onQuerySubmit('0')"/>
 
     <el-dialog title="驳回原因" :visible.sync="dialogFormVisible">
       <el-form :model="form">
