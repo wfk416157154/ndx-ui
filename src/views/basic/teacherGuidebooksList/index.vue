@@ -15,7 +15,7 @@
                 </div>
                 <div style="width: 50%;margin-top: 20px;float: left;border: 2px solid gray;border-radius: 5px;">
                     <div style="margin:10px 0px 10px 10px" v-for="(vo,index) in kcrwList" :key="index">{{vo.jdmc}}
-                        <el-button size="mini" type="primary" @click="toPage('teacherGuidebooksEdit',vo)">编 辑</el-button>
+                        <el-button size="mini" type="primary" v-if="$store.state.user.dataRoleWeightId != 41" @click="toPage('teacherGuidebooksEdit',vo)">编 辑</el-button>
                         <el-button size="mini" type="primary" @click="toPage('proposal',vo)">建 议</el-button>
                     </div>
 

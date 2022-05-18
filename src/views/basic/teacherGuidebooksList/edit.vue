@@ -149,13 +149,15 @@ export default {
         }
       });
     },
+    // 导出
     handleExport() {
+      console.log(this.kcItem.kcmc)
       this.download(
         "basic/reference/exportReference",
         {
           ...this.templateItem
         },
-        `教参.doc`
+        `${this.kcItem.kcmc}-${this.templateItem.referenceName}.doc`
       );
     },
     // 保存按钮
