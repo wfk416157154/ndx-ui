@@ -125,7 +125,7 @@
       onAgree(row) {
         row.status = "1"
         updateWxUser(row).then(res => {
-          if (res.data.code == 200) {
+          if (res.code == 200) {
             this.msgSuccess("操作成功")
           }
         })
