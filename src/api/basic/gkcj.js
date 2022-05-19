@@ -32,3 +32,12 @@ export function updateCollegeEntranceExam(data) {
         data: data
     })
 }
+
+// 设置高考分数线
+export function editClass(data) {
+    return request({
+        url: '/basic/bjclass/editClass',
+        method: 'put',
+        data: data
+    })
+}
