@@ -23,9 +23,9 @@ export function updateWxUser(data) {
  * 角色审核完成后发送消息给该微信用户
  * @param query
  */
-export function checkRoleSendMsg(query) {
+export function checkRoleSendMsg(wechatServerUrl,query) {
   return request({
-    url: 'http://ndx-wxgzh-server.natapp1.cc/wxTemplateMessage/checkRoleSendMsg',
+    url: wechatServerUrl+'wxTemplateMessage/checkRoleSendMsg',
     method: 'get',
     params: query
   })

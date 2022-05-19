@@ -129,7 +129,7 @@
         updateWxUser(row).then(res => {
           if (res.code == 200) {
             this.msgSuccess("操作成功")
-            checkRoleSendMsg({openId:row.openId})
+            this.sendMsg(row.openId);
           }
         })
       },
@@ -144,10 +144,15 @@
         updateWxUser(this.form).then(res => {
           if (res.code == 200) {
             this.msgSuccess("操作成功")
-            checkRoleSendMsg({openId:this.form.openId})
+            this.sendMsg(this.form.openId);
             this.dialogFormVisible = false
           }
         })
+      },
+      sendMsg(openId){
+        this.getConfigKey("wecharServerUrl").then(resp => {
+          checkRoleSendMsg(resp.msg,{openId})
+        });
       },
       exportWxUser() {
         this.download(
