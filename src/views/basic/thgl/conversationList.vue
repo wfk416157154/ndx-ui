@@ -75,12 +75,22 @@
           <el-input v-model="formStu.lsxm" readonly placeholder="请输入老师姓名" />
         </el-form-item>
         <el-form-item label="学生姓名" prop="xsxm">
-          <el-select v-model="formStu.xsid" filterable @change="getStudentName" placeholder="班级">
+          <el-select v-model="formStu.xsid" filterable @change="getStudentName" placeholder="学生">
             <el-option
               v-for="item in studentList "
               :key="item.id"
               :label="item.xsxm"
               :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="谈话对象" prop="xsxm">
+          <el-select v-model="formStu.kzzd3" filterable placeholder="谈话对象">
+            <el-option
+              v-for="item in padConversationType "
+              :key="item.id"
+              :label="item.dictLabel"
+              :value="item.dictValue"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -164,7 +174,8 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
-      }
+      },
+      padConversationType: []
     };
   },
   created() {
@@ -172,6 +183,9 @@ export default {
       this.queryBjclassList = response.rows;
       this.queryParams.kzzd2 = this.queryBjclassList[0].id;
       this.getStudent();
+    });
+    this.getDicts("pad_conversation_type").then(res => {
+      this.padConversationType = res.data;
     });
   },
   mounted() {
@@ -190,7 +204,7 @@ export default {
       });
     },
     conversation() {
-      this.resetStu()
+      this.resetStu();
       this.openStu = true;
       let loginUser = this.$store.state.user;
       this.formStu.lsid = loginUser.glrid;
@@ -261,7 +275,7 @@ export default {
           addTeacherTalk(this.formStu).then(response => {
             this.msgSuccess("新增谈话内容成功");
             this.openStu = false;
-            this.getList()
+            this.getList();
           });
         }
       });
