@@ -75,7 +75,7 @@
           <el-input v-model="formStu.lsxm" readonly placeholder="请输入老师姓名" />
         </el-form-item>
         <el-form-item label="学生姓名" prop="xsxm">
-          <el-select v-model="formStu.xsid" filterable placeholder="班级">
+          <el-select v-model="formStu.xsid" filterable @change="getStudentName" placeholder="班级">
             <el-option
               v-for="item in studentList "
               :key="item.id"
@@ -171,7 +171,7 @@ export default {
     listBjclass().then(response => {
       this.queryBjclassList = response.rows;
       this.queryParams.kzzd2 = this.queryBjclassList[0].id;
-      this.getStudent()
+      this.getStudent();
     });
   },
   mounted() {
@@ -190,13 +190,16 @@ export default {
       });
     },
     conversation() {
+      this.resetStu()
       this.openStu = true;
       let loginUser = this.$store.state.user;
       this.formStu.lsid = loginUser.glrid;
       this.formStu.lsxm = loginUser.nickName;
       this.formStu.kzzd2 = this.queryParams.kzzd2;
+    },
+    getStudentName() {
       this.studentList.forEach(val => {
-        if (val.xsid == this.formStu.xsid) {
+        if (val.id == this.formStu.xsid) {
           this.formStu.xsxm = val.xsxm;
         }
       });
@@ -258,6 +261,7 @@ export default {
           addTeacherTalk(this.formStu).then(response => {
             this.msgSuccess("新增谈话内容成功");
             this.openStu = false;
+            this.getList()
           });
         }
       });
