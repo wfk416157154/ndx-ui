@@ -149,26 +149,7 @@
       <el-col :span="1.5">
         <el-button type="info" icon="el-icon-upload2" size="mini" @click="handleImport">导入</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="info"
-          icon="el-icon-upload2"
-          size="mini"
-          :disabled="single"
-          @click="addStuTalk"
-        >添加学生谈话
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="info"
-          icon="el-icon-upload2"
-          size="mini"
-          :disabled="single"
-          @click="lookStuTalk"
-        >查看谈话内容
-        </el-button>
-      </el-col>
+  
       <el-col :span="1.5">
         <el-button
           type="danger"
