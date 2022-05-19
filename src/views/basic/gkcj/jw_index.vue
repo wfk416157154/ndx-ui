@@ -72,13 +72,12 @@
 <script>
 import {
     listBjclass,
-    updateBjclass,
 } from "@/api/basic/bjclass";
 import {
     listStudent,
 } from "@/api/basic/student";
 import { listTeacher } from "@/api/basic/teacher"
-import { listForAcdemicDean, listForTeacher, addCollegeEntranceExam, updateCollegeEntranceExam } from "@/api/basic/gkcj"
+import { listForAcdemicDean,editClass, listForTeacher, addCollegeEntranceExam, updateCollegeEntranceExam } from "@/api/basic/gkcj"
 export default {
     data() {
         return {
@@ -139,7 +138,7 @@ export default {
             this.dialogFormVisible = true
         },
         bkxSubmit() {
-            updateBjclass(this.bkfsForm).then(res => {
+            editClass(this.bkfsForm).then(res => {
                 this.dialogFormVisible = false;
                 this.msgSuccess(res.msg)
             })
