@@ -46,7 +46,7 @@
             <div v-if="recordList.length > 0 && !templateItem">
               <el-collapse>
                 <el-collapse-item
-                  :title="`${item.userName} ${item.createTime} `"
+                  :title="`${item.userName} ${item.createTime}`"
                   v-for="(item,index) in recordList"
                   :key="index"
                 >
@@ -88,7 +88,13 @@
               @click="saveSubmit"
               v-if="(referenceList.length == 2 && templateItem && templateItem.status == '2') || (referenceList.length == 1 && templateItem && templateItem.status == '1') "
             >保 存</el-button>
-            <el-button size="mini" type="info" @click="handleExport" style="float:right;margin-right : 10px" :disabled="!templateItem.id" >导出</el-button>
+            <el-button
+              size="mini"
+              type="info"
+              @click="handleExport"
+              style="float:right;margin-right : 10px"
+              :disabled=" activeTabName == 'ls'"
+            >导出</el-button>
           </div>
         </div>
       </div>
@@ -115,7 +121,8 @@ export default {
       recordList: [],
       tabsContent: "",
       templateItem: null,
-      activeName: "1"
+      activeName: "1",
+      activeTabName: ""
     };
   },
   created() {
@@ -151,7 +158,7 @@ export default {
     },
     // 导出
     handleExport() {
-      console.log(this.kcItem.kcmc)
+      console.log(this.kcItem.kcmc);
       this.download(
         "basic/reference/exportReference",
         {

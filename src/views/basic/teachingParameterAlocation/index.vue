@@ -160,7 +160,7 @@ export default {
           this.distributionForm.parentId = null;
           this.unallocatedData = [];
           this.dialogFormVisible = false;
-          this.getList()
+          this.getList();
         }
       });
     }
