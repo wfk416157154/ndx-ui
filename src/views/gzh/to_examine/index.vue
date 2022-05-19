@@ -15,7 +15,7 @@
       </el-form-item>
 
       <el-form-item label="班级">
-        <el-select v-model="queryParams.rybjidArr" filterable placeholder="请选择" multiple clearable >
+        <el-select v-model="queryParams.rybjidArr" filterable placeholder="请选择" multiple clearable>
           <el-option v-for="item in classList" :key="item.value" :label="item.rybjmc" :value="item.id">
           </el-option>
         </el-select>
@@ -62,7 +62,8 @@
         <template slot-scope="scope">
           <el-button type="success" size="mini" @click="onAgree(scope.row)" :disabled="scope.row.status == 1 ">同 意
           </el-button>
-          <el-button type="danger" size="mini" @click="onReject(scope.row)" :disabled="scope.row.status == 2||scope.row.status == 1">驳 回
+          <el-button type="danger" size="mini" @click="onReject(scope.row)"
+                     :disabled="scope.row.status == 2||scope.row.status == 1">驳 回
           </el-button>
         </template>
       </el-table-column>
@@ -86,10 +87,11 @@
 </template>
 
 <script>
-  import {wxUserList, updateWxUser} from "@/api/basic/weixin"
+  import {wxUserList, updateWxUser, checkRoleSendMsg} from "@/api/basic/weixin"
   import {
     listBjclass,
   } from "@/api/basic/bjclass";
+
   export default {
     data() {
       return {
@@ -127,6 +129,7 @@
         updateWxUser(row).then(res => {
           if (res.code == 200) {
             this.msgSuccess("操作成功")
+            checkRoleSendMsg({openId:row.openId})
           }
         })
       },
@@ -141,11 +144,12 @@
         updateWxUser(this.form).then(res => {
           if (res.code == 200) {
             this.msgSuccess("操作成功")
+            checkRoleSendMsg({openId:this.form.openId})
             this.dialogFormVisible = false
           }
         })
       },
-      exportWxUser(){
+      exportWxUser() {
         this.download(
           "basic/wxUser/wxUserExport",
           {},
