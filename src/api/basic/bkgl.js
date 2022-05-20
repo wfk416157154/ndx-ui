@@ -53,3 +53,13 @@ export function lsEditPrepareLessons(data) {
     data: data
   })
 }
+
+//备课归属变更
+export function affiliationUpdate(data) {
+  return request({
+    url: '/basic/prepareLessons/affiliationUpdate',
+    method: 'post',
+    data: data
+  })
+}
+
