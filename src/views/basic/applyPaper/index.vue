@@ -259,6 +259,7 @@
         </el-form-item>
         <!--<el-form-item label="考试范围" label-width="120px" prop="ksfw">
           <el-input v-model="cjscForm.ksfw" disabled/>
+          //
         </el-form-item>-->
         <el-form-item label="考试时间" label-width="120px" prop="kskssj">
           <el-input v-model="cjscForm.kskssj" disabled />
