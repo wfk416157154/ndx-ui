@@ -157,7 +157,7 @@
       exportWxUser() {
         this.download(
           "basic/wxUser/wxUserExport",
-          {},
+          this.queryParams,
           `微信用户信息.xlsx`
         );
       }
