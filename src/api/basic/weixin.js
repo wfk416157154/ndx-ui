@@ -30,3 +30,14 @@ export function checkRoleSendMsg(wechatServerUrl,query) {
     params: query
   })
 }
+
+/**
+ * 消息提醒
+ */
+ export function messageReminder(wechatServerUrl,data) {
+  return request({
+    url: wechatServerUrl+'wxTemplateMessage/gkcjUploadInform',
+    method: 'post',
+    data: data
+  })
+}
