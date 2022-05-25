@@ -17,7 +17,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="班级">
+      <el-form-item label="时间区间">
         <el-date-picker
           v-model="queryParams.thsjArr"
           value-format="yyyy-MM-dd"
