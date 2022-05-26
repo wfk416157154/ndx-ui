@@ -15,7 +15,7 @@
                    :highlight-current="true" :default-expand-all="true" @node-click="handleNodeClick"></el-tree>
         </div>
         <div style="width: 50%;margin-top: 20px;float: left;border: 2px solid gray;border-radius: 5px;">
-          <div style="margin:10px 0px 10px 10px" v-for="(vo,index) in kcrwList">{{vo.jdmc}}
+          <div style="margin:10px 0px 10px 10px" v-for="(vo,index) in kcrwList" :key="index">{{vo.jdmc}}
             <el-button style="margin-left: 20px" type="primary" size="small" round @click="checkKj(vo)"
                        v-if="vo.courseware.status&&'0'!=vo.courseware.status">上传修改课件
             </el-button>
