@@ -141,7 +141,7 @@ export default {
 </script>
     
    
-<style lang="scss">
+<style lang="scss" scoped>
 .el-form--inline .el-form-item {
   display: block;
 }

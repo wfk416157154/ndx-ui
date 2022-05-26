@@ -128,7 +128,6 @@ export default {
     onGetList(status) {
       this.queryParams.isComplete = status;
       listForAcdemicDean(this.queryParams).then((res) => {
-        console.log(res);
         this.gkcjList = res.rows;
         this.total = res.total;
       });
@@ -137,7 +136,6 @@ export default {
     getList() {
       this.queryParams.isComplete = null;
       listForAcdemicDean(this.queryParams).then((res) => {
-        console.log(res);
         this.gkcjList = res.rows;
         this.total = res.total;
       });
@@ -169,7 +167,14 @@ export default {
         lsdh: row.lsdh, //老师电话
       };
       this.getConfigKey("wecharServerUrl").then((resp) => {
-        messageReminder(resp.msg, teacherObj);
+        messageReminder(resp.msg, teacherObj).then(res=>{
+           this.msgSuccess("操作成功！");
+        }).catch(e=>{
+            this.$message({
+            type: "error",
+            message: "操作失败，请联系管理员！",
+          });
+        })
       });
     },
   },
