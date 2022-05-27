@@ -336,28 +336,31 @@ export default {
     },
     handleRemind(row) {
       let achievementObj = {
-        lsid:row.lsid,
-        bjmc:row.bjmc,
-        lsxm:row.lsxm,
-        ksfw:row.ksfw,
-        kslx:row.kslx
+        lsid: row.lsid,
+        bjmc: row.bjmc,
+        lsxm: row.lsxm,
+        ksfw: row.ksfw,
+        kslx: row.kslx,
+        userId: this.$store.state.user.userId,
+        userName: this.$store.state.user.nickName,
       };
-       this.getConfigKey("wecharServerUrl").then((resp) => {
-        gradeUploadInform(resp.msg, achievementObj).then(res=>{
-           this.msgSuccess("操作成功！");
-        }).catch(e=>{
+      this.getConfigKey("wecharServerUrl").then((resp) => {
+        gradeUploadInform(resp.msg, achievementObj)
+          .then((res) => {
+            this.msgSuccess("操作成功！");
+          })
+          .catch((e) => {
             this.$message({
-            type: "error",
-            message: "操作失败，请联系管理员！",
+              type: "error",
+              message: "操作失败，请联系管理员！",
+            });
           });
-        })
       });
       this.getListMessage = row;
       this.reset();
       this.form.jsrArr[0] = row.lsxm + "-" + row.dhhm;
       this.form.kzzd2 = row.id;
       this.open = true;
-
     },
     /** 提交按钮 */
     submitForm() {

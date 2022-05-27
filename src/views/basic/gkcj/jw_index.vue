@@ -167,6 +167,8 @@ export default {
         lsxm: row.lsxm, //老师姓名
         lsdh: row.lsdh, //老师电话
         lsid: row.lsid, //老师id
+        userId: this.$store.state.user.userId,
+        userName: this.$store.state.user.nickName,
       };
       this.getConfigKey("wecharServerUrl").then((resp) => {
         messageReminder(resp.msg, teacherObj)
