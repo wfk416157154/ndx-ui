@@ -1,25 +1,25 @@
 import request from '@/utils/request'
 
 // 新增微信素材表
-export function listWxMaterial(query) {
+export function listWxMaterial(path, query) {
   return request({
-    url: '/wxMaterial/list',
+    url: path + 'wxMaterial/list',
     method: 'get',
     params: query
   })
 }
 // 获取微信素材表的详细信息
-export function getWxMaterial(id) {
+export function getWxMaterial(path, id) {
   return request({
-    url: '/wxMaterial/' + id,
+    url: path + 'wxMaterial/' + id,
     method: 'get'
   })
 }
 
 // 新增微信基本消息表
-export function addWxMaterial(data) {
+export function addWxMaterial(path, data) {
   return request({
-    url: '/wxMaterial',
+    url: path + 'wxMaterial',
     method: 'post',
     data: data
   })
@@ -27,18 +27,19 @@ export function addWxMaterial(data) {
 
 
 // 修改微信素材表
-export function updateWxMaterial(data) {
+export function updateWxMaterial(path, data) {
   return request({
-    url: '/wxMaterial',
+    url: path + 'wxMaterial',
     method: 'put',
     data: data
   })
 }
 
 // 删除微信素材表
-export function delWxMaterial(id) {
+export function delWxMaterial(path, data) {
   return request({
-    url: '/wxMaterial/' + id,
-    method: 'delete'
+    url: path + 'wxMaterial/delWxMaterial',
+    method: 'post',
+    data: data
   })
 }
