@@ -41,3 +41,12 @@ export function checkRoleSendMsg(wechatServerUrl,query) {
     data: data
   })
 }
+
+// 成绩上传统计提醒
+export function gradeUploadInform(wechatServerUrl,data) {
+  return request({
+    url: wechatServerUrl+'wxTemplateMessage/gradeUploadInform',
+    method: 'post',
+    data: data
+  })
+}

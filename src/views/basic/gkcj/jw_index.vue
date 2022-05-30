@@ -160,21 +160,27 @@ export default {
     },
     // 提醒
     handleRemind(row) {
+      console.log(row);
       let teacherObj = {
         bjid: row.bjid, //班级id
         bjmc: row.rybjmc, //班级名称
         lsxm: row.lsxm, //老师姓名
         lsdh: row.lsdh, //老师电话
+        lsid: row.lsid, //老师id
+        userId: this.$store.state.user.userId,
+        userName: this.$store.state.user.nickName,
       };
       this.getConfigKey("wecharServerUrl").then((resp) => {
-        messageReminder(resp.msg, teacherObj).then(res=>{
-           this.msgSuccess("操作成功！");
-        }).catch(e=>{
+        messageReminder(resp.msg, teacherObj)
+          .then((res) => {
+            this.msgSuccess("操作成功！");
+          })
+          .catch((e) => {
             this.$message({
-            type: "error",
-            message: "操作失败，请联系管理员！",
+              type: "error",
+              message: "操作失败，请联系管理员！",
+            });
           });
-        })
       });
     },
   },
