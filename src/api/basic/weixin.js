@@ -50,3 +50,12 @@ export function gradeUploadInform(wechatServerUrl,data) {
     data: data
   })
 }
+
+// 消息管理新增 提醒
+export function messageInform(wechatServerUrl,data) {
+  return request({
+    url: wechatServerUrl+'wxTemplateMessage/messageInform',
+    method: 'post',
+    data: data
+  })
+}
