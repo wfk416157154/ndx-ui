@@ -273,8 +273,8 @@ export default {
                 // 设置上传的请求头部
                 headers: { Authorization: "Bearer " + getToken() },
                 // 上传考试成绩地址
-                // fileUrl: this.wecharServerUrl + "wxMaterial",
-                fileUrl: "http://ndx-wxgzh-server.natapp1.cc/wxMaterial",
+                fileUrl: this.wecharServerUrl + "wxMaterial",
+                // fileUrl: "http://ndx-wxgzh-server.natapp1.cc/wxMaterial",
             },
         };
     },
@@ -283,12 +283,12 @@ export default {
     },
     methods: {
         getList() {
-            listWxMaterial("http://ndx-wxgzh-server.natapp1.cc/", {
+            listWxMaterial(this.wecharServerUrl, {
                 sclx: this.activeName,
             }).then((res) => {
                 this.scTableData = res.rows;
             });
-            listWxMaterial("http://ndx-wxgzh-server.natapp1.cc/", {
+            listWxMaterial(this.wecharServerUrl, {
                 sclx: "image",
             }).then((res) => {
                 this.imgOptions = res.rows;
@@ -301,7 +301,7 @@ export default {
                 type: "warning",
             })
                 .then(() => {
-                    delWxMaterial("http://ndx-wxgzh-server.natapp1.cc/", {
+                    delWxMaterial(this.wecharServerUrl, {
                         ids: [row.id],
                         mediaIds: [row.mediaId],
                     }).then((res) => {

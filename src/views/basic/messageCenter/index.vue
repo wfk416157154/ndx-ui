@@ -339,7 +339,7 @@ export default {
         };
     },
     created() {
-        getUserList("http://ndx-wxgzh-server.natapp1.cc/", {
+        getUserList(this.wecharServerUrl, {
             isDel: 1,
             status: 1,
         }).then((res) => {
@@ -353,7 +353,7 @@ export default {
     methods: {
         // 查看未关注用户
         getNoFollowed() {
-            getUserList("http://ndx-wxgzh-server.natapp1.cc/", {
+            getUserList(this.wecharServerUrl, {
                 isDel: 0,
             }).then((res) => {
                 this.userTable = res.rows;
@@ -361,7 +361,7 @@ export default {
         },
         // 获取素材数据
         getListWxMaterial(type) {
-            listWxMaterial("http://ndx-wxgzh-server.natapp1.cc/", {
+            listWxMaterial(this.wecharServerUrl, {
                 sclx: type,
             }).then((res) => {
                 this.scOptions = res.rows;
@@ -376,13 +376,12 @@ export default {
                 this.queryParams.startDate = null;
                 this.queryParams.endDate = null;
             }
-            listWxMessage(
-                "http://ndx-wxgzh-server.natapp1.cc/",
-                this.queryParams
-            ).then((res) => {
-                this.msgTableData = res.rows;
-                this.total = res.total;
-            });
+            listWxMessage(this.wecharServerUrl, this.queryParams).then(
+                (res) => {
+                    this.msgTableData = res.rows;
+                    this.total = res.total;
+                }
+            );
         },
         // 添加消息
         addMsg() {
@@ -400,7 +399,7 @@ export default {
         handelViews(row) {
             this.msgTitle =
                 row.msgTitle + "-" + row.messageModule + "-" + row.createTime;
-            listWxMsgUser("http://ndx-wxgzh-server.natapp1.cc/", {
+            listWxMsgUser(this.wecharServerUrl, {
                 id: row.id,
             }).then((res) => {
                 console.log(res);
@@ -420,10 +419,7 @@ export default {
                     this.msgHomeForm.lsidArr.push(val.userId);
                 }
             });
-            addWxMessage(
-                "http://ndx-wxgzh-server.natapp1.cc/",
-                this.msgHomeForm
-            ).then((res) => {
+            addWxMessage(this.wecharServerUrl, this.msgHomeForm).then((res) => {
                 if (res.code == 200) {
                     this.msgDialogFormVisible = false;
                     this.getList();
@@ -433,7 +429,7 @@ export default {
         },
         //动态搜索接收者
         getReceiverName() {
-            getUserList("http://ndx-wxgzh-server.natapp1.cc/", {
+            getUserList(this.wecharServerUrl, {
                 isDel: 1,
                 status: 1,
                 name: this.msgHomeForm.receiver,
