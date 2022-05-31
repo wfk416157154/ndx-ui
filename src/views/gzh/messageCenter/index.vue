@@ -393,9 +393,8 @@ export default {
             this.msgTitle =
                 row.msgTitle + "-" + row.messageModule + "-" + row.createTime;
             listWxMsgUser(this.wecharServerUrl, {
-                id: row.id,
+                glid: row.id,
             }).then((res) => {
-                console.log(res);
                 this.wxMsgUserTable = res.rows;
             });
             this.dialogFormVisible = true;
