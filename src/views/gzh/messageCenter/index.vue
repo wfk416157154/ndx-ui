@@ -34,7 +34,7 @@
                 <el-button type="success" @click="addMsg">添 加 消 息</el-button>
             </el-form-item>
             <el-form-item>
-                <el-popover placement="right" width="600" trigger="click">
+                <el-popover placement="bottom" width="600" trigger="click">
                     <el-table :data="userTable" height="400px">
                         <el-table-column width="100" property="name" label="姓名"></el-table-column>
                         <el-table-column property="phone" label="手机号"></el-table-column>
