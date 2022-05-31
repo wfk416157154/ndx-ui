@@ -42,7 +42,7 @@
                 >
             </el-form-item>
             <el-form-item>
-                <el-popover placement="right" width="600" trigger="click">
+                <el-popover placement="bottom" width="600" trigger="click">
                     <el-table :data="userTable" height="400px">
                         <el-table-column
                             width="100"
