@@ -25,56 +25,35 @@
                 <el-input v-model="queryParams.messageModule" />
             </el-form-item>
             <el-form-item label="发送时间">
-                <el-date-picker
-                    v-model="queryParams.sjArr"
-                    type="daterange"
-                    value-format="yyyy-MM-dd"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                >
+                <el-date-picker v-model="queryParams.sjArr" type="daterange" value-format="yyyy-MM-dd" range-separator="至"
+                                start-placeholder="开始日期" end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="getList">查 询</el-button>
-                <el-button type="success" @click="addMsg"
-                    >添 加 消 息</el-button
-                >
+                <el-button type="success" @click="addMsg">添 加 消 息</el-button>
             </el-form-item>
             <el-form-item>
                 <el-popover placement="right" width="600" trigger="click">
                     <el-table :data="userTable" height="400px">
-                        <el-table-column
-                            width="100"
-                            property="name"
-                            label="姓名"
-                        ></el-table-column>
-                        <el-table-column property="phone" label="手机号">
-                        </el-table-column>
+                        <el-table-column width="100" property="name" label="姓名"></el-table-column>
+                        <el-table-column property="phone" label="手机号"></el-table-column>
+                        <el-table-column property="kzzd4" label="微信昵称"></el-table-column>
                         <el-table-column property="phone" label="状态">
                             <template slot-scope="scope">
-                                <el-tag
-                                    type="success"
-                                    v-if="scope.row.status == 1"
-                                    >正 常</el-tag
-                                >
-                                <el-tag type="info" v-if="scope.row.status == 0"
-                                    >待审核</el-tag
-                                >
-                                <el-tag
-                                    type="danger"
-                                    v-if="scope.row.status == 2"
-                                    >不通过</el-tag
-                                >
+                                <el-tag type="warning" v-if="scope.row.status == ''||scope.row.status == null">未进行角色绑定</el-tag>
+                                <el-tag type="success" v-if="scope.row.status == 1">正 常</el-tag>
+                                <el-tag type="info" v-if="scope.row.status == 0">待审核</el-tag>
+                                <el-tag type="danger" v-if="scope.row.status == 2">不通过</el-tag>
                             </template>
                         </el-table-column>
+                      <el-table-column property="createTime" label="添加时间" width="150px">
+                        <template slot-scope="scope">
+                          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+                        </template>
+                      </el-table-column>
                     </el-table>
-                    <el-button
-                        type="danger"
-                        slot="reference"
-                        @click="getNoFollowed"
-                        >查看未关注用户</el-button
-                    >
+                    <el-button type="danger" slot="reference" @click="getNoFollowed">查看未关注用户</el-button>
                 </el-popover>
             </el-form-item>
         </el-form>
@@ -85,6 +64,9 @@
             <el-table-column prop="msgTitle" label="消息主题" width="180">
             </el-table-column>
             <el-table-column prop="messageType" label="消息类型" width="180">
+              <template slot-scope="scope">
+                <dict-tag :options="wechatMsgType" :value="scope.row.messageType" />
+              </template>
             </el-table-column>
             <el-table-column prop="messageModule" label="消息模块">
             </el-table-column>
@@ -224,14 +206,8 @@
                         </td>
                     </tr>
                     <tr v-if="showArr.includes(1)">
-                        <td
-                            style="
-                                padding: 20px;
-                                box-sizing: border-box;
-                                text-align: center;
-                            "
-                        >
-                            消息主题
+                        <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                            消息标题
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
                             <el-input v-model="msgHomeForm.msgTitle" />
@@ -257,6 +233,22 @@
                             </el-input>
                         </td>
                     </tr>
+                    <tr v-if="showArr.includes(1)">
+                      <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                        跳转链接
+                      </td>
+                      <td style="padding: 20px; box-sizing: border-box">
+                        <el-input type="textarea" :rows="4" v-model="msgHomeForm.kzzd1" />
+                      </td>
+                    </tr>
+                    <tr v-if="showArr.includes(1)">
+                      <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                        备注
+                      </td>
+                      <td style="padding: 20px; box-sizing: border-box">
+                        <el-input type="textarea" :rows="4" v-model="msgHomeForm.remark" />
+                      </td>
+                    </tr>
                     <tr v-if="showArr.includes(3)">
                         <td
                             style="
@@ -273,7 +265,7 @@
                                     v-for="item in scOptions"
                                     :key="item.value"
                                     :label="item.scmc"
-                                    :value="item.mediaId"
+                                    :value="item.id"
                                 >
                                 </el-option>
                             </el-select>
@@ -390,7 +382,8 @@ export default {
                 userName: this.$store.state.user.nickName,
                 receiverArr: [],
                 lsidArr: [],
-                messageType: "2",
+                messageType: "1",
+                messageModule:"系统后台",
             };
             this.getTemplateShow();
             this.msgDialogFormVisible = true;
