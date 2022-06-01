@@ -169,36 +169,21 @@
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            style="
+                        <td style="
                                 padding: 20px;
                                 box-sizing: border-box;
                                 text-align: center;
-                            "
-                        >
+                            ">
                             接收人
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
                             <div>
-                                <el-input
-                                    v-model="msgHomeForm.receiver"
-                                    @input="getReceiverName"
-                                />
-                                <el-checkbox
-                                    v-model="isSelectAll"
-                                    @change="selectAll"
-                                    >全 选</el-checkbox
-                                >
+                                <el-input v-model="msgHomeForm.receiver" @input="getReceiverName"/>
+                                <el-checkbox v-model="isSelectAll" @change="selectAll">全 选</el-checkbox>
                             </div>
                             <div style="margin: 20px 0px">
-                                <el-checkbox-group
-                                    v-model="msgHomeForm.receiverArr"
-                                >
-                                    <el-checkbox
-                                        v-for="(dic, index) in userNameList"
-                                        :key="index"
-                                        :label="dic.openId"
-                                    >
+                                <el-checkbox-group v-model="msgHomeForm.receiverArr">
+                                    <el-checkbox v-for="(dic, index) in userNameList" :key="index" :label="dic.openId">
                                         {{ dic.name }}
                                     </el-checkbox>
                                 </el-checkbox-group>
@@ -214,22 +199,11 @@
                         </td>
                     </tr>
                     <tr v-if="showArr.includes(2)">
-                        <td
-                            style="
-                                padding: 20px;
-                                box-sizing: border-box;
-                                text-align: center;
-                            "
-                        >
+                        <td style="padding: 20px;box-sizing: border-box;text-align: center;">
                             消息内容
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
-                            <el-input
-                                type="textarea"
-                                :rows="4"
-                                placeholder="请输入内容"
-                                v-model="msgHomeForm.msgContent"
-                            >
+                            <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="msgHomeForm.msgContent">
                             </el-input>
                         </td>
                     </tr>
@@ -241,6 +215,14 @@
                         <el-input type="textarea" :rows="4" v-model="msgHomeForm.kzzd1" />
                       </td>
                     </tr>
+                    <tr v-if="showArr.includes(4)">
+                      <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                        图片封面URL
+                      </td>
+                      <td style="padding: 20px; box-sizing: border-box">
+                        <el-input type="textarea" :rows="4" v-model="msgHomeForm.kzzd2" />
+                      </td>
+                    </tr>
                     <tr v-if="showArr.includes(1)">
                       <td style="padding: 20px;box-sizing: border-box;text-align: center;">
                         备注
@@ -250,23 +232,16 @@
                       </td>
                     </tr>
                     <tr v-if="showArr.includes(3)">
-                        <td
-                            style="
+                        <td style="
                                 padding: 20px;
                                 box-sizing: border-box;
                                 text-align: center;
-                            "
-                        >
+                            ">
                             素材id
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
                             <el-select filterable v-model="msgHomeForm.scid">
-                                <el-option
-                                    v-for="item in scOptions"
-                                    :key="item.value"
-                                    :label="item.scmc"
-                                    :value="item.id"
-                                >
+                                <el-option v-for="item in scOptions" :key="item.value" :label="item.scmc" :value="item.id">
                                 </el-option>
                             </el-select>
                         </td>
@@ -274,9 +249,7 @@
                 </tbody>
             </table>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="msgDialogFormVisible = false"
-                    >取 消</el-button
-                >
+                <el-button @click="msgDialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="handelSave">确 定</el-button>
             </div>
         </el-dialog>
@@ -473,8 +446,8 @@ export default {
                     break;
                 // 图文
                 case "6":
-                    this.showArr = [3];
-                    this.getListWxMaterial("news");
+                    this.showArr = [1,2,4];
+                    //this.getListWxMaterial("news");
                     break;
                 default:
                     break;
