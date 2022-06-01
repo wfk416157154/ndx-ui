@@ -207,6 +207,8 @@
             :on-success="handleFileSuccess"
             :auto-upload="true"
             :file-list="wjidFile"
+            :before-upload="beforeFile"
+            :data="fileForm"
             drag
           >
             <i class="el-icon-upload"></i>
@@ -383,7 +385,10 @@ export default {
         // 设置上传的请求头部
         headers: {Authorization: "Bearer " + getToken()},
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/file/upload"
+        url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+      },
+      fileForm: {
+        renameFileName: ""
       },
       // 文件id数组
       wjidFile: [],
@@ -418,6 +423,10 @@ export default {
     });
   },
   methods: {
+    //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='平板公告管理-'+file.name
+    },
     /** 查询广告列表 */
     getList() {
       this.loading = true;

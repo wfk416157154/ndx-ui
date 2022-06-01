@@ -43,6 +43,8 @@
                   :on-preview="handlePictureCardPreview"
                   :on-remove="handleRemove"
                   :on-success="mzSuccess"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -108,6 +110,8 @@
                   :on-remove="handleRemoveEdit"
                   :on-success="mzSuccessEdit"
                   :file-list="files1"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -159,7 +163,10 @@ export default {
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+      },
+      fileForm: {
+        renameFileName: ""
       },
       dialogVisible: false,
       files1: null,
@@ -184,6 +191,10 @@ export default {
     this.lsName = this.$store.state.user.nickName;
   },
   methods: {
+    //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='免责列表-'+file.name
+    },
     getImg() {
       selectFileList({ kzzd1: this.getInfo.id }).then(res => {
         this["files1"] = res.rows;
