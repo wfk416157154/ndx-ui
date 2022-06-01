@@ -6,7 +6,7 @@
       :inline="true"
       label-width="68px"
       :rules="rules"
-      style="margin-top:20px" 
+      style="margin-top: 20px"
     >
       <el-form-item label="老师姓名" label-width="80px" prop="newLsid">
         <el-select
@@ -102,7 +102,7 @@ export default {
         newBjid: [
           { required: true, message: "请选择新班级", trigger: "change" },
         ],
-         newLsid: [
+        newLsid: [
           { required: true, message: "请选择新老师", trigger: "change" },
         ],
       },
@@ -121,10 +121,9 @@ export default {
   methods: {
     //更换老师
     replaceTeacher() {
-        this.$refs["queryForm"].validate((valid) => {
+      this.$refs["queryForm"].validate((valid) => {
         if (valid) {
-      affiliationUpdate(this.queryParams).then((response) => {
-      });
+          affiliationUpdate(this.queryParams).then((response) => {});
         }
       });
     },
@@ -142,5 +141,12 @@ export default {
 </script>
     
    
-<style>
+<style lang="scss" scoped>
+.el-form--inline .el-form-item {
+  display: block;
+}
+
+.el-form-item {
+  margin-left: 40px;
+}
 </style>

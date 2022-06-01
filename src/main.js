@@ -59,6 +59,9 @@ Vue.prototype.renderDict = renderDict
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
 Vue.prototype.$bus = Bus
+Vue.prototype.getConfigKey("wecharServerUrl").then(res=>{
+  Vue.prototype.wecharServerUrl = res.msg
+})
 
 
 Vue.prototype.msgSuccess = function (msg) {

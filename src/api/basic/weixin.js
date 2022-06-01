@@ -30,3 +30,32 @@ export function checkRoleSendMsg(wechatServerUrl,query) {
     params: query
   })
 }
+
+/**
+ * 消息提醒
+ */
+ export function messageReminder(wechatServerUrl,data) {
+  return request({
+    url: wechatServerUrl+'wxTemplateMessage/gkcjUploadInform',
+    method: 'post',
+    data: data
+  })
+}
+
+// 成绩上传统计提醒
+export function gradeUploadInform(wechatServerUrl,data) {
+  return request({
+    url: wechatServerUrl+'wxTemplateMessage/gradeUploadInform',
+    method: 'post',
+    data: data
+  })
+}
+
+// 消息管理新增 提醒
+export function messageInform(wechatServerUrl,data) {
+  return request({
+    url: wechatServerUrl+'wxTemplateMessage/messageInform',
+    method: 'post',
+    data: data
+  })
+}

@@ -70,87 +70,119 @@
 </template>
 
 <script>
+import { listBjclass } from "@/api/basic/bjclass";
+import { listStudent } from "@/api/basic/student";
+import { listTeacher } from "@/api/basic/teacher";
 import {
-    listBjclass,
-} from "@/api/basic/bjclass";
-import {
-    listStudent,
-} from "@/api/basic/student";
-import { listTeacher } from "@/api/basic/teacher"
-import { listForAcdemicDean,editClass, listForTeacher, addCollegeEntranceExam, updateCollegeEntranceExam } from "@/api/basic/gkcj"
-export default {
-    data() {
-        return {
-            gkcjList: [],
-            form: {},
-            dialogFormVisible: false,
-            dialogVisible: false,
-            total: 0,
-            queryParams: {
-                pageNum: 0,
-                pageSize: 10
-            },
-            formLabelWidth: 200,
-            queryBjclassList: [],
-            getListTeacher: [],
-            bkfsForm: {
-                bkfs1: null,
-                bkfs2: null
-            }
-        }
-    },
-    created() {
-        listBjclass().then(response => {
-            this.queryBjclassList = response.rows;
-        });
-        listTeacher({ rybj: this.queryParams.bjid }).then(res => {
-            this.getListTeacher = res.rows
-        })
-    },
-    methods: {
-        onExport(row) {
-            this.download('basic/collegeEntranceExam/exportCollegeEntranceExam', {
-                bjid: row.bjid
-            }, `班级高考成绩.xlsx`)
-        },
-        // 选择老师
-        onSelectClass() {
-            this.getList()
-        },
-        onGetList(status) {
-            this.queryParams.isComplete = status;
-            listForAcdemicDean(this.queryParams).then(res => {
-                console.log(res)
-                this.gkcjList = res.rows;
-                this.total = res.total
-            })
-        },
-        getList() {
-            this.queryParams.isComplete = null
-            listForAcdemicDean(this.queryParams).then(res => {
-                console.log(res)
-                this.gkcjList = res.rows;
-                this.total = res.total
-            })
-        },
-        handleClick(row) {
-            this.bkfsForm.id = row.bjid
-            this.dialogFormVisible = true
-        },
-        bkxSubmit() {
-            editClass(this.bkfsForm).then(res => {
-                this.dialogFormVisible = false;
-                this.msgSuccess(res.msg)
-            })
-        },
-        handleViews(row) {
-            this.getConfigKey("teacher_index").then(res => {
-                this.$router.push({ path: res.msg, query: { bjid: row.bjid } })
-            })
-        },
-        handleRemind() {
+  listForAcdemicDean,
+  editClass,
+  listForTeacher,
+  addCollegeEntranceExam,
+  updateCollegeEntranceExam,
+} from "@/api/basic/gkcj";
+import { messageReminder } from "@/api/basic/weixin";
 
-        }
-    }
-}
+export default {
+  data() {
+    return {
+      gkcjList: [],
+      form: {},
+      dialogFormVisible: false,
+      dialogVisible: false,
+      total: 0,
+      queryParams: {
+        pageNum: 0,
+        pageSize: 10,
+      },
+      formLabelWidth: 200,
+      queryBjclassList: [],
+      getListTeacher: [],
+      bkfsForm: {
+        bkfs1: null,
+        bkfs2: null,
+      },
+    };
+  },
+  created() {
+    listBjclass().then((response) => {
+      this.queryBjclassList = response.rows;
+    });
+    listTeacher({ rybj: this.queryParams.bjid }).then((res) => {
+      this.getListTeacher = res.rows;
+    });
+  },
+  methods: {
+    onExport(row) {
+      this.download(
+        "basic/collegeEntranceExam/exportCollegeEntranceExam",
+        {
+          bjid: row.bjid,
+        },
+        `班级高考成绩.xlsx`
+      );
+    },
+    // 选择老师
+    onSelectClass() {
+      this.getList();
+    },
+    onGetList(status) {
+      this.queryParams.isComplete = status;
+      listForAcdemicDean(this.queryParams).then((res) => {
+        this.gkcjList = res.rows;
+        this.total = res.total;
+      });
+    },
+    //查询
+    getList() {
+      this.queryParams.isComplete = null;
+      listForAcdemicDean(this.queryParams).then((res) => {
+        this.gkcjList = res.rows;
+        this.total = res.total;
+      });
+    },
+    // 设置本科线
+    handleClick(row) {
+      this.bkfsForm.id = row.bjid;
+      this.dialogFormVisible = true;
+    },
+    // 确定
+    bkxSubmit() {
+      editClass(this.bkfsForm).then((res) => {
+        this.dialogFormVisible = false;
+        this.msgSuccess(res.msg);
+      });
+    },
+    //查看
+    handleViews(row) {
+      this.getConfigKey("teacher_index").then((res) => {
+        this.$router.push({ path: res.msg, query: { bjid: row.bjid } });
+      });
+    },
+    // 提醒
+    handleRemind(row) {
+      console.log(row);
+      let teacherObj = {
+        bjid: row.bjid, //班级id
+        bjmc: row.rybjmc, //班级名称
+        lsxm: row.lsxm, //老师姓名
+        lsdh: row.lsdh, //老师电话
+        lsid: row.lsid, //老师id
+        userId: this.$store.state.user.userId,
+        userName: this.$store.state.user.nickName,
+      };
+      this.getConfigKey("wecharServerUrl").then((resp) => {
+        messageReminder(resp.msg, teacherObj)
+          .then((res) => {
+            this.msgSuccess("操作成功！");
+          })
+          .catch((e) => {
+            this.$message({
+              type: "error",
+              message: "操作失败，请联系管理员！",
+            });
+          });
+      });
+    },
+  },
+};
 </script>
