@@ -239,7 +239,7 @@ export default {
     getHomePageClassTeachingPlan(id) {
       let result = homePageClassTeachingPlan(id);
       result.then((res) => {
-        console.log(res)
+        // console.log(res)
         this.dqkcmc = res.data.dqkcmc;
       });
       return result;
