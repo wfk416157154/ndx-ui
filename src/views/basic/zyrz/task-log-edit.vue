@@ -1,6 +1,6 @@
 <template>
   <div class="wrap-pybc">
-    <table border="1" style="width : 100%" cellspacing="0">
+    <table border="1" style="width: 100%" cellspacing="0">
       <tbody>
         <tr>
           <td class="td-left-box">班级</td>
@@ -12,7 +12,7 @@
               placeholder="请选择班级"
             >
               <el-option
-                v-for="item in bjclassList "
+                v-for="item in bjclassList"
                 :key="item.id"
                 :label="item.rybjmc"
                 :value="item.id"
@@ -22,12 +22,19 @@
         </tr>
         <tr>
           <td class="td-left-box">老师</td>
-          <td style="text-align : center">{{this.$store.state.user.nickName}}</td>
+          <td style="text-align: center">
+            {{ this.$store.state.user.nickName }}
+          </td>
         </tr>
         <tr>
           <td class="td-left-box">作业类型</td>
           <td>
-            <el-select v-model="queryParams.zylx" placeholder="请选择作业类型" clearable size="small">
+            <el-select
+              v-model="queryParams.zylx"
+              placeholder="请选择作业类型"
+              clearable
+              size="small"
+            >
               <el-option
                 v-for="dict in zylxOptions"
                 :key="dict.dictValue"
@@ -40,7 +47,10 @@
         <tr>
           <td class="td-left-box">作业主题</td>
           <td>
-            <el-input v-model="queryParams.zyzt" placeholder="请输入内容"></el-input>
+            <el-input
+              v-model="queryParams.zyzt"
+              placeholder="请输入内容"
+            ></el-input>
           </td>
         </tr>
         <tr>
@@ -55,26 +65,30 @@
             <template v-if="queryParams.id">
               <el-checkbox
                 :ref="'c' + index"
-                @change="addStudentInfo(item,index)"
-                v-for="(item,index) in getListStudent"
+                @change="addStudentInfo(item, index)"
+                v-for="(item, index) in getListStudent"
                 :key="index"
                 :label="item.xsbh"
                 :checked="queryParams.xsList.includes(item.xsbh)"
               >
-                <span v-if="!queryParams.id">{{item.xsxm}}</span>
-                <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
+                <span v-if="!queryParams.id">{{ item.xsxm }}</span>
+                <el-link v-else type="success" @click="getStudentLog(item)">{{
+                  item.xsxm
+                }}</el-link>
               </el-checkbox>
             </template>
             <template v-else>
               <el-checkbox
                 v-model="cForm[index]"
-                @change="addStudentInfo(item,index)"
-                v-for="(item,index) in getListStudent"
+                @change="addStudentInfo(item, index)"
+                v-for="(item, index) in getListStudent"
                 :key="index"
                 :label="item.xsbh"
               >
-                <span v-if="!queryParams.id">{{item.xsxm}}</span>
-                <el-link v-else type="success" @click="getStudentLog(item)">{{item.xsxm}}</el-link>
+                <span v-if="!queryParams.id">{{ item.xsxm }}</span>
+                <el-link v-else type="success" @click="getStudentLog(item)">{{
+                  item.xsxm
+                }}</el-link>
               </el-checkbox>
             </template>
           </td>
@@ -91,6 +105,8 @@
               :on-remove="handleRemove"
               :on-success="zyrzSuccess"
               :file-list="getImages"
+              :before-upload="beforeFile"
+              :data="fileForm"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -107,11 +123,15 @@
         </tr>
       </tbody>
     </table>
-    <div style="margin-top :20px;text-align: center;">
+    <div style="margin-top: 20px; text-align: center">
       <el-button type="primary" @click="submitForm">提交</el-button>
     </div>
 
-    <el-dialog title="作业日志" :visible.sync="dialogFormVisible" :before-close="cancel">
+    <el-dialog
+      title="作业日志"
+      :visible.sync="dialogFormVisible"
+      :before-close="cancel"
+    >
       <el-form>
         <el-form-item label="图片上传" label-width="120px">
           <el-upload
@@ -122,6 +142,8 @@
             :on-remove="xsHandleRemove"
             :on-success="xsZyrzSuccess"
             :file-list="zdxsGetImage"
+            :before-upload="beforeFile"
+            :data="fileForm"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -133,7 +155,9 @@
           <editor v-model="form.remark" :min-height="200" />
         </el-form-item>
         <el-form-item label="操作" label-width="120px" v-if="form.id">
-          <el-button type="danger" @click="xsDeleteSubmit(form)">删 除</el-button>
+          <el-button type="danger" @click="xsDeleteSubmit(form)"
+            >删 除</el-button
+          >
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -156,7 +180,7 @@ import {
   updateHomeworkLogStudent,
   getHomeworkLogStudent,
   listHomeworkLogStudent,
-  delHomeworkLogStudent
+  delHomeworkLogStudent,
 } from "@/api/basic/homework";
 import { getToken } from "@/utils/auth";
 import { secretKey } from "@/utils/tools";
@@ -166,6 +190,9 @@ import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 export default {
   data() {
     return {
+      fileForm: {
+        renameFileName: "",
+      },
       cForm: {},
       upload: {
         // 是否显示弹出层（用户导入）
@@ -179,7 +206,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
       },
       dialogVisible: false,
       dialogImageUrl: "",
@@ -199,7 +226,7 @@ export default {
         zyzt: null,
         zynr: null,
         ksrq: null,
-        jzrq: null
+        jzrq: null,
       },
       form: {},
       bjclassList: [],
@@ -208,11 +235,11 @@ export default {
       getImages: [],
       // 正对学生
       zdxsGetImage: [],
-      cancelIndex: null
+      cancelIndex: null,
     };
   },
   created() {
-    this.getDicts("homework_type").then(response => {
+    this.getDicts("homework_type").then((response) => {
       this.zylxOptions = response.data;
     });
     if (JSON.parse(this.$route.query.list).id) {
@@ -221,7 +248,7 @@ export default {
         this.queryParams.xsList = [];
         if (this.queryParams.homeworkLogStudentList) {
           // 当该学生-作业日志对象集合不为空
-          this.queryParams.homeworkLogStudentList.forEach(value => {
+          this.queryParams.homeworkLogStudentList.forEach((value) => {
             this.queryParams.xsList.push(value.xsbh);
           });
         }
@@ -232,26 +259,28 @@ export default {
         this.getListStudentData();
       }
     }
-    listBjclass().then(response => {
+    listBjclass().then((response) => {
       this.bjclassList = response.rows;
       // 当id为空,且只有一个班级时
-      if(!this.queryParams.id&&response.total==1){
-        this.queryParams.bjid=response.rows[0].id
-        this.getListStudentData()
+      if (!this.queryParams.id && response.total == 1) {
+        this.queryParams.bjid = response.rows[0].id;
+        this.getListStudentData();
       }
     });
-
   },
   methods: {
+    beforeFile(file) {
+      this.fileForm.renameFileName = "作业日志—" +file.name
+    },
     // 获取班级
     getListStudentData() {
-      listStudent({ ryb: this.queryParams.bjid }).then(res => {
+      listStudent({ ryb: this.queryParams.bjid }).then((res) => {
         this.getListStudent = res.rows;
       });
     },
     // 查询图片
     getSelectFileList(id, templateName) {
-      selectFileList(id).then(res => {
+      selectFileList(id).then((res) => {
         if (res.code == 200) {
           this[templateName] = res.rows;
         }
@@ -264,11 +293,11 @@ export default {
     },
     //图片删除
     handleRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -280,7 +309,7 @@ export default {
       let data = response.data;
       data.kzzd1 = this.queryParams.tpid || secretKey();
       this.queryParams.tpid = data.kzzd1;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 上传成功");
         } else {
@@ -295,11 +324,11 @@ export default {
     },
     //图片删除(学生)
     xsHandleRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -311,7 +340,7 @@ export default {
       let data = response.data;
       data.kzzd1 = this.form.tpid || secretKey();
       this.form.tpid = data.kzzd1;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 上传成功");
         } else {
@@ -322,12 +351,12 @@ export default {
     /** 提交按钮 */
     submitForm() {
       if (this.queryParams.id != null) {
-        updateHomework(this.queryParams).then(response => {
+        updateHomework(this.queryParams).then((response) => {
           this.msgSuccess("修改成功");
           this.$router.go(-1);
         });
       } else {
-        addHomework(this.queryParams).then(response => {
+        addHomework(this.queryParams).then((response) => {
           this.msgSuccess("新增成功");
           this.$router.go(-1);
         });
@@ -352,7 +381,7 @@ export default {
       }
       this.form.zdxsglid = this.queryParams.zdxsid;
       if (typeof index == "number") {
-        listHomeworkLogStudent(this.form).then(res => {
+        listHomeworkLogStudent(this.form).then((res) => {
           if (res.rows.length > 0) {
             this.form = res.rows[0];
             if (this.form.tpid) {
@@ -369,7 +398,7 @@ export default {
       let { xsbh } = item;
       this.form = {};
       this.zdxsGetImage = [];
-      listHomeworkLogStudent({ zdxsglid: zdxsid, xsbh }).then(res => {
+      listHomeworkLogStudent({ zdxsglid: zdxsid, xsbh }).then((res) => {
         if (res.code == 200 && res.rows.length > 0) {
           this.form = res.rows[0];
           if (this.form.tpid) {
@@ -396,12 +425,12 @@ export default {
         this.form.zdxsglid = this.queryParams.zdxsid;
       }
       if (this.form.id != null) {
-        updateHomeworkLogStudent(this.form).then(response => {
+        updateHomeworkLogStudent(this.form).then((response) => {
           this.msgSuccess("修改成功");
           this.dialogFormVisible = false;
         });
       } else {
-        addHomeworkLogStudent(this.form).then(response => {
+        addHomeworkLogStudent(this.form).then((response) => {
           this.msgSuccess("新增成功");
           this.dialogFormVisible = false;
         });
@@ -409,14 +438,14 @@ export default {
     },
     //针对学生 删除
     xsDeleteSubmit(item) {
-      delHomeworkLogStudent(item.id).then(res => {
+      delHomeworkLogStudent(item.id).then((res) => {
         if (res.code == 200) {
           this.msgSuccess("成功 : 删除成功");
           this.dialogFormVisible = false;
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
