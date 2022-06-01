@@ -71,6 +71,9 @@
             <el-table-column prop="messageModule" label="消息模块">
             </el-table-column>
             <el-table-column prop="createTime" label="发送时间">
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+              </template>
             </el-table-column>
             <el-table-column prop="address" label="操作" width="200px">
                 <template slot-scope="scope">
@@ -364,7 +367,7 @@ export default {
         // 查看
         handelViews(row) {
             this.msgTitle =
-                row.msgTitle + "-" + row.messageModule + "-" + row.createTime;
+                row.msgTitle + "-" + row.messageModule + "-" + this.parseTime(row.createTime, '{y}-{m}-{d} {h}:{i}:{s}');
             listWxMsgUser(this.wecharServerUrl, {
                 glid: row.id,
             }).then((res) => {
