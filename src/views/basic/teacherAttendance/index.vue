@@ -652,7 +652,7 @@ export default {
   },
   methods: {
     beforeFile(file) {
-      this.fileForm.renameFileName = "作业日志—" + file.name;
+      this.fileForm.renameFileName = "老师请假审批—" + file.name;
     },
     // 查询学校列表
     getSchoolList() {
