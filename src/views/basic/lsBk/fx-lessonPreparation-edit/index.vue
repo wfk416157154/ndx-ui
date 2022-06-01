@@ -27,6 +27,8 @@
                 :on-preview="handlePictureCardPreview"
                 :on-remove="handleRemove"
                 :on-success="bkSuccess"
+                :before-upload="beforeFile"
+                :data="fileForm"
               >
                 <i class="el-icon-plus"></i>
               </el-upload>
@@ -44,6 +46,7 @@
                 :before-upload="beforeAvatarUploadZIP"
                 :on-success="addFileSuccess"
                 :auto-upload="false"
+                :data="fileForm"
                 drag
               >
                 <i class="el-icon-upload"></i>
@@ -108,7 +111,10 @@ export default {
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+      },
+      fileForm: {
+        renameFileName: ""
       },
       paramsList: null,
       dialogVisible: false,
@@ -126,6 +132,10 @@ export default {
   },
   mounted() {},
   methods: {
+    //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='老师备课复习-'+file.name
+    },
     // 图片预览 大图
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
@@ -163,6 +173,7 @@ export default {
       if (!isLt40M) {
         this.$message.error("上传文件大小不能超过 40MB!");
       }
+       this.fileForm.renameFileName ='老师备课复习-'+file.name
       return isLt40M;
     },
     // 文件上传成功处理压缩包

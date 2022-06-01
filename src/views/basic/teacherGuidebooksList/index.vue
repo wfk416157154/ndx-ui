@@ -25,7 +25,7 @@
 
         <el-dialog title="上传原版课件" :visible.sync="ybdialogShow" width="30%">
             <div>
-                <el-upload ref="kjUpload" :limit="1" accept="*" :headers="upload.headers" :action="upload.url" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleKjFileSuccess" :auto-upload="true" :file-list="ybWjidFile" drag v-loading="fullscreenLoading" element-loading-text="正在进行上传·······" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+                <el-upload ref="kjUpload" :limit="1" accept="*" :headers="upload.headers" :action="upload.url" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleKjFileSuccess" :auto-upload="true" :file-list="ybWjidFile"  :before-upload="beforeFile" :data="fileForm" drag v-loading="fullscreenLoading" element-loading-text="正在进行上传·······" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">
                         将文件拖到此处，或
@@ -40,7 +40,7 @@
 
         <el-dialog title="修改原版课件" :visible.sync="updateKjdialogShow" width="30%">
             <div>
-                <el-upload ref="xgkjUpload" :limit="1" accept="*" :headers="upload.headers" :action="upload.url" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleXgkjSuccess" :auto-upload="true" :file-list="xgkjWjidFile" drag v-loading="fullscreenLoading" element-loading-text="正在进行上传·······" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+                <el-upload ref="xgkjUpload" :limit="1" accept="*" :headers="upload.headers" :action="upload.url" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleXgkjSuccess" :auto-upload="true" :file-list="xgkjWjidFile"  :before-upload="beforeFile" :data="fileForm" drag v-loading="fullscreenLoading" element-loading-text="正在进行上传·······" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">
                         将文件拖到此处，或
@@ -93,7 +93,10 @@ export default {
                 // 设置上传的请求头部
                 headers: { Authorization: "Bearer " + getToken() },
                 // 上传的地址
-                url: process.env.VUE_APP_BASE_API + "/file/upload"
+                url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+            },
+             fileForm: {
+                renameFileName: ""
             },
             // 文件id数组
             ybWjidFile: [],
@@ -114,6 +117,10 @@ export default {
         });
     },
     methods: {
+        //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='老师课件-'+file.name
+    },
         /* 查看课件 */
         checkKj(vo) {
             this.currentClickKjObj = vo;
