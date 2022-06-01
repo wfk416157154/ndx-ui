@@ -96,12 +96,14 @@
                     <el-input type="textarea" v-model="form.yaoqiu" placeholder="请输入要求" />
                 </el-form-item>
                 <el-form-item label="图片示例" prop="tpslid">
-                    <el-upload :action="upload.url" :headers="upload.headers" list-type="picture-card" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :limit="maxPhotoNum" :file-list="tpslPhoto">
+                    <el-upload :action="upload.url" :headers="upload.headers" list-type="picture-card" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :limit="maxPhotoNum" :file-list="tpslPhoto" :before-upload="beforeFile"
+                    :data="fileForm">
                         <i class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="文件" prop="wjid">
-                    <el-upload ref="upload" :limit="maxPhotoNum" accept=".*" :headers="upload.headers" :action="upload.url" :disabled="upload.isUploading" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="true" :file-list="wjidFile" drag>
+                    <el-upload ref="upload" :limit="maxPhotoNum" accept=".*" :headers="upload.headers" :action="upload.url" :disabled="upload.isUploading" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="true" :file-list="wjidFile" :before-upload="beforeFile"
+                    :data="fileForm" drag>
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">
                             将文件拖到此处，或
@@ -185,8 +187,11 @@ export default {
                 // 设置上传的请求头部
                 headers: { Authorization: "Bearer " + getToken() },
                 // 上传的地址
-                url: process.env.VUE_APP_BASE_API + "/file/upload"
+                url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
             },
+             fileForm: {
+                 renameFileName: ""
+                },
             // 图片示例数组
             tpslPhoto: [],
             // 文件id数组
@@ -205,6 +210,10 @@ export default {
         });
     },
     methods: {
+        //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='公司文件-'+file.name
+    },
         /** 查询文件管理列表 */
         getList() {
             this.loading = true;
