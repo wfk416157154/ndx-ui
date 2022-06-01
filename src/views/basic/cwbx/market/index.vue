@@ -581,7 +581,7 @@ export default {
         this.fileForm.renameFileName = "";
         let hz = file.name.substr(file.name.lastIndexOf("."));
         this.fileForm.renameFileName =
-          this.form.applyName + this.parseTime(new Date(), "{y}-{m}-{d}") + hz;
+         '总部/市场报销—'+this.form.applyName + this.parseTime(new Date(), "{y}-{m}-{d}") + hz;
       } else {
         this.msgError("只能上传图片或者pdf格式文件");
         return false;
