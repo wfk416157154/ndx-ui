@@ -14,7 +14,8 @@
         <div class="content">
             <h3>笔记上传</h3>
             <div>
-                <el-upload :action="upload.imgUrl" :headers="upload.headers" list-type="picture-card" :on-preview="bjPreview" :on-remove="bjRemove" :on-success="bjSuccess">
+                <el-upload :action="upload.imgUrl" :headers="upload.headers" list-type="picture-card" :on-preview="bjPreview"  :before-upload="beforeFile"
+  :data="fileForm" :on-remove="bjRemove" :on-success="bjSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
@@ -63,6 +64,9 @@ import { secretKey } from "@/utils/tools";
 export default {
     data() {
         return {
+             fileForm: {
+        renameFileName: "",
+      },
             executeDocument: {
                 videoUrl: "",
                 disabledProgress: true,
@@ -90,7 +94,7 @@ export default {
                     process.env.VUE_APP_BASE_API +
                     "/basic/examinationPaper/importClassGradeData",
                 // 上传图片地址
-                imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
+                imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
             },
             dialogImageUrl: "",
             dialogVisible: false,
@@ -123,6 +127,9 @@ export default {
         });
     },
     methods: {
+        beforeFile(file) {
+      this.fileForm.renameFileName = "视频学习笔记上传—" +file.name
+    },
         onUpdateLearnRecord() {
             this.learnRecordForm.spjd = "1";
             updateLearnRecord(this.learnRecordForm).then((res) => {
