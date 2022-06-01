@@ -214,6 +214,8 @@
             :on-success="handleFileSuccess"
             :auto-upload="true"
             :file-list="wjidFile"
+            :before-upload="beforeFile"
+            :data="fileForm"
             drag
             v-loading="fullscreenLoading"
             element-loading-text="正在进行上传·······"
@@ -240,6 +242,8 @@
             :on-success="handleKjFileSuccess"
             :auto-upload="true"
             :file-list="kjidFile"
+            :before-upload="beforeFile"
+            :data="fileForm"
             drag
             v-loading="fullscreenLoading"
             element-loading-text="正在进行上传·······"
@@ -379,7 +383,10 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/file/upload"
+        url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+      },
+      fileForm: {
+        renameFileName: ""
       },
       // 文件id数组
       wjidFile: [],
@@ -419,6 +426,10 @@ export default {
     });
   },
   methods: {
+    //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='教辅资料-'+file.name
+    },
     // 选择课程进度后
     kcjdChange(val){
       console.log("val:",val)

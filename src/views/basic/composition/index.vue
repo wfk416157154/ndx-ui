@@ -69,7 +69,7 @@
                     <el-input v-model="form.type" placeholder="请输入作文类型" />
                 </el-form-item>
                 <el-form-item label="文件" prop="wjid">
-                    <el-upload ref="uploadvideo" :headers="upload.headers" :action="upload.imgUrl" :on-success="handleFileSuccess" drag>
+                    <el-upload ref="uploadvideo" :headers="upload.headers" :action="upload.imgUrl" :on-success="handleFileSuccess" :before-upload="beforeFile" :data="fileForm" drag>
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">
                             将文件拖到此处，或
@@ -147,7 +147,10 @@ export default {
                 // 设置上传的请求头部
                 headers: { Authorization: "Bearer " + getToken() },
                 // 上传图片地址
-                imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
+                imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
+            },
+            fileForm: {
+                renameFileName: ""
             },
             // 表单参数
             form: {},
@@ -168,6 +171,10 @@ export default {
         });
     },
     methods: {
+        //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='南斗星作文-'+file.name
+    },
         /** 查询作文列表 */
         getList() {
             this.loading = true;

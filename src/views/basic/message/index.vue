@@ -234,6 +234,8 @@
             :on-success="handleFileSuccess"
             :auto-upload="true"
             :file-list="wjidFile"
+            :before-upload="beforeFile"
+            :data="fileForm"
             drag
           >
             <i class="el-icon-upload"></i>
@@ -383,8 +385,11 @@
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "/file/upload"
+          url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
         },
+         fileForm: {
+            renameFileName: ""
+          },
         // 文件id数组
         wjidFile: [],
         // 最多上传的文件数量
@@ -427,6 +432,10 @@
       });
     },
     methods: {
+      //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='消息管理-'+file.name
+    },
       /** 查询消息管理列表 */
       getList() {
         this.loading = true;
