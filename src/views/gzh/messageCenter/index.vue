@@ -57,25 +57,34 @@
                 </el-popover>
             </el-form-item>
         </el-form>
+        <!-- 切换 -->
+        <el-tabs v-model="queryParams.messageType" type="card" class="demo-tabs" @tab-click="handleQuery">
+            <el-tab-pane v-for="dict in wechatMsgType" :key="dict.dictValue" :label="dict.dictLabel" :name="dict.dictValue"></el-tab-pane>
+        </el-tabs>
 
         <el-table :data="msgTableData" border style="width: 100%">
-            <el-table-column type="index" label="序号" width="55">
+            <el-table-column align="center" type="index" label="序号" width="55">
             </el-table-column>
-            <el-table-column prop="msgTitle" label="消息主题" width="180">
+            <el-table-column align="center" prop="messageModule" label="消息模块">
             </el-table-column>
-            <el-table-column prop="messageType" label="消息类型" width="180">
-              <template slot-scope="scope">
-                <dict-tag :options="wechatMsgType" :value="scope.row.messageType" />
-              </template>
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='6'" prop="msgTitle" label="消息主题" width="180">
             </el-table-column>
-            <el-table-column prop="messageModule" label="消息模块">
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='2'||queryParams.messageType=='6'" prop="msgContent" label="消息内容" width="180">
             </el-table-column>
-            <el-table-column prop="createTime" label="发送时间">
+             <el-table-column align="center" v-if="queryParams.messageType=='3'||queryParams.messageType=='4'||queryParams.messageType=='5'" prop="scid" label="素材id" width="180">
+            </el-table-column>
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='6'" prop="kzzd1" label="跳转链接" width="180">
+            </el-table-column>
+             <el-table-column align="center" v-if="queryParams.messageType=='6'" prop="kzzd2" label="图片封面URL" width="180">
+            </el-table-column>
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='6'" prop="remark" label="备注" width="180">
+            </el-table-column>
+            <el-table-column align="center" prop="createTime" label="发送时间">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="操作" width="200px">
+            <el-table-column align="center" prop="address" label="操作" width="200px">
                 <template slot-scope="scope">
                     <el-button
                         size="mini"
@@ -283,6 +292,7 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
                 sjArr: [],
+                messageType: null,
             },
             total: 0,
             dialogFormVisible: false,
@@ -309,7 +319,7 @@ export default {
     created() {
         getUserList(this.wecharServerUrl, {
             isDel: 1,
-            status: 1,
+            status: 1
         }).then((res) => {
             this.userList = res.rows;
         });
@@ -319,6 +329,11 @@ export default {
         this.getReceiverName();
     },
     methods: {
+        // 切换tab查询(根据消息类型切换)
+        handleQuery(){
+            this.queryParams.pageNum=1;
+            this.getList()
+        },
         // 查看未关注用户
         getNoFollowed() {
             getUserList(this.wecharServerUrl, {

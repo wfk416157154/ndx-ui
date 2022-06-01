@@ -15,7 +15,7 @@
                 <el-button type="success" size="mini" @click="seeHistorical">查看下载历史</el-button>
             </el-form-item>
         </el-form>
-
+        
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
                 <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['basic:fileManagement:add']">新增</el-button>
