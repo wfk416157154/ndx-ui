@@ -2,33 +2,20 @@
     <div class="class-progress-statistics">
         <el-form :inline="true" :model="form" class="demo-form-inline">
             <el-form-item label="试卷名称">
-                <el-select
-                    v-model="form.rybjid"
-                    filterable
-                    @change="onSelectClass"
-                    clearable
-                    placeholder="班级"
-                >
-                    <el-option
-                        v-for="item in queryBjclassList"
-                        :key="item.id"
-                        :label="item.rybjmc"
-                        :value="item.id"
-                    ></el-option>
-                </el-select>
+                <el-input v-model="form.ksmc"></el-input>
             </el-form-item>
-            <el-form-item label="开始类型">
+            <el-form-item label="考试类型">
                 <el-select
-                    v-model="form.lsid"
+                    v-model="form.kslx"
                     filterable
-                    placeholder="老师"
+                    placeholder="考试类型"
                     clearable
                 >
                     <el-option
-                        v-for="item in getListTeacher"
+                        v-for="item in examinationType"
                         :key="item.id"
-                        :label="item.lsxm"
-                        :value="item.id"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
                     ></el-option>
                 </el-select>
             </el-form-item>
@@ -45,32 +32,42 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="省份">
-                <el-date-picker
-                    v-model="form.sjArr"
-                    type="daterange"
-                    clearable
-                    value-format="yyyy-MM-dd"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                >
-                </el-date-picker>
+                <el-input v-model="form.sf"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="getList">查询</el-button>
+                <el-button
+                    type="warning"
+                    plain
+                    icon="el-icon-download"
+                    @click="handleExport"
+                    >导出</el-button
+                >
             </el-form-item>
         </el-form>
 
-        <el-table :data="progressStatisticsList" border style="width: 100%">
+        <el-table :data="groupGradeEveryTimeData" border style="width: 100%">
             <el-table-column type="index" label="序号" width="55">
             </el-table-column>
             <el-table-column prop="rybjmc" label="班级" width="200">
             </el-table-column>
-            <el-table-column prop="kzzd1" label="老师"> </el-table-column>
-            <el-table-column prop="kzzd3" label="考试名称"> </el-table-column>
-            <el-table-column prop="createTime" label="时间" width="180">
+            <el-table-column prop="lsxm" label="老师"> </el-table-column>
+            <el-table-column prop="ksmc" label="考试名称"> </el-table-column>
+            <el-table-column prop="zgf" label="最高分"> </el-table-column>
+            <el-table-column prop="zdf" label="最低分"> </el-table-column>
+            <el-table-column prop="pjf" label="平均分"> </el-table-column>
+            <el-table-column prop="xssl" label="学生数量"> </el-table-column>
+            <el-table-column prop="kslx" label="考试类型">
                 <template slot-scope="scope">
-                    {{ parseTime(scope.row.createTime, "{y}-{m}-{d}") }}
+                    <dict-tag
+                        :options="examinationType"
+                        :value="scope.row.kslx"
+                    />
+                </template>
+            </el-table-column>
+            <el-table-column prop="kssj" label="时间" width="180">
+                <template slot-scope="scope">
+                    {{ parseTime(scope.row.kssj, "{y}-{m}-{d}") }}
                 </template>
             </el-table-column>
             <el-table-column prop="lsxm" label="操作人" width="180">
@@ -88,40 +85,42 @@
 </template>
 
 <script>
-import { listBjclass } from "@/api/basic/bjclass";
-import { listTeacher } from "@/api/basic/teacher";
-import { ListPlanProgress } from "@/api/basic/tj";
 import { groupGradeEveryTime } from "@/api/basic/performance-analysis-class";
 export default {
     data() {
         return {
-            progressStatisticsList: [],
+            groupGradeEveryTimeData: [],
             form: {
                 pageNum: 1,
                 pageSize: 10,
             },
             total: 0,
-            queryBjclassList: [],
-            getListTeacher: [],
+            examinationType: [],
         };
     },
     created() {
-        listBjclass().then((response) => {
-            this.queryBjclassList = response.rows;
-        });
-        listTeacher().then((res) => {
-            this.getListTeacher = res.rows;
-        });
         this.getList();
+        this.getDicts("examination_type").then((res) => {
+            this.examinationType = res.data;
+        });
     },
     methods: {
         getList() {
-            ListPlanProgress(this.form).then((res) => {
+            groupGradeEveryTime(this.form).then((res) => {
                 if (res.code == 200) {
-                    this.progressStatisticsList = res.rows;
+                    this.groupGradeEveryTimeData = res.rows;
                     this.total = res.total;
                 }
             });
+        },
+        handleExport() {
+            this.download(
+                "basic/trainProject/export",
+                {
+                    ...this.queryParams,
+                },
+                `考试成绩分析.xlsx`
+            );
         },
     },
 };
