@@ -178,7 +178,7 @@
             <!-- 添加或修改班级基础信息对话框 -->
             <el-form class="wrap-el-form" ref="photoForm" :model="form" label-width="80px">
                 <el-form-item label-width="100px" label="开班照" prop="kbz">
-                    <el-upload :action="upload.fileUrl" :headers="upload.headers" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :limit="maxPhotoNum" :file-list="files1">
+                    <el-upload :action="upload.fileUrl" :headers="upload.headers" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :limit="maxPhotoNum" :file-list="files1"  :before-upload="beforeFile" :data="fileForm">
                         <i class="el-icon-plus"></i>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
@@ -186,7 +186,7 @@
                     </el-dialog>
                 </el-form-item>
                 <el-form-item label-width="100px" label="英语成绩确认签字" prop="jtz">
-                    <el-upload :action="upload.fileUrl" :headers="upload.headers" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-success="jtzSuccess" :limit="maxPhotoNum" :file-list="files2">
+                    <el-upload :action="upload.fileUrl" :headers="upload.headers" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :on-success="jtzSuccess" :limit="maxPhotoNum" :file-list="files2"  :before-upload="beforeFile" :data="fileForm">
                         <i class="el-icon-plus"></i>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
@@ -314,7 +314,10 @@ export default {
                 // 上传的地址
                 url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
                 // 上传图片地址
-                fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+                fileUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+            },
+            fileForm: {
+                renameFileName: ""
             },
             // 图片地址
             dialogImageUrl: "",
@@ -378,6 +381,10 @@ export default {
         this.getList();
     },
     methods: {
+        //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='班级信息-'+file.name
+    },
         /** 查询班级基础信息列表 */
         getList() {
             this.loading = true;

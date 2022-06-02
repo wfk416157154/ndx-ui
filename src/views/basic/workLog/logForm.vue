@@ -335,6 +335,8 @@
                   :on-success="jswsSuccess"
                   :file-list="files1"
                   :disabled="ifRoleHasPerms"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -363,6 +365,8 @@
                   :on-success="xsbxSuccess"
                   :file-list="files2"
                   :disabled="ifRoleHasPerms"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -523,6 +527,9 @@ import { parseTime } from "../../../utils/ruoyi";
 export default {
   data() {
     return {
+        fileForm: {
+        renameFileName: "",
+      },
       ifRoleHasPerms: false,
       ksmcdisable: false,
       enableBos: false,
@@ -553,7 +560,7 @@ export default {
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
       },
       items: "height : 150px",
       // 教室图片
@@ -646,6 +653,9 @@ export default {
     //this.initGetListExaminationPaper();
   },
   methods: {
+      beforeFile(file) {
+      this.fileForm.renameFileName = "老师工作日志—" +file.name
+    },
     openFullScreen() {
       if (this.isLoad) {
         this.formLoading = this.$loading({

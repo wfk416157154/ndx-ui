@@ -62,6 +62,8 @@
               :on-remove="handleRemove"
               :on-success="zyrzSuccess"
               :file-list="getImages"
+               :before-upload="beforeFile"
+  :data="fileForm"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -93,6 +95,8 @@
             :on-remove="xsHandleRemove"
             :on-success="xsZyrzSuccess"
             :file-list="zdxsGetImage"
+             :before-upload="beforeFile"
+  :data="fileForm"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -137,6 +141,9 @@ import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 export default {
   data() {
     return {
+      fileForm: {
+        renameFileName: "",
+      },
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
@@ -149,7 +156,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
       },
       dialogVisible: false,
       dialogImageUrl: "",
@@ -207,6 +214,9 @@ export default {
     });
   },
   methods: {
+     beforeFile(file) {
+      this.fileForm.renameFileName = "培优补差—" +file.name
+    },
     // 当关闭弹窗触发的事件
     closePybcDialog(){
       // 当关闭弹窗时判断是否需要取消勾选

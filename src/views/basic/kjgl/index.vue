@@ -44,6 +44,8 @@
           :on-success="handleKjFileSuccess"
           :auto-upload="true"
           :file-list="ybWjidFile"
+          :before-upload="beforeFile"
+          :data="fileForm"
           drag
           v-loading="fullscreenLoading"
           element-loading-text="正在进行上传·······"
@@ -104,8 +106,11 @@
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "/file/upload"
+          url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
         },
+        fileForm: {
+            renameFileName: ""
+          },
         // 文件id数组
         ybWjidFile: [],
         ybkjWjid: secretKey(),// 原版课件id
@@ -122,6 +127,10 @@
       });
     },
     methods: {
+      //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='课件列表-'+file.name
+    },
       /* 查看课件 */
       checkKj(vo) {
         this.getConfigKey("kjglForm").then(resp => {

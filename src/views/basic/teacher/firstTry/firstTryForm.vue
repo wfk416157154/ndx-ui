@@ -7,9 +7,16 @@
         icon="el-icon-plus"
         size="mini"
         @click="dialogVisible = true"
-      >新增</el-button>
+        >新增</el-button
+      >
     </div>
-    <el-dialog :close-on-click-modal="false" title="增加面试老师" @close="cancel" :visible.sync="dialogVisible" width="600px">
+    <el-dialog
+      :close-on-click-modal="false"
+      title="增加面试老师"
+      @close="cancel"
+      :visible.sync="dialogVisible"
+      width="600px"
+    >
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="姓名">
           <el-input v-model="form.xm"></el-input>
@@ -40,6 +47,8 @@
             :on-remove="handleRemove"
             :on-progress="handleFileUploadProgress"
             :on-success="handleFileSuccess"
+            :before-upload="beforeFile"
+            :data="fileForm"
             :auto-upload="true"
             :file-list="wjidFile"
             drag
@@ -49,7 +58,9 @@
               将文件拖到此处，或
               <em>点击上传</em>
             </div>
-            <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许上传50M以下文件！</div>
+            <div class="el-upload__tip" style="color: red" slot="tip">
+              提示：仅允许上传50M以下文件！
+            </div>
           </el-upload>
         </el-form-item>
         <!-- <el-form-item label="初试结果">
@@ -85,6 +96,9 @@ import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
+      fileForm: {
+        renameFileName: "",
+      },
       dialogVisible: false,
       form: {
         xm: "",
@@ -93,7 +107,7 @@ export default {
         xb: "",
         yxdq: "",
         jtzz: "",
-        remark:null
+        remark: null,
       },
       // 初试结果
       resultList: [],
@@ -110,40 +124,44 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/file/upload"
+        url: process.env.VUE_APP_BASE_API + "/file/renameUpload",
       },
       // 文件id数组
-      wjidFile:[],
+      wjidFile: [],
       // 最多上传的文件数量
-      maxFileNum:3
+      maxFileNum: 3,
     };
   },
   created() {
-    this.getDicts("preliminary_test_results").then(response => {
+    this.getDicts("preliminary_test_results").then((response) => {
       this.resultList = response.data;
     });
   },
   methods: {
+    //修改上传
+    beforeFile(file) {
+      this.fileForm.renameFileName = "教师招聘—" + file.name;
+    },
     // 提交按钮
     onSubmit() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         this.dialogVisible = false;
         if (valid) {
           if (this.form.id != null) {
-            editTeacherPersonnel(this.form).then(res => {
+            editTeacherPersonnel(this.form).then((res) => {
               this.$notify({
                 title: "成功",
                 message: res.msg,
-                type: "success"
+                type: "success",
               });
               this.cancel();
             });
           } else {
-            teacherPersonnel(this.form).then(res => {
+            teacherPersonnel(this.form).then((res) => {
               this.$notify({
                 title: "成功",
                 message: res.msg,
-                type: "success"
+                type: "success",
               });
               this.cancel();
             });
@@ -155,10 +173,10 @@ export default {
     editFirstTryForm(value) {
       this.dialogVisible = true;
       this.form = value;
-      this.wjidFile=this.ifNullToNewArray(value.jlArr);
+      this.wjidFile = this.ifNullToNewArray(value.jlArr);
     },
-    ifNullToNewArray(arr){
-      if(null==arr){
+    ifNullToNewArray(arr) {
+      if (null == arr) {
         return [];
       }
       return arr;
@@ -173,16 +191,16 @@ export default {
         xb: "",
         yxdq: "",
         jtzz: "",
-        id: null
+        id: null,
       };
     },
     //公共图片删除
     handleRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -195,29 +213,29 @@ export default {
     },
     // 文件上传成功处理
     handleFileSuccess(response, file, fileList) {
-      this.ifFileLimit(fileList.length," 个文件")
+      this.ifFileLimit(fileList.length, " 个文件");
       this.upload.open = false;
       this.upload.isUploading = false;
       let data = response.data;
       data.kzzd1 = this.form.kzzd1 || secretKey();
       this.form.kzzd1 = data.kzzd1;
-      addImg(data).then(res => {
-        file.id=res.data.id;
-        this.msgSuccess("文件上传成功")
-        this.wjidFile=fileList;
+      addImg(data).then((res) => {
+        file.id = res.data.id;
+        this.msgSuccess("文件上传成功");
+        this.wjidFile = fileList;
       });
       this.$refs.upload.clearFiles();
     },
     // 图片限制判断
-    ifFileLimit(num,msg) {
+    ifFileLimit(num, msg) {
       if (num >= this.maxFileNum) {
         this.$message({
-          message: "最多上传 "+this.maxFileNum+msg,
-          type: "warning"
+          message: "最多上传 " + this.maxFileNum + msg,
+          type: "warning",
         });
       }
     },
-  }
+  },
 };
 </script>
 

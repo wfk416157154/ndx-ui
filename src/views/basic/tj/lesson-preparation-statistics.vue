@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="进度">
-        <el-select v-model="queryParams.jd" placeholder="请选择活动区域">
+        <el-select v-model="queryParams.jd" placeholder="进度">
           <el-option
             v-for="dict in prepareStatsProgress"
             :key="dict.dictValue"
