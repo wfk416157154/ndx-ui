@@ -115,7 +115,7 @@ export default {
         },
         handleExport() {
             this.download(
-                "basic/trainProject/export",
+                "/basic/everytime/exportGroupExam",
                 {
                     ...this.queryParams,
                 },
