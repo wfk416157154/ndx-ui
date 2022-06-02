@@ -58,7 +58,7 @@
             <el-table-column label="谈话原因" align="center" prop="thyy" />
             <el-table-column label="谈话内容" align="center" prop="thnr" />
             <el-table-column label="备注" align="center" prop="remark" />
-            <el-table-column label="操作" align="center" prop="remark">
+            <el-table-column label="文件下载" align="center" prop="remark">
                 <template slot-scope="scope">
                     <a href="#" v-if="null != scope.row.kzzd1">
                         <span
@@ -67,17 +67,23 @@
                             >下载谈话文件</span
                         >
                     </a>
-                    <a href="#" v-else>
-                        <span style="margin-left: 10px; color: red"
-                            >未上传</span
-                        >
-                    </a>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" prop="remark">
+                <template slot-scope="scope">
                     <el-button
                         style="margin-left: 10px"
                         type="text"
                         size="small"
                         @click="handelEdit(scope.row)"
                         >编 辑</el-button
+                    >
+                    <el-button
+                        style="margin-left: 10px"
+                        type="text"
+                        size="small"
+                        @click="handelView(scope.row)"
+                        >查 看</el-button
                     >
                 </template>
             </el-table-column>
@@ -197,6 +203,105 @@
                 <el-button @click="cancelStu">取 消</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog
+            title="查看老师谈话"
+            :visible.sync="openStuView"
+            width="500px"
+            append-to-body
+        >
+            <el-form ref="stuform" :model="formStu" label-width="80px">
+                <el-form-item label="老师姓名" prop="lsxm">
+                    <el-input
+                        disabled
+                        v-model="formStu.lsxm"
+                        readonly
+                        placeholder="请输入老师姓名"
+                    />
+                </el-form-item>
+                <el-form-item label="学生姓名" prop="xsxm">
+                    <el-select
+                        disabled
+                        v-model="formStu.xsid"
+                        filterable
+                        @change="getStudentName"
+                        placeholder="学生"
+                    >
+                        <el-option
+                            v-for="item in studentList"
+                            :key="item.id"
+                            :label="item.xsxm"
+                            :value="item.id"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="谈话对象" prop="xsxm">
+                    <el-select
+                        disabled
+                        v-model="formStu.kzzd3"
+                        filterable
+                        placeholder="谈话对象"
+                    >
+                        <el-option
+                            v-for="item in padConversationType"
+                            :key="item.id"
+                            :label="item.dictLabel"
+                            :value="item.dictValue"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="谈话时间" prop="thsj">
+                    <el-date-picker
+                        disabled
+                        clearable
+                        size="small"
+                        v-model="formStu.thsj"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="选择谈话时间"
+                    ></el-date-picker>
+                </el-form-item>
+                <el-form-item label="谈话原因" prop="thyy">
+                    <el-input
+                        disabled
+                        v-model="formStu.thyy"
+                        placeholder="请输入谈话原因"
+                    />
+                </el-form-item>
+                <el-form-item label="谈话内容" prop="thnr">
+                    <el-input
+                        disabled
+                        v-model="formStu.thnr"
+                        type="textarea"
+                        placeholder="请输入内容"
+                    />
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input
+                        disabled
+                        v-model="formStu.remark"
+                        placeholder="请输入备注"
+                    />
+                </el-form-item>
+                <el-form-item label="文件上传" prop="kzzd1">
+                    <div>
+                        <el-link
+                            @click="
+                                downloadTalkUploadFile({ kzzd1: formStu.kzzd1 })
+                            "
+                        >
+                            {{ formStu.kzzd1 }}
+                        </el-link>
+                    </div>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="openStuView = false"
+                    >确 定</el-button
+                >
+                <el-button @click="openStuView = false">取 消</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -225,6 +330,7 @@ export default {
             total: 0,
             submitStuFormButton: false,
             openStu: false,
+            openStuView: false,
             formStu: {},
             uploadFile: {
                 // 设置上传的请求头部
@@ -306,6 +412,11 @@ export default {
             };
             this.resetForm("formStu");
         },
+        // 查看
+        handelView(row) {
+            this.openStuView = true;
+            this.formStu = row;
+        },
         beforeFileUpload(file) {
             const isLt2M = file.size / 1024 / 1024 < 2;
             if (!isLt2M) {
@@ -359,6 +470,7 @@ export default {
         },
         // 下载谈话文件
         downloadTalkUploadFile(row) {
+            console.log(row);
             this.download(
                 "file/filetable/download",
                 {
