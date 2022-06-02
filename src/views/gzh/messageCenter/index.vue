@@ -25,72 +25,66 @@
                 <el-input v-model="queryParams.messageModule" />
             </el-form-item>
             <el-form-item label="发送时间">
-                <el-date-picker
-                    v-model="queryParams.sjArr"
-                    type="daterange"
-                    value-format="yyyy-MM-dd"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                >
+                <el-date-picker v-model="queryParams.sjArr" type="daterange" value-format="yyyy-MM-dd" range-separator="至"
+                                start-placeholder="开始日期" end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="getList">查 询</el-button>
-                <el-button type="success" @click="addMsg"
-                    >添 加 消 息</el-button
-                >
+                <el-button type="success" @click="addMsg">添 加 消 息</el-button>
             </el-form-item>
             <el-form-item>
                 <el-popover placement="bottom" width="600" trigger="click">
                     <el-table :data="userTable" height="400px">
-                        <el-table-column
-                            width="100"
-                            property="name"
-                            label="姓名"
-                        ></el-table-column>
-                        <el-table-column property="phone" label="手机号">
-                        </el-table-column>
+                        <el-table-column width="100" property="name" label="姓名"></el-table-column>
+                        <el-table-column property="phone" label="手机号"></el-table-column>
+                        <el-table-column property="kzzd4" label="微信昵称"></el-table-column>
                         <el-table-column property="phone" label="状态">
                             <template slot-scope="scope">
-                                <el-tag
-                                    type="success"
-                                    v-if="scope.row.status == 1"
-                                    >正 常</el-tag
-                                >
-                                <el-tag type="info" v-if="scope.row.status == 0"
-                                    >待审核</el-tag
-                                >
-                                <el-tag
-                                    type="danger"
-                                    v-if="scope.row.status == 2"
-                                    >不通过</el-tag
-                                >
+                                <el-tag type="warning" v-if="scope.row.status == ''||scope.row.status == null">未进行角色绑定</el-tag>
+                                <el-tag type="success" v-if="scope.row.status == 1">正 常</el-tag>
+                                <el-tag type="info" v-if="scope.row.status == 0">待审核</el-tag>
+                                <el-tag type="danger" v-if="scope.row.status == 2">不通过</el-tag>
                             </template>
                         </el-table-column>
+                      <el-table-column property="createTime" label="添加时间" width="150px">
+                        <template slot-scope="scope">
+                          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+                        </template>
+                      </el-table-column>
                     </el-table>
-                    <el-button
-                        type="danger"
-                        slot="reference"
-                        @click="getNoFollowed"
-                        >查看未关注用户</el-button
-                    >
+                    <el-button type="danger" slot="reference" @click="getNoFollowed">查看未关注用户</el-button>
                 </el-popover>
             </el-form-item>
         </el-form>
+        <!-- 切换 -->
+        <el-tabs v-model="queryParams.messageType" type="card" class="demo-tabs" @tab-click="handleQuery">
+            <el-tab-pane v-for="dict in wechatMsgType" :key="dict.dictValue" :label="dict.dictLabel" :name="dict.dictValue"></el-tab-pane>
+        </el-tabs>
 
         <el-table :data="msgTableData" border style="width: 100%">
-            <el-table-column type="index" label="序号" width="55">
+            <el-table-column align="center" type="index" label="序号" width="55">
             </el-table-column>
-            <el-table-column prop="msgTitle" label="消息主题" width="180">
+            <el-table-column align="center" prop="messageModule" label="消息模块">
             </el-table-column>
-            <el-table-column prop="messageType" label="消息类型" width="180">
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='6'" prop="msgTitle" label="消息主题" width="180">
             </el-table-column>
-            <el-table-column prop="messageModule" label="消息模块">
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='2'||queryParams.messageType=='6'" prop="msgContent" label="消息内容" width="180">
             </el-table-column>
-            <el-table-column prop="createTime" label="发送时间">
+             <el-table-column align="center" v-if="queryParams.messageType=='3'||queryParams.messageType=='4'||queryParams.messageType=='5'" prop="scid" label="素材id" width="180">
             </el-table-column>
-            <el-table-column prop="address" label="操作" width="200px">
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='6'" prop="kzzd1" label="跳转链接" width="180">
+            </el-table-column>
+             <el-table-column align="center" v-if="queryParams.messageType=='6'" prop="kzzd2" label="图片封面URL" width="180">
+            </el-table-column>
+            <el-table-column align="center" v-if="queryParams.messageType=='1'||queryParams.messageType=='6'" prop="remark" label="备注" width="180">
+            </el-table-column>
+            <el-table-column align="center" prop="createTime" label="发送时间">
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="address" label="操作" width="200px">
                 <template slot-scope="scope">
                     <el-button
                         size="mini"
@@ -187,36 +181,21 @@
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            style="
+                        <td style="
                                 padding: 20px;
                                 box-sizing: border-box;
                                 text-align: center;
-                            "
-                        >
+                            ">
                             接收人
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
                             <div>
-                                <el-input
-                                    v-model="msgHomeForm.receiver"
-                                    @input="getReceiverName"
-                                />
-                                <el-checkbox
-                                    v-model="isSelectAll"
-                                    @change="selectAll"
-                                    >全 选</el-checkbox
-                                >
+                                <el-input v-model="msgHomeForm.receiver" @input="getReceiverName"/>
+                                <el-checkbox v-model="isSelectAll" @change="selectAll">全 选</el-checkbox>
                             </div>
                             <div style="margin: 20px 0px">
-                                <el-checkbox-group
-                                    v-model="msgHomeForm.receiverArr"
-                                >
-                                    <el-checkbox
-                                        v-for="(dic, index) in userNameList"
-                                        :key="index"
-                                        :label="dic.openId"
-                                    >
+                                <el-checkbox-group v-model="msgHomeForm.receiverArr">
+                                    <el-checkbox v-for="(dic, index) in userNameList" :key="index" :label="dic.openId">
                                         {{ dic.name }}
                                     </el-checkbox>
                                 </el-checkbox-group>
@@ -224,57 +203,57 @@
                         </td>
                     </tr>
                     <tr v-if="showArr.includes(1)">
-                        <td
-                            style="
-                                padding: 20px;
-                                box-sizing: border-box;
-                                text-align: center;
-                            "
-                        >
-                            消息主题
+                        <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                            消息标题
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
                             <el-input v-model="msgHomeForm.msgTitle" />
                         </td>
                     </tr>
                     <tr v-if="showArr.includes(2)">
-                        <td
-                            style="
-                                padding: 20px;
-                                box-sizing: border-box;
-                                text-align: center;
-                            "
-                        >
+                        <td style="padding: 20px;box-sizing: border-box;text-align: center;">
                             消息内容
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
-                            <el-input
-                                type="textarea"
-                                :rows="4"
-                                placeholder="请输入内容"
-                                v-model="msgHomeForm.msgContent"
-                            >
+                            <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="msgHomeForm.msgContent">
                             </el-input>
                         </td>
                     </tr>
+                    <tr v-if="showArr.includes(1)">
+                      <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                        跳转链接
+                      </td>
+                      <td style="padding: 20px; box-sizing: border-box">
+                        <el-input type="textarea" :rows="4" v-model="msgHomeForm.kzzd1" />
+                      </td>
+                    </tr>
+                    <tr v-if="showArr.includes(4)">
+                      <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                        图片封面URL
+                      </td>
+                      <td style="padding: 20px; box-sizing: border-box">
+                        <el-input type="textarea" :rows="4" v-model="msgHomeForm.kzzd2" />
+                      </td>
+                    </tr>
+                    <tr v-if="showArr.includes(1)">
+                      <td style="padding: 20px;box-sizing: border-box;text-align: center;">
+                        备注
+                      </td>
+                      <td style="padding: 20px; box-sizing: border-box">
+                        <el-input type="textarea" :rows="4" v-model="msgHomeForm.remark" />
+                      </td>
+                    </tr>
                     <tr v-if="showArr.includes(3)">
-                        <td
-                            style="
+                        <td style="
                                 padding: 20px;
                                 box-sizing: border-box;
                                 text-align: center;
-                            "
-                        >
+                            ">
                             素材id
                         </td>
                         <td style="padding: 20px; box-sizing: border-box">
                             <el-select filterable v-model="msgHomeForm.scid">
-                                <el-option
-                                    v-for="item in scOptions"
-                                    :key="item.value"
-                                    :label="item.scmc"
-                                    :value="item.mediaId"
-                                >
+                                <el-option v-for="item in scOptions" :key="item.value" :label="item.scmc" :value="item.id">
                                 </el-option>
                             </el-select>
                         </td>
@@ -282,9 +261,7 @@
                 </tbody>
             </table>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="msgDialogFormVisible = false"
-                    >取 消</el-button
-                >
+                <el-button @click="msgDialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="handelSave">确 定</el-button>
             </div>
         </el-dialog>
@@ -315,6 +292,7 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
                 sjArr: [],
+                messageType: null,
             },
             total: 0,
             dialogFormVisible: false,
@@ -341,7 +319,7 @@ export default {
     created() {
         getUserList(this.wecharServerUrl, {
             isDel: 1,
-            status: 1,
+            status: 1
         }).then((res) => {
             this.userList = res.rows;
         });
@@ -351,6 +329,11 @@ export default {
         this.getReceiverName();
     },
     methods: {
+        // 切换tab查询(根据消息类型切换)
+        handleQuery(){
+            this.queryParams.pageNum=1;
+            this.getList()
+        },
         // 查看未关注用户
         getNoFollowed() {
             getUserList(this.wecharServerUrl, {
@@ -390,7 +373,8 @@ export default {
                 userName: this.$store.state.user.nickName,
                 receiverArr: [],
                 lsidArr: [],
-                messageType: "2",
+                messageType: "1",
+                messageModule:"系统后台",
             };
             this.getTemplateShow();
             this.msgDialogFormVisible = true;
@@ -398,11 +382,10 @@ export default {
         // 查看
         handelViews(row) {
             this.msgTitle =
-                row.msgTitle + "-" + row.messageModule + "-" + row.createTime;
+                row.msgTitle + "-" + row.messageModule + "-" + this.parseTime(row.createTime, '{y}-{m}-{d} {h}:{i}:{s}');
             listWxMsgUser(this.wecharServerUrl, {
-                id: row.id,
+                glid: row.id,
             }).then((res) => {
-                console.log(res);
                 this.wxMsgUserTable = res.rows;
             });
             this.dialogFormVisible = true;
@@ -481,8 +464,8 @@ export default {
                     break;
                 // 图文
                 case "6":
-                    this.showArr = [3];
-                    this.getListWxMaterial("news");
+                    this.showArr = [1,2,4];
+                    //this.getListWxMaterial("news");
                     break;
                 default:
                     break;

@@ -98,6 +98,8 @@
             :on-success="handleAvatarSuccess"
             :limit="maxPhotoNum"
             :file-list="jctpPhoto"
+            :before-upload="beforeFile"
+            :data="fileForm"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -167,8 +169,11 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/file/upload"
+        url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
       },
+      fileForm: {
+            renameFileName: ""
+          },
       // 图片示例数组
       jctpPhoto:[],
       // 最多上传的图片数量
@@ -179,6 +184,10 @@ export default {
     this.getList();
   },
   methods: {
+     //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='教材列表-'+file.name
+    },
     /** 查询教材列表 */
     getList() {
       this.loading = true;

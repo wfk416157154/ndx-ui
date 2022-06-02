@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form class="wrap-el-dialog" ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-form
+      class="wrap-el-dialog"
+      ref="form"
+      :model="form"
+      :rules="rules"
+      label-width="80px"
+    >
       <!-- <el-col :span="12"> -->
       <el-form-item label-width="180px" label="老师头像" prop="lstx">
         <el-upload
@@ -10,6 +16,7 @@
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
+          :data="fileForm"
         >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -43,7 +50,11 @@
       </el-col>-->
       <el-col :span="12">
         <el-form-item label-width="180px" label="老师姓名" prop="lsxm">
-          <el-input maxlength="4" v-model="form.lsxm" placeholder="请输入老师姓名" />
+          <el-input
+            maxlength="4"
+            v-model="form.lsxm"
+            placeholder="请输入老师姓名"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -72,51 +83,91 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="入职工龄" prop="rzgl">
-          <el-input v-model="form.rzgl" placeholder="入职工龄系统自动计算" readonly />
+          <el-input
+            v-model="form.rzgl"
+            placeholder="入职工龄系统自动计算"
+            readonly
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="身份证号" prop="sfzh">
-          <el-input maxlength="18" v-model="form.sfzh" placeholder="请输入身份证号" />
+          <el-input
+            maxlength="18"
+            v-model="form.sfzh"
+            placeholder="请输入身份证号"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="电话号码" prop="dhhm">
-          <el-input maxlength="11" v-model="form.dhhm" placeholder="请输入电话号码" />
+          <el-input
+            maxlength="11"
+            v-model="form.dhhm"
+            placeholder="请输入电话号码"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="家庭地址" prop="jtzz">
-          <el-input maxlength="50" v-model="form.jtzz" placeholder="请输入家庭地址" />
+          <el-input
+            maxlength="50"
+            v-model="form.jtzz"
+            placeholder="请输入家庭地址"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="现住址" prop="xzz">
-          <el-input maxlength="50" v-model="form.xzz" placeholder="请输入现住址" />
+          <el-input
+            maxlength="50"
+            v-model="form.xzz"
+            placeholder="请输入现住址"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="紧急联系人" prop="jjlxr">
-          <el-input maxlength="4" v-model="form.jjlxr" placeholder="请输入紧急联系人" />
+          <el-input
+            maxlength="4"
+            v-model="form.jjlxr"
+            placeholder="请输入紧急联系人"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="紧急联系人电话" prop="jjlxrdh">
-          <el-input maxlength="11" v-model="form.jjlxrdh" placeholder="请输入紧急联系人电话" />
+          <el-input
+            maxlength="11"
+            v-model="form.jjlxrdh"
+            placeholder="请输入紧急联系人电话"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="毕业学校" prop="byxx">
-          <el-input maxlength="50" v-model="form.byxx" placeholder="请输入毕业学校" />
+          <el-input
+            maxlength="50"
+            v-model="form.byxx"
+            placeholder="请输入毕业学校"
+          />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label-width="180px" label="毕业专业" prop="byzy">
-          <el-input maxlength="50" v-model="form.byzy" placeholder="请输入毕业专业" />
+          <el-input
+            maxlength="50"
+            v-model="form.byzy"
+            placeholder="请输入毕业专业"
+          />
         </el-form-item>
       </el-col>
       <!-- <el-col :span="12"> -->
-      <el-form-item label-width="180px" label="个人身份证正反扫描照" prop="grsfzsmz">
+      <el-form-item
+        label-width="180px"
+        label="个人身份证正反扫描照"
+        prop="grsfzsmz"
+      >
         <el-upload
           :action="upload.fileUrl"
           :headers="upload.headers"
@@ -124,6 +175,8 @@
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
           :on-success="grsfzsmzSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
           :limit="maxPhotoNum"
           :file-list="files1"
         >
@@ -145,6 +198,8 @@
           :limit="maxPhotoNum"
           :file-list="files2"
           :on-success="byzsmjSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -163,6 +218,8 @@
           :on-remove="handleRemove"
           :limit="maxPhotoNum"
           :on-success="xwzsmjSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
           :file-list="files3"
         >
           <i class="el-icon-plus"></i>
@@ -173,7 +230,11 @@
       </el-form-item>
       <!-- </el-col> -->
       <!-- <el-col :span="12"> -->
-      <el-form-item label-width="180px" label="个人证件照白底蓝底" prop="grzjzbdld">
+      <el-form-item
+        label-width="180px"
+        label="个人证件照白底蓝底"
+        prop="grzjzbdld"
+      >
         <el-upload
           :action="upload.fileUrl"
           :headers="upload.headers"
@@ -182,6 +243,8 @@
           :on-remove="handleRemove"
           :limit="maxPhotoNum"
           :on-success="grzjzbdldSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
           :file-list="files4"
         >
           <i class="el-icon-plus"></i>
@@ -201,6 +264,8 @@
           :on-remove="handleRemove"
           :limit="maxPhotoNum"
           :on-success="rydjzsSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
           :file-list="files5"
         >
           <i class="el-icon-plus"></i>
@@ -211,7 +276,11 @@
       </el-form-item>
       <!-- </el-col> -->
       <el-col :span="12">
-        <el-form-item label-width="180px" label="是否有教师资格证" prop="sfyjszgz">
+        <el-form-item
+          label-width="180px"
+          label="是否有教师资格证"
+          prop="sfyjszgz"
+        >
           <el-select
             v-model="form.sfyjszgz"
             @change="selectChange(form.sfyjszgz)"
@@ -227,7 +296,12 @@
         </el-form-item>
       </el-col>
       <!-- <el-col :span="12"> -->
-      <el-form-item v-if="isCertificais" label-width="180px" label="教师资格证" prop="jszgz">
+      <el-form-item
+        v-if="isCertificais"
+        label-width="180px"
+        label="教师资格证"
+        prop="jszgz"
+      >
         <el-upload
           :action="upload.fileUrl"
           :headers="upload.headers"
@@ -236,6 +310,8 @@
           :on-remove="handleRemove"
           :limit="maxPhotoNum"
           :on-success="jszgzSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
           :file-list="files6"
         >
           <i class="el-icon-plus"></i>
@@ -255,6 +331,8 @@
           :on-remove="handleRemove"
           :limit="10"
           :on-success="qtzsSuccess"
+          :before-upload="beforeFile"
+          :data="fileForm"
           :file-list="files7"
         >
           <i class="el-icon-plus"></i>
@@ -272,13 +350,19 @@
               v-for="dict in statusOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
-            >{{dict.dictLabel}}</el-radio>
+              >{{ dict.dictLabel }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
       </el-col>
 
       <el-form-item label-width="180px" label="备注" prop="remark">
-        <el-input maxlength="300" type="textarea" v-model="form.remark" placeholder="请输入备注" />
+        <el-input
+          maxlength="300"
+          type="textarea"
+          v-model="form.remark"
+          placeholder="请输入备注"
+        />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -294,7 +378,7 @@ import {
   getTeacher,
   delTeacher,
   addTeacher,
-  updateTeacher
+  updateTeacher,
 } from "@/api/basic/teacher";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
 import { listBjclass } from "@/api/basic/bjclass";
@@ -308,6 +392,9 @@ export default {
   inject: ["reload"],
   data() {
     return {
+      fileForm: {
+        renameFileName: "",
+      },
       // 遮罩层
       loading: true,
       // 选中数组
@@ -341,7 +428,7 @@ export default {
         lsxm: null,
         xb: null,
         sfyjszgz: null,
-        status: null
+        status: null,
       },
       // 表单参数
       form: {},
@@ -373,7 +460,7 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
         // 上传图片地址
-        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
       },
       //老师id
       id: "",
@@ -403,40 +490,41 @@ export default {
             required: false,
             message: "格式不对,只能填写数字",
             trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
+            pattern: /^[0-9]+$/,
+          },
         ],
         dhhm: [
           {
             required: false,
             message: "格式不对,只能填写数字",
             trigger: "blur",
-            pattern: /^[0-9]+$/
-          }
+            pattern: /^[0-9]+$/,
+          },
         ],
         sfzh: [
           {
             required: false,
             message: "格式不对",
             trigger: "blur",
-            pattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/
-          }
-        ]
+            pattern:
+              /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/,
+          },
+        ],
       },
       // 校区字典
       selectXqmc: [],
       // 日语班级
-      bjclassList: []
+      bjclassList: [],
     };
   },
   created() {
-    this.getDicts("sys_user_sex").then(response => {
+    this.getDicts("sys_user_sex").then((response) => {
       this.xbOptions = response.data;
     });
-    this.getDicts("sys_yes_no").then(response => {
+    this.getDicts("sys_yes_no").then((response) => {
       this.sfyjszgzOptions = response.data;
     });
-    this.getDicts("basic_status").then(response => {
+    this.getDicts("basic_status").then((response) => {
       this.statusOptions = response.data;
     });
   },
@@ -447,14 +535,17 @@ export default {
     } else {
       this.reset();
     }
-    listSchool(this.queryParams).then(response => {
+    listSchool(this.queryParams).then((response) => {
       this.selectXqmc = response.rows;
     });
-    listBjclass(this.queryParams).then(response => {
+    listBjclass(this.queryParams).then((response) => {
       this.bjclassList = response.rows;
     });
   },
   methods: {
+    beforeFile(file) {
+      this.fileForm.renameFileName = "添加老师资料—" + file.name;
+    },
     // 性别字典翻译
     xbFormat(row, column) {
       return this.selectDictLabel(this.xbOptions, row.xb);
@@ -512,7 +603,7 @@ export default {
         kzzd2: null,
         kzzd3: null,
         kzzd4: null,
-        kzzd5: null
+        kzzd5: null,
       };
       this.resetForm("form");
     },
@@ -529,7 +620,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(id) {
       this.reset();
-      getInfoByKzzd2(id).then(response => {
+      getInfoByKzzd2(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改老师信息";
@@ -568,26 +659,26 @@ export default {
     // 查询证件照
     selectPhotoList(glid, file) {
       let kzzdJson = {
-        kzzd1: glid
+        kzzd1: glid,
       };
-      selectFileList(kzzdJson).then(res => {
+      selectFileList(kzzdJson).then((res) => {
         this.photoNum = res.total;
         this[file] = res.rows;
       });
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
-          updateTeacher(this.form).then(response => {
+          updateTeacher(this.form).then((response) => {
             if (response.code == 200) {
               this.msgSuccess("编辑成功");
               this.open = false;
               // 获取页面中参数配置的路由
-              this.getConfigKey("certificates").then(resp => {
+              this.getConfigKey("certificates").then((resp) => {
                 this.router = resp.msg;
                 this.$router.push({
-                  path: this.router
+                  path: this.router,
                 });
               });
               this.reload();
@@ -602,6 +693,7 @@ export default {
       this.form.lstx = res.data.wjlj;
     },
     beforeAvatarUpload(file) {
+         this.fileForm.renameFileName = "添加老师资料—" +file.name
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -615,11 +707,11 @@ export default {
     },
     //证件照处理
     handleRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -636,7 +728,7 @@ export default {
       data.kzzd1 = this.form.grsfzsmz || secretKey();
       this.form.grsfzsmz = data.kzzd1;
       this.photoNum1 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum1);
       });
@@ -646,7 +738,7 @@ export default {
       data.kzzd1 = this.form.byzsmj || secretKey();
       this.form.byzsmj = data.kzzd1;
       this.photoNum2 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         this.photoNum2++;
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum2);
@@ -657,7 +749,7 @@ export default {
       data.kzzd1 = this.form.xwzsmj || secretKey();
       this.form.xwzsmj = data.kzzd1;
       this.photoNum3 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum3);
       });
@@ -667,7 +759,7 @@ export default {
       data.kzzd1 = this.form.grzjzbdld || secretKey();
       this.form.grzjzbdld = data.kzzd1;
       this.photoNum4 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum4);
       });
@@ -677,7 +769,7 @@ export default {
       data.kzzd1 = this.form.rydjzs || secretKey();
       this.form.rydjzs = data.kzzd1;
       this.photoNum5 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum5);
       });
@@ -687,7 +779,7 @@ export default {
       data.kzzd1 = this.form.jszgz || secretKey();
       this.form.jszgz = data.kzzd1;
       this.photoNum6 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum6);
       });
@@ -697,7 +789,7 @@ export default {
       data.kzzd1 = this.form.qtzs || secretKey();
       this.form.qtzs = data.kzzd1;
       this.photoNum7 = fileList.length;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
         this.ifPhotoLimit(this.photoNum7);
       });
@@ -707,12 +799,12 @@ export default {
       if (num >= this.maxPhotoNum) {
         this.$message({
           message: "最多上传 3 张图片",
-          type: "warning"
+          type: "warning",
         });
       } else {
         this.$message({
           message: "新增成功",
-          type: "success"
+          type: "success",
         });
       }
     },
@@ -723,8 +815,8 @@ export default {
       } else {
         this.isCertificais = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

@@ -12,6 +12,8 @@
           :on-success="handleAvatarSuccess"
           :limit="maxPhotoNum"
           :file-list="files1"
+          :before-upload="beforeFile"
+          :data="fileForm"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -29,6 +31,8 @@
           :on-success="jtzSuccess"
           :limit="maxPhotoNum"
           :file-list="files2"
+          :before-upload="beforeFile"
+          :data="fileForm"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -210,7 +214,10 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/basic/bjclass/importData",
         // 上传图片地址
-        fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        fileUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+      },
+      fileForm: {
+        renameFileName: ""
       },
       files1: [],
       files2: [],
@@ -260,6 +267,10 @@ export default {
     }
   },
   methods: {
+    //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='班级信息-'+file.name
+    },
     // 状态字典翻译
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, row.status);

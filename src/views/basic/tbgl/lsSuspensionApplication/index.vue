@@ -56,6 +56,8 @@
                   :on-preview="handlePictureCardPreview"
                   :on-remove="handleRemove"
                   :on-success="xxSuccess"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -134,6 +136,8 @@
                   :on-remove="handleRemoveEdit"
                   :on-success="xxSuccessEdit"
                   :file-list="files1"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                 >
                   <i class="el-icon-plus"></i>
                 </el-upload>
@@ -186,7 +190,10 @@ export default {
           process.env.VUE_APP_BASE_API +
           "/basic/examinationPaper/importClassGradeData",
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+      },
+      fileForm: {
+           renameFileName: ""
       },
       dialogVisible: false,
       files1: null,
@@ -213,6 +220,10 @@ export default {
     this.lsName = this.$store.state.user.nickName;
   },
   methods: {
+    //  文件上传修改名称
+       beforeFile(file) {
+            this.fileForm.renameFileName ='休学管理-'+file.name
+        },
     // 获取图片
     getImg() {
       selectFileList({ kzzd1: this.getInfo.id }).then(res => {

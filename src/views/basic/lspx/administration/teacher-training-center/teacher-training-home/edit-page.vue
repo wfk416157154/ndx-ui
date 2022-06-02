@@ -1,15 +1,20 @@
 <template>
   <div class="teacher-training-completed-edit">
-    <table style="width : 100%;" border="1" cellspacing="0">
+    <table style="width: 100%" border="1" cellspacing="0">
       <tbody>
         <tr>
           <td class="tds">老师姓名</td>
-          <td>{{parentTiem.lsxm}}</td>
+          <td>{{ parentTiem.lsxm }}</td>
         </tr>
         <tr>
           <td class="tds">高考试卷分数</td>
           <td>
-            <el-input-number v-model="parentTiem.gksjfs" placeholder="请输入内容" :max="150" :min="0" ></el-input-number>
+            <el-input-number
+              v-model="parentTiem.gksjfs"
+              placeholder="请输入内容"
+              :max="150"
+              :min="0"
+            ></el-input-number>
           </td>
         </tr>
         <tr>
@@ -26,6 +31,8 @@
                   :on-success="vHandleFileSuccess"
                   :on-error="vHandleFileError"
                   :on-remove="handleRemove"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                   :auto-upload="true"
                   :file-list="spList"
                   drag
@@ -48,6 +55,8 @@
                   :on-preview="handlePictureCardPreview"
                   :on-remove="handleRemove"
                   :on-success="bxgcBjSuccess"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                   :file-list="tpList"
                 >
                   <i class="el-icon-plus"></i>
@@ -68,8 +77,8 @@
         <tr>
           <td class="tds">操作</td>
           <td>
-            <div style="text-align : center">
-              <el-button @click="saveSubmit" type="primary" >保存</el-button>
+            <div style="text-align: center">
+              <el-button @click="saveSubmit" type="primary">保存</el-button>
             </div>
           </td>
         </tr>
@@ -86,11 +95,14 @@ import { addOrUpdate } from "@/api/basic/teacher-training-completed";
 export default {
   data() {
     return {
+       fileForm: {
+        renameFileName: "",
+      },
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         user: "",
-        region: ""
+        region: "",
       },
       form: {},
       total: 0,
@@ -107,36 +119,39 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+        imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
       },
       dialogVisible: false,
       dialogImageUrl: null,
-      parentTiem:{
-        lsid:null,
-        lsxm:null,
-        gksjfs:null,
-        tpid:null,
-        spid:null,
-        remark:null
+      parentTiem: {
+        lsid: null,
+        lsxm: null,
+        gksjfs: null,
+        tpid: null,
+        spid: null,
+        remark: null,
       },
-      tpList:[],
-      spList:[],
+      tpList: [],
+      spList: [],
     };
   },
   created() {
     if (this.$route.query.list) {
       let parentObj = JSON.parse(this.$route.query.list);
-      this.parentTiem.lsid=parentObj.lsid
-      this.parentTiem.lsxm=parentObj.lsxm
-      this.parentTiem.gksjfs=parentObj.gksjfs
-      this.parentTiem.tpid=parentObj.tpid
-      this.parentTiem.spid=parentObj.spid
-      this.parentTiem.remark=parentObj.remark
-      this.getSelectFileList(parentObj.tpid,"tpList")
-      this.getSelectFileList(parentObj.spid,"spList")
+      this.parentTiem.lsid = parentObj.lsid;
+      this.parentTiem.lsxm = parentObj.lsxm;
+      this.parentTiem.gksjfs = parentObj.gksjfs;
+      this.parentTiem.tpid = parentObj.tpid;
+      this.parentTiem.spid = parentObj.spid;
+      this.parentTiem.remark = parentObj.remark;
+      this.getSelectFileList(parentObj.tpid, "tpList");
+      this.getSelectFileList(parentObj.spid, "spList");
     }
   },
   methods: {
+     beforeFile(file) {
+      this.fileForm.renameFileName = "老师培训主页编辑—" +file.name
+    },
 
     // 文件上传中处理
     vHandleFileUploadProgress(event, file, fileList) {
@@ -150,7 +165,7 @@ export default {
         let data = response.data;
         data.kzzd1 = this.parentTiem.spid || secretKey();
         this.parentTiem.spid = data.kzzd1;
-        addImg(data).then(res => {
+        addImg(data).then((res) => {
           file.id = res.data.id;
         });
         this.msgSuccess("上传成功");
@@ -165,11 +180,11 @@ export default {
     },
     //图片删除
     handleRemove(file, fileList) {
-      deleteImg(file.id).then(res => {
+      deleteImg(file.id).then((res) => {
         if (res.code == 200) {
           this.$message({
             message: "删除成功",
-            type: "success"
+            type: "success",
           });
         } else {
           this.$message.error("删除失败");
@@ -180,25 +195,25 @@ export default {
       let data = response.data;
       data.kzzd1 = this.parentTiem.tpid || secretKey();
       this.parentTiem.tpid = data.kzzd1;
-      addImg(data).then(res => {
+      addImg(data).then((res) => {
         file.id = res.data.id;
       });
     },
     saveSubmit() {
-      addOrUpdate(this.parentTiem).then(res => {
+      addOrUpdate(this.parentTiem).then((res) => {
         this.$router.go(-1);
       });
     },
     // 给对应的图片和视频进行赋值
-    getSelectFileList(id,tempName){
-      if(id){// 当id不为空
-        selectFileList({kzzd1 : id}).then(res=>{
-          this[tempName]=res.rows
-        })
+    getSelectFileList(id, tempName) {
+      if (id) {
+        // 当id不为空
+        selectFileList({ kzzd1: id }).then((res) => {
+          this[tempName] = res.rows;
+        });
       }
-     },
-
-  }
+    },
+  },
 };
 </script>
 

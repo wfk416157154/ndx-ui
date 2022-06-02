@@ -204,6 +204,8 @@
               :on-success="handleFileSuccess"
               :auto-upload="true"
               :file-list="wjidFile"
+              :before-upload="beforeFile"
+              :data="fileForm"
               drag
             >
               <i class="el-icon-upload"></i>
@@ -300,7 +302,10 @@
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "/file/upload"
+          url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+        },
+        fileForm: {
+          renameFileName: ""
         },
         problemTypesOptions: [],// 问题类型字典类型
         problemStatusOptions: [],// 问题解决状态字典类型
@@ -325,6 +330,10 @@
 
     },
     methods: {
+      //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='用户问题反馈列表-'+file.name
+    },
       getListBjclass() {
         listBjclass().then(response => {
           this.bjclassList = response.rows

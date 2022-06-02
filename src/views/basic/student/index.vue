@@ -278,6 +278,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
+            :data="fileForm"
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar"/>
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -549,6 +550,7 @@
             :before-upload="beforeFileUpload"
             :on-progress="handleFileUploadProgress"
             :on-success="handleXsthFileSuccess"
+            :data="fileForm"
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
@@ -732,13 +734,16 @@
           // 上传的地址
           url: process.env.VUE_APP_BASE_API + "/basic/student/importData",
           // 上传图片地址
-          fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+          fileUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
         },
         uploadFile: {
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
-          fileUrl: process.env.VUE_APP_BASE_API + "/file/upload"
+          fileUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload"
         },
+        fileForm: {
+        renameFileName: ""
+      },
         uploadData: {},
         // 表单校验
         rules: {
@@ -1137,6 +1142,7 @@
         if (!isLt2M) {
           this.$message.error("上传头像图片大小不能超过 2MB!");
         }
+        this.fileForm.renameFileName ='学生信息-'+file.name
         return isJPG && isLt2M;
       },
 
@@ -1145,6 +1151,7 @@
         if (!isLt2M) {
           this.$message.error("上传文件大小不能超过 2MB!");
         }
+        this.fileForm.renameFileName ='学生信息-'+file.name
         return isLt2M;
       },
 

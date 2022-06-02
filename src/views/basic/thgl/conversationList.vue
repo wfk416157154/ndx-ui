@@ -296,10 +296,14 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="openStuView = false"
+                <el-button
+                    type="primary"
+                    v-prevent-re-click
+                    :disabled="submitStuFormButton"
+                    @click="submitStuForm"
                     >确 定</el-button
                 >
-                <el-button @click="openStuView = false">取 消</el-button>
+                <el-button @click="cancelStu">取 消</el-button>
             </div>
         </el-dialog>
     </div>
@@ -470,7 +474,6 @@ export default {
         },
         // 下载谈话文件
         downloadTalkUploadFile(row) {
-            console.log(row);
             this.download(
                 "file/filetable/download",
                 {

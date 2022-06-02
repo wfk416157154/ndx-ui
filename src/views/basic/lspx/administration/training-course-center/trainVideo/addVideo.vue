@@ -4,12 +4,15 @@
       <h3>添加视频</h3>
     </div>
     <div>
-      <table style="width : 100%;" border="1" cellspacing="0">
+      <table style="width: 100%" border="1" cellspacing="0">
         <tbody>
           <tr>
             <td class="tds">视频名称</td>
             <td>
-              <el-input v-model="addVideoForm.videoName" placeholder="请输入内容"></el-input>
+              <el-input
+                v-model="addVideoForm.videoName"
+                placeholder="请输入内容"
+              ></el-input>
             </td>
           </tr>
           <tr>
@@ -36,6 +39,8 @@
                   :on-progress="vHandleFileUploadProgress"
                   :on-success="vHandleFileSuccess"
                   :on-error="vHandleFileError"
+                  :before-upload="beforeFile"
+                  :data="fileForm"
                   :auto-upload="false"
                   drag
                 >
@@ -47,16 +52,17 @@
                 </el-upload>
               </div>
               <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="vsubmitFileForm">确 定</el-button>
-                <el-button @click="dialogUploadVideoisible = false">取 消</el-button>
+                <el-button type="primary" @click="vsubmitFileForm"
+                  >确 定</el-button
+                >
+                <el-button @click="dialogUploadVideoisible = false"
+                  >取 消</el-button
+                >
               </div>
             </td>
           </tr>
           <tr>
-            <td class="tds">
-              视频介绍
-              (选填）
-            </td>
+            <td class="tds">视频介绍 (选填）</td>
             <td>
               <el-input
                 type="textarea"
@@ -104,38 +110,63 @@
         </el-table-column>
         <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+              >编辑</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <div style="margin : 20px 0px;padding-bottom : 60px">
+    <div style="margin: 20px 0px; padding-bottom: 60px">
       <el-row>
         <el-button type="primary" @click="saveVideo">保存</el-button>
-        <el-button type="success" :disabled="!this.addVideoForm.id" @click="addTestQuestions">添加测试题</el-button>
+        <el-button
+          type="success"
+          :disabled="!this.addVideoForm.id"
+          @click="addTestQuestions"
+          >添加测试题</el-button
+        >
       </el-row>
     </div>
 
     <el-dialog title="添加题目" :visible.sync="dialogFormVisible">
       <el-form :model="addSubjectForm">
         <el-form-item label="题目" :label-width="formLabelWidth">
-          <el-input v-model="addSubjectForm.topic" autocomplete="off"></el-input>
+          <el-input
+            v-model="addSubjectForm.topic"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item label="选项A" :label-width="formLabelWidth">
-          <el-input v-model="addSubjectForm.optionA" autocomplete="off"></el-input>
+          <el-input
+            v-model="addSubjectForm.optionA"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item label="选项B" :label-width="formLabelWidth">
-          <el-input v-model="addSubjectForm.optionB" autocomplete="off"></el-input>
+          <el-input
+            v-model="addSubjectForm.optionB"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item label="选项C" :label-width="formLabelWidth">
-          <el-input v-model="addSubjectForm.optionC" autocomplete="off"></el-input>
+          <el-input
+            v-model="addSubjectForm.optionC"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item label="选项D" :label-width="formLabelWidth">
-          <el-input v-model="addSubjectForm.optionD" autocomplete="off"></el-input>
+          <el-input
+            v-model="addSubjectForm.optionD"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item label="正确答案" :label-width="formLabelWidth">
-          <el-input v-model="addSubjectForm.answer" autocomplete="off"></el-input>
+          <el-input
+            v-model="addSubjectForm.answer"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -152,14 +183,14 @@ import {
   getTrainVideo,
   delTrainVideo,
   addTrainVideo,
-  updateTrainVideo
+  updateTrainVideo,
 } from "@/api/basic/trainVideo";
 import {
   updateVideoQuestion,
   listVideoQuestion,
   deleteVideoQuestion,
   getVideoQuestion,
-  addVideoQuestion
+  addVideoQuestion,
 } from "@/api/basic/test-questions";
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
@@ -167,8 +198,11 @@ import { secretKey } from "@/utils/tools";
 export default {
   data() {
     return {
+      fileForm: {
+        renameFileName: "",
+      },
       addVideoForm: {
-        videoFile: ""
+        videoFile: "",
       },
       addSubjectForm: {},
       // 视频类别字典
@@ -185,15 +219,15 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传图片地址
-        url: process.env.VUE_APP_BASE_API + "/file/upload"
+        url: process.env.VUE_APP_BASE_API + "/file/renameUpload",
       },
       listVideoQuestionData: [],
       dialogFormVisible: false,
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
     };
   },
   created() {
-    this.getDicts("videoType").then(response => {
+    this.getDicts("videoType").then((response) => {
       this.videoTypeOptions = response.data;
     });
     if (this.$route.query.name == "app-container") {
@@ -202,23 +236,26 @@ export default {
     }
   },
   methods: {
+    beforeFile(file) {
+      this.fileForm.renameFileName = "培训视频—" + file.name;
+    },
     handleDelete(index, row) {
       // console.log(index, row);
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
           this.$message({
             type: "success",
-            message: "删除成功!"
+            message: "删除成功!",
           });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消删除",
           });
         });
     },
@@ -239,7 +276,7 @@ export default {
         let data = response.data;
         data.kzzd1 = secretKey();
         this.addVideoForm.videoFile = data.kzzd1;
-        addImg(data).then(res => {
+        addImg(data).then((res) => {
           file.id = res.data.id;
           this.msgSuccess("上传成功");
         });
@@ -254,7 +291,7 @@ export default {
     // 保存视频
     saveVideo() {
       if (this.addVideoForm.id != null) {
-        updateTrainVideo(this.addVideoForm).then(response => {
+        updateTrainVideo(this.addVideoForm).then((response) => {
           if (200 == response.code) {
             this.getList();
             this.msgSuccess(response.msg);
@@ -264,7 +301,7 @@ export default {
         });
       } else {
         this.addVideoForm.id = secretKey();
-        addTrainVideo(this.addVideoForm).then(response => {
+        addTrainVideo(this.addVideoForm).then((response) => {
           if (200 == response.code) {
             this.msgSuccess(response.msg);
           } else {
@@ -287,7 +324,7 @@ export default {
       if (!this.addVideoForm.id) {
         return;
       }
-      listVideoQuestion({ trainVideoId: this.addVideoForm.id }).then(res => {
+      listVideoQuestion({ trainVideoId: this.addVideoForm.id }).then((res) => {
         this.listVideoQuestionData = res.rows;
       });
     },
@@ -299,7 +336,7 @@ export default {
         return;
       }
       if (this.addSubjectForm.id != null) {
-        updateVideoQuestion(this.addSubjectForm).then(res => {
+        updateVideoQuestion(this.addSubjectForm).then((res) => {
           if (200 == res.code) {
             this.getList();
             this.msgSuccess(res.msg);
@@ -309,7 +346,7 @@ export default {
           }
         });
       } else {
-        addVideoQuestion(this.addSubjectForm).then(res => {
+        addVideoQuestion(this.addSubjectForm).then((res) => {
           if (200 == res.code) {
             this.msgSuccess(res.msg);
             this.dialogFormVisible = false;
@@ -320,8 +357,8 @@ export default {
           }
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

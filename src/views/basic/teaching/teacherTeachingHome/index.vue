@@ -15,6 +15,7 @@
         <el-button type="primary" @click="getList">查询</el-button>
       </el-form-item>
     </el-form>
+    
     <div v-if="ifTemplate">
       <div class="wrap-header">
         <h3 style="margin-right: 20px">教学计划</h3>

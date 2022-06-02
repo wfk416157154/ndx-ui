@@ -77,6 +77,8 @@
                                         :on-remove="handleRemove"
                                         :on-success="jyxzlxyUploadSuccess"
                                         :file-list="jyxzlxyPhotoArr"
+                                        :before-upload="beforeFile"
+                                        :data="fileForm"
                                     >
                                         <i class="el-icon-plus"></i>
                                     </el-upload>
@@ -112,6 +114,8 @@
                                         :on-remove="handleRemove"
                                         :on-success="sjUploadSuccess"
                                         :file-list="tpslPhotoArr"
+                                        :before-upload="beforeFile"
+                                        :data="fileForm"
                                     >
                                         <i class="el-icon-plus"></i>
                                     </el-upload>
@@ -162,6 +166,8 @@
                                         :on-success="tbsqzlUploadSuccess"
                                         :auto-upload="true"
                                         :file-list="tbsqzlFileArr"
+                                        :before-upload="beforeFile"
+                                        :data="fileForm"
                                         drag
                                     >
                                         <i class="el-icon-upload"></i>
@@ -237,8 +243,11 @@ export default {
                 // 设置上传的请求头部
                 headers: { Authorization: "Bearer " + getToken() },
                 // 上传地址
-                url: process.env.VUE_APP_BASE_API + "/file/upload",
+                url: process.env.VUE_APP_BASE_API + "/file/renameUpload",
             },
+             fileForm: {
+                    renameFileName: ""
+                },
             dialogVisible: false,
             dialogImageUrl: null,
             form: {
@@ -337,6 +346,10 @@ export default {
         this.form = JSON.parse(this.$route.query.row);
     },
     methods: {
+        //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='退班管理-'+file.name
+    },
         // 图片预览 大图
         handlePictureCardPreview(file) {
             this.dialogImageUrl = file.url;

@@ -68,7 +68,7 @@
                     <el-input v-model.number="form.fullMarks" />
                 </el-form-item>
                 <el-form-item label="高考成绩截图">
-                    <el-upload :headers="upload.headers" :action="upload.imgUrl" list-type="picture-card" :on-success="handleFileSuccess" :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
+                    <el-upload :headers="upload.headers" :action="upload.imgUrl" list-type="picture-card" :on-success="handleFileSuccess" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :before-upload="beforeFile" :data="fileForm">
                         <i class="el-icon-plus"></i>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
@@ -130,8 +130,11 @@ export default {
                     process.env.VUE_APP_BASE_API +
                     "/basic/examinationPaper/importClassGradeData",
                 // 上传图片地址
-                imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
+                imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
             },
+            fileForm: {
+                 renameFileName: ""
+                },
             formLabelWidth: 200,
             // 校区数据
             queryBjclassList: [],
@@ -154,6 +157,10 @@ export default {
         });
     },
     methods: {
+         //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='老师添加高考成绩-'+file.name
+    },
         handleRemove(file, fileList) {
             console.log(file, fileList);
         },

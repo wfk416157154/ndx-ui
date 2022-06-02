@@ -23,6 +23,8 @@
             :on-success="handleXgkjSuccess"
             :auto-upload="true"
             :file-list="xgkjWjidFile"
+            :before-upload="beforeFile"
+            :data="fileForm"
             drag
             v-loading="fullscreenLoading"
             element-loading-text="正在进行上传·······"
@@ -99,8 +101,11 @@
           // 设置上传的请求头部
           headers: {Authorization: "Bearer " + getToken()},
           // 上传的地址
-          url: process.env.VUE_APP_BASE_API + "/file/upload"
+          url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
         },
+        fileForm: {
+            renameFileName: ""
+          },
         xgkjWjidFile: [],// 修改后的课件列表
         xgkjWjid: secretKey(),// 修改后的课件id
         kcrwId: "",// 课程任务id
@@ -144,6 +149,10 @@
       this.getList();
     },
     methods: {
+      //  文件上传修改名称
+       beforeFile(file) {
+        this.fileForm.renameFileName ='课件表单-'+file.name
+    },
       tabClick(e) {
         switch (e.name) {
           case "1":

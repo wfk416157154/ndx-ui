@@ -1,13 +1,7 @@
 <template>
     <div class="sc-wrap">
-        <el-tabs
-            type="border-card"
-            v-model="activeName"
-            @tab-click="handleClick"
-        >
-            <el-button size="mini" type="success" @click="handelUpload"
-                >上 传</el-button
-            >
+        <el-tabs type="border-card" v-model="activeName" @tab-click="handleClick">
+            <el-button size="mini" type="success" @click="handelUpload">上 传</el-button>
             <el-tab-pane label="图片" name="image"></el-tab-pane>
             <el-tab-pane label="音频" name="voice"></el-tab-pane>
             <el-tab-pane label="视频" name="video"></el-tab-pane>
@@ -22,7 +16,9 @@
                     </el-table-column>
                     <el-table-column prop="scmc" label="素材名称" width="180">
                     </el-table-column>
-                    <el-table-column prop="fmtpscMediaId" label="MediaId">
+                    <el-table-column prop="mediaId" label="MediaId">
+                    </el-table-column>
+                    <el-table-column prop="fmtpscMediaId" label="封面图片mediaId">
                     </el-table-column>
                     <el-table-column prop="createTime" label="上传时间">
                     </el-table-column>
