@@ -479,7 +479,7 @@ export default {
         menuType: "M",
         orderNum: undefined,
         isFrame: "1",
-        isCache: "0",
+        isCache: "1",
         visible: "0",
         status: "0"
       };
@@ -495,7 +495,7 @@ export default {
         menuType: "F",
         orderNum: undefined,
         isFrame: "1",
-        isCache: "0",
+        isCache: "1",
         visible: "0",
         status: "0",
         menuUrl: []
