@@ -318,12 +318,17 @@
   import {addImg, selectFileList, deleteImg} from "@/api/tool/common";
   import {secretKey} from "@/utils/tools";
   import {listSchool} from "@/api/basic/school";
+  import { messageInform } from "@/api/basic/weixin";
 
   export default {
     name: "Message",
     components: {},
     data() {
       return {
+        lsidList: [],
+        // 原始老师列表
+        originTeacherList: [],
+        teacherMap: new Map(), //全局定义
         // 遮罩层
         loading: true,
         loadingReceive:true,
@@ -429,6 +434,13 @@
       // 获取校区
       listSchool().then(response => {
         this.selectXqmc = response.rows;
+      });
+      //获取老师
+      listTeacher().then((response) => {
+        this.originTeacherList = response.rows;  //获取所有老师
+        this.originTeacherList.forEach((vo) => {  //遍历数组
+          this.teacherMap.set(vo.dhhm, vo.id);  //获取所有的电话号码和老师id  key：老师电话号码  value：老师id
+        });
       });
     },
     methods: {
@@ -546,6 +558,26 @@
                 this.msgSuccess("新增成功");
                 this.open = false;
                 this.getList();
+                //微信发送提醒消息
+                let messageObj = {
+                  sfqbfs: this.form.sfqbfs, //是否全部发送
+                  xxlx: this.form.xxlx, //消息类型
+                  xxbt: this.form.xxbt, //消息标题
+                  lsidList: this.lsidList, //老师id集合
+                  userId: this.$store.state.user.userId,
+                  userName: this.$store.state.user.nickName,
+                };
+                this.getConfigKey("wecharServerUrl").then((resp) => {
+                  messageInform(resp.msg, messageObj)
+                    .then((res) => {
+                    })
+                    .catch((e) => {
+                      this.$message({
+                        type: "error",
+                        message: "操作失败，请联系管理员！",
+                      });
+                    });
+                });
               });
             }
           }
@@ -660,6 +692,18 @@
       // 选择老师触发
       teacherOnChange(lsdh) {
         this.form.jsrArr = [lsdh]
+        let dhhm = lsdh.split("-")[1]; //获取老师电话
+        let lsid = this.teacherMap.get(dhhm); //根据老师电话查找老师id
+        this.lsidList.push(lsid); //将老师id放到lsidList中
+      },
+      //老师多选框
+      mulTecherChange(arr) {
+        this.lsidList = [];
+        for (let i = 0; i < arr.length; i++) {
+          let dhhm = arr[i].split("-")[1]; //获取老师电话
+          let lsid = this.teacherMap.get(dhhm); //根据老师电话查找老师id
+          this.lsidList.push(lsid); //将老师id放到lsidList中
+        }
       },
       // 点击查看(确认/回复)人员按钮触发
       showJsrPage(row){
