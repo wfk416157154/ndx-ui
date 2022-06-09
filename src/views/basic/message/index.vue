@@ -212,7 +212,7 @@
                        :value="item.lsxm+'-'+item.dhhm"></el-option>
           </el-select>
 
-          <el-checkbox-group v-model="form.jsrArr">
+          <el-checkbox-group v-model="form.jsrArr" @change="mulTecherChange">
             <el-checkbox
               v-for="(item,index) in teacherList"
               :key="index"
