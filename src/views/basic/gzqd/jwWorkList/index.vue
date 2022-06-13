@@ -106,7 +106,7 @@
       <el-table-column label="第一周" align="center" prop="oneWeek" >
         <template slot-scope="scope">
           <span v-if="null!=scope.row.oneWeek">
-            <span v-for="item in scope.row.oneWeek.split(',')" :key="index">
+            <span v-for="(item,index) in scope.row.oneWeek.split(',')" :key="index">
               <dict-tag :options="oneWeekOptions" :value="item"/>
             </span>
           </span>
@@ -115,7 +115,7 @@
       <el-table-column label="第二周" align="center" prop="twoWeek" >
         <template slot-scope="scope">
           <span v-if="null!=scope.row.twoWeek">
-            <span v-for="item in scope.row.twoWeek.split(',')">
+            <span v-for="(item,index) in scope.row.twoWeek.split(',')" :key="index">
               <dict-tag :options="twoWeekOptions" :value="item"/>
             </span>
           </span>

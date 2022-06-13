@@ -227,8 +227,6 @@
                   :headers="upload.headers"
                   :action="upload.url + '?updateSupport=' + upload.updateSupport"
                   :disabled="upload.isUploading"
-                  :on-progress="handleFileUploadProgress"
-                  :on-success="handleFileSuccess"
                   :auto-upload="false"
                   drag
                   v-loading="fullscreenLoading"
@@ -243,12 +241,12 @@
               </div>
               <div class="el-upload__tip" slot="tip">
                   <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
-                  <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+                  <!-- <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link> -->
               </div>
               <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
           </el-upload>
           <div slot="footer" class="dialog-footer">
-              <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button>
+              <!-- <el-button type="primary" v-prevent-re-click :disabled="importBtn" @click="submitFileForm">确 定</el-button> -->
               <el-button @click="upload.open = false">取 消</el-button>
           </div>
       </el-dialog>
