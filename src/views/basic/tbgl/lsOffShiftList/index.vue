@@ -1,13 +1,6 @@
 <template>
-    <div
-        style="width: 100%; height: 100%; padding: 40px; box-sizing: border-box"
-    >
-        <el-form
-            ref="queryForm"
-            :model="queryParams"
-            :inline="true"
-            label-width="80px"
-        >
+    <div style="width: 100%; height: 100%; padding: 40px; box-sizing: border-box">
+        <el-form ref="queryForm" :model="queryParams" :inline="true" label-width="80px">
             <!--<el-form-item label="负责人" prop="fzrid">
         <el-select v-model="queryParams.fzrid" placeholder="请选择区域负责人">
           <el-option
@@ -17,7 +10,7 @@
             :value="item.id"
           ></el-option>
         </el-select>
-      </el-form-item>-->
+            </el-form-item>-->
             <el-form-item label="学校" prop="xqid">
                 <el-select
                     v-model="queryParams.xqid"
@@ -34,11 +27,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="日语班级" prop="rybjid">
-                <el-select
-                    v-model="queryParams.rybjid"
-                    filterable
-                    placeholder="请选择日语班级"
-                >
+                <el-select v-model="queryParams.rybjid" filterable placeholder="请选择日语班级">
                     <el-option
                         v-for="item in bjclassList"
                         :key="item.id"
@@ -68,21 +57,10 @@
                 ></el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button
-                    type="primary"
-                    icon="el-icon-zoom-in"
-                    @click="handleQuery"
-                    >查询</el-button
-                >
-                <el-button type="danger" @click="queryShenpi('1,2')"
-                    >未审批</el-button
-                >
-                <el-button type="success" @click="queryShenpi('3,4,5,6')"
-                    >已审批</el-button
-                >
-                <el-button icon="el-icon-refresh" @click="resetQuery"
-                    >重置</el-button
-                >
+                <el-button type="primary" icon="el-icon-zoom-in" @click="handleQuery">查询</el-button>
+                <el-button type="danger" @click="queryShenpi('1,2')">未审批</el-button>
+                <el-button type="success" @click="queryShenpi('3,4,5,6')">已审批</el-button>
+                <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
             </el-form-item>
         </el-form>
 
@@ -93,81 +71,31 @@
             border
             style="width: 100%; font-size: 18px"
         >
-            <el-table-column
-                prop="rybjmc"
-                label="班级"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="lsxm"
-                label="老师"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="xsxm"
-                label="学生姓名"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="rbsj"
-                label="入班时间"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="tbsj"
-                label="退班时间"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="yhkh"
-                label="银行账号"
-                align="center"
-            ></el-table-column>
+            <el-table-column prop="rybjmc" label="班级" align="center"></el-table-column>
+            <el-table-column prop="lsxm" label="老师" align="center"></el-table-column>
+            <el-table-column prop="xsxm" label="学生姓名" align="center"></el-table-column>
+            <el-table-column prop="rbsj" label="入班时间" align="center"></el-table-column>
+            <el-table-column prop="tbsj" label="退班时间" align="center"></el-table-column>
+            <el-table-column prop="yhkh" label="银行账号" align="center"></el-table-column>
             <el-table-column prop="tblx" label="退班规则" align="center">
                 <template slot-scope="scope">
                     <dict-tag :options="tbgzlxOption" :value="scope.row.tblx" />
                 </template>
             </el-table-column>
-            <el-table-column
-                prop="thje"
-                label="退还金额"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="thgz"
-                label="退还规则"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="tbyy"
-                label="退班原因"
-                align="center"
-            ></el-table-column>
-            <el-table-column
-                prop="yyxzlxyZt"
-                label="教与学质量协议"
-                align="center"
-            >
+            <el-table-column prop="thje" label="退还金额" align="center"></el-table-column>
+            <el-table-column prop="thgz" label="退还规则" align="center"></el-table-column>
+            <el-table-column prop="tbyy" label="退班原因" align="center"></el-table-column>
+            <el-table-column prop="yyxzlxyZt" label="教与学质量协议" align="center">
                 <template slot-scope="scope">
-                    <dict-tag
-                        :options="jyxzlxyStatusOption"
-                        :value="scope.row.yyxzlxyZt"
-                    />
+                    <dict-tag :options="jyxzlxyStatusOption" :value="scope.row.yyxzlxyZt" />
                 </template>
             </el-table-column>
             <el-table-column prop="sjZt" label="收据" align="center">
                 <template slot-scope="scope">
-                    <dict-tag
-                        :options="sjStatusOption"
-                        :value="scope.row.sjZt"
-                    />
+                    <dict-tag :options="sjStatusOption" :value="scope.row.sjZt" />
                 </template>
             </el-table-column>
-            <el-table-column
-                prop="tbsqzlTpidArr"
-                label="审核资料"
-                align="center"
-            >
+            <el-table-column prop="tbsqzlTpidArr" label="审核资料" align="center">
                 <template slot-scope="scope">
                     <!--          <el-button
             size="mini"
@@ -175,23 +103,19 @@
             v-for="(item,index) in scope.row.tbsqzlTpidArr"
             :key="index"
             @click="downloadFileName(item.wjmc)"
-          >{{item.wjmc}}</el-button>-->
+                    >{{item.wjmc}}</el-button>-->
                     <el-image
                         style="width: 100px; height: 100px"
                         v-for="(item, index) in scope.row.tbsqzlTpidArr"
                         :key="index"
                         :src="item.wjlj"
                         :preview-src-list="[item.wjlj]"
-                    >
-                    </el-image>
+                    ></el-image>
                 </template>
             </el-table-column>
             <el-table-column prop="shzt" label="审核状态" align="center">
                 <template slot-scope="scope">
-                    <dict-tag
-                        :options="tuibanStatusList"
-                        :value="scope.row.shzt"
-                    />
+                    <dict-tag :options="tuibanStatusList" :value="scope.row.shzt" />
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="350px" align="center">
@@ -201,23 +125,20 @@
                         icon="el-icon-check"
                         type="success"
                         @click="tongyiHandleEdit(scope.row)"
-                        >学生同意</el-button
-                    >
+                    >学生同意</el-button>
                     <el-button
                         size="mini"
                         icon="el-icon-question"
                         type="danger"
                         @click="showYiyiPage(scope.row)"
-                        >对费用有异议</el-button
-                    >
+                    >对费用有异议</el-button>
                     <el-button
                         size="mini"
                         icon="el-icon-edit"
                         type="info"
                         v-if="scope.row.shzt == 1 || scope.row.shzt == 5"
                         @click="toPageitem(scope.row, 'tbsqPage')"
-                        >修改</el-button
-                    >
+                    >修改</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -231,18 +152,11 @@
 
         <el-dialog title="异议" :visible.sync="dialogVisible" width="30%">
             <div>
-                <el-input
-                    type="textarea"
-                    :rows="4"
-                    placeholder="请输入异议内容"
-                    v-model="objection"
-                ></el-input>
+                <el-input type="textarea" :rows="4" placeholder="请输入异议内容" v-model="objection"></el-input>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submitObjection"
-                    >确 定</el-button
-                >
+                <el-button type="primary" @click="submitObjection">确 定</el-button>
             </span>
         </el-dialog>
     </div>

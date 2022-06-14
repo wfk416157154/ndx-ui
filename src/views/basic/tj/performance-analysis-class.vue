@@ -5,12 +5,7 @@
                 <el-input v-model="form.ksmc"></el-input>
             </el-form-item>
             <el-form-item label="考试类型">
-                <el-select
-                    v-model="form.kslx"
-                    filterable
-                    placeholder="考试类型"
-                    clearable
-                >
+                <el-select v-model="form.kslx" filterable placeholder="考试类型" clearable>
                     <el-option
                         v-for="item in examinationType"
                         :key="item.id"
@@ -28,50 +23,35 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                >
-                </el-date-picker>
+                ></el-date-picker>
             </el-form-item>
             <el-form-item label="省份">
                 <el-input v-model="form.sf"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="getList">查询</el-button>
-                <el-button
-                    type="warning"
-                    plain
-                    icon="el-icon-download"
-                    @click="handleExport"
-                    >导出</el-button
-                >
+                <el-button type="warning" plain icon="el-icon-download" @click="handleExport">导出</el-button>
             </el-form-item>
         </el-form>
 
         <el-table :data="groupGradeEveryTimeData" border style="width: 100%">
-            <el-table-column type="index" label="序号" width="55">
-            </el-table-column>
-            <el-table-column prop="rybjmc" label="班级" width="200">
-            </el-table-column>
-            <el-table-column prop="lsxm" label="老师"> </el-table-column>
-            <el-table-column prop="ksmc" label="考试名称"> </el-table-column>
-            <el-table-column prop="zgf" label="最高分"> </el-table-column>
-            <el-table-column prop="zdf" label="最低分"> </el-table-column>
-            <el-table-column prop="pjf" label="平均分"> </el-table-column>
-            <el-table-column prop="xssl" label="学生数量"> </el-table-column>
+            <el-table-column type="index" label="序号" width="55"></el-table-column>
+            <el-table-column prop="rybjmc" label="班级" width="200"></el-table-column>
+            <el-table-column prop="lsxm" label="老师"></el-table-column>
+            <el-table-column prop="ksmc" label="考试名称"></el-table-column>
+            <el-table-column prop="zgf" label="最高分"></el-table-column>
+            <el-table-column prop="zdf" label="最低分"></el-table-column>
+            <el-table-column prop="pjf" label="平均分"></el-table-column>
+            <el-table-column prop="xssl" label="学生数量"></el-table-column>
             <el-table-column prop="kslx" label="考试类型">
                 <template slot-scope="scope">
-                    <dict-tag
-                        :options="examinationType"
-                        :value="scope.row.kslx"
-                    />
+                    <dict-tag :options="examinationType" :value="scope.row.kslx" />
                 </template>
             </el-table-column>
             <el-table-column prop="kssj" label="时间" width="180">
-                <template slot-scope="scope">
-                    {{ parseTime(scope.row.kssj, "{y}-{m}-{d}") }}
-                </template>
+                <template slot-scope="scope">{{ parseTime(scope.row.kssj, "{y}-{m}-{d}") }}</template>
             </el-table-column>
-            <el-table-column prop="lsxm" label="操作人" width="180">
-            </el-table-column>
+            <el-table-column prop="lsxm" label="操作人" width="180"></el-table-column>
         </el-table>
 
         <pagination
@@ -117,7 +97,7 @@ export default {
             this.download(
                 "/basic/everytime/exportGroupExam",
                 {
-                    ...this.queryParams,
+                    ...this.form,
                 },
                 `考试成绩分析.xlsx`
             );
