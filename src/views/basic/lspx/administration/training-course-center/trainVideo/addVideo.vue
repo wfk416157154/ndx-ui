@@ -219,7 +219,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传图片地址
-        url: process.env.VUE_APP_BASE_API + "/file/renameUpload",
+        url: process.env.VUE_APP_BASE_API + "/file/ossFile/upload/",
       },
       listVideoQuestionData: [],
       dialogFormVisible: false,
@@ -350,7 +350,6 @@ export default {
           if (200 == res.code) {
             this.msgSuccess(res.msg);
             this.dialogFormVisible = false;
-
             this.getList();
           } else {
             this.msgError(res.msg);
