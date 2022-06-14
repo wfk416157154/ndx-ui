@@ -97,7 +97,7 @@ export default {
             this.download(
                 "/basic/everytime/exportGroupExam",
                 {
-                    ...this.queryParams,
+                    ...this.form,
                 },
                 `考试成绩分析.xlsx`
             );
