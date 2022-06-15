@@ -603,7 +603,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <!--<el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据-->
-          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+           <el-link type="info" style="font-size: 17px" @click="importTemplate" ><span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"</el-link>
           <el-link
             type="info"
             style="margin-left:50px ;font-size:12px;color: red"

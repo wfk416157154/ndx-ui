@@ -309,7 +309,7 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+           <el-link type="info" style="font-size: 17px" @click="importTemplate" ><span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>
@@ -339,7 +339,7 @@
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+          <el-link type="info" style="font-size: 17px" @click="importTemplate" ><span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"</el-link>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
       </el-upload>

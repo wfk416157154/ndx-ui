@@ -30,7 +30,6 @@
                     <span>{{scope.row.ysj}}/{{scope.row.zs}}</span>
                 </template>
             </el-table-column>
-            </el-table-column>
             <el-table-column prop="gradeMax" label="最高分">
             </el-table-column>
             <el-table-column prop="gradeMin" label="最低分">
