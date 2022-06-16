@@ -42,6 +42,7 @@
                   :before-upload="beforeFile"
                   :data="fileForm"
                   :auto-upload="false"
+                  :multiple="true"
                   drag
                 >
                   <i class="el-icon-upload"></i>
