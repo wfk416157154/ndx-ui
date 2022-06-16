@@ -21,7 +21,7 @@
                         <td style="text-align : left">
                             <p>图片上传</p>
                             <el-upload
-                                :action="upload.imgNewUrl"
+                                :action="upload.imgUrl"
                                 :headers="upload.headers"
                                 list-type="picture-card"
                                 :on-preview="handlePictureCardPreview"
@@ -111,8 +111,6 @@ export default {
                 fileUrl:
                     process.env.VUE_APP_BASE_API +
                     "/basic/examinationPaper/importClassGradeData",
-                // 图片/file/uploadList"
-                imgNewUrl: process.env.VUE_APP_BASE_API + "/file/uploadList",
                 // 上传图片地址
                 imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
             },
