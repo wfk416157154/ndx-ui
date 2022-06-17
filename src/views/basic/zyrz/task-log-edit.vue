@@ -107,6 +107,7 @@
               :file-list="getImages"
               :before-upload="beforeFile"
               :data="fileForm"
+              :multiple="true"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
