@@ -24,7 +24,7 @@
             <div
               :id="index"
               v-if="true"
-              style="width : 90%; height : 340px; display: inline-block;"
+              style="width : 90%; height : 640px; display: inline-block;"
             ></div>
             <div class="chart-nav">
               <h4 style="color: #FFCC00" @click="selectChart('bar')">柱状图</h4>
@@ -56,7 +56,6 @@ export default {
       year: new Date().getFullYear(),
       //查询条件
       form: {
-        xqid: null,
         lsxm: null,
         bjmc: null,
         bjid: null,
@@ -135,12 +134,6 @@ export default {
       getExaminationType: []
     };
   },
-  props: {
-    bjid: {
-      type: String,
-      default: null
-    }
-  },
   created() {
     this.getDicts("studentGradeType").then(response => {
       this.studentGradeTypeList = response.data;
@@ -149,9 +142,8 @@ export default {
       this.getExaminationType = response.data;
     });
     this.getList();
-    listBjclass({ id: this.bjid }).then(res => {
-      this.form.xqid = res.rows[0].kzzd1;
-      this.form.bjid = this.bjid;
+    listBjclass({ id: this.$route.query.bjid }).then(res => {
+      this.form.bjid = this.$route.query.bjid;
       this.getSchoolId(this.form.xqid);
       this.getAchievement();
     });
