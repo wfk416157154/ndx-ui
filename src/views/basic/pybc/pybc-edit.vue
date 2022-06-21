@@ -63,7 +63,8 @@
               :on-success="zyrzSuccess"
               :file-list="getImages"
                :before-upload="beforeFile"
-  :data="fileForm"
+              :data="fileForm"
+              :multiple="true"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -96,7 +97,8 @@
             :on-success="xsZyrzSuccess"
             :file-list="zdxsGetImage"
              :before-upload="beforeFile"
-  :data="fileForm"
+             :data="fileForm"
+
           >
             <i class="el-icon-plus"></i>
           </el-upload>
