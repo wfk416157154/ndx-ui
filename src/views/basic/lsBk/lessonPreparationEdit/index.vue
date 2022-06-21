@@ -148,7 +148,6 @@ export default {
     methods: {
         //  文件上传修改名称
         beforeFile(file) {
-            console.log(file);
             this.fileForm.renameFileName = "老师备课-" + file.name;
         },
         // 图片预览 大图
