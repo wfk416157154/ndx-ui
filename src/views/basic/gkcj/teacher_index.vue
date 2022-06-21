@@ -2,13 +2,33 @@
     <div style="width:100%,height:100%;padding:40px;box-sizing:border-box">
         <el-form :inline="true" :model="queryParams" class="demo-form-inline">
             <el-form-item label="班级">
-                <el-select v-model="queryParams.bjid" filterable @change="onSelectClass" placeholder="班级">
-                    <el-option v-for="item in queryBjclassList " :key="item.id" :label="item.rybjmc" :value="item.id"></el-option>
+                <el-select
+                    v-model="queryParams.bjid"
+                    filterable
+                    @change="onSelectClass"
+                    placeholder="班级"
+                >
+                    <el-option
+                        v-for="item in queryBjclassList "
+                        :key="item.id"
+                        :label="item.rybjmc"
+                        :value="item.id"
+                    ></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="学生">
-                <el-select v-model="queryParams.studentId" filterable @change="onSelectClass" placeholder="学生">
-                    <el-option v-for="item in getListStudent " :key="item.id" :label="item.xsxm" :value="item.id"></el-option>
+                <el-select
+                    v-model="queryParams.studentId"
+                    filterable
+                    @change="onSelectClass"
+                    placeholder="学生"
+                >
+                    <el-option
+                        v-for="item in getListStudent "
+                        :key="item.id"
+                        :label="item.xsxm"
+                        :value="item.id"
+                    ></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -19,21 +39,20 @@
         </el-form>
 
         <el-table :data="gkcjList" border style="width: 100%">
-            <el-table-column prop="xsxm" label="学生" width="180">
-            </el-table-column>
-            <el-table-column prop="gradeMath" label="数学" width="180">
-            </el-table-column>
-            <el-table-column prop="gradeChinese" label="语文">
-            </el-table-column>
-            <el-table-column prop="gradeJapanese" label="外语">
-            </el-table-column>
-            <el-table-column prop="gradeSynthesis" label="综合">
-            </el-table-column>
-            <el-table-column prop="fullMarks" label="满分">
-            </el-table-column>
+            <el-table-column prop="xsxm" label="学生" width="180"></el-table-column>
+            <el-table-column prop="gradeMath" label="数学" width="180"></el-table-column>
+            <el-table-column prop="gradeChinese" label="语文"></el-table-column>
+            <el-table-column prop="gradeJapanese" label="外语"></el-table-column>
+            <el-table-column prop="gradeSynthesis" label="综合"></el-table-column>
+            <el-table-column prop="fullMarks" label="满分"></el-table-column>
             <el-table-column prop="kzzd1" label="高考截图">
                 <template slot-scope="scope">
-                    <el-image style="width: 100px; height: 100px" :src="scope.row.kzzd1" :preview-src-list="[scope.row.kzzd1]"></el-image>
+                    <el-image
+                        v-if="scope.row.kzzd1"
+                        style="width: 100px; height: 100px"
+                        :src="scope.row.kzzd1"
+                        :preview-src-list="[scope.row.kzzd1]"
+                    ></el-image>
                 </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
@@ -47,32 +66,70 @@
 
         <el-dialog title="高考成绩" :visible.sync="dialogFormVisible">
             <el-form :model="form" ref="bkForm" label-width="120px">
-                <el-form-item label="学生" prop="studentId" :rules="[{ required: true, message: '请选择',trigger: 'change'}]">
-                    <el-select v-model="form.studentId" filterable="" placeholder="学生">
-                        <el-option v-for="item in getListStudent " :key="item.id" :label="item.xsxm" :value="item.id"></el-option>
+                <el-form-item
+                    label="学生"
+                    prop="studentId"
+                    :rules="[{ required: true, message: '请选择',trigger: 'change'}]"
+                >
+                    <el-select v-model="form.studentId" filterable placeholder="学生">
+                        <el-option
+                            v-for="item in getListStudent "
+                            :key="item.id"
+                            :label="item.xsxm"
+                            :value="item.id"
+                        ></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="语文" prop="gradeChinese" :rules="[{ required: true, message: '请填写'}]">
+                <el-form-item
+                    label="语文"
+                    prop="gradeChinese"
+                    :rules="[{ required: true, message: '请填写'}]"
+                >
                     <el-input v-model.number="form.gradeChinese" @input="computedAchievement" />
                 </el-form-item>
-                <el-form-item label="数学" prop="gradeMath" :rules="[{ required: true, message: '请填写'}]">
+                <el-form-item
+                    label="数学"
+                    prop="gradeMath"
+                    :rules="[{ required: true, message: '请填写'}]"
+                >
                     <el-input v-model.number="form.gradeMath" @input="computedAchievement" />
                 </el-form-item>
-                <el-form-item label="外语" prop="gradeJapanese" :rules="[{ required: true, message: '请填写'}]">
+                <el-form-item
+                    label="外语"
+                    prop="gradeJapanese"
+                    :rules="[{ required: true, message: '请填写'}]"
+                >
                     <el-input v-model.number="form.gradeJapanese" @input="computedAchievement" />
                 </el-form-item>
-                <el-form-item label="综合" prop="gradeSynthesis" :rules="[{ required: true, message: '请填写'}]">
+                <el-form-item
+                    label="综合"
+                    prop="gradeSynthesis"
+                    :rules="[{ required: true, message: '请填写'}]"
+                >
                     <el-input v-model.number="form.gradeSynthesis" @input="computedAchievement" />
                 </el-form-item>
-                <el-form-item label="满分" prop="fullMarks" :rules="[{ required: true, message: '请填写'},{type:'number',message: '请填写数字'}]">
+                <el-form-item
+                    label="满分"
+                    prop="fullMarks"
+                    :rules="[{ required: true, message: '请填写'},{type:'number',message: '请填写数字'}]"
+                >
                     <el-input v-model.number="form.fullMarks" />
                 </el-form-item>
                 <el-form-item label="高考成绩截图">
-                    <el-upload :headers="upload.headers" :action="upload.imgUrl" list-type="picture-card" :on-success="handleFileSuccess" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :before-upload="beforeFile" :data="fileForm">
+                    <el-upload
+                        :headers="upload.headers"
+                        :action="upload.imgUrl"
+                        list-type="picture-card"
+                        :on-success="handleFileSuccess"
+                        :on-preview="handlePictureCardPreview"
+                        :on-remove="handleRemove"
+                        :before-upload="beforeFile"
+                        :data="fileForm"
+                    >
                         <i class="el-icon-plus"></i>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
-                        <img width="100%" :src="dialogImageUrl" alt="">
+                        <img width="100%" :src="dialogImageUrl" alt />
                     </el-dialog>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -88,30 +145,31 @@
 </template>
 
 <script>
-import {
-    listBjclass,
-} from "@/api/basic/bjclass";
-import {
-    listStudent,
-} from "@/api/basic/student";
+import { listBjclass } from "@/api/basic/bjclass";
+import { listStudent } from "@/api/basic/student";
 import { getToken } from "@/utils/auth";
 import { addImg, addFile, selectFileList, deleteImg } from "@/api/tool/common";
 import { secretKey } from "@/utils/tools";
-import { listForAcdemicDean, listForTeacher, addCollegeEntranceExam, updateCollegeEntranceExam } from "@/api/basic/gkcj"
+import store from "@/store";
+import {
+    listForAcdemicDean,
+    listForTeacher,
+    addCollegeEntranceExam,
+    updateCollegeEntranceExam,
+    gkcjUploadInform,
+} from "@/api/basic/gkcj";
 export default {
     data() {
         return {
             gkcjList: [],
-            form: {
-
-            },
+            form: {},
             dialogFormVisible: false,
-            dialogImageUrl: '',
+            dialogImageUrl: "",
             dialogVisible: false,
             total: 0,
             queryParams: {
                 pageNum: 0,
-                pageSize: 10
+                pageSize: 10,
             },
             // 文件图片上传
             upload: {
@@ -133,34 +191,47 @@ export default {
                 imgUrl: process.env.VUE_APP_BASE_API + "/file/renameUpload",
             },
             fileForm: {
-                 renameFileName: ""
-                },
+                renameFileName: "",
+            },
             formLabelWidth: 200,
             // 校区数据
             queryBjclassList: [],
             // 学生
-            getListStudent: []
-        }
+            getListStudent: [],
+            // 发送人
+            wxjwjs: [],
+        };
     },
     created() {
-        listBjclass().then(response => {
-            this.queryBjclassList = response.rows;
+        listBjclass().then((response) => {
+            this.queryBjclassList = [];
+            let year = String(new Date().getFullYear()).substr(2) + "届";
+            response.rows.forEach((val) => {
+                if (val.rybjmc.includes(year)) {
+                    this.queryBjclassList.push(val);
+                }
+            });
             if (this.$route.query.bjid) {
                 this.queryParams.bjid = this.$route.query.bjid;
-                this.onSelectClass()
-                this.getList()
+                this.onSelectClass();
+                this.getList();
             } else {
                 this.queryParams.bjid = this.queryBjclassList[0].id;
-                this.onSelectClass()
-                this.getList()
+                this.onSelectClass();
+                this.getList();
             }
         });
+        // 发送人
+        this.getDicts("wxjwjs").then((response) => {
+            this.wxjwjs = response.data;
+        });
+        console.log(this.$store.state.user);
     },
     methods: {
-         //  文件上传修改名称
-       beforeFile(file) {
-        this.fileForm.renameFileName ='老师添加高考成绩-'+file.name
-    },
+        //  文件上传修改名称
+        beforeFile(file) {
+            this.fileForm.renameFileName = "老师添加高考成绩-" + file.name;
+        },
         handleRemove(file, fileList) {
             console.log(file, fileList);
         },
@@ -171,57 +242,94 @@ export default {
         // 保存
         onSaveSubmit() {
             if (!this.form.kzzd1) {
-                this.msgError("请上传高考成绩截图")
-                return
+                this.msgError("请上传高考成绩截图");
+                return;
             }
             this.$refs["bkForm"].validate((valid) => {
                 if (valid) {
-                    this.form.bjid = this.queryParams.bjid
+                    this.form.bjid = this.queryParams.bjid;
                     if (this.form.gkId) {
-                        updateCollegeEntranceExam(this.form).then(res => {
-                            this.msgSuccess(res.msg)
-                            this.dialogFormVisible = false
+                        updateCollegeEntranceExam(this.form).then((res) => {
+                            this.msgSuccess(res.msg);
+                            this.dialogFormVisible = false;
                             this.getList();
-                        })
+                            this.onGkcjUploadInform();
+                        });
                     } else {
-                        addCollegeEntranceExam(this.form).then(res => {
-                            this.msgSuccess(res.msg)
-                            this.dialogFormVisible = false
+                        addCollegeEntranceExam(this.form).then((res) => {
+                            this.msgSuccess(res.msg);
+                            this.dialogFormVisible = false;
                             this.getList();
-                        })
-
+                            this.onGkcjUploadInform();
+                        });
                     }
                 }
+            });
+        },
+        // 消息通知发送人
+        onGkcjUploadInform() {
+            listForTeacher({
+                bjid: this.queryParams.bjid,
+                isUpload: "1",
+                studentId: this.queryParams.studentId,
+            }).then((res) => {
+                let ysc = res.total;
+                let zs = this.gkcjList.length;
+                let uploadMsg = `共${zs}人/已上传${ysc}人/未上传${zs - ysc}人`;
+                this.wxjwjs.forEach((val) => {
+                    gkcjUploadInform(this.wecharServerUrl, {
+                        openId: val.dictValue,
+                        msgTitle: `${this.$store.state.user.nickName}老师上传了高考成绩`,
+                        bjid: this.form.bjid,
+                        bjmc: this.form.rybjmc,
+                        lsdh: this.$store.state.user.name,
+                        lsxm: this.$store.state.user.nickName,
+                        uploadMsg,
+                        remark: `${this.form.xsxm}/语文:${this.form.gradeChinese}分/数学:${this.form.gradeMath}分/外语:${this.form.gradeJapanese}分/综合:${this.form.gradeSynthesis}分/总分:${this.form.fullMarks}分`,
+                        userId: this.$store.state.user.glrid,
+                        userName: this.$store.state.user.nickName,
+                    }).then((res) => {
+                        console.log(res);
+                    });
+                });
             });
         },
         // 计算满分
         computedAchievement() {
             if (typeof this.form.gradeChinese == "string") {
-                this.msgError("成绩只能输入数字")
-                this.form.gradeChinese = null
-                return
+                this.msgError("成绩只能输入数字");
+                this.form.gradeChinese = null;
+                return;
             }
             if (typeof this.form.gradeMath == "string") {
-                this.msgError("成绩只能输入数字")
-                this.form.gradeMath = null
-                return
+                this.msgError("成绩只能输入数字");
+                this.form.gradeMath = null;
+                return;
             }
             if (typeof this.form.gradeJapanese == "string") {
-                this.msgError("成绩只能输入数字")
-                this.form.gradeJapanese = null
-                return
+                this.msgError("成绩只能输入数字");
+                this.form.gradeJapanese = null;
+                return;
             }
             if (typeof this.form.gradeSynthesis == "string") {
-                this.msgError("成绩只能输入数字")
-                this.form.gradeSynthesis = null
-                return
+                this.msgError("成绩只能输入数字");
+                this.form.gradeSynthesis = null;
+                return;
             }
-            if (this.form.gradeChinese && this.form.gradeMath && this.form.gradeJapanese && this.form.gradeSynthesis) {
-                this.form.fullMarks = this.form.gradeChinese + this.form.gradeMath + this.form.gradeJapanese + this.form.gradeSynthesis
+            if (
+                this.form.gradeChinese &&
+                this.form.gradeMath &&
+                this.form.gradeJapanese &&
+                this.form.gradeSynthesis
+            ) {
+                this.form.fullMarks =
+                    this.form.gradeChinese +
+                    this.form.gradeMath +
+                    this.form.gradeJapanese +
+                    this.form.gradeSynthesis;
             } else {
-                this.form.fullMarks = null
+                this.form.fullMarks = null;
             }
-
         },
         // 文件上传成功处理
         handleFileSuccess(response, file, fileList) {
@@ -242,37 +350,45 @@ export default {
         // 查看
         handleClick(row) {
             this.form = row;
-            this.form.id = row.gkId
-            this.dialogFormVisible = true
+            this.form.id = row.gkId;
+            this.dialogFormVisible = true;
         },
         //导出
         onExport() {
-            this.download('basic/collegeEntranceExam/exportCollegeEntranceExam', {
-                bjid: this.queryParams.bjid
-            }, `班级高考成绩.xlsx`)
+            this.download(
+                "basic/collegeEntranceExam/exportCollegeEntranceExam",
+                {
+                    bjid: this.queryParams.bjid,
+                },
+                `班级高考成绩.xlsx`
+            );
         },
         // 添加
         onAddGkcj() {
-            this.form = {}
-            this.dialogFormVisible = true
+            this.form = {};
+            this.dialogFormVisible = true;
         },
         // 已上传
         onGetList(status) {
             this.queryParams.isUpload = status;
-            this.getList()
+            this.getList();
         },
         getList() {
-            listForTeacher({ bjid: this.queryParams.bjid, isUpload: this.queryParams.isUpload, studentId: this.queryParams.studentId }).then(res => {
-                this.gkcjList = res.rows
-            })
+            listForTeacher({
+                bjid: this.queryParams.bjid,
+                isUpload: this.queryParams.isUpload,
+                studentId: this.queryParams.studentId,
+            }).then((res) => {
+                this.gkcjList = res.rows;
+            });
         },
         // 选择学生
         onSelectClass() {
             this.getList();
-            listStudent({ ryb: this.queryParams.bjid }).then(res => {
-                this.getListStudent = res.rows
-            })
-        }
-    }
-}
+            listStudent({ ryb: this.queryParams.bjid }).then((res) => {
+                this.getListStudent = res.rows;
+            });
+        },
+    },
+};
 </script>

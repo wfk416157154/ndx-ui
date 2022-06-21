@@ -23,6 +23,14 @@ export function addCollegeEntranceExam(data) {
         data: data
     })
 }
+// 老师上传高考成绩后通知教务/提醒老师及时上传学生高考成绩
+export function gkcjUploadInform(path, data) {
+    return request({
+        url: path + 'wxTemplateMessage/gkcjUploadInform',
+        method: 'post',
+        data: data
+    })
+}
 
 // 编辑 高考成绩
 export function updateCollegeEntranceExam(data) {
