@@ -117,7 +117,7 @@ export default {
         {
           bjid: row.bjid,
         },
-        `班级高考成绩.xlsx`
+        `${row.rybjmc}-${row.lsxm}高考成绩.xlsx`
       );
     },
     // 选择老师

@@ -33,7 +33,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onAddGkcj">添加</el-button>
-                <el-button type="primary" @click="onExport">导出</el-button>
+                <!-- <el-button type="primary" @click="onExport">导出</el-button> -->
                 <el-button type="primary" @click="onGetList('1')">已上传</el-button>
             </el-form-item>
         </el-form>
@@ -106,10 +106,14 @@
                     prop="gradeSynthesis"
                     :rules="[{ required: true, message: '请填写'}]"
                 >
-                    <el-input v-model.number="form.gradeSynthesis" @input="computedAchievement" />
+                    <el-input
+                        placeholder="除语数外成绩总和"
+                        v-model.number="form.gradeSynthesis"
+                        @input="computedAchievement"
+                    />
                 </el-form-item>
                 <el-form-item
-                    label="满分"
+                    label="高考总分"
                     prop="fullMarks"
                     :rules="[{ required: true, message: '请填写'},{type:'number',message: '请填写数字'}]"
                 >
@@ -225,7 +229,6 @@ export default {
         this.getDicts("wxjwjs").then((response) => {
             this.wxjwjs = response.data;
         });
-        console.log(this.$store.state.user);
     },
     methods: {
         //  文件上传修改名称
@@ -268,6 +271,11 @@ export default {
         },
         // 消息通知发送人
         onGkcjUploadInform() {
+            this.getListStudent.forEach((val) => {
+                if (this.form.studentId == val.id) {
+                    this.form.xsxm = val.xsxm;
+                }
+            });
             listForTeacher({
                 bjid: this.queryParams.bjid,
                 isUpload: "1",
@@ -285,7 +293,7 @@ export default {
                         lsdh: this.$store.state.user.name,
                         lsxm: this.$store.state.user.nickName,
                         uploadMsg,
-                        remark: `${this.form.xsxm}/语文:${this.form.gradeChinese}分/数学:${this.form.gradeMath}分/外语:${this.form.gradeJapanese}分/综合:${this.form.gradeSynthesis}分/总分:${this.form.fullMarks}分`,
+                        remark: `${this.form.xsxm}/语文:${this.form.gradeChinese}分/数学:${this.form.gradeMath}分/外语:${this.form.gradeJapanese}分/综合:${this.form.gradeSynthesis}分/高考总分:${this.form.fullMarks}分`,
                         userId: this.$store.state.user.glrid,
                         userName: this.$store.state.user.nickName,
                     }).then((res) => {
@@ -351,6 +359,7 @@ export default {
         handleClick(row) {
             this.form = row;
             this.form.id = row.gkId;
+            this.dialogImageUrl = "";
             this.dialogFormVisible = true;
         },
         //导出
@@ -366,6 +375,7 @@ export default {
         // 添加
         onAddGkcj() {
             this.form = {};
+            this.dialogImageUrl = "";
             this.dialogFormVisible = true;
         },
         // 已上传
