@@ -229,6 +229,7 @@ export default {
         this.getDicts("wxjwjs").then((response) => {
             this.wxjwjs = response.data;
         });
+
     },
     methods: {
         //  文件上传修改名称
