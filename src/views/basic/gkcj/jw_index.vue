@@ -1,5 +1,5 @@
 <template>
-    <div style="width:100%,height:100%;padding:40px;box-sizing:border-box">
+    <div style="width:100%;height:100%;padding:40px;box-sizing:border-box">
         <el-form :inline="true" :model="queryParams" class="demo-form-inline">
             <el-form-item label="班级">
                 <el-select
