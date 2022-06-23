@@ -15,10 +15,28 @@ export function listForTeacher(query) {
     })
 }
 
+// 查询高考成绩分数线列表
+export function listCollegeScoreLine(query) {
+    return request({
+        url: '/basic/collegeScoreLine/list',
+        method: 'get',
+        params: query
+    })
+}
+
 // 新增 高考成绩
 export function addCollegeEntranceExam(data) {
     return request({
         url: '/basic/collegeEntranceExam',
+        method: 'post',
+        data: data
+    })
+}
+
+// 批量新增或修改高考成绩分数线
+export function addOrUpdate(data) {
+    return request({
+        url: '/basic/collegeScoreLine/addOrUpdate',
         method: 'post',
         data: data
     })

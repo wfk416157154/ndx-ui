@@ -95,6 +95,7 @@ import {
     addCollegeEntranceExam,
     updateCollegeEntranceExam,
     addOrUpdate,
+    listCollegeScoreLine,
 } from "@/api/basic/gkcj";
 import { messageReminder } from "@/api/basic/weixin";
 
@@ -165,7 +166,17 @@ export default {
         // 设置本科线
         handleClick(row) {
             this.bkfsForm.id = row.bjid;
-            this.dialogFormVisible = true;
+            listCollegeScoreLine({ rybjid: this.bkfsForm.id }).then((res) => {
+                res.rows.forEach((val) => {
+                    this.collegeScoreLine.forEach((row) => {
+                        if (row.dictValue == val.xklx) {
+                            row.fsx = val.fsx;
+                            row.fsxid = val.id;
+                        }
+                    });
+                });
+                this.dialogFormVisible = true;
+            });
         },
         // 确定
         bkxSubmit() {
@@ -176,6 +187,7 @@ export default {
                         rybjid: this.bkfsForm.id,
                         fsx: val.fsx,
                         xklx: val.dictValue,
+                        id: val.fsxid ? val.fsxid : null,
                     });
                 }
             });
