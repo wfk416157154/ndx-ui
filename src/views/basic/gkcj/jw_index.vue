@@ -26,6 +26,7 @@
                         :value="item.id"
                     ></el-option>
                 </el-select>
+                
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onGetList('1')">已完成</el-button>
@@ -174,14 +175,20 @@ export default {
                 }
             });
             listCollegeScoreLine({ rybjid: this.bkfsForm.id }).then((res) => {
-                res.rows.forEach((val) => {
-                    this.collegeScoreLine.forEach((row) => {
-                        if (row.dictValue == val.xklx) {
-                            this.$set(row, "fsx", val.fsx);
-                            this.$set(row, "fsxid", val.id);
-                        }
+                if (res.rows.length > 0) {
+                    res.rows.forEach((val) => {
+                        this.collegeScoreLine.forEach((row) => {
+                            if (row.dictValue == val.xklx) {
+                                this.$set(row, "fsx", val.fsx);
+                                this.$set(row, "fsxid", val.id);
+                            }
+                        });
                     });
-                });
+                } else {
+                    this.collegeScoreLine.forEach((row) => {
+                        row.fsxid = null;
+                    });
+                }
                 this.dialogFormVisible = true;
             });
         },
