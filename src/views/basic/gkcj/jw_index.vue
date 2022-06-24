@@ -59,6 +59,7 @@
                 </template>
             </el-table-column>
         </el-table>
+
         <pagination
             v-show="total>0"
             :total="total"
@@ -168,15 +169,16 @@ export default {
         handleClick(row) {
             this.bkfsForm.id = row.bjid;
             this.collegeScoreLine.forEach((row) => {
-                row.fsx = null;
-                row.fsxid = null;
+                if (row.fsx) {
+                    row.fsx = "";
+                }
             });
             listCollegeScoreLine({ rybjid: this.bkfsForm.id }).then((res) => {
                 res.rows.forEach((val) => {
                     this.collegeScoreLine.forEach((row) => {
                         if (row.dictValue == val.xklx) {
-                            row.fsx = val.fsx;
-                            row.fsxid = val.id;
+                            this.$set(row, "fsx", val.fsx);
+                            this.$set(row, "fsxid", val.id);
                         }
                     });
                 });
