@@ -6,6 +6,7 @@
                     v-model="queryParams.bjid"
                     filterable
                     @change="onSelectClass"
+                    clearable
                     placeholder="班级"
                 >
                     <el-option
@@ -17,7 +18,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="老师">
-                <el-select v-model="queryParams.lsid" filterable placeholder="老师">
+                <el-select clearable v-model="queryParams.lsid" filterable placeholder="老师">
                     <el-option
                         v-for="item in getListTeacher "
                         :key="item.id"
@@ -166,6 +167,10 @@ export default {
         // 设置本科线
         handleClick(row) {
             this.bkfsForm.id = row.bjid;
+            this.collegeScoreLine.forEach((row) => {
+                row.fsx = null;
+                row.fsxid = null;
+            });
             listCollegeScoreLine({ rybjid: this.bkfsForm.id }).then((res) => {
                 res.rows.forEach((val) => {
                     this.collegeScoreLine.forEach((row) => {
