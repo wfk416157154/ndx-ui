@@ -26,7 +26,7 @@
                         :value="item.id"
                     ></el-option>
                 </el-select>
-                
+
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onGetList('1')">已完成</el-button>
@@ -46,8 +46,8 @@
             </el-table-column>
             <el-table-column prop="gradeMax" label="最高分"></el-table-column>
             <el-table-column prop="gradeMin" label="最低分"></el-table-column>
-            <el-table-column prop="address" label="状态"></el-table-column>
-            <el-table-column prop="address" label="导出">
+            <el-table-column prop="gradeAvg" label="平均分"></el-table-column>
+            <el-table-column label="导出">
                 <template slot-scope="scope">
                     <el-button @click="onExport(scope.row)">导出</el-button>
                 </template>
