@@ -286,7 +286,7 @@
                 <el-form-item label="目前状态" label-width="100px">
                     <el-radio-group v-model="fixedAssetsRegistrationForm.status">
                         <el-radio
-                            :disabled="fixedAssetsRegistrationForm.id ? true : false"
+                            :disabled="fixedAssetsRegistrationForm.id ? false : true"
                             v-for="(item,index) in goodsLibraryRegisterStatus"
                             :key="index"
                             :label="item.dictValue"
