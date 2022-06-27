@@ -41,7 +41,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="goodsStock" label="物品数量"></el-table-column>
-            <el-table-column prop="goodsPrice" label="物品价格"></el-table-column>
+            <!-- <el-table-column prop="goodsPrice" label="物品价格"></el-table-column> -->
             <el-table-column prop="goodsPrice" label="操作" width="200px">
                 <template slot-scope="scope">
                     <el-popover placement="right" width="500" trigger="click">
@@ -63,6 +63,7 @@
                                 </template>
                             </el-table-column>
                             <el-table-column width="100" property="goodsStock" label="库存"></el-table-column>
+                            <el-table-column prop="goodsPrice" label="物品价格"></el-table-column>
                         </el-table>
                         <el-button
                             slot="reference"

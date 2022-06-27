@@ -120,7 +120,7 @@
                 >
                     <el-select
                         v-model="fixedAssetsRegistrationForm.giveCompany"
-                        :disabled="fixedAssetsRegistrationForm.id"
+                        :disabled="fixedAssetsRegistrationForm.id ? true : false"
                         placeholder="请选择发放公司"
                     >
                         <el-option
@@ -143,7 +143,7 @@
                 >
                     <el-select
                         v-model="fixedAssetsRegistrationForm.goodsType"
-                        :disabled="fixedAssetsRegistrationForm.id"
+                        :disabled="fixedAssetsRegistrationForm.id ? true : false"
                         placeholder="请选择物品类别"
                     >
                         <el-option
@@ -167,7 +167,7 @@
                     <el-select
                         v-model="fixedAssetsRegistrationForm.kzzd1"
                         @change="onGetStock(fixedAssetsRegistrationForm.kzzd1)"
-                        :disabled="fixedAssetsRegistrationForm.id"
+                        :disabled="fixedAssetsRegistrationForm.id ? true : false"
                         placeholder="请选择物品名称"
                     >
                         <el-option
@@ -189,7 +189,7 @@
                }]"
                 >
                     <el-input
-                        :disabled="fixedAssetsRegistrationForm.id"
+                        :disabled="fixedAssetsRegistrationForm.id ? true : false"
                         v-model="fixedAssetsRegistrationForm.quantity"
                         autocomplete="off"
                     ></el-input>
@@ -219,7 +219,7 @@
                     <el-select
                         v-model="fixedAssetsRegistrationForm.teacherId"
                         @change="getClass2(fixedAssetsRegistrationForm.teacherId)"
-                        :disabled="fixedAssetsRegistrationForm.id"
+                        :disabled="fixedAssetsRegistrationForm.id ? true : false"
                         placeholder="请选择申请老师"
                     >
                         <el-option
@@ -242,7 +242,7 @@
                 >
                     <el-select
                         v-model="fixedAssetsRegistrationForm.classId"
-                        :disabled="fixedAssetsRegistrationForm.id"
+                        :disabled="fixedAssetsRegistrationForm.id ? true : false"
                         placeholder="请选择使用班级"
                     >
                         <el-option
@@ -267,7 +267,7 @@
                         <el-col :span="10">
                             <el-select
                                 v-model="fixedAssetsRegistrationForm.distributionWay"
-                                :disabled="fixedAssetsRegistrationForm.id"
+                                :disabled="fixedAssetsRegistrationForm.id ? true : false"
                                 placeholder="请选择发放途径"
                             >
                                 <el-option
@@ -286,7 +286,7 @@
                 <el-form-item label="目前状态" label-width="100px">
                     <el-radio-group v-model="fixedAssetsRegistrationForm.status">
                         <el-radio
-                            :disabled="!fixedAssetsRegistrationForm.id"
+                            :disabled="fixedAssetsRegistrationForm.id ? true : false"
                             v-for="(item,index) in goodsLibraryRegisterStatus"
                             :key="index"
                             :label="item.dictValue"
@@ -474,12 +474,17 @@ export default {
             });
         },
         // 获取班级
-        getClass3(lsid) {
+        getClass3(lsid, bjid = "") {
             this.getListBjclass3 = [];
             // 获取班级信息lsid
             listBjclass({ lsid }).then((res) => {
-                this.fixedAssetsRegistrationForm.transferClassId =
-                    res.rows[0].id;
+                if (bjid) {
+                    this.fixedAssetsRegistrationForm.transferClassId = bjid;
+                } else {
+                    this.fixedAssetsRegistrationForm.transferClassId =
+                        res.rows[0].id;
+                }
+
                 this.getListBjclass3 = res.rows;
             });
         },
@@ -492,9 +497,9 @@ export default {
         // 导出
         handleExport() {
             this.download(
-                "/basic/goodsLibrary/flowing/export",
+                "/basic/goodsLibrary/register/export",
                 {
-                    goodsLibraryId: row.id,
+                    ...this.queryParams,
                 },
                 `固定资产登记.xlsx`
             );
@@ -509,8 +514,10 @@ export default {
         handleView(row) {
             this.fixedAssetsRegistrationForm = row;
             this.getClass2(row.teacherId, row.classId);
+            this.getClass3(row.transferTeacherId, row.transferClassId);
             this.dialogFormVisible = true;
             this.open = false;
+            this.onGetStock(this.fixedAssetsRegistrationForm.kzzd1);
         },
         // 编辑
         handleEdit(row) {
