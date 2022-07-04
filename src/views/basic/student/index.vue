@@ -193,12 +193,12 @@
     >
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column v-if="false" label="状态" align="center" prop="id"/>
-      <el-table-column label="学生头像" align="center" prop="xstx">
+      <el-table-column label="学生头像" :fixed="true" align="center" prop="xstx">
         <template slot-scope="scope">
           <el-image v-if="scope.row.xstx!=null&&scope.row.xstx!=''" style="width : 80px; hieght : 80px" :src="scope.row.xstx" :preview-src-list="previewPhoto(scope.row.xstx)" />
         </template>
       </el-table-column>
-      <el-table-column label="学生姓名" align="center" prop="xsxm">
+      <el-table-column label="学生姓名" :fixed="true" width="120px" align="center" prop="xsxm">
         <template slot-scope="scope">
           <a href="#">
             <span

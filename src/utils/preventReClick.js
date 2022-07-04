@@ -1,8 +1,8 @@
 export default {
-  install (Vue) {
+  install(Vue) {
     // 防重复点击(指令实现)
     Vue.directive('preventReClick', {
-      inserted (el, binding) {
+      inserted(el, binding) {
         //console.log(el, binding)
         el.addEventListener('click', () => {
           if (!el.disabled) {
