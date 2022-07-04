@@ -69,6 +69,7 @@
                     </a>
                 </template>
             </el-table-column>
+            <el-table-column label="创建时间" align="center" prop="createTime"/>
             <el-table-column label="操作" align="center" prop="remark">
                 <template slot-scope="scope">
                     <el-button
