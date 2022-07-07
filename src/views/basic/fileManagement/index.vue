@@ -1,12 +1,29 @@
 <template>
     <div class="app-container">
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form
+            :model="queryParams"
+            ref="queryForm"
+            :inline="true"
+            v-show="showSearch"
+            label-width="68px"
+        >
             <el-form-item label="标题" prop="title">
-                <el-input v-model="queryParams.title" placeholder="请输入标题" clearable size="small" @keyup.enter.native="handleQuery" />
+                <el-input
+                    v-model="queryParams.title"
+                    placeholder="请输入标题"
+                    clearable
+                    size="small"
+                    @keyup.enter.native="handleQuery"
+                />
             </el-form-item>
             <el-form-item label="类型" prop="lx">
                 <el-select v-model="queryParams.lx" placeholder="请选择类型" clearable size="small">
-                    <el-option v-for="dict in lxOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+                    <el-option
+                        v-for="dict in lxOptions"
+                        :key="dict.dictValue"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                    />
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -15,25 +32,60 @@
                 <el-button type="success" size="mini" @click="seeHistorical">查看下载历史</el-button>
             </el-form-item>
         </el-form>
-        
+
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['basic:fileManagement:add']">新增</el-button>
+                <el-button
+                    type="primary"
+                    plain
+                    icon="el-icon-plus"
+                    size="mini"
+                    @click="handleAdd"
+                    v-hasPermi="['basic:fileManagement:add']"
+                >新增</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['basic:fileManagement:edit']">修改</el-button>
+                <el-button
+                    type="success"
+                    plain
+                    icon="el-icon-edit"
+                    size="mini"
+                    :disabled="single"
+                    @click="handleUpdate"
+                    v-hasPermi="['basic:fileManagement:edit']"
+                >修改</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['basic:fileManagement:remove']">删除</el-button>
+                <el-button
+                    type="danger"
+                    plain
+                    icon="el-icon-delete"
+                    size="mini"
+                    :disabled="multiple"
+                    @click="handleDelete"
+                    v-hasPermi="['basic:fileManagement:remove']"
+                >删除</el-button>
             </el-col>
             <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
         <el-tabs v-model="queryParams.lx" type="card" class="demo-tabs" @tab-click="handleQuery">
-            <el-tab-pane v-for="dict in lxOptions" :key="dict.dictValue" :label="dict.dictLabel" :name="dict.dictValue"></el-tab-pane>
+            <el-tab-pane
+                v-for="dict in lxOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :name="dict.dictValue"
+            ></el-tab-pane>
         </el-tabs>
 
-        <el-table style="width: 100%;font-size : 18px" v-loading="loading" :height="$root.tableHeight" border :data="fileManagementList" @selection-change="handleSelectionChange">
+        <el-table
+            style="width: 100%;font-size : 18px"
+            v-loading="loading"
+            :height="$root.tableHeight"
+            border
+            :data="fileManagementList"
+            @selection-change="handleSelectionChange"
+        >
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column label="主键" align="center" prop="id" v-if="false" />
             <el-table-column label="标题" align="center" prop="title" />
@@ -44,11 +96,26 @@
             </el-table-column>
             <el-table-column label="要求" align="center" prop="yaoqiu" />
             <el-table-column label="图片示例id" align="center" prop="tpslid" v-if="false" />
-            <el-table-column label="图片示例" align="center" prop="tpslArr" :width="flexColumnWidth('tpslArr',fileManagementList)">
+            <el-table-column
+                label="图片示例"
+                align="center"
+                prop="tpslArr"
+                :width="flexColumnWidth('tpslArr',fileManagementList)"
+            >
                 <template slot-scope="scope">
                     <div class="block" style="display : flex; width : 100% ; height : 100%">
-                        <el-image style="width: 60px; height: 60px; margin : 0px 5px" v-for="(item,index) in scope.row.tpslArr" :key="index" :src="item" :preview-src-list="scope.row.tpslArr">
-                            <div slot="error" style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc" class="image-slot">
+                        <el-image
+                            style="width: 60px; height: 60px; margin : 0px 5px"
+                            v-for="(item,index) in scope.row.tpslArr"
+                            :key="index"
+                            :src="item"
+                            :preview-src-list="scope.row.tpslArr"
+                        >
+                            <div
+                                slot="error"
+                                style="width : 100%; height : 100%; display : flex; align-items : center;background : #eee; font-size : 12px;justify-content:center;color : #c0c4cc"
+                                class="image-slot"
+                            >
                                 <span>加载失败</span>
                             </div>
                         </el-image>
@@ -58,19 +125,43 @@
             <el-table-column label="文件id" align="center" prop="wjid" v-if="false" />
             <el-table-column label="文件下载" align="center" prop="wjidArr" width="280px" v-if="false">
                 <template slot-scope="scope">
-                    <el-button size="mini" type="text" v-for="(item,index) in scope.row.wjidArr" :key="index" @click="downloadFileName(item.wjmc,scope.row.title)">点击下载</el-button>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        v-for="(item,index) in scope.row.wjidArr"
+                        :key="index"
+                        @click="downloadFileName(item.wjmc,scope.row.title)"
+                    >点击下载</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="备注" align="center" prop="remark" />
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
-                    <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['basic:fileManagement:edit']">修改</el-button>
-                    <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['basic:fileManagement:remove']">删除</el-button>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-edit"
+                        @click="handleUpdate(scope.row)"
+                        v-hasPermi="['basic:fileManagement:edit']"
+                    >修改</el-button>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        icon="el-icon-delete"
+                        @click="handleDelete(scope.row)"
+                        v-hasPermi="['basic:fileManagement:remove']"
+                    >删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
+        <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getList"
+        />
         <el-dialog title="下载历史" :visible.sync="dialogFormVisible" width="80%">
             <div>
                 <historical-records :ssmk="filessmk" />
@@ -89,21 +180,49 @@
                 </el-form-item>
                 <el-form-item label="类型" prop="lx">
                     <el-select v-model="form.lx" placeholder="请选择类型">
-                        <el-option v-for="dict in lxOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
+                        <el-option
+                            v-for="dict in lxOptions"
+                            :key="dict.dictValue"
+                            :label="dict.dictLabel"
+                            :value="dict.dictValue"
+                        ></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="要求" prop="yaoqiu">
                     <el-input type="textarea" v-model="form.yaoqiu" placeholder="请输入要求" />
                 </el-form-item>
                 <el-form-item label="图片示例" prop="tpslid">
-                    <el-upload :action="upload.url" :headers="upload.headers" list-type="picture-card" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :limit="maxPhotoNum" :file-list="tpslPhoto" :before-upload="beforeFile"
-                    :data="fileForm">
+                    <el-upload
+                        :action="upload.url"
+                        :headers="upload.headers"
+                        list-type="picture-card"
+                        :on-remove="handleRemove"
+                        :on-success="handleAvatarSuccess"
+                        :limit="maxPhotoNum"
+                        :file-list="tpslPhoto"
+                        :before-upload="beforeFile"
+                        :data="fileForm"
+                    >
                         <i class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="文件" prop="wjid">
-                    <el-upload ref="upload" :limit="maxPhotoNum" accept=".*" :headers="upload.headers" :action="upload.url" :disabled="upload.isUploading" :on-remove="handleRemove" :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="true" :file-list="wjidFile" :before-upload="beforeFile"
-                    :data="fileForm" drag>
+                    <el-upload
+                        ref="upload"
+                        :limit="maxPhotoNum"
+                        accept=".*"
+                        :headers="upload.headers"
+                        :action="upload.url"
+                        :disabled="upload.isUploading"
+                        :on-remove="handleRemove"
+                        :on-progress="handleFileUploadProgress"
+                        :on-success="handleFileSuccess"
+                        :auto-upload="true"
+                        :file-list="wjidFile"
+                        :before-upload="beforeFile"
+                        :data="fileForm"
+                        drag
+                    >
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">
                             将文件拖到此处，或
@@ -130,7 +249,7 @@ import {
     getFileManagement,
     delFileManagement,
     addFileManagement,
-    updateFileManagement
+    updateFileManagement,
 } from "@/api/basic/fileManagement";
 import { getToken } from "@/utils/auth";
 import { addImg, selectFileList, deleteImg } from "@/api/tool/common";
@@ -168,7 +287,7 @@ export default {
                 title: null,
                 lx: null,
                 tpslid: null,
-                wjid: null
+                wjid: null,
             },
             // 表单参数
             form: {},
@@ -187,11 +306,11 @@ export default {
                 // 设置上传的请求头部
                 headers: { Authorization: "Bearer " + getToken() },
                 // 上传的地址
-                url: process.env.VUE_APP_BASE_API + "/file/renameUpload"
+                url: process.env.VUE_APP_BASE_API + "/file/renameUpload",
             },
-             fileForm: {
-                 renameFileName: ""
-                },
+            fileForm: {
+                renameFileName: "",
+            },
             // 图片示例数组
             tpslPhoto: [],
             // 文件id数组
@@ -200,24 +319,24 @@ export default {
             maxPhotoNum: 10,
             // 文件所属模块
             filessmk: "试卷管理",
-            dialogFormVisible: false
+            dialogFormVisible: false,
         };
     },
     created() {
         this.getList();
-        this.getDicts("fileManagementType").then(response => {
+        this.getDicts("fileManagementType").then((response) => {
             this.lxOptions = response.data;
         });
     },
     methods: {
         //  文件上传修改名称
-       beforeFile(file) {
-        this.fileForm.renameFileName ='公司文件-'+file.name
-    },
+        beforeFile(file) {
+            this.fileForm.renameFileName = "公司文件-" + file.name;
+        },
         /** 查询文件管理列表 */
         getList() {
             this.loading = true;
-            listFileManagement(this.queryParams).then(response => {
+            listFileManagement(this.queryParams).then((response) => {
                 this.fileManagementList = response.rows;
                 this.total = response.total;
                 this.loading = false;
@@ -249,7 +368,7 @@ export default {
                 kzzd2: null,
                 kzzd3: null,
                 kzzd4: null,
-                kzzd5: null
+                kzzd5: null,
             };
             this.resetForm("form");
         },
@@ -265,7 +384,7 @@ export default {
         },
         // 多选框选中数据
         handleSelectionChange(selection) {
-            this.ids = selection.map(item => item.id);
+            this.ids = selection.map((item) => item.id);
             this.single = selection.length !== 1;
             this.multiple = !selection.length;
         },
@@ -279,7 +398,7 @@ export default {
         handleUpdate(row) {
             this.reset();
             const id = row.id || this.ids;
-            getFileManagement(id).then(response => {
+            getFileManagement(id).then((response) => {
                 this.form = response.data;
                 this.tpslPhoto = this.ifNullToNewArray(response.data.tpslArr);
                 this.wjidFile = this.ifNullToNewArray(response.data.wjidArr);
@@ -295,16 +414,16 @@ export default {
         },
         /** 提交按钮 */
         submitForm() {
-            this.$refs["form"].validate(valid => {
+            this.$refs["form"].validate((valid) => {
                 if (valid) {
                     if (this.form.id != null) {
-                        updateFileManagement(this.form).then(response => {
+                        updateFileManagement(this.form).then((response) => {
                             this.msgSuccess("修改成功");
                             this.open = false;
                             this.getList();
                         });
                     } else {
-                        addFileManagement(this.form).then(response => {
+                        addFileManagement(this.form).then((response) => {
                             this.msgSuccess("新增成功");
                             this.open = false;
                             this.getList();
@@ -319,7 +438,7 @@ export default {
             this.$confirm("是否确认删除选中的数据?", "警告", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                type: "warning"
+                type: "warning",
             })
                 .then(function () {
                     return delFileManagement(ids);
@@ -328,19 +447,20 @@ export default {
                     this.getList();
                     this.msgSuccess("删除成功");
                 })
-                .catch(e => {
+                .catch((e) => {
                     console.log(e);
                 });
         },
         /** 下载模板操作 */
         downloadFileName(fileName, title) {
             title =
-                title + fileName.substring(fileName.indexOf("."), fileName.length);
+                title +
+                fileName.substring(fileName.indexOf("."), fileName.length);
             this.download(
                 "file/filetable/download",
                 {
                     ssmk: this.filessmk,
-                    wjmc: fileName
+                    wjmc: fileName,
                 },
                 title
             );
@@ -352,7 +472,7 @@ export default {
             let data = response.data;
             data.kzzd1 = this.form.tpslid || secretKey();
             this.form.tpslid = data.kzzd1;
-            addImg(data).then(res => {
+            addImg(data).then((res) => {
                 file.id = res.data.id;
                 this.msgSuccess("图片上传成功");
             });
@@ -360,11 +480,11 @@ export default {
 
         //公共图片删除
         handleRemove(file, fileList) {
-            deleteImg(file.id).then(res => {
+            deleteImg(file.id).then((res) => {
                 if (res.code == 200) {
                     this.$message({
                         message: "删除成功",
-                        type: "success"
+                        type: "success",
                     });
                 } else {
                     this.$message.error("删除失败");
@@ -383,7 +503,7 @@ export default {
             let data = response.data;
             data.kzzd1 = this.form.wjid || secretKey();
             this.form.wjid = data.kzzd1;
-            addImg(data).then(res => {
+            addImg(data).then((res) => {
                 file.id = res.data.id;
                 this.msgSuccess("文件上传成功");
                 this.wjidFile = fileList;
@@ -398,9 +518,14 @@ export default {
         flexColumnWidth(str, tableData) {
             let arr = [];
             for (let i = 0; i < tableData.length; i++) {
-                if (tableData[i] && tableData[i][str] && tableData[i][str].length > 0) {
-                    tableData.forEach(obj => {
-                        if (obj[str] && obj[str].length) arr.push(obj[str].length);
+                if (
+                    tableData[i] &&
+                    tableData[i][str] &&
+                    tableData[i][str].length > 0
+                ) {
+                    tableData.forEach((obj) => {
+                        if (obj[str] && obj[str].length)
+                            arr.push(obj[str].length);
                     });
                 } else {
                     continue;
@@ -413,10 +538,10 @@ export default {
             if (num >= this.maxPhotoNum) {
                 this.$message({
                     message: "最多上传 " + this.maxPhotoNum + msg,
-                    type: "warning"
+                    type: "warning",
                 });
             }
-        }
-    }
+        },
+    },
 };
 </script>
