@@ -1,69 +1,91 @@
 <template>
-  <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="日语班级" prop="bjid">
-        <el-select
-          v-model="queryParams.bjid"
-          filterable
-          @change="getClassList"
-          placeholder="请选择日语班级"
+    <div class="app-container">
+        <el-form
+            :model="queryParams"
+            ref="queryForm"
+            :inline="true"
+            v-show="showSearch"
+            label-width="68px"
         >
-          <el-option
-            v-for="(dict,index) in classList"
-            :key="index"
-            :label="dict.rybjmc"
-            :value="dict.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="考试类型" prop="kslx">
-        <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" clearable size="small">
-          <el-option
-            v-for="(dict,index) in kslxOptions"
-            :key="index"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button type="success" size="mini" @click="seeHistorical">查看下载历史</el-button>
-      </el-form-item>
-    </el-form>
+            <el-form-item label="日语班级" prop="bjid">
+                <el-select
+                    v-model="queryParams.bjid"
+                    filterable
+                    @change="getClassList"
+                    placeholder="请选择日语班级"
+                >
+                    <el-option
+                        v-for="(dict,index) in classList"
+                        :key="index"
+                        :label="dict.rybjmc"
+                        :value="dict.id"
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="考试类型" prop="kslx">
+                <el-select v-model="queryParams.kslx" placeholder="请选择考试类型" clearable size="small">
+                    <el-option
+                        v-for="(dict,index) in kslxOptions"
+                        :key="index"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+                <el-button type="success" size="mini" @click="seeHistorical">查看下载历史</el-button>
+            </el-form-item>
+        </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">申请试卷</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddQt">添加其他试卷</el-button>
-      </el-col>
-      <el-button type="primary" icon="el-icon-search" size="mini" @click="statusQuery(9)">成绩未上传</el-button>
-      <el-button type="primary" icon="el-icon-search" size="mini" @click="statusQuery(3)">成绩已上传</el-button>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-    <el-table
-      border
-      v-loading="loading"
-      :data="examinationPaperList"
-      @selection-change="handleSelectionChange"
-      style="width: 100%;font-size : 18px"
-    >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="日语班级" align="center" prop="bjmc" />
-      <el-table-column label="老师" align="center" prop="lsxm" />
-      <el-table-column label="教材" align="center" prop="jcmc" />
-      <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
-      <el-table-column label="考试范围" align="center" prop="ksfw">
-        <!--        <template slot-scope="scope">
+        <el-row :gutter="10" class="mb8">
+            <el-col :span="1.5">
+                <el-button
+                    type="primary"
+                    plain
+                    icon="el-icon-plus"
+                    size="mini"
+                    @click="handleAdd"
+                >申请试卷</el-button>
+            </el-col>
+            <el-col :span="1.5">
+                <el-button
+                    type="primary"
+                    plain
+                    icon="el-icon-plus"
+                    size="mini"
+                    @click="handleAddQt"
+                >添加其他试卷</el-button>
+            </el-col>
+            <el-button
+                type="primary"
+                icon="el-icon-search"
+                size="mini"
+                @click="statusQuery(9)"
+            >成绩未上传</el-button>
+            <el-button
+                type="primary"
+                icon="el-icon-search"
+                size="mini"
+                @click="statusQuery(3)"
+            >成绩已上传</el-button>
+            <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+        </el-row>
+        <el-table
+            border
+            v-loading="loading"
+            :data="examinationPaperList"
+            @selection-change="handleSelectionChange"
+            style="width: 100%;font-size : 18px"
+        >
+            <el-table-column type="selection" width="55" align="center" />
+            <el-table-column label="日语班级" align="center" prop="bjmc" />
+            <el-table-column label="老师" align="center" prop="lsxm" />
+            <el-table-column label="教材" align="center" prop="jcmc" />
+            <el-table-column label="考试类型" align="center" :formatter="getKslx" prop="kslx" />
+            <el-table-column label="考试范围" align="center" prop="ksfw">
+                <!--        <template slot-scope="scope">
                   <span v-if="'1'==scope.row.kslx">
                     <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw"/>
                   </span>
@@ -71,1039 +93,1058 @@
                     <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[0]"/>-至-
                     <dict-tag :options="sjglKsfwJsbfList" :value="scope.row.ksfw.split('-')[1]"/>
                   </span>
-        </template>-->
-      </el-table-column>
-      <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="120">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="成绩上传状态" align="center" :formatter="getCjsczt" prop="kzzd2">
-        <template slot-scope="scope">
-          <span v-if="scope.row.kzzd2 == '3'">已上传</span>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleCjsc(scope.row)"
-            v-if="(scope.row.kzzd2 == '1'|| scope.row.kzzd2 == '2')&& scope.row.lssjzt != '1' "
-          >上传成绩</el-button>
-        </template>
-      </el-table-column>
+                </template>-->
+            </el-table-column>
+            <el-table-column label="考试时间" align="center" prop="kskssj" width="120">
+                <template slot-scope="scope">
+                    <span>{{ parseTime(scope.row.kskssj, '{y}-{m}-{d}') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="考试结束时间" align="center" v-if="false" prop="ksjssj" width="120">
+                <template slot-scope="scope">
+                    <span>{{ parseTime(scope.row.ksjssj, '{y}-{m}-{d}') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="成绩上传状态" align="center" :formatter="getCjsczt" prop="kzzd2">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.kzzd2 == '3'">已上传</span>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        @click="handleCjsc(scope.row)"
+                        v-if="(scope.row.kzzd2 == '1'|| scope.row.kzzd2 == '2')&& scope.row.lssjzt != '1' "
+                    >上传成绩</el-button>
+                </template>
+            </el-table-column>
 
-      <el-table-column label="上传时间" align="center" prop="kzzd1" width="120"></el-table-column>
-      <el-table-column label="发送时间" align="center" prop="fssj" width="120">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.fssj, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="发送人" align="center" prop="fsrmc" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <!--          <span v-if="scope.row.lssjzt == '1'">暂无试卷</span>
-          <span v-if="scope.row.lssjzt == '4'">其他试卷</span>-->
-          <el-button
-            type="danger"
-            size="small"
-            v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1' &&scope.row.kzzd2 !== '3'&&scope.row.kslx !== '1'"
-          slot="reference"
-            @click="backout(scope.row.id)"
-          >撤回</el-button>
-          <span v-if="scope.row.status == '2'">已撤回</span>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleExport(scope.row)"
-            v-if="(scope.row.lssjzt == '2' || scope.row.lssjzt == '3')&&scope.row.kzzd2 !== '3' "
-          >下载</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleCjscEdit(scope.row)"
-            v-if="scope.row.kzzd2 == '3'"
-          >成绩更新</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleExamSummary(scope.row)"
-          >考试分析总结</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            <el-table-column label="上传时间" align="center" prop="kzzd1" width="120"></el-table-column>
+            <el-table-column label="发送时间" align="center" prop="fssj" width="120">
+                <template slot-scope="scope">
+                    <span>{{ parseTime(scope.row.fssj, '{y}-{m}-{d}') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="发送人" align="center" prop="fsrmc" />
+            <el-table-column label="备注" align="center" prop="remark" />
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                <template slot-scope="scope">
+                    <!--          <span v-if="scope.row.lssjzt == '1'">暂无试卷</span>
+                    <span v-if="scope.row.lssjzt == '4'">其他试卷</span>-->
+                    <el-button
+                        type="danger"
+                        size="small"
+                        v-if="(scope.row.lssjzt == '1'||scope.row.lssjzt == '4')&&scope.row.status == '1' &&scope.row.kzzd2 !== '3'&&scope.row.kslx !== '1'"
+                        slot="reference"
+                        @click="backout(scope.row.id)"
+                    >撤回</el-button>
+                    <span v-if="scope.row.status == '2'">已撤回</span>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        @click="handleExport(scope.row)"
+                        v-if="(scope.row.lssjzt == '2' || scope.row.lssjzt == '3')&&scope.row.kzzd2 !== '3' "
+                    >下载</el-button>
+                    <el-button
+                        size="mini"
+                        type="text"
+                        @click="handleCjscEdit(scope.row)"
+                        v-if="scope.row.kzzd2 == '3'"
+                    >成绩更新</el-button>
+                    <el-button size="mini" type="text" @click="handleExamSummary(scope.row)">考试分析总结</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+        <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getList"
+        />
 
-    <!-- 申请试卷 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="formState" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
-          <el-input v-model="form.lsxm" placeholder="请输入老师姓名" readonly />
-        </el-form-item>
-        <el-form-item label="日语班级" label-width="120px" prop="bjid">
-          <el-select v-model="form.bjid" @change="getClassList" placeholder="请选择日语班级">
-            <el-option
-              v-for="(dict,index) in classList"
-              :key="index"
-              :label="dict.rybjmc"
-              :value="dict.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-input v-model="form.jcmc" readonly />
-        </el-form-item>
-        <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="form.kslx" placeholder="请考试类型" @change="onKslxClick">
-            <el-option
-              v-for="(dict,index) in kslxOptions"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-              :disabled="dict.dictValue == '1' "
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-select v-model="form.ksfw" v-if="showKsfw">
-            <el-option
-              v-for="(dict,index) in sjglKsfwJsbfList"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
+        <!-- 申请试卷 -->
+        <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+            <el-form ref="formState" :model="form" :rules="rules" label-width="80px">
+                <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
+                    <el-input v-model="form.lsxm" placeholder="请输入老师姓名" readonly />
+                </el-form-item>
+                <el-form-item label="日语班级" label-width="120px" prop="bjid">
+                    <el-select v-model="form.bjid" @change="getClassList" placeholder="请选择日语班级">
+                        <el-option
+                            v-for="(dict,index) in classList"
+                            :key="index"
+                            :label="dict.rybjmc"
+                            :value="dict.id"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="教材" label-width="120px" prop="jcid">
+                    <el-input v-model="form.jcmc" readonly />
+                </el-form-item>
+                <el-form-item label="考试类型" label-width="120px" prop="kslx">
+                    <el-select v-model="form.kslx" placeholder="请考试类型" @change="onKslxClick">
+                        <el-option
+                            v-for="(dict,index) in kslxOptions"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictValue"
+                            :disabled="dict.dictValue == '1' "
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="考试范围" label-width="120px" prop="ksfw">
+                    <el-select v-model="form.ksfw" v-if="showKsfw">
+                        <el-option
+                            v-for="(dict,index) in sjglKsfwJsbfList"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictLabel"
+                        ></el-option>
+                    </el-select>
 
-          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
-            <el-option
-              v-for="(dict,index) in sjglKsfwKsbfList"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-          <span v-if="showKsfwKsJs">----</span>
-          <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
-            <el-option
-              v-for="(dict,index) in sjglKsfwJsbfList"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="考试时间" label-width="120px" prop="kskssj">
-          <el-date-picker
-            v-model="form.kskssj"
-            type="date"
-            value-format=" yyyy-MM-dd"
-            placeholder="选择考试时间"
-          ></el-date-picker>
-        </el-form-item>
-        <!--<el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
+                    <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
+                        <el-option
+                            v-for="(dict,index) in sjglKsfwKsbfList"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictLabel"
+                        ></el-option>
+                    </el-select>
+                    <span v-if="showKsfwKsJs">----</span>
+                    <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
+                        <el-option
+                            v-for="(dict,index) in sjglKsfwJsbfList"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictLabel"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="考试时间" label-width="120px" prop="kskssj">
+                    <el-date-picker
+                        v-model="form.kskssj"
+                        type="date"
+                        value-format=" yyyy-MM-dd"
+                        placeholder="选择考试时间"
+                    ></el-date-picker>
+                </el-form-item>
+                <!--<el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
           <el-date-picker
             v-model="form.ksjssj"
             type="datetime"
             value-format=" yyyy-MM-dd HH:mm"
             placeholder="选择考试开始时间"
           ></el-date-picker>
-        </el-form-item>-->
-        <el-form-item label="试卷说明" label-width="120px" prop="remark">
-          <el-input v-model="form.remark" placeholder />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitForm">提交</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+                </el-form-item>-->
+                <el-form-item label="试卷说明" label-width="120px" prop="remark">
+                    <el-input v-model="form.remark" placeholder />
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" v-prevent-re-click @click="submitForm">提交</el-button>
+                <el-button @click="cancel">取 消</el-button>
+            </div>
+        </el-dialog>
 
-    <!-- 成绩上传 -->
-    <el-dialog :title="cjsc.title" :visible.sync="cjsc.open" width="600px" append-to-body>
-      <el-form ref="formState" :model="cjscForm" label-width="80px">
-        <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
-          <el-input v-model="cjscForm.lsxm" disabled />
-        </el-form-item>
-        <el-form-item label="日语班级" label-width="120px" prop="bjid">
-          <el-select v-model="cjscForm.bjid" disabled>
-            <el-option
-              v-for="(dict,index) in classList"
-              :key="index"
-              :label="dict.rybjmc"
-              :value="dict.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-input v-model="cjscForm.jcmc" disabled />
-        </el-form-item>
-        <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="cjscForm.kslx" disabled>
-            <el-option
-              v-for="(dict,index) in kslxOptions"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <!--<el-form-item label="考试范围" label-width="120px" prop="ksfw">
+        <!-- 成绩上传 -->
+        <el-dialog :title="cjsc.title" :visible.sync="cjsc.open" width="600px" append-to-body>
+            <el-form ref="formState" :model="cjscForm" label-width="80px">
+                <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
+                    <el-input v-model="cjscForm.lsxm" disabled />
+                </el-form-item>
+                <el-form-item label="日语班级" label-width="120px" prop="bjid">
+                    <el-select v-model="cjscForm.bjid" disabled>
+                        <el-option
+                            v-for="(dict,index) in classList"
+                            :key="index"
+                            :label="dict.rybjmc"
+                            :value="dict.id"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="教材" label-width="120px" prop="jcid">
+                    <el-input v-model="cjscForm.jcmc" disabled />
+                </el-form-item>
+                <el-form-item label="考试类型" label-width="120px" prop="kslx">
+                    <el-select v-model="cjscForm.kslx" disabled>
+                        <el-option
+                            v-for="(dict,index) in kslxOptions"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictValue"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <!--<el-form-item label="考试范围" label-width="120px" prop="ksfw">
           <el-input v-model="cjscForm.ksfw" disabled/>
           //
-        </el-form-item>-->
-        <el-form-item label="考试时间" label-width="120px" prop="kskssj">
-          <el-input v-model="cjscForm.kskssj" disabled />
-        </el-form-item>
+                </el-form-item>-->
+                <el-form-item label="考试时间" label-width="120px" prop="kskssj">
+                    <el-input v-model="cjscForm.kskssj" disabled />
+                </el-form-item>
 
-        <el-form-item label="备注" label-width="120px" prop="remark">
-          <el-input v-model="cjscForm.remark" disabled />
-        </el-form-item>
-        <div class="button">
-          <el-button
-            type="info"
-            icon="el-icon-upload2"
-            size="mini"
-            @click="handleCjImport"
-            v-has-role="['teacher']"
-            v-if="!isEdit"
-          >导入成绩</el-button>
-          <el-button
-            type="info"
-            icon="el-icon-upload2"
-            size="mini"
-            @click="handleCjImportEdit"
-            v-has-role="['teacher']"
-            v-if="isEdit"
-          >更新成绩</el-button>
-        </div>
-      </el-form>
-    </el-dialog>
-    <!-- 成绩更新对话框 -->
-    <el-dialog :title="uploadEdit.title" :visible.sync="uploadEdit.open" width="400px">
-      <el-upload
-        ref="uploadEdit"
-        :limit="1"
-        accept=".xlsx, .xls"
-        :headers="uploadEdit.headers"
-        :action="uploadEdit.fileUrl"
-        :disabled="uploadEdit.isUploading"
-        :on-progress="handleFileUploadProgress"
-        :on-success="handleFileSuccessForUpdate"
-        :auto-upload="false"
-        :data="{ksmc: cjscForm.kzzd4 ? cjscForm.kzzd4 : cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj }"
-        drag
-      >
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          将文件拖到此处，或
-          <em>点击上传</em>
-        </div>
-        <div class="el-upload__tip" slot="tip">
-           <el-link type="info" style="font-size: 17px" @click="importTemplate" ><span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"</el-link>
-        </div>
-        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileFormEdit">确 定</el-button>
-        <el-button @click="uploadEdit.open = false">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 成绩导入对话框 -->
-    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
-      <el-upload
-        ref="upload"
-        :limit="1"
-        accept=".xlsx, .xls"
-        :headers="upload.headers"
-        :action="upload.fileUrl"
-        :disabled="upload.isUploading"
-        :on-progress="handleFileUploadProgress"
-        :on-success="handleFileSuccess"
-        :auto-upload="false"
-        :data="{ ksmc: cjscForm.kzzd4 ? cjscForm.kzzd4 : cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj }"
-        drag
-      >
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">
-          将文件拖到此处，或
-          <em>点击上传</em>
-        </div>
-        <div class="el-upload__tip" slot="tip">
-          <el-link type="info" style="font-size: 17px" @click="importTemplate" ><span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"</el-link>
-        </div>
-        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileForm">确 定</el-button>
-        <el-button @click="upload.open = false">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 考试成绩分析总结 -->
-    <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzj" width="60%">
-      <el-form label-width="120px">
-        <el-form-item label="考试总结">
-          <el-input type="textarea" :autosize="{ minRows: 8, maxRows: 10 }" v-model="getKscjzj"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="kscjzj = false">取 消</el-button>
-        <el-button type="primary" @click="addKscjfxzj">确 定</el-button>
-      </span>
-    </el-dialog>
+                <el-form-item label="备注" label-width="120px" prop="remark">
+                    <el-input v-model="cjscForm.remark" disabled />
+                </el-form-item>
+                <div class="button">
+                    <el-button
+                        type="info"
+                        icon="el-icon-upload2"
+                        size="mini"
+                        @click="handleCjImport"
+                        v-has-role="['teacher']"
+                        v-if="!isEdit"
+                    >导入成绩</el-button>
+                    <el-button
+                        type="info"
+                        icon="el-icon-upload2"
+                        size="mini"
+                        @click="handleCjImportEdit"
+                        v-has-role="['teacher']"
+                        v-if="isEdit"
+                    >更新成绩</el-button>
+                </div>
+            </el-form>
+        </el-dialog>
+        <!-- 成绩更新对话框 -->
+        <el-dialog :title="uploadEdit.title" :visible.sync="uploadEdit.open" width="400px">
+            <el-upload
+                ref="uploadEdit"
+                :limit="1"
+                accept=".xlsx, .xls"
+                :headers="uploadEdit.headers"
+                :action="uploadEdit.fileUrl"
+                :disabled="uploadEdit.isUploading"
+                :on-progress="handleFileUploadProgress"
+                :on-success="handleFileSuccessForUpdate"
+                :auto-upload="false"
+                :data="{ksmc: cjscForm.kzzd4 ? cjscForm.kzzd4 : cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj }"
+                drag
+            >
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">
+                    将文件拖到此处，或
+                    <em>点击上传</em>
+                </div>
+                <div class="el-upload__tip" slot="tip">
+                    <el-link type="info" style="font-size: 17px" @click="importTemplate">
+                        <span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"
+                    </el-link>
+                </div>
+                <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+            </el-upload>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="submitFileFormEdit">确 定</el-button>
+                <el-button @click="uploadEdit.open = false">取 消</el-button>
+            </div>
+        </el-dialog>
+        <!-- 成绩导入对话框 -->
+        <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+            <el-upload
+                ref="upload"
+                :limit="1"
+                accept=".xlsx, .xls"
+                :headers="upload.headers"
+                :action="upload.fileUrl"
+                :disabled="upload.isUploading"
+                :on-progress="handleFileUploadProgress"
+                :on-success="handleFileSuccess"
+                :auto-upload="false"
+                :data="{ ksmc: cjscForm.kzzd4 ? cjscForm.kzzd4 : cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj ,bjmc:cjscForm.bjmc}"
+                drag
+            >
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">
+                    将文件拖到此处，或
+                    <em>点击上传</em>
+                </div>
+                <div class="el-upload__tip" slot="tip">
+                    <el-link type="info" style="font-size: 17px" @click="importTemplate">
+                        <span style="color: red">下载模板</span> "必须下载模板编辑数据后,再导入编辑后的模板"
+                    </el-link>
+                </div>
+                <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+            </el-upload>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                <el-button @click="upload.open = false">取 消</el-button>
+            </div>
+        </el-dialog>
+        <!-- 考试成绩分析总结 -->
+        <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzj" width="60%">
+            <el-form label-width="120px">
+                <el-form-item label="考试总结">
+                    <el-input
+                        type="textarea"
+                        :autosize="{ minRows: 8, maxRows: 10 }"
+                        v-model="getKscjzj"
+                    ></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="kscjzj = false">取 消</el-button>
+                <el-button type="primary" @click="addKscjfxzj">确 定</el-button>
+            </span>
+        </el-dialog>
 
-    <!-- 添加其他试卷对话框 -->
-    <el-dialog :title="title" :visible.sync="openQt" width="800px" append-to-body>
-      <el-form ref="formState" :model="formQt" :rules="rules" label-width="80px">
-        <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
-          <el-input v-model="formQt.lsxm" placeholder="请输入老师姓名" readonly />
-        </el-form-item>
-        <el-form-item label="日语班级" label-width="120px" prop="bjid">
-          <el-select v-model="formQt.bjid" @change="getClassList" placeholder="请选择日语班级">
-            <el-option
-              v-for="(dict,index) in classList"
-              :key="index"
-              :label="dict.rybjmc"
-              :value="dict.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="教材" label-width="120px" prop="jcid">
-          <el-input v-model="formQt.jcmc" readonly />
-        </el-form-item>
-        <el-form-item label="考试类型" label-width="120px" prop="kslx">
-          <el-select v-model="formQt.kslx" plac输入eholder="请考试类型" @change="onKslxClick">
-            <el-option
-              v-for="(dict,index) in kslxOptions"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="考试范围" label-width="120px" prop="ksfw">
-          <el-select v-model="formQt.ksfw" v-if="showKsfw">
-            <el-option
-              v-for="(dict,index) in sjglKsfwJsbfList"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
+        <!-- 添加其他试卷对话框 -->
+        <el-dialog :title="title" :visible.sync="openQt" width="800px" append-to-body>
+            <el-form ref="formState" :model="formQt" :rules="rules" label-width="80px">
+                <el-form-item label="老师姓名" label-width="120px" prop="lsxm">
+                    <el-input v-model="formQt.lsxm" placeholder="请输入老师姓名" readonly />
+                </el-form-item>
+                <el-form-item label="日语班级" label-width="120px" prop="bjid">
+                    <el-select v-model="formQt.bjid" @change="getClassList" placeholder="请选择日语班级">
+                        <el-option
+                            v-for="(dict,index) in classList"
+                            :key="index"
+                            :label="dict.rybjmc"
+                            :value="dict.id"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="教材" label-width="120px" prop="jcid">
+                    <el-input v-model="formQt.jcmc" readonly />
+                </el-form-item>
+                <el-form-item label="考试类型" label-width="120px" prop="kslx">
+                    <el-select v-model="formQt.kslx" plac输入eholder="请考试类型" @change="onKslxClick">
+                        <el-option
+                            v-for="(dict,index) in kslxOptions"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictValue"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="考试范围" label-width="120px" prop="ksfw">
+                    <el-select v-model="formQt.ksfw" v-if="showKsfw">
+                        <el-option
+                            v-for="(dict,index) in sjglKsfwJsbfList"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictLabel"
+                        ></el-option>
+                    </el-select>
 
-          <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
-            <el-option
-              v-for="(dict,index) in sjglKsfwKsbfList"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-          <!--          <span v-if="showKsfwKsJs">&#45;&#45;&#45;&#45;</span>-->
-          <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
-            <el-option
-              v-for="(dict,index) in sjglKsfwJsbfList"
-              :key="index"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="考试时间" label-width="120px" prop="kskssj">
-          <el-date-picker
-            v-model="formQt.kskssj"
-            type="date"
-            value-format=" yyyy-MM-dd"
-            placeholder="选择考试时间"
-          ></el-date-picker>
-        </el-form-item>
-        <!--<el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
+                    <el-select v-model="ksfw_ksbf" v-if="showKsfwKsJs">
+                        <el-option
+                            v-for="(dict,index) in sjglKsfwKsbfList"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictLabel"
+                        ></el-option>
+                    </el-select>
+                    <!--          <span v-if="showKsfwKsJs">&#45;&#45;&#45;&#45;</span>-->
+                    <el-select v-model="ksfw_jsbf" placeholder="请选择考试范围" v-if="showKsfwKsJs">
+                        <el-option
+                            v-for="(dict,index) in sjglKsfwJsbfList"
+                            :key="index"
+                            :label="dict.dictLabel"
+                            :value="dict.dictLabel"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="考试时间" label-width="120px" prop="kskssj">
+                    <el-date-picker
+                        v-model="formQt.kskssj"
+                        type="date"
+                        value-format=" yyyy-MM-dd"
+                        placeholder="选择考试时间"
+                    ></el-date-picker>
+                </el-form-item>
+                <!--<el-form-item label="考试结束时间" label-width="120px" prop="ksjssj">
           <el-date-picker
             v-model="form.ksjssj"
             type="datetime"
             value-format=" yyyy-MM-dd HH:mm"
             placeholder="选择考试开始时间"
           ></el-date-picker>
-        </el-form-item>-->
-        <el-form-item label="试卷说明" label-width="120px" prop="remark">
-          <el-input v-model="formQt.remark" placeholder />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-prevent-re-click @click="submitFormQt">提交</el-button>
-        <el-button @click="cancelQt">取 消</el-button>
-      </div>
-    </el-dialog>
-    <Progress :progress-data="datas" @data-callback="callBack" ref="progress" />
-    <el-dialog title="下载历史" :visible.sync="dialogFormVisible" width="80%">
-      <div>
-        <historical-records :ssmk="filessmk" />
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-      </div>
-    </el-dialog>
+                </el-form-item>-->
+                <el-form-item label="试卷说明" label-width="120px" prop="remark">
+                    <el-input v-model="formQt.remark" placeholder />
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" v-prevent-re-click @click="submitFormQt">提交</el-button>
+                <el-button @click="cancelQt">取 消</el-button>
+            </div>
+        </el-dialog>
+        <Progress :progress-data="datas" @data-callback="callBack" ref="progress" />
+        <el-dialog title="下载历史" :visible.sync="dialogFormVisible" width="80%">
+            <div>
+                <historical-records :ssmk="filessmk" />
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            </div>
+        </el-dialog>
 
-    <!-- 考试成绩分析总结（操作） -->
-    <el-dialog title="考试分析总结" :close-on-click-modal="false" :visible.sync="kscjzjDialog" width="60%">
-      <el-form label-width="120px">
-        <el-form-item label="考试总结">
-          <editor v-model="examSummaryForm.ksfxzj" :min-height="150"/>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="kscjzjDialog = false">取 消</el-button>
-        <el-button type="primary" @click="saveKscjfxzj">确 定</el-button>
-      </span>
-    </el-dialog>
-  </div>
+        <!-- 考试成绩分析总结（操作） -->
+        <el-dialog
+            title="考试分析总结"
+            :close-on-click-modal="false"
+            :visible.sync="kscjzjDialog"
+            width="60%"
+        >
+            <el-form label-width="120px">
+                <el-form-item label="考试总结">
+                    <editor v-model="examSummaryForm.ksfxzj" :min-height="150" />
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="kscjzjDialog = false">取 消</el-button>
+                <el-button type="primary" @click="saveKscjfxzj">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
 import {
-  listExaminationPaper,
-  getExaminationPaper,
-  delExaminationPaper,
-  addExaminationPaper,
-  updateExaminationPaper
+    listExaminationPaper,
+    getExaminationPaper,
+    delExaminationPaper,
+    addExaminationPaper,
+    updateExaminationPaper,
 } from "@/api/basic/examinationPaper";
 import { getToken } from "@/utils/auth";
 import { listBjclass } from "@/api/basic/bjclass";
-import { addExamSummary,listExamSummary,updateExamSummary } from "@/api/basic/examSummary";
+import {
+    addExamSummary,
+    listExamSummary,
+    updateExamSummary,
+} from "@/api/basic/examSummary";
 import { listTeachingMaterial } from "@/api/basic/teachingMaterial";
 import { selectFileList } from "@/api/tool/common";
 
 export default {
-  name: "ExaminationPaper",
-  components: {},
-  data() {
-    return {
-      isEdit: false,
-      // 遮罩层
-      loading: true,
-      dialogFormVisible: false,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 考卷表格数据
-      examinationPaperList: [],
-      // 弹出层标题
-      title: "",
-      //考试成绩总结
-      kscjzj: false,
-      kscjzjDialog: false,
-      examSummaryForm: {
-        ksfxzj: null,
-      },
-      // 是否显示弹出层
-      open: false,
-      openQt: false,
-      // 考试类型字典
-      kslxOptions: [],
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        bjid: null,
-        bjmc: null,
-        kslx: null,
-        ksnr: null,
-        jcmc: null,
-        jwsjzt: null,
-        lssjzt: null,
-        status: "1", //默认只查正常
-        dataOrder: null,
-        addOrUpdateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null,
-        statusArr: []
-      },
-      // 表单参数
-      form: {},
-      // 其他试卷表单参数
-      formQt: {},
-      //成绩上传表参数
-      cjscForm: {},
-      // 考试分析总结
-      getKscjzj: "",
+    name: "ExaminationPaper",
+    components: {},
+    data() {
+        return {
+            isEdit: false,
+            // 遮罩层
+            loading: true,
+            dialogFormVisible: false,
+            // 选中数组
+            ids: [],
+            // 非单个禁用
+            single: true,
+            // 非多个禁用
+            multiple: true,
+            // 显示搜索条件
+            showSearch: true,
+            // 总条数
+            total: 0,
+            // 考卷表格数据
+            examinationPaperList: [],
+            // 弹出层标题
+            title: "",
+            //考试成绩总结
+            kscjzj: false,
+            kscjzjDialog: false,
+            examSummaryForm: {
+                ksfxzj: null,
+            },
+            // 是否显示弹出层
+            open: false,
+            openQt: false,
+            // 考试类型字典
+            kslxOptions: [],
+            // 查询参数
+            queryParams: {
+                pageNum: 1,
+                pageSize: 10,
+                bjid: null,
+                bjmc: null,
+                kslx: null,
+                ksnr: null,
+                jcmc: null,
+                jwsjzt: null,
+                lssjzt: null,
+                status: "1", //默认只查正常
+                dataOrder: null,
+                addOrUpdateTime: null,
+                kzzd1: null,
+                kzzd2: null,
+                kzzd3: null,
+                kzzd4: null,
+                kzzd5: null,
+                statusArr: [],
+            },
+            // 表单参数
+            form: {},
+            // 其他试卷表单参数
+            formQt: {},
+            //成绩上传表参数
+            cjscForm: {},
+            // 考试分析总结
+            getKscjzj: "",
 
-      // 表单校验
-      rules: {
-        bjid: [{ required: true, message: "必填", trigger: "blur" }],
-        kslx: [{ required: true, message: "必填", trigger: "blur" }],
-        ksfw: [{ required: true, message: "必填", trigger: "blur" }],
-        ksfw_ksbf: [{ required: true, message: "必填", trigger: "blur" }],
-        ksfw_jsbf: [{ required: true, message: "必填", trigger: "blur" }],
-        kskssj: [{ required: true, message: "必填", trigger: "blur" }]
-      },
-      //成绩上传
-      cjsc: {
-        // 是否显示弹出层
-        open: false,
-        title: "成绩上传"
-      },
-      // 成绩上传
-      upload: {
-        // 是否显示弹出层（用户导入）
-        open: false,
-        // 弹出层标题（用户导入）
-        title: "",
-        // 是否禁用上传
-        isUploading: false,
-        // 是否更新已经存在的用户数据
-        updateSupport: 0,
-        // 设置上传的请求头部
-        headers: { Authorization: "Bearer " + getToken() },
-        // 上传考试成绩地址
-        fileUrl:
-          process.env.VUE_APP_BASE_API +
-          "/basic/examinationPaper/importClassGradeData",
-        // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
-      },
-      // 成绩更新
-      uploadEdit: {
-        // 是否显示弹出层（用户导入）
-        open: false,
-        // 弹出层标题（用户导入）
-        title: "",
-        // 是否禁用上传
-        isUploading: false,
-        // 是否更新已经存在的用户数据
-        updateSupport: 0,
-        // 设置上传的请求头部
-        headers: { Authorization: "Bearer " + getToken() },
-        // 上传考试成绩地址
-        fileUrl:
-          process.env.VUE_APP_BASE_API +
-          "/basic/examinationPaper/importClassGradeDataForUpdate",
-        // 上传图片地址
-        imgUrl: process.env.VUE_APP_BASE_API + "/file/upload"
-      },
-      // 用户关联id
-      glrid: "",
-      // 老师教学班级
-      classList: [],
-      // 老师试卷状态
-      getStatusList: [],
-      // 成绩上传状态
-      getCjscztList: [],
-      // 教材名称
-      jsList: [],
-      // 是否显示考试范围
-      showKsfw: true,
-      // 是否显示考试范围-开始结束两个部分
-      showKsfwKsJs: false,
-      ksfw_ksbf: null,
-      ksfw_jsbf: null,
-      sjglKsfwKsbfList: [],
-      sjglKsfwJsbfList: [],
-      datas: {},
-      ifProgress: false,
-      // 文件所属模块
-      filessmk: "试卷管理"
-    };
-  },
-  created() {
-    this.getDicts("examination_type").then(response => {
-      this.kslxOptions = response.data;
-    });
-    this.getDicts("sjzt").then(response => {
-      this.getStatusList = response.data;
-    });
-    this.getDicts("paper_upload_type").then(response => {
-      this.getCjscztList = response.data;
-    });
-    // 试卷管理-考试范围-开始部分
-    this.getDicts("sjgl-ksfw-ksbf").then(response => {
-      this.sjglKsfwKsbfList = response.data;
-    });
-    // 试卷管理-考试范围-结束部分
-    this.getDicts("sjgl-ksfw-jsbf").then(response => {
-      this.sjglKsfwJsbfList = response.data;
-    });
-    listTeachingMaterial().then(resp => {
-      this.jsList = resp.data;
-    });
-  },
-  mounted() {
-    this.getList();
-    this.getListBjclass();
-  },
-  methods: {
-    /** 查询考卷列表 */
-    getList() {
-      this.loading = true;
-      listExaminationPaper(this.queryParams).then(response => {
-        this.examinationPaperList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
-    //查看历史
-    seeHistorical(){
-        this.dialogFormVisible = true
-    },
-    // 选择考试类型后动态显示隐藏考试范围
-    onKslxClick(val) {
-      if ("1" === val) {
-        this.showKsfw = true;
-        this.showKsfwKsJs = false;
-      } else {
-        this.showKsfw = false;
-        this.showKsfwKsJs = true;
-      }
-    },
-    // 获取老师所带班级
-    getListBjclass() {
-      this.glrid = this.$store.state.user.glrid;
-      //只查未毕业的
-      listBjclass({ statusArr: ["1", "3", "4"] }).then(res => {
-        this.classList = res.rows;
-        if (res.rows.length == 1) {
-          this.queryParams.bjid = res.rows[0].id;
-          this.form.bjid = res.rows[0].id;
-        }
-      });
-    },
-    // 考试类型字典翻译
-    kslxFormat(row, column) {
-      return this.selectDictLabel(this.kslxOptions, row.kslx);
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 添加其他试卷取消按钮
-    cancelQt() {
-      this.openQt = false;
-      this.resetQt();
-    },
-    backout(value) {
-      this.$confirm("确定撤回吗", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        let json = {
-          id: value,
-          status: "2"
+            // 表单校验
+            rules: {
+                bjid: [{ required: true, message: "必填", trigger: "blur" }],
+                kslx: [{ required: true, message: "必填", trigger: "blur" }],
+                ksfw: [{ required: true, message: "必填", trigger: "blur" }],
+                ksfw_ksbf: [
+                    { required: true, message: "必填", trigger: "blur" },
+                ],
+                ksfw_jsbf: [
+                    { required: true, message: "必填", trigger: "blur" },
+                ],
+                kskssj: [{ required: true, message: "必填", trigger: "blur" }],
+            },
+            //成绩上传
+            cjsc: {
+                // 是否显示弹出层
+                open: false,
+                title: "成绩上传",
+            },
+            // 成绩上传
+            upload: {
+                // 是否显示弹出层（用户导入）
+                open: false,
+                // 弹出层标题（用户导入）
+                title: "",
+                // 是否禁用上传
+                isUploading: false,
+                // 是否更新已经存在的用户数据
+                updateSupport: 0,
+                // 设置上传的请求头部
+                headers: { Authorization: "Bearer " + getToken() },
+                // 上传考试成绩地址
+                fileUrl:
+                    process.env.VUE_APP_BASE_API +
+                    "/basic/examinationPaper/importClassGradeData",
+                // 上传图片地址
+                imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
+            },
+            // 成绩更新
+            uploadEdit: {
+                // 是否显示弹出层（用户导入）
+                open: false,
+                // 弹出层标题（用户导入）
+                title: "",
+                // 是否禁用上传
+                isUploading: false,
+                // 是否更新已经存在的用户数据
+                updateSupport: 0,
+                // 设置上传的请求头部
+                headers: { Authorization: "Bearer " + getToken() },
+                // 上传考试成绩地址
+                fileUrl:
+                    process.env.VUE_APP_BASE_API +
+                    "/basic/examinationPaper/importClassGradeDataForUpdate",
+                // 上传图片地址
+                imgUrl: process.env.VUE_APP_BASE_API + "/file/upload",
+            },
+            // 用户关联id
+            glrid: "",
+            // 老师教学班级
+            classList: [],
+            // 老师试卷状态
+            getStatusList: [],
+            // 成绩上传状态
+            getCjscztList: [],
+            // 教材名称
+            jsList: [],
+            // 是否显示考试范围
+            showKsfw: true,
+            // 是否显示考试范围-开始结束两个部分
+            showKsfwKsJs: false,
+            ksfw_ksbf: null,
+            ksfw_jsbf: null,
+            sjglKsfwKsbfList: [],
+            sjglKsfwJsbfList: [],
+            datas: {},
+            ifProgress: false,
+            // 文件所属模块
+            filessmk: "试卷管理",
         };
-        updateExaminationPaper(json).then(response => {
-          this.msgSuccess("修改成功");
-          this.open = false;
-          this.getList();
+    },
+    created() {
+        this.getDicts("examination_type").then((response) => {
+            this.kslxOptions = response.data;
         });
-      });
-    },
-    // 表单重置
-    reset() {
-      this.ksfw_ksbf= null,
-      this.ksfw_jsbf= null,
-      this.examSummaryForm = {
-        id: null,
-        ksfxzj: null,
-        examPaperId: null,
-      }
-      this.form = {
-        id: null,
-        bjid: null,
-        bjmc: null,
-        lsid: null,
-        kslx: null,
-        ksnr: null,
-        ksfw: null,
-        jcid: null,
-        jcmc: null,
-        jwsjzt: null,
-        lssjzt: null,
-        kskssj: null,
-        ksjssj: null,
-        kssjwb: null,
-        fssj: null,
-        fsrid: null,
-        fsrmc: null,
-        status: "1",
-        remark: null,
-        dataOrder: null,
-        addOrUpdateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null
-      };
-      this.resetForm("form");
-    },
-    // 其他试卷表单重置
-    resetQt() {
-      this.ksfw_ksbf= null,
-      this.ksfw_jsbf= null,
-      this.formQt = {
-        id: null,
-        bjid: null,
-        bjmc: null,
-        lsid: null,
-        kslx: null,
-        ksnr: null,
-        ksfw: null,
-        jcid: null,
-        jcmc: null,
-        jwsjzt: null,
-        lssjzt: null,
-        kskssj: null,
-        ksjssj: null,
-        kssjwb: null,
-        fssj: null,
-        fsrid: null,
-        fsrmc: null,
-        status: "1",
-        remark: "添加的其他试卷",
-        dataOrder: null,
-        addOrUpdateTime: null,
-        kzzd1: null,
-        kzzd2: null,
-        kzzd3: null,
-        kzzd4: null,
-        kzzd5: null
-      };
-      this.resetForm("formQt");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.form.lsxm = this.$store.state.user.nickName;
-      this.form.lsid = this.$store.state.user.glrid;
-      this.open = true;
-      this.ksfw_ksbf = "五十音图"; // 默认 0=五十音图
-      if (this.classList.length == 1) {
-        this.form.bjid = this.classList[0].id;
-        this.getJcList(this.classList[0].uname);
-      }
-      this.title = "添加考卷";
-    },
-    /** 新增其他试卷按钮操作 */
-    handleAddQt() {
-      this.resetQt();
-      this.formQt.lsxm = this.$store.state.user.nickName;
-      this.formQt.lsid = this.$store.state.user.glrid;
-      this.openQt = true;
-      this.ksfw_ksbf = "五十音图"; // 默认 0=五十音图
-      if (this.classList.length == 1) {
-        this.formQt.bjid = this.classList[0].id;
-        this.getJcList(this.classList[0].uname);
-      }
-      this.title = "添加其他考卷";
-    },
-    /** 成绩是否上传查询操作 */
-    statusQuery(uploadStaus) {
-      this.queryParams.pageNum = 1;
-      this.queryParams.kzzd2 = uploadStaus;
-      this.getList();
-    },
-    /** 打开成绩上传对话框*/
-    handleCjsc(row) {
-      this.cjsc.open = true;
-      this.cjscForm = row;
-      this.isEdit = false;
-    },
-    /** 打开成绩上传对话框*/
-    handleCjscEdit(row) {
-      this.cjsc.open = true;
-      this.cjscForm = row;
-      this.isEdit = true;
-    },
-    /** 打开考试分析总结对话框*/
-    handleExamSummary(row) {
-      this.reset();
-      //  查询试卷考试分析
-      let json = {
-        examPaperId: row.id
-      };
-      listExamSummary(json).then(res => {
-        this.examSummaryForm.examPaperId = row.id
-        if (res.rows.length>0){
-          this.examSummaryForm.ksfxzj = res.rows[0].ksfxzj
-          this.examSummaryForm.id = res.rows[0].id
-        }
-      })
-      this.kscjzjDialog = true;
-    },
-    /** 打开考试分析总结对话框*/
-    saveKscjfxzj() {
-      this.kscjzjDialog = false;
-      //  查询试卷考试分析
-      if(this.examSummaryForm.id){
-        updateExamSummary(this.examSummaryForm).then(res => {
-          this.$notify({
-            message: res.msg,
-            type: "success"
-          });
+        this.getDicts("sjzt").then((response) => {
+            this.getStatusList = response.data;
         });
-      }else {
-        addExamSummary(this.examSummaryForm).then(res => {
-          this.$notify({
-            message: res.msg,
-            type: "success"
-          });
+        this.getDicts("paper_upload_type").then((response) => {
+            this.getCjscztList = response.data;
         });
-      }
+        // 试卷管理-考试范围-开始部分
+        this.getDicts("sjgl-ksfw-ksbf").then((response) => {
+            this.sjglKsfwKsbfList = response.data;
+        });
+        // 试卷管理-考试范围-结束部分
+        this.getDicts("sjgl-ksfw-jsbf").then((response) => {
+            this.sjglKsfwJsbfList = response.data;
+        });
+        listTeachingMaterial().then((resp) => {
+            this.jsList = resp.data;
+        });
     },
-    // 下载模板操作
-    importTemplate() {
-      this.download(
-        "basic/examinationPaper/importClassGradeTemplate",
-        {
-          bjid: this.cjscForm.bjid
+    mounted() {
+        this.getList();
+        this.getListBjclass();
+    },
+    methods: {
+        /** 查询考卷列表 */
+        getList() {
+            this.loading = true;
+            listExaminationPaper(this.queryParams).then((response) => {
+                this.examinationPaperList = response.rows;
+                this.total = response.total;
+                this.loading = false;
+            });
         },
-        `考试-导入模板.xlsx`
-      );
-    },
-    // 考试分析总结
-    addKscjfxzj() {
-      this.kscjzj = false;
-      let json = {
-        examPaperId: this.cjscForm.id,
-        ksfxzj: this.getKscjzj
-      };
-      addExamSummary(json).then(res => {
-        this.$notify({
-          message: res.msg,
-          type: "success"
-        });
-      });
-    },
-    // 根据考试类型判断是否需要进行拼接赋值
-    setFormKsfwValue(kslx, ksfw) {
-      if (null != kslx && "1" !== kslx) {
-        //考试类型不等于 1=课考，则进行赋值
-        ksfw = this.ksfw_ksbf + "-" + this.ksfw_jsbf;
-      }
-      return ksfw;
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.form.ksfw = this.setFormKsfwValue(this.form.kslx, this.form.ksfw);
-      this.$refs.formState.validate(valid => {
-        if (valid) {
-          if(this.showKsfwKsJs&&!this.ksfw_jsbf){
-            this.msgError("考试范围不能为空");
-            return;
-          }
-          this.getClassList(this.form.bjid);
-          if (this.form.id != null) {
-            updateExaminationPaper(this.form).then(response => {
-              this.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addExaminationPaper(this.form).then(response => {
-              this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
-    /** 提交其他试卷按钮 */
-    submitFormQt() {
-      //老师试卷状态:其他试卷
-      this.formQt.lssjzt = "4";
-      //教务试卷状态:默认已发送
-      this.formQt.jwsjzt = "1";
-      this.formQt.ksfw = this.setFormKsfwValue(
-        this.formQt.kslx,
-        this.formQt.ksfw
-      );
-      this.$refs.formState.validate(valid => {
-        if (valid) {
-          if(this.showKsfwKsJs&&!this.ksfw_jsbf){
-            this.msgError("考试范围不能为空");
-            return;
-          }
-          this.getClassList(this.formQt.bjid);
-          if (this.formQt.id != null) {
-            updateExaminationPaper(this.formQt).then(response => {
-              this.msgSuccess("修改成功");
-              this.openQt = false;
-              this.getList();
-            });
-          } else {
-            addExaminationPaper(this.formQt).then(response => {
-              this.msgSuccess("新增成功");
-              this.openQt = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
-    /** 下载试卷 */
-    handleExport(row) {
-
-      this.datas = {
-        url: "file/filetable/download",
-        params: {
-          ssmk: this.filessmk,
-          kzzd1: row.id
+        //查看历史
+        seeHistorical() {
+            this.dialogFormVisible = true;
         },
-        filename: `考卷-${row.bjmc}-${row.ksfw}.`
-      };
-      selectFileList({kzzd1: row.id}).then(res=>{
-        this.datas.filename= this.datas.filename+ (res.rows[0].name.split('.')[1])
-        this.$nextTick(() => {
-          this.$refs.progress.download();
-        });
-      })
-      // // 修改老师试卷状态
-      // this.submitForm("3"); by 2021/9/8可多次下载不改状态
+        // 选择考试类型后动态显示隐藏考试范围
+        onKslxClick(val) {
+            if ("1" === val) {
+                this.showKsfw = true;
+                this.showKsfwKsJs = false;
+            } else {
+                this.showKsfw = false;
+                this.showKsfwKsJs = true;
+            }
+        },
+        // 获取老师所带班级
+        getListBjclass() {
+            this.glrid = this.$store.state.user.glrid;
+            //只查未毕业的
+            listBjclass({ statusArr: ["1", "3", "4"] }).then((res) => {
+                this.classList = res.rows;
+                if (res.rows.length == 1) {
+                    this.queryParams.bjid = res.rows[0].id;
+                    this.form.bjid = res.rows[0].id;
+                }
+            });
+        },
+        // 考试类型字典翻译
+        kslxFormat(row, column) {
+            return this.selectDictLabel(this.kslxOptions, row.kslx);
+        },
+        // 取消按钮
+        cancel() {
+            this.open = false;
+            this.reset();
+        },
+        // 添加其他试卷取消按钮
+        cancelQt() {
+            this.openQt = false;
+            this.resetQt();
+        },
+        backout(value) {
+            this.$confirm("确定撤回吗", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }).then(() => {
+                let json = {
+                    id: value,
+                    status: "2",
+                };
+                updateExaminationPaper(json).then((response) => {
+                    this.msgSuccess("修改成功");
+                    this.open = false;
+                    this.getList();
+                });
+            });
+        },
+        // 表单重置
+        reset() {
+            (this.ksfw_ksbf = null),
+                (this.ksfw_jsbf = null),
+                (this.examSummaryForm = {
+                    id: null,
+                    ksfxzj: null,
+                    examPaperId: null,
+                });
+            this.form = {
+                id: null,
+                bjid: null,
+                bjmc: null,
+                lsid: null,
+                kslx: null,
+                ksnr: null,
+                ksfw: null,
+                jcid: null,
+                jcmc: null,
+                jwsjzt: null,
+                lssjzt: null,
+                kskssj: null,
+                ksjssj: null,
+                kssjwb: null,
+                fssj: null,
+                fsrid: null,
+                fsrmc: null,
+                status: "1",
+                remark: null,
+                dataOrder: null,
+                addOrUpdateTime: null,
+                kzzd1: null,
+                kzzd2: null,
+                kzzd3: null,
+                kzzd4: null,
+                kzzd5: null,
+            };
+            this.resetForm("form");
+        },
+        // 其他试卷表单重置
+        resetQt() {
+            (this.ksfw_ksbf = null),
+                (this.ksfw_jsbf = null),
+                (this.formQt = {
+                    id: null,
+                    bjid: null,
+                    bjmc: null,
+                    lsid: null,
+                    kslx: null,
+                    ksnr: null,
+                    ksfw: null,
+                    jcid: null,
+                    jcmc: null,
+                    jwsjzt: null,
+                    lssjzt: null,
+                    kskssj: null,
+                    ksjssj: null,
+                    kssjwb: null,
+                    fssj: null,
+                    fsrid: null,
+                    fsrmc: null,
+                    status: "1",
+                    remark: "添加的其他试卷",
+                    dataOrder: null,
+                    addOrUpdateTime: null,
+                    kzzd1: null,
+                    kzzd2: null,
+                    kzzd3: null,
+                    kzzd4: null,
+                    kzzd5: null,
+                });
+            this.resetForm("formQt");
+        },
+        /** 搜索按钮操作 */
+        handleQuery() {
+            this.queryParams.pageNum = 1;
+            this.getList();
+        },
+        /** 重置按钮操作 */
+        resetQuery() {
+            this.resetForm("queryForm");
+            this.handleQuery();
+        },
+        // 多选框选中数据
+        handleSelectionChange(selection) {
+            this.ids = selection.map((item) => item.id);
+            this.single = selection.length !== 1;
+            this.multiple = !selection.length;
+        },
+        /** 新增按钮操作 */
+        handleAdd() {
+            this.reset();
+            this.form.lsxm = this.$store.state.user.nickName;
+            this.form.lsid = this.$store.state.user.glrid;
+            this.open = true;
+            this.ksfw_ksbf = "五十音图"; // 默认 0=五十音图
+            if (this.classList.length == 1) {
+                this.form.bjid = this.classList[0].id;
+                this.getJcList(this.classList[0].uname);
+            }
+            this.title = "添加考卷";
+        },
+        /** 新增其他试卷按钮操作 */
+        handleAddQt() {
+            this.resetQt();
+            this.formQt.lsxm = this.$store.state.user.nickName;
+            this.formQt.lsid = this.$store.state.user.glrid;
+            this.openQt = true;
+            this.ksfw_ksbf = "五十音图"; // 默认 0=五十音图
+            if (this.classList.length == 1) {
+                this.formQt.bjid = this.classList[0].id;
+                this.getJcList(this.classList[0].uname);
+            }
+            this.title = "添加其他考卷";
+        },
+        /** 成绩是否上传查询操作 */
+        statusQuery(uploadStaus) {
+            this.queryParams.pageNum = 1;
+            this.queryParams.kzzd2 = uploadStaus;
+            this.getList();
+        },
+        /** 打开成绩上传对话框*/
+        handleCjsc(row) {
+            this.cjsc.open = true;
+            this.cjscForm = row;
+            this.isEdit = false;
+        },
+        /** 打开成绩上传对话框*/
+        handleCjscEdit(row) {
+            this.cjsc.open = true;
+            this.cjscForm = row;
+            this.isEdit = true;
+        },
+        /** 打开考试分析总结对话框*/
+        handleExamSummary(row) {
+            this.reset();
+            //  查询试卷考试分析
+            let json = {
+                examPaperId: row.id,
+            };
+            listExamSummary(json).then((res) => {
+                this.examSummaryForm.examPaperId = row.id;
+                if (res.rows.length > 0) {
+                    this.examSummaryForm.ksfxzj = res.rows[0].ksfxzj;
+                    this.examSummaryForm.id = res.rows[0].id;
+                }
+            });
+            this.kscjzjDialog = true;
+        },
+        /** 打开考试分析总结对话框*/
+        saveKscjfxzj() {
+            this.kscjzjDialog = false;
+            //  查询试卷考试分析
+            if (this.examSummaryForm.id) {
+                updateExamSummary(this.examSummaryForm).then((res) => {
+                    this.$notify({
+                        message: res.msg,
+                        type: "success",
+                    });
+                });
+            } else {
+                addExamSummary(this.examSummaryForm).then((res) => {
+                    this.$notify({
+                        message: res.msg,
+                        type: "success",
+                    });
+                });
+            }
+        },
+        // 下载模板操作
+        importTemplate() {
+            this.download(
+                "basic/examinationPaper/importClassGradeTemplate",
+                {
+                    bjid: this.cjscForm.bjid,
+                },
+                `考试-导入模板.xlsx`
+            );
+        },
+        // 考试分析总结
+        addKscjfxzj() {
+            this.kscjzj = false;
+            let json = {
+                examPaperId: this.cjscForm.id,
+                ksfxzj: this.getKscjzj,
+            };
+            addExamSummary(json).then((res) => {
+                this.$notify({
+                    message: res.msg,
+                    type: "success",
+                });
+            });
+        },
+        // 根据考试类型判断是否需要进行拼接赋值
+        setFormKsfwValue(kslx, ksfw) {
+            if (null != kslx && "1" !== kslx) {
+                //考试类型不等于 1=课考，则进行赋值
+                ksfw = this.ksfw_ksbf + "-" + this.ksfw_jsbf;
+            }
+            return ksfw;
+        },
+        /** 提交按钮 */
+        submitForm() {
+            this.form.ksfw = this.setFormKsfwValue(
+                this.form.kslx,
+                this.form.ksfw
+            );
+            this.$refs.formState.validate((valid) => {
+                if (valid) {
+                    if (this.showKsfwKsJs && !this.ksfw_jsbf) {
+                        this.msgError("考试范围不能为空");
+                        return;
+                    }
+                    this.getClassList(this.form.bjid);
+                    if (this.form.id != null) {
+                        updateExaminationPaper(this.form).then((response) => {
+                            this.msgSuccess("修改成功");
+                            this.open = false;
+                            this.getList();
+                        });
+                    } else {
+                        addExaminationPaper(this.form).then((response) => {
+                            this.msgSuccess("新增成功");
+                            this.open = false;
+                            this.getList();
+                        });
+                    }
+                }
+            });
+        },
+        /** 提交其他试卷按钮 */
+        submitFormQt() {
+            //老师试卷状态:其他试卷
+            this.formQt.lssjzt = "4";
+            //教务试卷状态:默认已发送
+            this.formQt.jwsjzt = "1";
+            this.formQt.ksfw = this.setFormKsfwValue(
+                this.formQt.kslx,
+                this.formQt.ksfw
+            );
+            this.$refs.formState.validate((valid) => {
+                if (valid) {
+                    if (this.showKsfwKsJs && !this.ksfw_jsbf) {
+                        this.msgError("考试范围不能为空");
+                        return;
+                    }
+                    this.getClassList(this.formQt.bjid);
+                    if (this.formQt.id != null) {
+                        updateExaminationPaper(this.formQt).then((response) => {
+                            this.msgSuccess("修改成功");
+                            this.openQt = false;
+                            this.getList();
+                        });
+                    } else {
+                        addExaminationPaper(this.formQt).then((response) => {
+                            this.msgSuccess("新增成功");
+                            this.openQt = false;
+                            this.getList();
+                        });
+                    }
+                }
+            });
+        },
+        /** 下载试卷 */
+        handleExport(row) {
+            this.datas = {
+                url: "file/filetable/download",
+                params: {
+                    ssmk: this.filessmk,
+                    kzzd1: row.id,
+                },
+                filename: `考卷-${row.bjmc}-${row.ksfw}.`,
+            };
+            selectFileList({ kzzd1: row.id }).then((res) => {
+                this.datas.filename =
+                    this.datas.filename + res.rows[0].name.split(".")[1];
+                this.$nextTick(() => {
+                    this.$refs.progress.download();
+                });
+            });
+            // // 修改老师试卷状态
+            // this.submitForm("3"); by 2021/9/8可多次下载不改状态
+        },
+        callBack(data) {},
+        /** 成绩导入按钮操作 */
+        handleCjImport() {
+            this.upload.title = "成绩数据导入";
+            this.upload.open = true;
+        },
+        /** 成绩更新按钮操作 */
+        handleCjImportEdit() {
+            this.uploadEdit.title = "成绩更新导入";
+            this.uploadEdit.open = true;
+        },
+        // 文件上传中处理
+        handleFileUploadProgress(event, file, fileList) {
+            this.upload.isUploading = true;
+        },
+        // 文件上传成功处理
+        handleFileSuccessForUpdate(response, file, fileList) {
+            this.uploadEdit.open = false;
+            this.cjsc.open = false;
+            this.uploadEdit.isUploading = false;
+            this.$refs.uploadEdit.clearFiles();
+            if (response.code == 200) {
+                this.$notify({
+                    message: response.msg,
+                    type: "success",
+                });
+            } else {
+                this.$notify({
+                    message: response.msg,
+                    type: "error",
+                });
+            }
+            this.getList();
+        },
+        // 文件上传成功处理
+        handleFileSuccess(response, file, fileList) {
+            this.upload.open = false;
+            this.cjsc.open = false;
+            this.upload.isUploading = false;
+            this.$refs.upload.clearFiles();
+            if (response.code == 200) {
+                let json = {
+                    kzzd2: "3",
+                    id: this.cjscForm.id,
+                    kzzd1: new Date(),
+                };
+                // 改变老师试卷状态
+                updateExaminationPaper(json).then((res) => {
+                    this.kscjzj = true;
+                });
+                this.$notify({
+                    message: response.msg,
+                    type: "success",
+                });
+            } else {
+                this.$notify({
+                    message: response.msg,
+                    type: "error",
+                });
+            }
+            this.getList();
+        },
+        // 提交上传文件
+        submitFileForm() {
+            this.$refs.upload.submit();
+        },
+        // 提交上传文件
+        submitFileFormEdit() {
+            this.$refs.uploadEdit.submit();
+        },
+        //班级id 和 名称
+        getClassList(value) {
+            for (let i = 0; i < this.classList.length; i++) {
+                if (this.classList[i].id === value) {
+                    this.form.bjid = value;
+                    this.form.bjmc = this.classList[i].rybjmc;
+                    this.formQt.bjid = value;
+                    this.formQt.bjmc = this.classList[i].rybjmc;
+                    this.getJcList(this.classList[i].uname);
+                }
+            }
+        },
+        //教材id 和 名称
+        getJcList(value) {
+            for (let i = 0; i < this.jsList.length; i++) {
+                if (this.jsList[i].id == value) {
+                    this.form.jcid = value;
+                    this.form.jcmc = this.jsList[i].jcmc;
+                    this.formQt.jcid = value;
+                    this.formQt.jcmc = this.jsList[i].jcmc;
+                }
+            }
+        },
+        // 考试类型字典翻译
+        getKslx(row, column) {
+            return this.selectDictLabel(this.kslxOptions, row.kslx);
+        },
+        // 考试状态字典翻译
+        getKszt(row, column) {
+            return this.selectDictLabel(this.getStatusList, row.lssjzt);
+        },
+        // 成绩上传状态字典翻译
+        getCjsczt(row, column) {
+            return this.selectDictLabel(this.getCjscztList, row.kzzd2);
+        },
     },
-    callBack(data) {
-    },
-    /** 成绩导入按钮操作 */
-    handleCjImport() {
-      this.upload.title = "成绩数据导入";
-      this.upload.open = true;
-    },
-    /** 成绩更新按钮操作 */
-    handleCjImportEdit() {
-      this.uploadEdit.title = "成绩更新导入";
-      this.uploadEdit.open = true;
-    },
-    // 文件上传中处理
-    handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true;
-    },
-    // 文件上传成功处理
-    handleFileSuccessForUpdate(response, file, fileList) {
-      this.uploadEdit.open = false;
-      this.cjsc.open = false;
-      this.uploadEdit.isUploading = false;
-      this.$refs.uploadEdit.clearFiles();
-      if (response.code == 200) {
-        this.$notify({
-          message: response.msg,
-          type: "success"
-        });
-      } else {
-        this.$notify({
-          message: response.msg,
-          type: "error"
-        });
-      }
-      this.getList();
-    },
-    // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
-      this.upload.open = false;
-      this.cjsc.open = false;
-      this.upload.isUploading = false;
-      this.$refs.upload.clearFiles();
-      if (response.code == 200) {
-        let json = {
-          kzzd2: "3",
-          id: this.cjscForm.id,
-          kzzd1: new Date()
-        };
-        // 改变老师试卷状态
-        updateExaminationPaper(json).then(res => {
-          this.kscjzj = true;
-        });
-        this.$notify({
-          message: response.msg,
-          type: "success"
-        });
-      } else {
-        this.$notify({
-          message: response.msg,
-          type: "error"
-        });
-      }
-      this.getList();
-    },
-    // 提交上传文件
-    submitFileForm() {
-      this.$refs.upload.submit();
-    },
-    // 提交上传文件
-    submitFileFormEdit() {
-      this.$refs.uploadEdit.submit();
-    },
-    //班级id 和 名称
-    getClassList(value) {
-      for (let i = 0; i < this.classList.length; i++) {
-        if (this.classList[i].id === value) {
-          this.form.bjid = value;
-          this.form.bjmc = this.classList[i].rybjmc;
-          this.formQt.bjid = value;
-          this.formQt.bjmc = this.classList[i].rybjmc;
-          this.getJcList(this.classList[i].uname);
-        }
-      }
-    },
-    //教材id 和 名称
-    getJcList(value) {
-      for (let i = 0; i < this.jsList.length; i++) {
-        if (this.jsList[i].id == value) {
-          this.form.jcid = value;
-          this.form.jcmc = this.jsList[i].jcmc;
-          this.formQt.jcid = value;
-          this.formQt.jcmc = this.jsList[i].jcmc;
-        }
-      }
-    },
-    // 考试类型字典翻译
-    getKslx(row, column) {
-      return this.selectDictLabel(this.kslxOptions, row.kslx);
-    },
-    // 考试状态字典翻译
-    getKszt(row, column) {
-      return this.selectDictLabel(this.getStatusList, row.lssjzt);
-    },
-    // 成绩上传状态字典翻译
-    getCjsczt(row, column) {
-      return this.selectDictLabel(this.getCjscztList, row.kzzd2);
-    }
-  }
 };
 </script>
 
