@@ -350,7 +350,7 @@
                 :on-progress="handleFileUploadProgress"
                 :on-success="handleFileSuccess"
                 :auto-upload="false"
-                :data="{ ksmc: cjscForm.kzzd4 ? cjscForm.kzzd4 : cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj ,bjmc:cjscForm.bjmc}"
+                :data="{ ksmc: cjscForm.kzzd4 ? cjscForm.kzzd4 : cjscForm.ksfw, kslx: cjscForm.kslx, kssj: cjscForm.kskssj ,bjid:cjscForm.bjid}"
                 drag
             >
                 <i class="el-icon-upload"></i>
